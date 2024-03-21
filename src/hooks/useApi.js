@@ -1,0 +1,32 @@
+"use client";
+import { useState } from "react";
+
+export const useApi = () => {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const makeApiCall = async (apiCall) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await apiCall();
+      console.log(response);
+      setIsLoading(false);
+      setError(null);
+      console.log("    <<<<    RESPONSE FROM THE API     >>>>    ", response);
+      return response;
+    } catch (err) {
+      setIsLoading(false);
+      const errorMessage =
+        err?.response?.data?.message ||
+        "An error occurred. Please try again later";
+      setError(errorMessage);
+
+      throw err;
+    }
+  };
+
+  return [isLoading, error, makeApiCall, setError];
+};

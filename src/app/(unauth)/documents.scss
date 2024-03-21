@@ -1,0 +1,78 @@
+.docs_main_wrapper {
+  max-width: 1200px;
+  padding: 1rem;
+  width: 100%;
+  margin: 0 auto;
+  .doc_title,
+  .doc_caption {
+    font-size: 20px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 22px;
+    text-transform: uppercase;
+    &.underline {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+  .doc_caption,
+  .doc_note {
+    font-size: 12px;
+  }
+  .doc_note{
+    margin: 2rem 0 18px;
+    font-weight: 800;
+  }
+  .list_wrapper {
+    padding: 2rem 0;
+  }
+  .list_heading {
+    font-size: 17px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 10px;
+    > span {
+      margin-left: 8px;
+    }
+  }
+  ol {
+    counter-reset: item;
+    font-weight: 700;
+    > li {
+      display: block;
+      position: relative;
+      margin: 20px 0px;
+      span {
+        // margin-left: 30px;
+        display: block;
+        text-align: justify;
+      }
+      &::before {
+        content: counters(item, ".") " ";
+        counter-increment: item;
+        position: absolute;
+        left: -30px;
+      }
+
+      .child_list {
+        margin-left: 38px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        text-transform: none;
+
+        > li {
+          > span {
+            margin-left: 24px;
+          }
+        }
+        .child_list {
+          margin-left: 54px;
+          span {
+            margin-left: 38px;
+          }
+        }
+      }
+    }
+  }
+}

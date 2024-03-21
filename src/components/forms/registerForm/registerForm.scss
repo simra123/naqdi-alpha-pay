@@ -1,0 +1,16 @@
+.register_form {
+    &__password{
+        margin-top: 3rem;
+        .item{
+            p{
+                padding: 0.5rem;
+                span{
+                    font-weight: 800;
+                }
+            }
+        }
+    }
+  .input_gap {
+    gap: 1rem;
+  }
+}
