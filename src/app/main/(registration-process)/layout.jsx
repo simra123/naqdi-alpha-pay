@@ -1,0 +1,59 @@
+import React from "react";
+import { Button } from "@mui/material";
+import { Security, Settings } from "@mui/icons-material";
+import "./registration_process.scss";
+
+const layout = ({ children }) => {
+  return (
+    <div>
+      <header className="registration_layout_header">
+        <div className="upgrade_message flex">
+          <p className="message">
+            In order for you to Trade, you have to complete your Onboarding
+            Registration process!
+          </p>
+          <div className="actions">
+            <button className="btn-yellow">
+              <Security />
+            </button>
+            <button className="btn-yellow">Upgrade to trader</button>
+          </div>
+        </div>
+
+        <nav className="navbar px-8 py-6">
+          <div className="nav_wrapper flex justify-between">
+            <div className="left_nav flex items-center gap-8">
+              <div className="logo text-2xl font-bold">Alphas</div>
+              <div className="nav_links flex gap-4">
+                <a href="#" className="font-bold">Dashboard</a>
+                <a href="#" className="font-bold">Trade</a>
+                <a href="#" className="font-bold">Wallets</a>
+              </div>
+            </div>
+
+            <div className="right_nav flex items-center gap-14">
+              <div className="user_name flex items-center gap-5">
+                <div className="name text-end">
+                  <div className="font-bold"> Muhammad Ahmed </div>
+                  <div className="text-sm">Standard User</div>
+                </div>
+                <div className="icon">
+                  <Security />
+                </div>
+              </div>
+              <div className="setting">
+                <button>
+                  <Settings />
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      {children}
+    </div>
+  );
+};
+
+export default layout;

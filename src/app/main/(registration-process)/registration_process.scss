@@ -1,0 +1,33 @@
+@import "../../../config/colors.scss";
+.registration_layout_header {
+  .upgrade_message {
+    background-color: $apy-secondary-color;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    p {
+      color: $apy-white-color;
+    }
+    .actions {
+      display: flex;
+      gap: 5px;
+      button {
+        border-radius: 0;
+      }
+    }
+  }
+  .navbar {
+    background: linear-gradient(
+        140deg,
+        $apy-primary-color,
+        $apy-secondary-color
+      );
+    * {
+      color: $apy-white-color;
+    }
+    a:hover{
+        color: $apy-secondary-color;
+    }
+  }
+}

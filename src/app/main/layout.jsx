@@ -1,19 +1,13 @@
+"use client";
+
 import React from "react";
-import Image from "next/image";
+
 import "./auth.scss";
 import { Typography } from "@mui/material";
 
 const Authlayout = ({ children }) => {
   return (
     <main id="auth_layout">
-      <header className="auth_header">
-        <div className="flex flex-col items-center">
-          <Image src={"/logo.png"} height={100} width={150} alt="logo" priority/>
-          <Typography variant="h5" color="primary">
-            Alphaspay
-          </Typography>
-        </div>
-      </header>
       {children}
       <footer>
         {/* <Image src={"/logo.png"} height={100} width={150} /> */}

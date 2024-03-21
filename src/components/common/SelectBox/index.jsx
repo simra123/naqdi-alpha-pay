@@ -1,14 +1,22 @@
+"use client";
 import React from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-const SelectBox = ({ label, options, value, onChange }) => {
+const SelectBox = ({ placeholder, options, value, onChange }) => {
   return (
     <FormControl fullWidth className="input-field">
-      <InputLabel>{label}</InputLabel>
       <Select
         value={value}
         className="primary-color"
         onChange={onChange}
+        displayEmpty
+        renderValue={(selected) => {
+          if (!selected) {
+            return <span className="placeholder_gray">{placeholder}</span>;
+          }
+
+          return selected;
+        }}
         MenuProps={{
           MenuListProps: {
             sx: {

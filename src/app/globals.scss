@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import "../config/colors.scss";
 @import url("https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap");
 
@@ -26,6 +30,12 @@ input {
     color: $apy-placeholder-gray-color !important;
   }
 }
+
+.placeholder_gray{
+  color: #b7b7b7 !important;
+
+}
+
 .btn {
   border-radius: 0;
   width: 100%;
@@ -84,6 +94,16 @@ input {
     background-color: $apy-secondary1-color;
   }
 }
+.btn-yellow {
+  background-color: $apy-yellow-color !important;
+  padding: 0.4rem 1.2rem !important;
+  color: $apy-primary-color !important;
+  border-radius: 6px;
+  text-transform: uppercase;
+  &:hover {
+    background-color: $apy-yellow1-color !important;
+  }
+}
 
 .btn-primary {
   background-color: $apy-primary-color;
@@ -97,7 +117,7 @@ input {
 }
 
 .input-field {
-  background-color: #f5f5f5;
+  background-color: #ebebeb;
   transition: all 0.3s;
 
   &:hover,
@@ -143,8 +163,12 @@ input {
   margin: auto;
 }
 
+.xl_heading_bold {
+  font-size: 36px;
+  font-weight: 700;
+}
 .large_heading_bold {
-  font-size: 33.6px;
+  font-size: 32.6px;
   font-weight: 700;
 }
 .medium_heading_light {
@@ -154,4 +178,29 @@ input {
 .medium_heading_bold {
   font-size: 24px;
   font-weight: 700;
+}
+
+
+@screen sm {
+  .container-custom {
+    max-width: 640px; /* Your custom width for small screens */
+  }
+}
+
+@screen md {
+  .container-custom {
+    max-width: 768px; /* Your custom width for medium screens */
+  }
+}
+
+@screen lg {
+  .container-custom {
+    max-width: 1024px; /* Your custom width for large screens */
+  }
+}
+
+@screen xl {
+  .container-custom {
+    max-width: 1140px; /* Your custom width for extra large screens */
+  }
 }

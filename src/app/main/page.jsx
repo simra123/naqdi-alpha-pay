@@ -1,0 +1,32 @@
+"use client";
+import React from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Typography } from "@mui/material";
+
+const Main = () => {
+  const router = useRouter();
+
+  router.push("/main/trader-registration");
+
+  return (
+    <section className="main_page">
+      <div className="large_container">
+        <div className="text-center">
+          <Image
+            src={"/logo.png"}
+            height={100}
+            width={150}
+            alt="logo"
+            priority
+          />
+          <Typography variant="h5" color="primary">
+            Alphaspay
+          </Typography>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Main;
