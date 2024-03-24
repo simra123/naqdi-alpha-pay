@@ -1,12 +1,13 @@
 import React from "react";
 import { Button } from "@mui/material";
+import Link from 'next/link'
 import { Security, Settings } from "@mui/icons-material";
 import "./registration_process.scss";
 
 const layout = ({ children }) => {
   return (
     <div>
-      <header className="registration_layout_header">
+      <header className="registration_layout_header sticky top-0 z-50">
         <div className="upgrade_message flex">
           <p className="message">
             In order for you to Trade, you have to complete your Onboarding
@@ -22,12 +23,18 @@ const layout = ({ children }) => {
 
         <nav className="navbar px-8 py-6">
           <div className="nav_wrapper flex justify-between">
-            <div className="left_nav flex items-center gap-8">
+            <div className="left_nav flex items-center gap-20">
               <div className="logo text-2xl font-bold">Alphas</div>
               <div className="nav_links flex gap-4">
-                <a href="#" className="font-bold">Dashboard</a>
-                <a href="#" className="font-bold">Trade</a>
-                <a href="#" className="font-bold">Wallets</a>
+                <Link href="/main/home" className="font-bold">
+                  Dashboard
+                </Link>
+                <Link href="/main/trade" className="font-bold">
+                  Trade
+                </Link>
+                <Link href="/main/wallet" className="font-bold">
+                  Wallets
+                </Link>
               </div>
             </div>
 

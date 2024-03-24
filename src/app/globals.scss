@@ -31,14 +31,68 @@ input {
   }
 }
 
-.placeholder_gray{
+.placeholder_gray {
   color: #b7b7b7 !important;
+}
 
+.tel_input_wrapper {
+  .form-control {
+    background-color: #ebebeb !important;
+    transition: all 0.3s !important;
+    width: 100% !important;
+    border: 0 !important;
+    padding: 17px 68px !important;
+    border-radius: 0 !important;
+    font-size: 15px !important;
+    &:hover,
+    &:focus-within,
+    &:focus {
+      background-color: #e8e6ee !important;
+      outline: 0 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+  }
+  .arrow {
+    left: 36px !important;
+  }
+  .search {
+    input {
+      width: 90%;
+      padding: 10px;
+    }
+  }
+  .country-list {
+    border-radius: 0 !important;
+  }
+  .flag-dropdown {
+    min-width: 4rem;
+    > div {
+      width: 100%;
+    }
+  }
+  .btn-yellow {
+    padding: 16.5px 16px !important;
+    border-radius: 0;
+    height: 100%;
+    min-width: fit-content;
+  }
 }
 
 .btn {
   border-radius: 0;
   width: 100%;
+}
+.capsule_btn{
+  border: 1px solid $apy-primary-color;
+  &.active{
+    color: $apy-white-color;
+    background: linear-gradient(
+      90deg,
+      $apy-primary-color,
+      $apy-secondary-color
+    );
+  }
 }
 
 .primary-color {
@@ -141,6 +195,9 @@ input {
   font-size: 12.6px;
   color: $apy-note-gray-color;
   line-height: 1.5;
+  &.success {
+    color: #71cc71;
+  }
 }
 
 .mt-1 {
@@ -179,7 +236,6 @@ input {
   font-size: 24px;
   font-weight: 700;
 }
-
 
 @screen sm {
   .container-custom {
