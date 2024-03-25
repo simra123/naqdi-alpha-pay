@@ -12,13 +12,6 @@ const Register = () => {
 
   const toggleForm = (form) => () => {
     setActiveForm(form);
-    // setActiveForm((pre) => {
-    //   return pre === forms.INDIVIDUAL ? forms.LegalEntity : forms.INDIVIDUAL;
-    // });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
   };
 
   return (
@@ -37,7 +30,7 @@ const Register = () => {
         Legal Entity you represent.
       </Typography>
 
-      <form className="register__form" onSubmit={handleSubmit}>
+      <div className="register__form">
         <div className="register__form--buttonWrapper">
           <button
             variant="text"
@@ -59,7 +52,7 @@ const Register = () => {
           </button>
         </div>
         <IndividualForm activeForm={activeForm} />
-      </form>
+      </div>
     </main>
   );
 };

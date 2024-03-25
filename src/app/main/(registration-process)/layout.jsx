@@ -1,10 +1,13 @@
+"use client";
+
 import React from "react";
-import { Button } from "@mui/material";
-import Link from 'next/link'
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Security, Settings } from "@mui/icons-material";
 import "./registration_process.scss";
 
 const layout = ({ children }) => {
+  const router = useRouter();
   return (
     <div>
       <header className="registration_layout_header sticky top-0 z-50">
@@ -17,7 +20,9 @@ const layout = ({ children }) => {
             <button className="btn-yellow">
               <Security />
             </button>
-            <button className="btn-yellow">Upgrade to trader</button>
+            <button className="btn-yellow" onClick={() => router.push("/main")}>
+              Upgrade to trader
+            </button>
           </div>
         </div>
 

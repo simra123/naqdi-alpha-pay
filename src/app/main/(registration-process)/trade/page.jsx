@@ -1,6 +1,9 @@
 import React from "react";
 import { TextField } from "@mui/material";
-import { Bitcoin, Dollar } from "@/assets/Svgs";
+import { Bars, Bitcoin, Dollar } from "@/assets/Svgs";
+
+import "./trade.scss";
+
 const Trade = () => {
   return (
     <div className="container-custom mx-auto mt-24">
@@ -26,16 +29,108 @@ const Trade = () => {
       </div>
 
       <div className="currncies_list_wrapper">
-        <div className="currency_section">
+        <div className="currency_section mt-10">
           <h3 className="font-semibold text-base">U.S. DOLLAR (USD)</h3>
           <div className="grid grid-cols-3 gap-3">
             <div className="currency_item">
-              <div className="flex">
+              <div className="flex items-center gap-6">
                 <div className="icons flex">
                   <Bitcoin />
                   <Dollar />
                 </div>
-                <span className="currency_label">BTC/USD</span>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="currency_section mt-10">
+          <h3 className="font-semibold text-base">EMIRATI DIRHAM (AED)</h3>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
+              </div>
+            </div>
+            <div className="currency_item">
+              <div className="flex items-center gap-6">
+                <div className="icons flex">
+                  <Bitcoin />
+                  <Dollar />
+                </div>
+                <span className="currency_label">BTC / USD</span>
+              </div>
+              <div className="bars">
+                <Bars className="bar_svg" />
               </div>
             </div>
           </div>

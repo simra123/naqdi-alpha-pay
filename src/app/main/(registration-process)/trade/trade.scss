@@ -1,0 +1,41 @@
+@import "../../../../config/colors.scss";
+
+.currency_item {
+  position: relative;
+  cursor: pointer;
+  background-color: $apy-primary-color;
+  color: $apy-white-color;
+  padding: 1.8rem 1rem;
+  transition: all 0.2s;
+
+  .bars {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    .bar_svg{
+        width: 100%;
+        display: none;
+    }
+  }
+
+  .icons {
+    svg {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+
+  .currency_label {
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  &:hover {
+    background-color: $apy-secondary-color;
+  }
+
+  &:hover .bar_svg {
+    display: block !important;
+  }
+}

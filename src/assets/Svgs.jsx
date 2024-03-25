@@ -1,9 +1,10 @@
-export const Bars = () => (
+export const Bars = ({ className }) => (
   <svg
     width="223"
     height="40"
     viewBox="0 0 223 40"
     fill="none"
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
   >
     <g opacity="0.8">

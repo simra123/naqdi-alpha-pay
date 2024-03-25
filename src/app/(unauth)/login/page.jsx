@@ -13,7 +13,7 @@ const Login = () => {
       <Typography variant="h2" color="primary">
         Autheticate
       </Typography>
-      <form id="login-form">
+      <form id="login-form" onSubmit={(e) => e.preventDefault()}>
         <TextField
           label={null}
           className="input-field"
@@ -38,27 +38,27 @@ const Login = () => {
           Forgot Password?
         </Typography>
 
-        <Button
+        <button
           variant="contained"
           color="primary"
           className="btn gradient-btn"
-          onClick={() => router.replace("/")}
+          onClick={() => router.push("/main")}
         >
           Login
-        </Button>
+        </button>
 
         <div className="register">
           <Typography variant="body1" color="primary">
             Don't have an account?
           </Typography>
-          <Button
+          <button
             variant="contained"
             color="primary"
             className="btn secondary-btn"
-            onClick={() => router.replace("/register")}
+            onClick={() => router.push("/register")}
           >
             Register
-          </Button>
+          </button>
         </div>
       </form>
     </section>

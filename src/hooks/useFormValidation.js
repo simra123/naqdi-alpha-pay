@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import * as Yup from 'yup';
+"use client";
+import { useState } from "react";
+import * as Yup from "yup";
 
 const useFormValidation = (initialState, validationSchema) => {
   const [values, setValues] = useState(initialState);
@@ -11,9 +12,11 @@ const useFormValidation = (initialState, validationSchema) => {
       ...values,
       [name]: value,
     });
+    // validateField(name, value);
   };
 
-  const validateField = async (name, value) => {
+  const validateField = async (event) => {
+    const { name, value } = event.target;
     try {
       await Yup.reach(validationSchema, name).validate(value);
       setErrors({ ...errors, [name]: undefined });
