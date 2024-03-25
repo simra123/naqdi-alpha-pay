@@ -1,13 +1,17 @@
 "use client";
 
 import React from "react";
-
+import { useSelector } from "react-redux";
 import "./auth.scss";
 import { Typography } from "@mui/material";
 
 const Authlayout = ({ children }) => {
+  const modal = useSelector((state) => state.modal.upgradeTrader);
   return (
-    <main id="auth_layout">
+    <main
+      id="auth_layout"
+      className={modal ? "overflow-hidden max-h-screen root" : "root"}
+    >
       {children}
       <footer>
         {/* <Image src={"/logo.png"} height={100} width={150} /> */}

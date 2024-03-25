@@ -143,11 +143,17 @@ input {
   }
 }
 
+.gradient_bg {
+  background: linear-gradient(90deg, $apy-primary-color, $apy-secondary-color);
+}
+
 .btn-secondary {
   background-color: $apy-secondary-color;
   padding: 0.8rem 1.5rem !important;
   color: $apy-white-color;
-  border-radius: 6px;
+  &:not(.no-radius) {
+    border-radius: 6px;
+  }
   // text-transform: none;
   &:hover {
     background-color: $apy-secondary1-color;

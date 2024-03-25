@@ -1,0 +1,21 @@
+@import "../../../config/colors.scss";
+
+.upgrade_modal_wrapper {
+  background-color: $apy-primary-transparent-color;
+  min-height: 100vh;
+  color: $apy-white-color;
+
+  .continue_modal {
+    background: #dadada;
+    color: $apy-primary-color;
+  }
+
+  .upgrade_modal {
+    background: linear-gradient(
+      44.71deg,
+      $apy-primary-color 0%,
+      $apy-secondary-color 100%
+    );
+    color: $apy-white-color;
+  }
+}

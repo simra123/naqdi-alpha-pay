@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Security, Settings } from "@mui/icons-material";
 import "./registration_process.scss";
+import UpgradeTraderModal from "@/components/common/UpgradeTraderModal";
 
 const layout = ({ children }) => {
   const router = useRouter();
+
   return (
     <div>
+      <UpgradeTraderModal />
       <header className="registration_layout_header sticky top-0 z-50">
         <div className="upgrade_message flex">
           <p className="message">
