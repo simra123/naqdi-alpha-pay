@@ -1,13 +1,15 @@
-"use client"
+"use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
 const Home = () => {
   const router = useRouter();
 
-  router.replace("/login");
+  useEffect(() => {
+    router.replace("/login");
+  }, []);
   return <div>Home</div>;
 };
 
