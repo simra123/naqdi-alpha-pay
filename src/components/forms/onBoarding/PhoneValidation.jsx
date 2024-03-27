@@ -2,8 +2,55 @@ import React from "react";
 import { Typography, TextField } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
+import useFormValidation from "@/hooks/useFormValidation";
+import { codeSchema, PhoneSchema } from "@/models/Phone";
 
 const PhoneValidation = () => {
+  const initialValuePhone = {
+    phone: "",
+  };
+
+  const initialValueCode = {
+    code: "",
+  };
+
+  const {
+    errors: phoneErrors,
+    handleChange: handleChangePhone,
+    handleSubmit: handleSubmitPhone,
+    validateField: validatePhone,
+    values: phoneValues,
+    setValues: setPhoneValues,
+  } = useFormValidation(initialValuePhone, PhoneSchema);
+
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    validateField,
+    values,
+    setValues,
+  } = useFormValidation(initialValueCode, codeSchema);
+
+  const onSubmitPhone = () => {
+    // Your submission logic here
+
+    alert("Form submitted successfully!");
+  };
+  const onSubmitPhoneError = () => {
+    window.scrollTo(0, 0);
+    console.log("Form Not submitted successfully!");
+  };
+  const onSubmit = () => {
+    // Your submission logic here
+
+    alert("Form submitted successfully!");
+  };
+  const onSubmitError = () => {
+    window.scrollTo(0, 300);
+    console.log("Form Not submitted successfully!");
+  };
+
   return (
     <>
       <h2 className="large_heading_bold">Phone Validation</h2>
@@ -25,23 +72,32 @@ const PhoneValidation = () => {
         </div>
 
         {/* <TextField placeholder="Phone*" className="input-field" fullWidth /> */}
-        <form onSubmit={(e) => e.preventDefault()}>
-          <div className="flex items-center tel_input_wrapper">
-            <PhoneInput
-              buttonClass="input-field"
-              inputClass="input-field"
-              enableSearch
-              specialLabel=""
-              inputProps={{
-                name: "phone",
-                required: true,
-                autoFocus: true,
-              }}
-            />
+        <form
+          onSubmit={(e) => handleSubmit(e, onSubmitPhone, onSubmitPhoneError)}
+        >
+          <div>
+            <div className="flex items-center tel_input_wrapper">
+              <PhoneInput
+                buttonClass="input-field"
+                inputClass="input-field"
+                onChange={handleChangePhone}
+                value={phoneValues.phone}
+                onBlur={validatePhone}
+                enableSearch
+                specialLabel=""
+                inputProps={{
+                  name: "phone",
+                  autoFocus: true,
+                }}
+              />
 
-            <button className="btn-yellow w-1/5 font-semibold" type="submit">
-              Send Sms
-            </button>
+              <button className="btn-yellow w-1/5 font-semibold" type="submit">
+                Send Sms
+              </button>
+            </div>
+            {phoneErrors.phone && (
+              <div className="error_text">{phoneErrors.phone}</div>
+            )}
           </div>
           <p className="success note mt-5">
             An SMS was sent to the mobile phone number you entered. Please enter
@@ -49,20 +105,27 @@ const PhoneValidation = () => {
           </p>
         </form>
 
-        <form onSubmit={(e) => e.preventDefault()}>
+        <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
           <div className="register_form__trader__heading mt-8">
             <Typography variant="h5" color="primary" className="text-base">
               Enter Code
             </Typography>
-            <TextField
-              className="input-field"
-              fullWidth
-              placeholder="EX: CODE!@"
-            />
+            <div>
+              <TextField
+                className="input-field"
+                onChange={handleChange}
+                value={values.code}
+                onBlur={validateField}
+                name="code"
+                fullWidth
+                placeholder="EX: CODE!@"
+              />
+              {errors.code && <div className="error_text">{errors.code}</div>}
+            </div>
           </div>
 
           <div className="btn_wrapper text-right">
-            <button className="header_step_btn active fl">
+            <button className="header_step_btn active fl" type="submit">
               Validate & Next
             </button>
           </div>

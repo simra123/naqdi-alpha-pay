@@ -9,7 +9,6 @@ import "./upgrademoda.scss";
 import { Security } from "@mui/icons-material";
 import { setModal } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
-import { setMessage } from "@/store/slices/snackSlice";
 
 const UpgradeTraderModal = () => {
   const dispatch = useDispatch();
@@ -30,7 +29,7 @@ const UpgradeTraderModal = () => {
 
         <div className="user_cards grid grid-cols-2 max-w-3xl mx-auto gap-6">
           <div className="flex flex-col gap-8">
-            <div className="mt-6 continue_modal px-14 py-24">
+            <div className="mt-6 continue_modal px-14 py-24 min-h-[570px]">
               <div className="flex flex-col gap-8 ">
                 <div className="secure_icon text-center">
                   <Security className="text-7xl" />
@@ -60,24 +59,26 @@ const UpgradeTraderModal = () => {
             </button>
           </div>
           <div className="flex flex-col gap-8">
-            <div className="mt-6 upgrade_modal px-14 py-24">
+            <div className="mt-6 upgrade_modal px-10 py-24  min-h-[570px]">
               <div className="flex flex-col gap-8 ">
                 <div className="secure_icon text-center">
                   <Security className="text-7xl" />
                 </div>
 
                 <h5 className="text-center font-semibold text-2xl mt-2">
-                  User Account
+                  Trader Account
                 </h5>
 
-                <div className="details font-semibold leading-7">
+                <div className="details font-semibold leading-6">
                   <p>
-                    A User Account gives you limited access to navigate the
+                    With a Alphaspay Trader Account you have full access to the
                     Alphaspay platform.
                   </p>
                   <p>
-                    In order to trade and Custody on the Alphaspay platform you
-                    need to upgrade your account to Trader status.
+                    This includes the ability to Custody your digital currency
+                    directly from your external wallets into Alphaspay cold
+                    storage solution and to trade OTC on our transparent trading
+                    platform.
                   </p>
                 </div>
               </div>

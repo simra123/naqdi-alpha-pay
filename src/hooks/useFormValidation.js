@@ -19,16 +19,17 @@ const useFormValidation = (initialState, validationSchema) => {
     const { name, value } = event.target;
     try {
       await Yup.reach(validationSchema, name).validate(value);
-      setErrors({ ...errors, [name]: undefined });
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: undefined }));
     } catch (error) {
-      setErrors({ ...errors, [name]: error.message });
+      setErrors((prevErrors) => ({ ...prevErrors, [name]: error.message }));
     }
   };
 
-  const handleSubmit = async (event, callback) => {
+  const handleSubmit = async (event, callback, errorCallBack) => {
     event.preventDefault();
     try {
       await validationSchema.validate(values, { abortEarly: false });
+      setErrors({});
       callback();
     } catch (validationErrors) {
       const formattedErrors = {};
@@ -36,6 +37,7 @@ const useFormValidation = (initialState, validationSchema) => {
         formattedErrors[error.path] = error.message;
       });
       setErrors(formattedErrors);
+      errorCallBack && errorCallBack();
     }
   };
 
@@ -45,6 +47,8 @@ const useFormValidation = (initialState, validationSchema) => {
     handleChange,
     validateField,
     handleSubmit,
+    setErrors,
+    setValues,
   };
 };
 

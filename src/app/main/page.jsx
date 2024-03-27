@@ -18,6 +18,7 @@ const Main = () => {
             height={100}
             width={150}
             alt="logo"
+            className="mx-auto mt-8"
             priority
           />
           <Typography variant="h5" color="primary">

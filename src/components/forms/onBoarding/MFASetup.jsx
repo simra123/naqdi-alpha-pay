@@ -5,6 +5,21 @@ import OtpInput from "react-otp-input";
 
 const MFASetup = () => {
   const [otp, setOtp] = useState(null);
+  const [otpError, setOtpError] = useState(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(otp.length);
+    if (!otp) {
+      return setOtpError("Please Enter Otp");
+    }
+    if (otp && otp.length < 6) {
+      return setOtpError("Otp is not valid");
+    }
+    if (otp) {
+      return setOtpError(null);
+    }
+  };
 
   return (
     <>
@@ -34,45 +49,54 @@ const MFASetup = () => {
           STEP 2: Generate and Scan the QR Code
         </h4>
         <div className="qr_code mt-6">
-          <QRCodeCanvas value="https://reactjs.org/" style={{width: '200px', height:'200px'}}/>
+          <QRCodeCanvas
+            value="https://reactjs.org/"
+            style={{ width: "200px", height: "200px" }}
+          />
         </div>
         <button className="btn-secondary font-bold rounded-none mt-6 min-w-32">
           Generate
         </button>
       </div>
 
-      <div className="form_steps mt-14">
-        <h4 className="text-lg font-bold">
-          STEP 3: Enter your personal generated MFA Code (6-Digit Code)
-        </h4>
-        <p className="text-lg mt-3">
-          Make a note of the MFA code that appears on your device and enter that
-          code in the box below, and then choose Verify.
-        </p>
-        <div className="my-5">
-          <OtpInput
-            numInputs={6}
-            placeholder="XXXXXX"
-            containerStyle={{
-              display: "flex",
+      <form onSubmit={handleSubmit}>
+        <div className="form_steps mt-14">
+          <h4 className="text-lg font-bold">
+            STEP 3: Enter your personal generated MFA Code (6-Digit Code)
+          </h4>
+          <p className="text-lg mt-3">
+            Make a note of the MFA code that appears on your device and enter
+            that code in the box below, and then choose Verify.
+          </p>
+          <div className="my-5">
+            <OtpInput
+              numInputs={6}
+              placeholder="XXXXXX"
+              containerStyle={{
+                display: "flex",
 
-              gap: "1.5rem",
-            }}
-            renderInput={(props) => (
-              <input
-                {...props}
-                className="input-field min-w-14 p-4 outline-none"
-              />
-            )}
-            onChange={(value) => setOtp(value)}
-            value={otp}
-          />
+                gap: "1.5rem",
+              }}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  className="input-field min-w-14 p-4 outline-none"
+                />
+              )}
+              onChange={(value) => setOtp(value)}
+              value={otp}
+            />
+            {otpError && <div className="error_text">{otpError}</div>}
+          </div>
+
+          <button
+            className="btn-secondary font-bold rounded-none mt-6 min-w-32"
+            type="submit"
+          >
+            Verify
+          </button>
         </div>
-
-        <button className="btn-secondary font-bold rounded-none mt-6 min-w-32">
-          Verify
-        </button>
-      </div>
+      </form>
 
       <p className="note mt-6">
         HAYVN does not charge any fees for using MFA. If you have any questions

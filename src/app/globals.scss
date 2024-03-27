@@ -73,7 +73,7 @@ input {
   }
   .btn-yellow {
     padding: 16.5px 16px !important;
-    border-radius: 0;
+    border-radius: 0 !important;
     height: 100%;
     min-width: fit-content;
   }
@@ -163,7 +163,9 @@ input {
   background-color: $apy-yellow-color !important;
   padding: 0.4rem 1.2rem !important;
   color: $apy-primary-color !important;
-  border-radius: 6px;
+  &:not(.no-radius) {
+    border-radius: 6px;
+  }
   text-transform: uppercase;
   &:hover {
     background-color: $apy-yellow1-color !important;

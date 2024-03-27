@@ -9,9 +9,15 @@
     p {
       color: $apy-white-color;
     }
+    overflow: hidden;
+
     .actions {
       display: flex;
       gap: 5px;
+      transition: all 0.8s;
+      &.hide_mate {
+        transform: translateX(400px);
+      }
       button {
         border-radius: 0;
       }
@@ -19,15 +25,23 @@
   }
   .navbar {
     background: linear-gradient(
-        140deg,
-        $apy-primary-color,
-        $apy-secondary-color
-      );
+      140deg,
+      $apy-primary-color,
+      $apy-secondary-color
+    );
     * {
       color: $apy-white-color;
     }
-    a:hover{
-        color: $apy-secondary-color;
+    a:hover,
+    a.active {
+      color: $apy-secondary-color;
+    }
+  }
+  #setting_btn {
+    padding: 10px;
+    &:hover,
+    &.active {
+      background-color: rgba(0, 0, 0, 0.2);
     }
   }
 }

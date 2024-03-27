@@ -1,11 +1,31 @@
+"use client";
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Typography, TextField, Button } from "@mui/material";
 
 import "../auth.scss";
 import "./forgot.scss";
+import { ForgotSchema } from "@/models/Forgot";
+import useFormValidation from "@/hooks/useFormValidation";
 
 const ForgotPassword = () => {
+  const router = useRouter();
+  const initialValues = {
+    email: "",
+  };
+
+  const { errors, handleChange, handleSubmit, validateField, values } =
+    useFormValidation(initialValues, ForgotSchema);
+
+  const onSubmit = () => {
+    // Your submission logic here
+    router.push("/main");
+  };
+  const onSubmitError = () => {
+    window.scrollTo(0, 500);
+    console.log("Form Not submitted successfully!");
+  };
   return (
     <section className="password_forgot_page">
       <Typography variant="h2" color="primary">
@@ -17,25 +37,36 @@ const ForgotPassword = () => {
         email you instructions on how to reset your password.
       </Typography>
 
-      <form id="login-form">
-        <TextField
-          label={null}
-          className="input-field"
-          placeholder="Email*"
-          type="email"
-          inputProps={{
-            autoComplete: "new-password",
-            form: {
-              autoComplete: "off",
-            },
-          }}
-        />
+      <form
+        id="login-form"
+        onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
+      >
+        <div>
+          <TextField
+            label={null}
+            className="input-field"
+            placeholder="Email*"
+            fullWidth
+            type="email"
+            onBlur={validateField}
+            name="email"
+            onChange={handleChange}
+            value={values.email}
+            inputProps={{
+              autoComplete: "new-password",
+              form: {
+                autoComplete: "off",
+              },
+            }}
+          />
+          {errors.email && <div className="error_text">{errors.email}</div>}
+        </div>
 
         <Button
           variant="contained"
           color="primary"
           className="btn gradient-btn"
-          //   onClick={() => router.replace("/")}
+          type="submit"
         >
           Send Instruction to recover account
         </Button>

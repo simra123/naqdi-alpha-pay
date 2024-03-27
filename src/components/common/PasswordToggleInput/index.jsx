@@ -8,9 +8,14 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const PasswordToggleInput = () => {
+const PasswordToggleInput = ({
+  onChange,
+  onBlur,
+  name,
+  value,
+  placeholder,
+}) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [password, setPassword] = useState("");
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -21,10 +26,12 @@ const PasswordToggleInput = () => {
       <OutlinedInput
         fullWidth
         type={passwordVisible ? "text" : "password"}
-        placeholder="Password*"
-        value={password}
+        placeholder={placeholder}
+        value={value}
         className="input-field"
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={onChange}
+        onBlur={onBlur}
+        name={name}
         endAdornment={
           <InputAdornment position="end">
             <IconButton

@@ -1,17 +1,36 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Security, Settings } from "@mui/icons-material";
-import "./registration_process.scss";
 import UpgradeTraderModal from "@/components/common/UpgradeTraderModal";
+import SettingsMenu from "@/components/common/SettingsMenu";
+import "./registration_process.scss";
+
+const Nav_items = [
+  {
+    name: "Dashboard",
+    activePath: "/main/home",
+  },
+  {
+    name: "Trade",
+    activePath: "/main/trade",
+  },
+  {
+    name: "Wallets",
+    activePath: "/main/wallet",
+  },
+];
 
 const layout = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname();
+
+  const [isSettingOpen, setSettingOpen] = useState(false);
 
   return (
-    <div>
+    <div onClick={(e) => setSettingOpen(false)}>
       <UpgradeTraderModal />
       <header className="registration_layout_header sticky top-0 z-50">
         <div className="upgrade_message flex">
@@ -19,13 +38,22 @@ const layout = ({ children }) => {
             In order for you to Trade, you have to complete your Onboarding
             Registration process!
           </p>
-          <div className="actions">
+          <div
+            className={
+              pathname == "/main/trader-registration"
+                ? "actions hide_mate"
+                : "actions"
+            }
+          >
             <button className="btn-yellow">
               <Security />
             </button>
-            <button className="btn-yellow" onClick={() => router.push("/main")}>
+            <Link
+              className="btn-yellow no-radius"
+              href={"/main/trader-registration"}
+            >
               Upgrade to trader
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -34,15 +62,16 @@ const layout = ({ children }) => {
             <div className="left_nav flex items-center gap-20">
               <div className="logo text-2xl font-bold">Alphas</div>
               <div className="nav_links flex gap-4">
-                <Link href="/main/home" className="font-bold">
-                  Dashboard
-                </Link>
-                <Link href="/main/trade" className="font-bold">
-                  Trade
-                </Link>
-                <Link href="/main/wallet" className="font-bold">
-                  Wallets
-                </Link>
+                {Nav_items.map(({ activePath, name }) => (
+                  <Link
+                    href={activePath}
+                    className={
+                      pathname == activePath ? "active font-bold" : "font-bold"
+                    }
+                  >
+                    {name}
+                  </Link>
+                ))}
               </div>
             </div>
 
@@ -56,10 +85,24 @@ const layout = ({ children }) => {
                   <Security />
                 </div>
               </div>
-              <div className="setting">
-                <button>
-                  <Settings />
+              <div className="setting relative" id="setting_wrapper">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSettingOpen(!isSettingOpen);
+                  }}
+                  id="setting_btn"
+                  className={isSettingOpen ? "active" : ""}
+                >
+                  <Settings
+                    className={
+                      isSettingOpen
+                        ? "-rotate-90 transition-all"
+                        : "transition-all rotate-0"
+                    }
+                  />
                 </button>
+                <SettingsMenu isOpen={isSettingOpen} />
               </div>
             </div>
           </div>

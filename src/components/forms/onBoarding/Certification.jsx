@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 const Certification = () => {
   return (
@@ -41,8 +42,16 @@ const Certification = () => {
         complete so please have all your supporting documentation ready.
       </p>
 
-      <p className=" font-semibold mt-9">Please click the button below to begin.</p>
-      <button className="btn-secondary w-full uppercase font-bold">Onboarding certification</button>
+      <p className=" font-semibold mt-9">
+        Please click the button below to begin.
+      </p>
+      <Link
+        className="btn-secondary w-full uppercase font-bold block text-center no-radius"
+        href={"/certification-form"}
+        target="_blank"
+      >
+        Onboarding certification
+      </Link>
 
       <p className="note mt-6">
         Once you have submitted your Onboarding Certification, please click the

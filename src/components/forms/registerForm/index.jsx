@@ -1,48 +1,79 @@
 "use client";
-import React, { useState } from "react";
-import * as Yup from "yup";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+
 import ReCaptcha from "react-google-recaptcha";
 import { Typography, TextField, Button } from "@mui/material";
-import SelectBox from "@/components/common/SelectBox";
-import useFormValidation from "@/hooks/useFormValidation";
+
+import { LegalSchema, RegisterSchema } from "@/models/Register";
+
 import { forms } from "@/constants/registerforms";
+
+import useFormValidation from "@/hooks/useFormValidation";
+
+import SelectBox from "@/components/common/SelectBox";
+import PasswordToggleInput from "@/components/common/PasswordToggleInput";
+
 import "./registerForm.scss";
 
 const options = [
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
+  {
+    value: "private-company-non-regulated",
+    label: "Private Company (Non-reqgulated)",
+  },
+  {
+    value: "listed-company-non-regulated",
+    label: "Listed Company (Non-regulated)",
+  },
 ];
 
 const IndividualForm = ({ activeForm }) => {
   const router = useRouter();
-  const [selectedOption, setSelectedOption] = useState("");
   const initialValues = {
+    legalName: "",
+    entityType: "",
     firstName: "",
+    middleName: "",
+    lastName: "",
+    email: "",
+    userName: "",
+    password: "",
+    confirmPassword: "",
+    captcha: "",
   };
 
-  const validationSchema = Yup.object().shape({
-    firstName: Yup.string()
-      .min(2, "minimum 2 letters required")
-      .required("Username is required"),
-  });
+  const current_schema =
+    activeForm == forms.LegalEntity ? LegalSchema : RegisterSchema;
 
-  const { errors, handleChange, handleSubmit, validateField, values } =
-    useFormValidation(initialValues, validationSchema);
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    validateField,
+    values,
+    setValues,
+    setErrors,
+  } = useFormValidation(initialValues, current_schema);
 
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
   const onSubmit = () => {
     // Your submission logic here
-    console.log("Form submitted successfully!");
+
+    alert("Form submitted successfully!");
   };
+  const onSubmitError = () => {
+    window.scrollTo(0, 500);
+    console.log("Form Not submitted successfully!");
+  };
+
+  useEffect(() => {
+    setValues(initialValues);
+    setErrors({});
+  }, [activeForm]);
 
   return (
     <div className="register_form">
-      <form onSubmit={(e) => handleSubmit(e, onSubmit)}>
+      <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
         {activeForm == forms.LegalEntity && (
           <div className="register_form__legalEnitiy">
             <div className="register_form__trader__heading">
@@ -55,16 +86,33 @@ const IndividualForm = ({ activeForm }) => {
               </Typography>
             </div>
             <div className="flex input_gap flex-col">
-              <TextField
-                placeholder="Legal Name*"
-                className="input-field"
-                fullWidth
-              />
-              <SelectBox
-                onChange={handleOptionChange}
-                options={options}
-                value={selectedOption}
-              />
+              <div>
+                <TextField
+                  placeholder="Legal Name*"
+                  className="input-field"
+                  name="legalName"
+                  value={values.legalName}
+                  onChange={handleChange}
+                  onBlur={validateField}
+                  fullWidth
+                />
+                {errors.legalName && (
+                  <div className="error_text">{errors.legalName}</div>
+                )}
+              </div>
+              <div>
+                <SelectBox
+                  onChange={handleChange}
+                  options={options}
+                  name={"entityType"}
+                  onBlur={validateField}
+                  value={values.entityType}
+                  placeholder={"Select Entity Type*"}
+                />
+                {errors.entityType && (
+                  <div className="error_text">{errors.entityType}</div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -116,6 +164,11 @@ const IndividualForm = ({ activeForm }) => {
                   placeholder="Middle Name"
                   className="input-field"
                   fullWidth
+                  onBlur={validateField}
+                  type="text"
+                  value={values.middleName}
+                  onChange={handleChange}
+                  name="middleName"
                 />
               </div>
               <div>
@@ -123,15 +176,45 @@ const IndividualForm = ({ activeForm }) => {
                   placeholder="Last Name*"
                   className="input-field"
                   fullWidth
+                  onBlur={validateField}
+                  type="text"
+                  value={values.lastName}
+                  onChange={handleChange}
+                  name="lastName"
                 />
+                {errors.lastName && (
+                  <div className="error_text">{errors.lastName}</div>
+                )}
               </div>
             </div>
-            <TextField placeholder="Email*" className="input-field" fullWidth />
-            <TextField
-              placeholder="Username*"
-              className="input-field"
-              fullWidth
-            />
+            <div>
+              <TextField
+                placeholder="Email*"
+                className="input-field"
+                fullWidth
+                onBlur={validateField}
+                type="email"
+                value={values.email}
+                onChange={handleChange}
+                name="email"
+              />
+              {errors.email && <div className="error_text">{errors.email}</div>}
+            </div>
+            <div>
+              <TextField
+                placeholder="Username*"
+                className="input-field"
+                fullWidth
+                onBlur={validateField}
+                type="text"
+                value={values.userName}
+                onChange={handleChange}
+                name="userName"
+              />
+              {errors.userName && (
+                <div className="error_text">{errors.userName}</div>
+              )}
+            </div>
           </div>
         </div>
         <div className="register_form__password">
@@ -146,27 +229,54 @@ const IndividualForm = ({ activeForm }) => {
           </div>
           <div className="flex input_gap flex-col">
             <div className="item">
-              <TextField
-                placeholder="Create Password*"
-                className="input-field"
-                fullWidth
-              />
+              <div>
+                <PasswordToggleInput
+                  placeholder="Password*"
+                  onBlur={validateField}
+                  type="text"
+                  value={values.password}
+                  onChange={handleChange}
+                  name="password"
+                />
+
+                {errors.password && (
+                  <div className="error_text">{errors.password}</div>
+                )}
+              </div>
               <Typography variant="body1" color="primary">
                 <span>Security policies</span>: Use 8 or more characters with a
                 mix of letters, numbers, special & uppercase characters.
               </Typography>
             </div>
-            <TextField
-              placeholder="Confirm Password*"
-              className="input-field"
-              fullWidth
-            />
+            <div>
+              <PasswordToggleInput
+                placeholder="Create Password*"
+                // onBlur={validateField}
+                value={values.confirmPassword}
+                onChange={handleChange}
+                name="confirmPassword"
+                key={12}
+              />
+              {values.password != values.confirmPassword && (
+                <div className="error_text">{errors.confirmPassword}</div>
+              )}
+            </div>
           </div>
 
-          <ReCaptcha
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-            className="mt-1"
-          />
+          <div>
+            <ReCaptcha
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+              className="mt-1"
+              key={activeForm}
+              onChange={(token) =>
+                handleChange({ target: { name: "captcha", value: token } })
+              }
+            />
+            {errors.captcha && (
+              <div className="error_text">{errors.captcha}</div>
+            )}
+          </div>
+
           <div className="register_form__privacy mt-1">
             <Typography variant="body1" className="note">
               The following documents create a legally binding contract between
@@ -199,7 +309,6 @@ const IndividualForm = ({ activeForm }) => {
               variant="contained"
               className="btn gradient-btn"
               type="submit"
-              onClick={() => router.push("/email-verification-required")}
             >
               Register Account
             </Button>
