@@ -159,11 +159,13 @@ const IdentityCheck = () => {
                 {values.document?.front?.name}
               </span>
             </div>
-            <img
-              src={URL.createObjectURL(values.document.front)}
-              alt="front side"
-              className="min-w-full"
-            />
+            {values.document.front && (
+              <img
+                src={URL.createObjectURL(values.document.front)}
+                alt="front side"
+                className="min-w-full"
+              />
+            )}
           </div>
 
           <div>
@@ -188,11 +190,13 @@ const IdentityCheck = () => {
                 {values.document?.back?.name}
               </span>
             </div>
-            <img
-              src={URL.createObjectURL(values.document.back)}
-              alt="bak side"
-              className="min-w-full"
-            />
+            {values.document.back && (
+              <img
+                src={URL.createObjectURL(values.document.back)}
+                alt="bak side"
+                className="min-w-full"
+              />
+            )}
           </div>
 
           {errors.document && (
