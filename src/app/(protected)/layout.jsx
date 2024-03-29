@@ -1,15 +1,15 @@
 "use client";
 
+import React from "react";
 import { useRouter } from "next/navigation";
-import React, { useLayoutEffect } from "react";
+import useRedirect from "@/hooks/useRedirect";
 
 const DashboardLayout = ({ children }) => {
-  const router = useRouter();
+  const loaded = useRedirect("/main");
 
-  useLayoutEffect(() => {
-    router.replace("/login");
-    
-  }, []);
+  if (!loaded) {
+    return <div>...Loading</div>;
+  }
 
   return (
     <>

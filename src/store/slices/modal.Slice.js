@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   upgradeTrader: null,
+  requestEdit: null,
 };
 
 export const ModalSlice = createSlice({
@@ -12,9 +13,12 @@ export const ModalSlice = createSlice({
     setModal(state, action) {
       state.upgradeTrader = action.payload;
     },
+    setRequestEdit(state, action) {
+      state.requestEdit = action.payload;
+    },
   },
 });
 
-export const { setModal } = ModalSlice.actions;
+export const { setModal, setRequestEdit } = ModalSlice.actions;
 
 export default ModalSlice.reducer;

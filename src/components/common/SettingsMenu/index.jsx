@@ -1,20 +1,28 @@
 "use client";
 
 import React from "react";
-
 import { useDispatch } from "react-redux";
 
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import "./settingsmenu.scss";
 import { setModal } from "@/store/slices/modal.Slice";
+
+import "./settingsmenu.scss";
 
 const SettingsMenu = ({ isOpen, setOpen }) => {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const openUpgrade = () => {
     setOpen(false);
     dispatch(setModal(true));
+  };
+
+  const redirect = (e) => {
+    e.preventDefault();
+    setOpen(false);
+    router.push(e.target.href);
   };
 
   return (
@@ -26,7 +34,7 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
     >
       <span className="menu_item heading">Muhammad Ahmed</span>
 
-      <Link href="#" className="menu_item Link">
+      <Link href="/main/profile" onClick={redirect} className="menu_item Link">
         Profile
       </Link>
 

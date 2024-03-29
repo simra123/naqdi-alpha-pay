@@ -1,0 +1,59 @@
+@import "../../../config/colors.scss";
+
+.approved_steps_box {
+  background: linear-gradient(
+    44.71deg,
+    $apy-primary-color 0%,
+    $apy-secondary-color 100%
+  );
+  color: $apy-white-color;
+  padding: 40px 20px;
+
+  .heading {
+    font-size: 22px;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 700;
+  }
+  .secure_icon svg {
+    font-size: 70px;
+  }
+
+  .steps_box {
+    .completed {
+      &:nth-child(1) {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+      &:nth-child(2) {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      &:nth-child(3) {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+      &:nth-child(4) {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      &:nth-child(5) {
+        background-color: rgba(255, 255, 255, 0.25);
+      }
+      &:nth-child(6) {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+    .step {
+      padding: 14px 10px;
+      display: flex;
+      font-weight: 600;
+      justify-content: space-between;
+      &:not(.completed) {
+        svg {
+          display: none;
+        }
+      }
+      &.current_step {
+        background-color: #fff;
+        color: $apy-primary-color;
+      }
+    }
+  }
+}

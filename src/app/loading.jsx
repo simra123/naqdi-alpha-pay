@@ -3,14 +3,14 @@ import React, { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Typography } from "@mui/material";
-import useRedirect from "@/hooks/useRedirect";
 
-const Main = () => {
-  const loaded = useRedirect("/main/trader-registration");
+const RootLoading = () => {
+  const router = useRouter();
 
-  if (!loaded) {
-    return "...Loading";
-  }
+  useEffect(() => {
+    router.push("/main/trader-registration");
+  }, []);
+
   return (
     <section className="main_page">
       <div className="large_container">
@@ -32,4 +32,4 @@ const Main = () => {
   );
 };
 
-export default Main;
+export default RootLoading;

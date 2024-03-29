@@ -1,15 +1,5 @@
 @import "../../../../config/colors.scss";
 
-.form_wrapper {
-  .note {
-    font-size: 14px;
-  }
-  .header_step_btn {
-    padding: 1rem 2.5rem;
-    margin-top: 2.5rem;
-  }
-}
-
 .header_step_btn {
   padding: 1.2rem;
   font-weight: 700;
@@ -29,4 +19,12 @@
     background-color: #6969695c;
     color: grey;
   }
+}
+
+.title,
+.value {
+  font-weight: 700;
+}
+.title {
+  color: grey;
 }

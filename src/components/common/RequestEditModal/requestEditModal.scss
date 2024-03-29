@@ -1,0 +1,14 @@
+@import "../../../config/colors.scss";
+
+.modal_wrapper {
+  background-color: $apy-primary-transparent-color;
+  min-height: 100vh;
+  color: $apy-white-color;
+  .request_box {
+    div {
+      background: #ffffff url("/request_modal_bg.png") no-repeat center right;
+      height: 200px;
+      background-size: contain;
+    }
+  }
+}

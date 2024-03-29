@@ -1,0 +1,30 @@
+@import "../../../config/colors.scss";
+.help_box {
+  padding: 1.5rem 1rem;
+  width: 100%;
+  background-color: $apy-white-color;
+  box-shadow: 0 0 3px #000;
+  position: relative;
+  .content_box {
+    &::before {
+      content: "";
+      height: 40px;
+      background-image: url("/help-bg.png");
+      background-repeat: no-repeat;
+      background-size: 100% 45px;
+      position: absolute;
+      top: -16px;
+      left: 0;
+      right: 0;
+    }
+    text-align: center;
+    margin: 36px 0 20px;
+    h3 {
+      font-size: 22px;
+    }
+    a {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+  }
+}

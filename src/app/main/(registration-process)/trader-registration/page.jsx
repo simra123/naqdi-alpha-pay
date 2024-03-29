@@ -11,6 +11,8 @@ import Certification from "@/components/forms/onBoarding/Certification";
 import IdentityCheck from "@/components/forms/onBoarding/IdentityCheck";
 import KYCApproval from "@/components/forms/onBoarding/KYCApproval";
 import FeeSchedule from "@/components/forms/onBoarding/FeeSchedule";
+import HelpBox from "@/components/ui/HelpBox";
+import ApprovedStepsBox from "@/components/common/ApprovedStepsBox";
 const TraderRegistration = () => {
   const [selectedStep, setSelectedStep] = useState(STEPS.PROFILE);
 
@@ -110,53 +112,8 @@ const TraderRegistration = () => {
         {/* RIGHT SIDE OF FLEX BELOW */}
 
         <div className="wrapper w-1/3">
-          <div className="help_box">
-            <div className="content_box flex flex-col gap-3">
-              <h3 className="font-bold">Need Help?</h3>
-              <a href="#">Submit a request</a>
-            </div>
-          </div>
-          <div className="approved_steps_box mt-6">
-            <div className="approved_box_content flex flex-col gap-8">
-              <div className="secure_icon text-center">
-                <Security />
-              </div>
-              <div className="heading">
-                <h4>UPGRADE TO TRADER</h4>
-              </div>
-
-              <div className="steps_box">
-                <div className="step current_step">
-                  <span>Profile Complete</span>
-                  <Check />
-                </div>
-                <div className="step">
-                  <span>Phone Validation</span>
-                  <Check />
-                </div>
-                <div className="step">
-                  <span>MFA Setup</span>
-                  <Check />
-                </div>
-                <div className="step">
-                  <span>Certification</span>
-                  <Check />
-                </div>
-                <div className="step">
-                  <span>KYC Indentity Check</span>
-                  <Check />
-                </div>
-                <div className="step">
-                  <span>KYC Approval</span>
-                  <Check />
-                </div>
-                <div className="step">
-                  <span>Fee Schedule</span>
-                  <Check />
-                </div>
-              </div>
-            </div>
-          </div>
+          <HelpBox />
+          <ApprovedStepsBox />
         </div>
       </div>
     </div>
