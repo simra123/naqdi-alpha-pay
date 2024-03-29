@@ -102,7 +102,7 @@ const layout = ({ children }) => {
                     }
                   />
                 </button>
-                <SettingsMenu isOpen={isSettingOpen} />
+                <SettingsMenu isOpen={isSettingOpen} setOpen={setSettingOpen} />
               </div>
             </div>
           </div>

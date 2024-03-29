@@ -32,7 +32,7 @@ const UpgradeTraderModal = () => {
             <div className="mt-6 continue_modal px-14 py-24 min-h-[570px]">
               <div className="flex flex-col gap-8 ">
                 <div className="secure_icon text-center">
-                  <Security className="text-7xl" />
+                  <Security />
                 </div>
 
                 <h5 className="text-center font-semibold text-2xl mt-2">
@@ -62,7 +62,7 @@ const UpgradeTraderModal = () => {
             <div className="mt-6 upgrade_modal px-10 py-24  min-h-[570px]">
               <div className="flex flex-col gap-8 ">
                 <div className="secure_icon text-center">
-                  <Security className="text-7xl" />
+                  <Security />
                 </div>
 
                 <h5 className="text-center font-semibold text-2xl mt-2">

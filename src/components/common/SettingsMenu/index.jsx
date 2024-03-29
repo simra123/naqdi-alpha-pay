@@ -1,10 +1,22 @@
+"use client";
+
 import React from "react";
+
+import { useDispatch } from "react-redux";
 
 import Link from "next/link";
 
 import "./settingsmenu.scss";
+import { setModal } from "@/store/slices/modal.Slice";
 
-const SettingsMenu = ({ isOpen }) => {
+const SettingsMenu = ({ isOpen, setOpen }) => {
+  const dispatch = useDispatch();
+
+  const openUpgrade = () => {
+    setOpen(false);
+    dispatch(setModal(true));
+  };
+
   return (
     <div
       className={
@@ -18,7 +30,7 @@ const SettingsMenu = ({ isOpen }) => {
         Profile
       </Link>
 
-      <Link href="#" className="menu_item Link">
+      <Link href="#" onClick={openUpgrade} className="menu_item Link">
         Fee Schedule
       </Link>
 
@@ -30,7 +42,7 @@ const SettingsMenu = ({ isOpen }) => {
         Custody Agreement
       </Link>
 
-      <Link href="#" className="menu_item Link">
+      <Link href="#" onClick={openUpgrade} className="menu_item Link">
         Bank Accounts
       </Link>
 

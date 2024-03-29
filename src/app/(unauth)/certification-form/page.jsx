@@ -2,15 +2,21 @@
 import { TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import useFormValidation from "@/hooks/useFormValidation";
-import { loginSchema } from "@/models/login";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import SelectBox from "@/components/common/SelectBox";
 import countryList from "react-select-country-list";
 import { LinearProgress } from "@mui/material";
 import "../auth.scss";
+import {
+  Step1Schema,
+  Step2Schema,
+  Step3Schema,
+} from "@/models/CertificationForm";
 
 const CertificationFormPage = () => {
   const router = useRouter();
+  const passport = useRef(null);
+  const address = useRef(null);
   const options = useMemo(() => {
     const data = countryList()
       .getData()
@@ -25,7 +31,7 @@ const CertificationFormPage = () => {
   const [step, setStep] = useState(1);
 
   const initialValues = {
-    firtName: "",
+    firstName: "",
     middleName: "",
     lastName: "",
     passport: "",
@@ -37,34 +43,42 @@ const CertificationFormPage = () => {
     country: "",
     addressProof: "",
     annualIncomeSource: "",
-    advisor: "",
-    derivatives: false,
-    bonds: false,
-    equities: false,
-    commodities: false,
-    assets: false,
-    usedElecPlatform: false,
-    safestInvestment: false,
-    governementBond: false,
-    companyStock: false,
-    bondPrice: false,
-    largestCrypto: false,
-    saferReturn: false,
-    monitoring: false,
-    makeCryptoMoney: false,
-    returnValue: false,
-    riskTolerance: false,
+    previousInvestments: {
+      advisor: "",
+      derivatives: "",
+      bonds: "",
+      equities: "",
+      commodities: "",
+      assets: "",
+    },
+    usedElecPlatform: "",
+    safestInvestment: "",
+    governementBond: "",
+    companyStock: "",
+    bondPrice: "",
+    largestCrypto: "",
+    saferReturn: "",
+    monitoring: "",
+    makeCryptoMoney: "",
+    returnValue: "",
+    riskTolerance: "",
   };
 
+  const currentSchema =
+    step == 1 ? Step1Schema : step == 2 ? Step2Schema : Step3Schema;
+
   const { errors, handleChange, handleSubmit, validateField, values } =
-    useFormValidation(initialValues, loginSchema);
+    useFormValidation(initialValues, currentSchema);
+  console.log({ values, errors });
 
   const onSubmit = () => {
-    // Your submission logic here
+    if (step != 3) {
+      return handleNext();
+    }
     router.push("/main");
   };
   const onSubmitError = () => {
-    window.scrollTo(0, 500);
+    window.scrollTo(0, 100);
     console.log("Form Not submitted successfully!");
   };
 
@@ -94,60 +108,49 @@ const CertificationFormPage = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <TextField
-                    label={null}
                     className="input-field"
                     placeholder="First Name*"
                     type="text"
                     fullWidth
-                    value={values.email}
+                    value={values.firstName}
                     onChange={handleChange}
                     onBlur={validateField}
-                    name="email"
-                    inputProps={{
-                      autoComplete: "new-password",
-                      form: {
-                        autoComplete: "off",
-                      },
-                    }}
+                    name="firstName"
                   />
+
+                  {errors.firstName && (
+                    <div className="error_text">{errors?.firstName}</div>
+                  )}
                 </div>
                 <div>
                   <TextField
-                    label={null}
                     className="input-field"
-                    placeholder="First Name*"
+                    placeholder="Middle Name"
                     type="text"
                     fullWidth
-                    value={values.email}
+                    value={values.middleName}
                     onChange={handleChange}
                     onBlur={validateField}
-                    name="email"
-                    inputProps={{
-                      autoComplete: "new-password",
-                      form: {
-                        autoComplete: "off",
-                      },
-                    }}
+                    name="middleName"
                   />
+                  {errors.middleName && (
+                    <div className="error_text">{errors?.middleName}</div>
+                  )}
                 </div>
                 <div>
                   <TextField
-                    label={null}
                     className="input-field"
-                    placeholder="First Name*"
+                    placeholder="Last Name*"
                     type="text"
                     fullWidth
-                    value={values.email}
+                    value={values.lastName}
                     onChange={handleChange}
                     onBlur={validateField}
-                    name="email"
-                    inputProps={{
-                      autoComplete: "new-password",
-                      form: {
-                        autoComplete: "off",
-                      },
-                    }}
+                    name="lastName"
                   />
+                  {errors.lastName && (
+                    <div className="error_text">{errors?.lastName}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -156,7 +159,30 @@ const CertificationFormPage = () => {
                 1.2. Upload biometric page of your Passport*
               </h5>
 
-              <input type="file" />
+              <input
+                type="file"
+                name="passport"
+                onBlur={validateField}
+                onChange={handleChange}
+                ref={passport}
+                hidden
+              />
+              <div className="flex gap-6 items-center">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => passport?.current?.click()}
+                >
+                  Choose File
+                </button>
+                <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
+                  {values.passport?.name}
+                </span>
+              </div>
+
+              {errors.passport && (
+                <div className="error_text">{errors?.passport}</div>
+              )}
 
               <p className="note mt-3">
                 This document can be either from your country of residence or
@@ -168,99 +194,79 @@ const CertificationFormPage = () => {
               <div className="flex flex-col gap-4">
                 <div>
                   <TextField
-                    label={null}
                     className="input-field"
-                    placeholder="First Name*"
+                    placeholder="Address Line 1*"
                     type="text"
                     fullWidth
-                    value={values.email}
+                    value={values.addressline1}
                     onChange={handleChange}
                     onBlur={validateField}
-                    name="email"
-                    inputProps={{
-                      autoComplete: "new-password",
-                      form: {
-                        autoComplete: "off",
-                      },
-                    }}
+                    name="addressline1"
                   />
+                  {errors.addressline1 && (
+                    <div className="error_text">{errors?.addressline1}</div>
+                  )}
                 </div>
                 <div>
                   <TextField
-                    label={null}
                     className="input-field"
-                    placeholder="First Name*"
+                    placeholder="Address Line 2*"
                     type="text"
                     fullWidth
-                    value={values.email}
+                    value={values.addressline2}
                     onChange={handleChange}
                     onBlur={validateField}
-                    name="email"
-                    inputProps={{
-                      autoComplete: "new-password",
-                      form: {
-                        autoComplete: "off",
-                      },
-                    }}
+                    name="addressline2"
                   />
+                  {errors.addressline2 && (
+                    <div className="error_text">{errors?.addressline2}</div>
+                  )}
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <TextField
-                      label={null}
                       className="input-field"
-                      placeholder="First Name*"
+                      placeholder="City*"
                       type="text"
                       fullWidth
-                      value={values.email}
+                      value={values.city}
                       onChange={handleChange}
                       onBlur={validateField}
-                      name="email"
-                      inputProps={{
-                        autoComplete: "new-password",
-                        form: {
-                          autoComplete: "off",
-                        },
-                      }}
+                      name="city"
                     />
+                    {errors.city && (
+                      <div className="error_text">{errors?.city}</div>
+                    )}
                   </div>
                   <div>
                     <TextField
-                      label={null}
                       className="input-field"
-                      placeholder="First Name*"
+                      placeholder="State/Province*"
                       type="text"
                       fullWidth
-                      value={values.email}
+                      value={values.state}
                       onChange={handleChange}
                       onBlur={validateField}
-                      name="email"
-                      inputProps={{
-                        autoComplete: "new-password",
-                        form: {
-                          autoComplete: "off",
-                        },
-                      }}
+                      name="state"
                     />
+                    {errors.state && (
+                      <div className="error_text">{errors?.state}</div>
+                    )}
                   </div>
                   <div>
                     <TextField
-                      label={null}
                       className="input-field"
-                      placeholder="First Name*"
+                      placeholder="ZIP / Postal*"
                       type="text"
                       fullWidth
-                      value={values.email}
+                      value={values.postal}
                       onChange={handleChange}
                       onBlur={validateField}
-                      name="email"
-                      inputProps={{
-                        autoComplete: "new-password",
-                        form: {
-                          autoComplete: "off",
-                        },
-                      }}
+                      name="postal"
                     />
+                    {errors.postal && (
+                      <div className="error_text">{errors?.postal}</div>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -272,6 +278,9 @@ const CertificationFormPage = () => {
                     onChange={handleChange}
                     value={values?.country}
                   />
+                  {errors.country && (
+                    <div className="error_text">{errors?.country}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -281,8 +290,31 @@ const CertificationFormPage = () => {
                 1.4. Upload Proof of Address (not older than 3 months)*
               </h5>
 
-              <input type="file" />
+              <input
+                type="file"
+                name="addressProof"
+                onBlur={validateField}
+                onChange={handleChange}
+                hidden
+                ref={address}
+              />
 
+              <div className="flex gap-6 items-center">
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => address?.current?.click()}
+                >
+                  Choose File
+                </button>
+                <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
+                  {values.addressProof?.name}
+                </span>
+              </div>
+
+              {errors.addressProof && (
+                <div className="error_text">{errors?.addressProof}</div>
+              )}
               <p className="note mt-3">
                 We are required to verify our Client’s identity together with a
                 proof of address. These basic mandatory KYC documents are
@@ -339,16 +371,18 @@ const CertificationFormPage = () => {
 
               <div>
                 <TextField
-                  label={null}
                   className="input-field"
-                  placeholder="First Name*"
+                  placeholder="Annual Income Source*"
                   type="text"
                   fullWidth
-                  value={values.email}
+                  value={values.annualIncomeSource}
                   onChange={handleChange}
                   onBlur={validateField}
-                  name="email"
+                  name="annualIncomeSource"
                 />
+                {errors.annualIncomeSource && (
+                  <div className="error_text">{errors?.annualIncomeSource}</div>
+                )}
               </div>
             </div>
           </>
@@ -364,23 +398,30 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
+                  name="advisor"
                   value={true}
+                  checked={values.advisor === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
+
                 <span className="ml-2">Yes</span>
               </label>
               <label className="inline-flex items-center">
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
                   value={false}
-                  // checked={selectedOption === "false"}
+                  name="advisor"
+                  checked={values.advisor === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.advisor && (
+                <div className="error_text">{errors?.advisor}</div>
+              )}
             </div>
 
             <div className="flex flex-col mb-8">
@@ -391,8 +432,11 @@ const CertificationFormPage = () => {
                 <input
                   type="checkbox"
                   className="form-checkbox h-5 w-5"
-                  name="option"
-                  value="Derivatives"
+                  value={true}
+                  name="previousInvestments.derivatives"
+                  checked={values.derivatives}
+                  onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Derivatives</span>
               </label>
@@ -400,8 +444,11 @@ const CertificationFormPage = () => {
                 <input
                   type="checkbox"
                   className="form-checkbox h-5 w-5"
-                  name="option"
-                  value="Bonds"
+                  value="true"
+                  name="previousInvestments.bonds"
+                  checked={values.bonds}
+                  onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Bonds</span>
               </label>
@@ -409,8 +456,11 @@ const CertificationFormPage = () => {
                 <input
                   type="checkbox"
                   className="form-checkbox h-5 w-5"
-                  name="option"
-                  value="Equities"
+                  value={true}
+                  name="previousInvestments.equities"
+                  checked={values.equities}
+                  onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Equities</span>
               </label>
@@ -418,8 +468,11 @@ const CertificationFormPage = () => {
                 <input
                   type="checkbox"
                   className="form-checkbox h-5 w-5"
-                  name="option"
-                  value="Commodities"
+                  value="true"
+                  name="previousInvestments.commodities"
+                  checked={values.commodities}
+                  onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Commodities</span>
               </label>
@@ -427,11 +480,17 @@ const CertificationFormPage = () => {
                 <input
                   type="checkbox"
                   className="form-checkbox h-5 w-5"
-                  name="option"
-                  value="Virtual / Crypto Assets"
+                  value="true"
+                  name="previousInvestments.assets"
+                  checked={values.assets}
+                  onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Virtual / Crypto Assets</span>
               </label>
+              {errors.previousInvestments && (
+                <div className="error_text">{errors?.previousInvestments}</div>
+              )}
             </div>
 
             <div className="flex gap-2 flex-col mb-8">
@@ -442,9 +501,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="usedElecPlatform"
+                  checked={values.usedElecPlatform === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -452,13 +513,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="usedElecPlatform"
+                  checked={values.usedElecPlatform === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.usedElecPlatform && (
+                <div className="error_text">{errors?.usedElecPlatform}</div>
+              )}
             </div>
 
             <div className="flex gap-2 flex-col mb-8">
@@ -470,9 +535,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="safestInvestment"
+                  checked={values.safestInvestment === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -480,13 +547,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="safestInvestment"
+                  checked={values.safestInvestment === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.safestInvestment && (
+                <div className="error_text">{errors?.safestInvestment}</div>
+              )}
             </div>
 
             <div className="flex gap-2 flex-col mb-8">
@@ -498,9 +569,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="governementBond"
+                  checked={values.governementBond === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -508,13 +581,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="governementBond"
+                  checked={values.governementBond === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.governementBond && (
+                <div className="error_text">{errors?.governementBond}</div>
+              )}
             </div>
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
@@ -525,9 +602,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="companyStock"
+                  checked={values.companyStock === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -535,13 +614,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="companyStock"
+                  checked={values.companyStock === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.companyStock && (
+                <div className="error_text">{errors?.companyStock}</div>
+              )}
             </div>
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
@@ -552,9 +635,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="bondPrice"
+                  checked={values.bondPrice === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -562,13 +647,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="bondPrice"
+                  checked={values.bondPrice === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.bondPrice && (
+                <div className="error_text">{errors?.bondPrice}</div>
+              )}
             </div>
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
@@ -579,9 +668,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="largestCrypto"
+                  checked={values.largestCrypto === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -589,14 +680,19 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="largestCrypto"
+                  checked={values.largestCrypto === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.largestCrypto && (
+                <div className="error_text">{errors?.largestCrypto}</div>
+              )}
             </div>
+
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
                 3.9. Buying a single coin usually provides a safer return than a
@@ -606,9 +702,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="saferReturn"
+                  checked={values.saferReturn === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -616,14 +714,19 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="saferReturn"
+                  checked={values.saferReturn === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.saferReturn && (
+                <div className="error_text">{errors?.saferReturn}</div>
+              )}
             </div>
+
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
                 3.10. Cryptocurrency markets are volatile, and your account
@@ -633,9 +736,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
-                  value={true}
+                  value={"true"}
+                  name="monitoring"
+                  checked={values.monitoring === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -643,13 +748,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="monitoring"
+                  checked={values.monitoring === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.monitoring && (
+                <div className="error_text">{errors?.monitoring}</div>
+              )}
             </div>
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
@@ -660,9 +769,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="makeCryptoMoney"
+                  checked={values.makeCryptoMoney === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -670,13 +781,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="makeCryptoMoney"
+                  checked={values.makeCryptoMoney === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.makeCryptoMoney && (
+                <div className="error_text">{errors?.makeCryptoMoney}</div>
+              )}
             </div>
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">
@@ -688,9 +803,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={true}
+                  name="returnValue"
+                  checked={values.returnValue === "true"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Yes</span>
               </label>
@@ -698,13 +815,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio h-5 w-5"
-                  name="option"
-                  value={false}
-                  // checked={selectedOption === "false"}
+                  value={"false"}
+                  name="returnValue"
+                  checked={values.returnValue === "false"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">No</span>
               </label>
+              {errors.returnValue && (
+                <div className="error_text">{errors?.returnValue}</div>
+              )}
             </div>
             <div className="flex gap-2 flex-col mb-8">
               <h5 className="mb-2">3.13. Risk Tolerance of the Individual* </h5>
@@ -712,9 +833,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
-                  value={"conservative"}
+                  value={"Conservative"}
+                  name="riskTolerance"
+                  checked={values.riskTolerance === "Conservative"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Convservative</span>
               </label>
@@ -722,9 +845,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={"Moderately Conservative"}
+                  name="riskTolerance"
+                  checked={values.riskTolerance === "Moderately Conservative"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Moderately Conservative</span>
               </label>
@@ -732,9 +857,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={"Moderate"}
+                  name="riskTolerance"
+                  checked={values.riskTolerance === "Moderate"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Moderate</span>
               </label>
@@ -742,9 +869,11 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={"Moderately Aggressive"}
+                  name="riskTolerance"
+                  checked={values.riskTolerance === "Moderately Aggressive"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Moderately Aggressive</span>
               </label>
@@ -752,12 +881,17 @@ const CertificationFormPage = () => {
                 <input
                   type="radio"
                   className="form-radio color-primary h-5 w-5"
-                  name="option"
                   value={"Aggressive"}
+                  name="riskTolerance"
+                  checked={values.riskTolerance === "Aggressive"}
                   onChange={handleChange}
+                  onBlur={validateField}
                 />
                 <span className="ml-2">Aggressive</span>
               </label>
+              {errors.riskTolerance && (
+                <div className="error_text">{errors?.riskTolerance}</div>
+              )}
             </div>
 
             <div className="list_docs mt-5 mb-8">
@@ -803,17 +937,23 @@ const CertificationFormPage = () => {
         <div className="actions">
           <div className="flex justify-between gap-4">
             {step != 1 && (
-              <button className="btn-secondary" onClick={handlePrev}>
+              <button
+                className="btn-secondary"
+                onClick={handlePrev}
+                type="button"
+              >
                 Previous
               </button>
             )}
             {step != 3 && (
-              <button className="btn-secondary ms-auto" onClick={handleNext}>
+              <button className="btn-secondary ms-auto" type="submit">
                 Next
               </button>
             )}
             {step == 3 && (
-              <button className="btn-secondary">Submit Form</button>
+              <button className="btn-secondary" type="submit">
+                Submit Form
+              </button>
             )}
           </div>
           <div>

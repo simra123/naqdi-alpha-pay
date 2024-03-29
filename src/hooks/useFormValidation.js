@@ -7,11 +7,40 @@ const useFormValidation = (initialState, validationSchema) => {
   const [errors, setErrors] = useState({});
 
   const handleChange = (event) => {
-    const { name, value } = event.target;
-    setValues({
-      ...values,
-      [name]: value,
-    });
+    const { name, value, type, files, checked } = event.target;
+
+    if (type == "file") {
+      const nameSplit = name.split(`.`);
+      if (nameSplit?.length > 1) {
+        setValues({
+          ...values,
+          [nameSplit[0]]: {
+            ...values[nameSplit[0]],
+            [nameSplit[1]]: files[0],
+          },
+        });
+      } else {
+        setValues({
+          ...values,
+          [name]: files[0],
+        });
+      }
+    } else if (type == "checkbox") {
+      const nameSplit = name.split(`.`);
+      console.log(nameSplit);
+      setValues({
+        ...values,
+        [nameSplit[0]]: {
+          ...values[nameSplit[0]],
+          [nameSplit[1]]: checked,
+        },
+      });
+    } else {
+      setValues({
+        ...values,
+        [name]: value,
+      });
+    }
     // validateField(name, value);
   };
 

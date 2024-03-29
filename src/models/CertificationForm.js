@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-const _step1 = Yup.object().shape({
+export const Step1Schema = Yup.object().shape({
   firstName: Yup.string()
     .required("First name is Required")
     .min(2, "Minimum 2 letters required")
@@ -10,42 +10,74 @@ const _step1 = Yup.object().shape({
     .required("Last name is required")
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
-  email: Yup.string()
-    .required("Email is required")
-    .email("Invalid Format")
-    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
-      message: "Email format is not valid",
-    }),
-  userName: Yup.string()
-    .required("Username is required")
-    .matches(/^[a-zA-Z0-9_]+$/, {
-      message: "Only text, numbers, and underscores are allowed",
-    })
-    .required("Username is required"),
-  password: Yup.string()
-    .required("password is required")
-    .min(8, "Password must be at least 8 characters")
-    .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&./]{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
-    ),
-  confirmPassword: Yup.string()
-    .required("Please retype your password.")
-    .oneOf([Yup.ref("password")], "Your passwords do not match."),
-  captcha: Yup.string().required("Please verify by checking the captcha"),
+  passport: Yup.string().required("File is required"),
+  addressline1: Yup.string()
+    .required("Address is Required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
+  country: Yup.string().required("Please select a country"),
+  state: Yup.string().required("State is required"),
+  city: Yup.string().required("City is required"),
+  addressProof: Yup.string().required("File is required"),
 });
 
-const _step2 = Yup.object().shape({
-  legalName: Yup.string()
-    .required("Legal name is Required")
-    .min(2, "Minimum 2 letters required")
+export const Step2Schema = Yup.object().shape({
+  annualIncomeSource: Yup.string()
+    .required("Income Source is Required")
+    .min(3, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
-  entityType: Yup.string().required("Please Select Entity Type"),
 });
-const _step3 = Yup.object().shape({
-  legalName: Yup.string()
-    .required("Legal name is Required")
-    .min(2, "Minimum 2 letters required")
-    .max(50, "Maximum 50 letters only."),
-  entityType: Yup.string().required("Please Select Entity Type"),
+
+export const Step3Schema = Yup.object().shape({
+  advisor: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  previousInvestments: Yup.object()
+    .shape({
+      derivatives: Yup.mixed(),
+      bonds: Yup.mixed(),
+      equities: Yup.mixed(),
+      commodities: Yup.mixed(),
+      assets: Yup.mixed(),
+    })
+    .test({
+      name: "atLeastOneSelected",
+      test: (value) => {
+        const { derivatives, bonds, equities, commodities, assets } = value;
+        return derivatives || bonds || equities || commodities || assets;
+      },
+      message: "At least one option must be selected",
+    }),
+  usedElecPlatform: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+
+  safestInvestment: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  governementBond: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  companyStock: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  bondPrice: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  largestCrypto: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  saferReturn: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  monitoring: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  makeCryptoMoney: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  returnValue: Yup.string()
+    .oneOf(["false", "true"], "Please select an option")
+    .required("Please select an option"),
+  riskTolerance: Yup.string().required("Please select an option"),
 });
