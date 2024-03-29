@@ -16,19 +16,15 @@ const Register = () => {
 
   return (
     <main className="register">
-      <Typography variant="h2" color="primary" className="register__heading">
+      <h2 className="register__heading text-[44px] font-extrabold">
         Let's get you started!
-      </Typography>
-      <Typography
-        variant="body1"
-        color="primary"
-        className="register__heading__caption"
-      >
+      </h2>
+      <p className="register__heading__caption">
         Please select whether you would like to be registered as an Individual
         User, or as a Legal Entity. Depending on your choice, Alphaspy will ask
         you to provide either personal information or information about the
         Legal Entity you represent.
-      </Typography>
+      </p>
 
       <div className="register__form">
         <div className="register__form--buttonWrapper">

@@ -305,17 +305,13 @@ const IndividualForm = ({ activeForm }) => {
           </div>
 
           <div className="footer mt-1">
-            <Button
-              variant="contained"
-              className="btn gradient-btn"
-              type="submit"
-            >
+            <button className="btn gradient-btn" type="submit">
               Register Account
-            </Button>
+            </button>
 
-            <Typography variant="body1" color="primary" className="mt-1">
+            <p className="mt-1">
               I already have an account? <Link href="/login">Login!</Link>
-            </Typography>
+            </p>
           </div>
         </div>
       </form>
