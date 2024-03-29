@@ -35,10 +35,16 @@ const MFASetup = () => {
           STEP 1: Download Google Authenticator
         </h4>
         <div className="flex gap-4 mt-8">
-          <a href="#">
+          <a
+            href="https://apps.apple.com/us/app/google-authenticator/id388497605"
+            target="_blank"
+          >
             <img src="/app_store.png" alt="app_store" className="w-40" />
           </a>
-          <a href="#">
+          <a
+            href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2"
+            target="_blank"
+          >
             <img src="/google_play.png" alt="app_store" className="w-40" />
           </a>
         </div>
