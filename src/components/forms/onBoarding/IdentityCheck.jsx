@@ -229,10 +229,10 @@ export const DocumentFormatCard = ({
   return (
     <div
       onClick={handleFormatChange(format)}
-      className={`card p-5 items-center flex gap-6 bg-white shadow-md border cursor-pointer transition-all ${
+      className={`card p-5 items-center flex gap-6 shadow-md border cursor-pointer transition-all ${
         value == format
-          ? `bg-slate-500 !text-white`
-          : `hover:bg-slate-100 hover:text-gray-950`
+          ? `bg-slate-500 text-white`
+          : `hover:bg-slate-100 hover:text-gray-950 bg-white`
       }`}
     >
       <div className="rounded-full secondary_section p-1">
