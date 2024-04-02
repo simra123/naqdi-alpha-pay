@@ -24,6 +24,7 @@ export const useApi = () => {
       return response;
     } catch (err) {
       setIsLoading(false);
+      console.log(err)
       const errorMessage =
         err?.response?.data?.message ||
         "An error occurred. Please try again later";
