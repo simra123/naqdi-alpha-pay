@@ -1,29 +1,23 @@
 "use client";
-import api, { formHeader } from "@/config/api";
 
-/* 
-                        Client APIS BELOW
- _____________________________________________________________________ 
- 
- */
+import api from "@/config/api";
 
 export const loginApi = (data) => {
-  return () => api.post(`user/login`, data);
+  return () => api.post(`auth/login`, data);
 };
 
-export const registerClientApi = (data) => {
-  return () => api.post(`user/register_client`, data, { ...formHeader });
+export const registerApi = (data) => {
+  return () => api.post(`auth/register`, data);
 };
 
-export const updateClientApi = (data, id) => {
-  return () => api.put(`user/update-client/${id}`, data, { ...formHeader });
+export const verifyApi = (data) => {
+  return () => api.post(`auth/verify`, data);
 };
 
-/*                       ADMIN APIS BELOW
- _____________________________________________________________________ 
- 
- */
+export const recoverPasswordApi = (data) => {
+  return () => api.post(`auth/forgot-password`, data);
+};
 
-export const adminRegisterApi = (data) => {
-  return () => api.post(`user/register_admin`, data, { ...formHeader });
+export const updatePasswordApi = (data) => {
+  return () => api.post(`auth/reset-password`, data);
 };

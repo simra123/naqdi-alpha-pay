@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import useRedirect from "@/hooks/useRedirect";
 
 const DashboardLayout = ({ children }) => {
-  const loaded = useRedirect("/main");
+  const loaded = useRedirect("/login");
 
   if (!loaded) {
     return <div>...Loading</div>;

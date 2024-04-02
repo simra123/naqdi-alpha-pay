@@ -1,14 +1,21 @@
 "use client";
-import { Typography, TextField, Stack, Button } from "@mui/material";
+import { Typography, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 import Link from "next/link";
 import "../auth.scss";
 import useFormValidation from "@/hooks/useFormValidation";
 import { loginSchema } from "@/models/login";
+import { useApi } from "@/hooks/useApi";
+import { loginApi } from "@/services/auth";
+import { callApiHook } from "@/utils/apifuncs";
+import Loader from "@/components/common/Loader";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import LoadingApi from "@/components/common/LoadindApi";
 
 const Login = () => {
   const router = useRouter();
+  const [isLoginLoading, isLoginError, callLoginApi] = useApi();
 
   const initialValues = {
     email: "",
@@ -18,10 +25,18 @@ const Login = () => {
   const { errors, handleChange, handleSubmit, validateField, values } =
     useFormValidation(initialValues, loginSchema);
 
-  const onSubmit = () => {
-    // Your submission logic here
-    router.push("/main");
+  const onSubmit = async () => {
+    await callApiHook({
+      apiCall: callLoginApi(
+        loginApi({
+          username: values?.email,
+          password: values?.password,
+        })
+      ),
+      successCallBack: () => router.push("/main"),
+    });
   };
+
   const onSubmitError = () => {
     window.scrollTo(0, 500);
     console.log("Form Not submitted successfully!");
@@ -72,7 +87,7 @@ const Login = () => {
 
         <Typography
           component={Link}
-          href={"/forgot-password"}
+          href={"/recover-password"}
           variant="body1"
           color="primary"
           className="Link"
@@ -80,14 +95,18 @@ const Login = () => {
           Forgot Password?
         </Typography>
 
-        <button
-          variant="contained"
-          color="primary"
-          className="btn gradient-btn"
-          type="submit"
-        >
-          Login
-        </button>
+        <ErrorApiText error={isLoginError} />
+
+        <LoadingApi loading={isLoginLoading}>
+          <button
+            variant="contained"
+            color="primary"
+            className="btn gradient-btn"
+            type="submit"
+          >
+            Login
+          </button>
+        </LoadingApi>
 
         <div className="register">
           <Typography variant="body1" color="primary">

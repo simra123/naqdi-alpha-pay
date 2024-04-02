@@ -7,9 +7,9 @@ import { Typography } from "@mui/material";
 const RootLoading = () => {
   const router = useRouter();
 
-  useEffect(() => {
-    router.push("/main/trader-registration");
-  }, []);
+  // useEffect(() => {
+  //   router.push("/main/trader-registration");
+  // }, []);
 
   return (
     <section className="main_page">

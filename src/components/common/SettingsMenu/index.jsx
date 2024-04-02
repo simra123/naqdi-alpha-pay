@@ -22,6 +22,7 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
   const redirect = (e) => {
     e.preventDefault();
     setOpen(false);
+    console.log(e.target.href);
     router.push(e.target.href);
   };
 
@@ -58,7 +59,7 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
         FAQ
       </Link>
 
-      <Link href="/login" className="menu_item Link">
+      <Link href="/login" onClick={redirect} className="menu_item Link">
         Logout
       </Link>
     </div>

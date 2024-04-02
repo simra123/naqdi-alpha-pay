@@ -1,5 +1,7 @@
 "use client";
+import { setNotification } from "@/store/slices/modal.Slice";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export const useApi = () => {
   const dispatch = useDispatch();
@@ -16,6 +18,9 @@ export const useApi = () => {
       setIsLoading(false);
       setError(null);
       console.log("    <<<<    RESPONSE FROM THE API     >>>>    ", response);
+      dispatch(
+        setNotification({ status: "success", message: response?.data?.message })
+      );
       return response;
     } catch (err) {
       setIsLoading(false);

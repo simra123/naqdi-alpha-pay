@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import "./globals.scss";
 import theme from "@/config/theme";
 import store from "@/store";
+import Notification from "@/components/common/Notification";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Provider store={store}>
           <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <Notification />
         </Provider>
       </body>
     </html>

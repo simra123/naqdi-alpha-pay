@@ -8,9 +8,13 @@ import "../auth.scss";
 import "./forgot.scss";
 import { ForgotSchema } from "@/models/Forgot";
 import useFormValidation from "@/hooks/useFormValidation";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { recoverPasswordApi } from "@/services/auth";
 
 const ForgotPassword = () => {
   const router = useRouter();
+  const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi();
   const initialValues = {
     email: "",
   };
@@ -18,10 +22,17 @@ const ForgotPassword = () => {
   const { errors, handleChange, handleSubmit, validateField, values } =
     useFormValidation(initialValues, ForgotSchema);
 
-  const onSubmit = () => {
-    // Your submission logic here
-    router.push("/main");
+  const onSubmit = async () => {
+    await callApiHook({
+      apiCall: callRecoverApi(
+        recoverPasswordApi({
+          email: values?.email,
+        })
+      ),
+      successCallBack: () => {},
+    });
   };
+
   const onSubmitError = () => {
     window.scrollTo(0, 500);
     console.log("Form Not submitted successfully!");

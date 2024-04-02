@@ -16,11 +16,16 @@ import SelectBox from "@/components/common/SelectBox";
 import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 
 import "./registerForm.scss";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { registerApi } from "@/services/auth";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import LoadingApi from "@/components/common/LoadindApi";
 
 const options = [
   {
     value: "private-company-non-regulated",
-    label: "Private Company (Non-reqgulated)",
+    label: "Private Company (Non-regulated)",
   },
   {
     value: "listed-company-non-regulated",
@@ -29,7 +34,9 @@ const options = [
 ];
 
 const IndividualForm = ({ activeForm }) => {
+  const [isRegisterLoading, isRegisterError, callRegisterApi] = useApi();
   const router = useRouter();
+
   const initialValues = {
     legalName: "",
     entityType: "",
@@ -56,10 +63,35 @@ const IndividualForm = ({ activeForm }) => {
     setErrors,
   } = useFormValidation(initialValues, current_schema);
 
-  const onSubmit = () => {
-    // Your submission logic here
+  const onSubmit = async () => {
+    const individualData = {
+      first_name: values?.firstName,
+      last_name: values.lastName,
+      middleName: values?.middleName,
+      username: values?.userName,
+      email: values?.email,
+      password: values?.password,
+      confirm_password: values?.confirmPassword,
+      user_type: activeForm,
+      role: "USER",
+    };
 
-    alert("Form submitted successfully!");
+    const legalEntityData = {
+      legal_name: values?.legalName,
+      legal_entity: values?.LegalEntity,
+    };
+
+    const registerData =
+      activeForm == forms.LegalEntity
+        ? { ...legalEntityData, ...individualData }
+        : individualData;
+
+    await callApiHook({
+      apiCall: callRegisterApi(registerApi(registerData)),
+      successCallBack: () =>
+        router.push(`/email-verification-required?email=${values?.email}`),
+      statusCode: 201,
+    });
   };
   const onSubmitError = () => {
     window.scrollTo(0, 500);
@@ -305,9 +337,12 @@ const IndividualForm = ({ activeForm }) => {
           </div>
 
           <div className="footer mt-1">
-            <button className="btn gradient-btn" type="submit">
-              Register Account
-            </button>
+            <ErrorApiText error={isRegisterError} />
+            <LoadingApi loading={isRegisterLoading}>
+              <button className="btn gradient-btn" type="submit">
+                Register Account
+              </button>
+            </LoadingApi>
 
             <p className="mt-1">
               I already have an account? <Link href="/login">Login!</Link>

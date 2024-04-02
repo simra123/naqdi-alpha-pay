@@ -17,8 +17,8 @@ const UpgradeTraderModal = ({ isOpen, setIsOpen }) => {
           <div className="request_box shadow-md-border px-14 py-8 w-[750px] max-w-full bg-white gap-4">
             <div className=" grid place-content-center ">
               <p className="font-bold text-2xl primary-color pe-36 lead">
-                Please contact HAYVN Support (support@alphaspay.com) to update
-                your account information
+                Please contact Alphaspay Support (support@alphaspay.com) to
+                update your account information
               </p>
             </div>
           </div>

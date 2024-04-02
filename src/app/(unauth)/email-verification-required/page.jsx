@@ -2,10 +2,11 @@
 
 import React from "react";
 import { Typography } from "@mui/material";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const page = () => {
   const router = useRouter();
+  const email = useSearchParams().get("email");
 
   return (
     <div className="mx-auto max-w-screen-md">
@@ -16,7 +17,7 @@ const page = () => {
       <div className="flex flex-col gap-5 mt-12 max-w-xl">
         <p className="color-primary">
           A verification email was sent to{" "}
-          <span className="font-bold"> "your@email.com"</span>
+          <span className="font-bold"> {email}</span>
         </p>
         <p className="color-primary">
           Please click on the link to{" "}
