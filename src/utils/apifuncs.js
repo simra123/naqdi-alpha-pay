@@ -6,6 +6,6 @@ export const callApiHook = async ({
   const response = await apiCall;
 
   if (response.status == statusCode) {
-    return successCallBack();
+    return successCallBack(response.data);
   }
 };

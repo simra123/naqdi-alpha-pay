@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Typography, TextField, Button } from "@mui/material";
 
-import "../auth.scss";
+import "../../auth.scss";
 import "./forgot.scss";
 import { ForgotSchema } from "@/models/Forgot";
 import useFormValidation from "@/hooks/useFormValidation";

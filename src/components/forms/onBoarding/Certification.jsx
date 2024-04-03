@@ -47,7 +47,7 @@ const Certification = () => {
       </p>
       <Link
         className="btn-secondary w-full uppercase font-bold block text-center no-radius"
-        href={"/certification-form"}
+        href={"/certification-individual-form"}
         target="_blank"
       >
         Onboarding certification

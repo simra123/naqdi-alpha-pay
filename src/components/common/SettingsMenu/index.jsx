@@ -26,6 +26,13 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
     router.push(e.target.href);
   };
 
+  const logoutHandler = (e) => {
+    e.preventDefault();
+    setOpen(false);
+    window?.localStorage?.removeItem("token");
+    router.push(e.target.href);
+  };
+
   return (
     <div
       className={
@@ -59,7 +66,7 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
         FAQ
       </Link>
 
-      <Link href="/login" onClick={redirect} className="menu_item Link">
+      <Link href="/login" onClick={logoutHandler} className="menu_item Link">
         Logout
       </Link>
     </div>

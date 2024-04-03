@@ -6,14 +6,14 @@ import { useMemo, useRef, useState } from "react";
 import SelectBox from "@/components/common/SelectBox";
 import countryList from "react-select-country-list";
 import { LinearProgress } from "@mui/material";
-import "../auth.scss";
+import "../../auth.scss";
 import {
   Step1Schema,
   Step2Schema,
   Step3Schema,
 } from "@/models/CertificationForm";
 
-const CertificationFormPage = () => {
+const CertificationIndividualForm = () => {
   const router = useRouter();
   const passport = useRef(null);
   const address = useRef(null);
@@ -969,4 +969,4 @@ const CertificationFormPage = () => {
   );
 };
 
-export default CertificationFormPage;
+export default CertificationIndividualForm;

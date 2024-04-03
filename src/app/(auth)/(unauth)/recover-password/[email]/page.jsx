@@ -10,7 +10,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { recoverSchema } from "@/models/recoverPassword";
 import LoadingApi from "@/components/common/LoadindApi";
 
-import "../../auth.scss";
+import "../../../auth.scss";
 
 const UpdatePassword = ({ params }) => {
   const router = useRouter();

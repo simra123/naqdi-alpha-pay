@@ -3,13 +3,12 @@ import { Typography, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 import Link from "next/link";
-import "../auth.scss";
+import "../../auth.scss";
 import useFormValidation from "@/hooks/useFormValidation";
 import { loginSchema } from "@/models/login";
 import { useApi } from "@/hooks/useApi";
 import { loginApi } from "@/services/auth";
 import { callApiHook } from "@/utils/apifuncs";
-import Loader from "@/components/common/Loader";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 
@@ -33,7 +32,10 @@ const Login = () => {
           password: values?.password,
         })
       ),
-      successCallBack: () => router.push("/main"),
+      successCallBack: (response) => {
+        window?.localStorage?.setItem("token", response?.data?.token);
+        router.push("/main");
+      },
     });
   };
 

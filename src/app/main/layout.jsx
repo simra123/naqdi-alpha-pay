@@ -2,11 +2,25 @@
 
 import React from "react";
 import { useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import "./auth.scss";
 import { Typography } from "@mui/material";
+import useAuth from "@/hooks/useAuth";
 
 const Authlayout = ({ children }) => {
   const modal = useSelector((state) => state.modal.upgradeTrader);
+  const router = useRouter();
+
+  const { isAuthenticated, loaded } = useAuth();
+
+  if (!loaded) {
+    return "...Loading";
+  }
+
+  if (!isAuthenticated) {
+    return router.push("/login");
+  }
+
   return (
     <main
       id="auth_layout"
