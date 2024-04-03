@@ -22,8 +22,8 @@ const Notification = () => {
     <div
       className={
         notification?.message
-          ? "bottom-20 fixed left-0 w-full transition-all"
-          : "-bottom-20 fixed left-0 w-full transition-all"
+          ? "top-4 fixed right-4  transition-all"
+          : "top-4 fixed -right-56  transition-all"
       }
     >
       <div className="content w-max mx-auto bg-green-400 text-green-700 font-bold px-5 py-3 rounded-md">
