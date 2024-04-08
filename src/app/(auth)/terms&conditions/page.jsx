@@ -247,7 +247,7 @@ const TermsCondition = () => {
             </ol>
           </li>
           <li className="list_heading">
-            <span>WARRANTIES BY HAYVN</span>
+            <span>WARRANTIES BY Alphaspay</span>
             <ol className="child_list">
               <li className="child_list_item">
                 <span>
@@ -321,7 +321,7 @@ const TermsCondition = () => {
             </ol>
           </li>
           <li className="list_heading">
-            <span>RESTRICTIONS AND UNAUTHORISED USE OF THE HAYVN PLATFORM</span>
+            <span>RESTRICTIONS AND UNAUTHORISED USE OF THE Alphaspay PLATFORM</span>
             <ol className="child_list">
               <li className="child_list_item">
                 <span>

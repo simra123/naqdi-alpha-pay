@@ -105,7 +105,7 @@ const MFASetup = () => {
       </form>
 
       <p className="note mt-6">
-        HAYVN does not charge any fees for using MFA. If you have any questions
+        Alphaspay does not charge any fees for using MFA. If you have any questions
         or concerns, please Contact us
       </p>
       <div className="btn_wrapper text-right">

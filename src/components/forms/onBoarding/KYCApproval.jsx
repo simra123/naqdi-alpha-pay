@@ -15,7 +15,7 @@ const KYCApproval = () => {
 
       <p className="text-base font-semibold mt-2">Welcome back to Alphaspay</p>
 
-      <div className="status my-8">
+      {/* <div className="status my-8">
         <div className="flex flex-col justify-center items-center gap-1">
           <PauseCircleOutline className="text-9xl text-orange-500" />
           <span className="font-bold text-xl text-orange-500">Pending</span>
@@ -24,7 +24,7 @@ const KYCApproval = () => {
           Please wait patiently while we are verifying your documents. The
           process may take 1-3 days to complete.
         </p>
-      </div>
+      </div> */}
 
       <div className="status my-8">
         <div className="flex flex-col justify-center items-center gap-1">
@@ -38,7 +38,7 @@ const KYCApproval = () => {
         </p>
       </div>
 
-      <div className="status my-8">
+      {/* <div className="status my-8">
         <div className="flex flex-col justify-center items-center gap-1">
           <CancelOutlined className="text-9xl text-red-500" />
           <span className="font-bold text-xl text-red-500">Rejected</span>
@@ -51,7 +51,7 @@ const KYCApproval = () => {
         <h2 className="medium_heading_light mt-6 !font-semibold">Remarks</h2>
 
         <p className="font-semibold mt-2">Your reason for being rejected</p>
-      </div>
+      </div> */}
 
       <p className="note mt-6">
         Once your documents have been approved, you will be notified and you

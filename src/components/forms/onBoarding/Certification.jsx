@@ -11,7 +11,7 @@ const Certification = () => {
       >
         Regulation requires us to have a clear understanding of every client's
         personal details and financial position. This gives you the security
-        that all transactions executed on HAYVN have been completed with
+        that all transactions executed on Alphaspay have been completed with
         counterparties that have also passed our onboarding certification.
       </p>
 

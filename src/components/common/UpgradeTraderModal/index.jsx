@@ -23,7 +23,7 @@ const UpgradeTraderModal = () => {
       <div className="upgrade_modal_wrapper p-8">
         <h3 className="text-center text-4xl font-bold">Become a Trader</h3>
         <p className="text-center max-w-xl text-lg mx-auto mt-5">
-          You have limited access to the HAYVN platform functionalities until
+          You have limited access to the Alphaspay platform functionalities until
           you are verified as Trader.
         </p>
 

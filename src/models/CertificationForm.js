@@ -15,9 +15,14 @@ export const Step1Schema = Yup.object().shape({
     .required("Address is Required")
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
+  addressline2: Yup.string()
+    .required("Address is Required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
   country: Yup.string().required("Please select a country"),
   state: Yup.string().required("State is required"),
   city: Yup.string().required("City is required"),
+  postal: Yup.string().required("Postal Code is required"),
   addressProof: Yup.string().required("File is required"),
 });
 

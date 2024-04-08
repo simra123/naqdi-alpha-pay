@@ -129,7 +129,7 @@ const Profile = () => {
             <p className="mt-4">
               Your verified Multi-Factor Authentication (MFA) devices are listed
               here. A valid MFA authorisation code is required for certain
-              restricted actions on HAYVN. You can use any one of the devices
+              restricted actions on Alphaspay. You can use any one of the devices
               listed below.
             </p>
 

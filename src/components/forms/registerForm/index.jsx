@@ -312,7 +312,7 @@ const IndividualForm = ({ activeForm }) => {
           <div className="register_form__privacy mt-1">
             <Typography variant="body1" className="note">
               The following documents create a legally binding contract between
-              You and HAYVN. Please read these legal documents carefully. To
+              You and Alphaspay. Please read these legal documents carefully. To
               confirm your understanding and acceptance of the{" "}
               <Link href="/privacy-policy" target="_blank">
                 {" "}

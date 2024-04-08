@@ -7,6 +7,8 @@ import "./globals.scss";
 import theme from "@/config/theme";
 import store from "@/store";
 import Notification from "@/components/common/Notification";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +17,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Provider store={store}>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          <ThemeProvider theme={theme}>
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              {children}
+            </LocalizationProvider>
+          </ThemeProvider>
           <Notification />
         </Provider>
       </body>

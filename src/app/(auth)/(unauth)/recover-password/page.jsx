@@ -44,7 +44,7 @@ const ForgotPassword = () => {
       </Typography>
 
       <Typography variant="body1" color="primary" className="heading_caption">
-        Enter the email address registered with your HAYVN account and we will
+        Enter the email address registered with your Alphaspay account and we will
         email you instructions on how to reset your password.
       </Typography>
 
@@ -90,7 +90,7 @@ const ForgotPassword = () => {
           you may not be able to recover your account. In this case, please
           contact us at{" "}
           <Link className="Link" href="#">
-            info@hayvnglobal.com
+            info@alphaspay.com
           </Link>
         </p>
       </form>
