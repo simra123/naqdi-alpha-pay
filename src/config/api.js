@@ -11,11 +11,11 @@ const api = axios.create({
 
 // Add an interceptor to modify the headers
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = window?.localStorage.getItem("token");
 
   if (token) {
     // Set the bearer token in the headers
-    config.headers["Authorization"] = token;
+    config.headers["Authorization"] = `bearer ` + token;
   }
 
   return config;

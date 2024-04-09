@@ -2,32 +2,36 @@
 
 import React, { useState } from "react";
 import "./trader-registration.scss";
-import { Check, Security } from "@mui/icons-material";
 import ProfileForm from "@/components/forms/onBoarding/ProfileForm";
 import { STEPS } from "@/constants/onboarding";
 import PhoneValidation from "@/components/forms/onBoarding/PhoneValidation";
 import MFASetup from "@/components/forms/onBoarding/MFASetup";
-import Certification from "@/components/forms/onBoarding/Certification";
+// import Certification from "@/components/forms/onBoarding/Certification";
 import IdentityCheck from "@/components/forms/onBoarding/IdentityCheck";
 import KYCApproval from "@/components/forms/onBoarding/KYCApproval";
 import FeeSchedule from "@/components/forms/onBoarding/FeeSchedule";
 import HelpBox from "@/components/ui/HelpBox";
 import ApprovedStepsBox from "@/components/common/ApprovedStepsBox";
+import { useDispatch, useSelector } from "react-redux";
+import { setStep } from "@/store/slices/onboarding.slice";
+
 const TraderRegistration = () => {
-  const [selectedStep, setSelectedStep] = useState(STEPS.PROFILE);
+  const dipatch = useDispatch();
+  const currentStep = useSelector((state) => state.onboarding.current_step);
+  const disabledSteps = useSelector((state) => state.onboarding.disabled_steps);
 
   const handleStepChange = (stepName) => () => {
-    setSelectedStep(stepName);
+    dipatch(setStep({ current_step: stepName }));
   };
 
   const returnActiveStep = (stepName) => {
-    return selectedStep === stepName ? " active" : "";
+    return currentStep === stepName ? " active" : "";
   };
   const returnActiveForm = (stepName, FormComponent) => {
-    return selectedStep === stepName && <FormComponent />;
+    return currentStep === stepName && <FormComponent />;
   };
 
-  console.log(selectedStep);
+  console.log(currentStep);
 
   return (
     <div className="container-custom mx-auto py-3">
@@ -46,6 +50,7 @@ const TraderRegistration = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.PHONEVALIDATION)
           }
+          disabled={disabledSteps[STEPS.PHONEVALIDATION]}
           onClick={handleStepChange(STEPS.PHONEVALIDATION)}
         >
           Phone Vaidation
@@ -55,25 +60,27 @@ const TraderRegistration = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.MFASETUP)
           }
-          ret
+          disabled={disabledSteps[STEPS.MFASETUP]}
           onClick={handleStepChange(STEPS.MFASETUP)}
         >
           MFA Setup
         </button>
-        <button
+        {/* <button
           className={
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.CERTIFICATION)
           }
+          disabled={disabledSteps[STEPS.CERTIFICATION]}
           onClick={handleStepChange(STEPS.CERTIFICATION)}
         >
           certifification
-        </button>
+        </button> */}
         <button
           className={
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.IDENTITYCHECK)
           }
+          disabled={disabledSteps[STEPS.IDENTITYCHECK]}
           onClick={handleStepChange(STEPS.IDENTITYCHECK)}
         >
           Identity Check
@@ -83,6 +90,7 @@ const TraderRegistration = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.KYCAPPROVAL)
           }
+          disabled={disabledSteps[STEPS.KYCAPPROVAL]}
           onClick={handleStepChange(STEPS.KYCAPPROVAL)}
         >
           KYC Approval
@@ -92,6 +100,7 @@ const TraderRegistration = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.FEESCHEDULE)
           }
+          disabled={disabledSteps[STEPS.FEESCHEDULE]}
           onClick={handleStepChange(STEPS.FEESCHEDULE)}
         >
           Fee Schedule
@@ -103,7 +112,7 @@ const TraderRegistration = () => {
           {returnActiveForm(STEPS.PROFILE, ProfileForm)}
           {returnActiveForm(STEPS.PHONEVALIDATION, PhoneValidation)}
           {returnActiveForm(STEPS.MFASETUP, MFASetup)}
-          {returnActiveForm(STEPS.CERTIFICATION, Certification)}
+          {/* {returnActiveForm(STEPS.CERTIFICATION, Certification)} */}
           {returnActiveForm(STEPS.IDENTITYCHECK, IdentityCheck)}
           {returnActiveForm(STEPS.KYCAPPROVAL, KYCApproval)}
           {returnActiveForm(STEPS.FEESCHEDULE, FeeSchedule)}

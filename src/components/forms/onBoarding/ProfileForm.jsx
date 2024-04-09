@@ -6,8 +6,29 @@ import SelectBox from "@/components/common/SelectBox";
 import countryList from "react-select-country-list";
 import useFormValidation from "@/hooks/useFormValidation";
 import { ProfileSchema } from "@/models/Profile";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { ProfileSetupApi } from "@/services/onBoarding";
+import { useDispatch } from "react-redux";
+import { setStep } from "@/store/slices/onboarding.slice";
+import { STEPS } from "@/constants/onboarding";
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import useLocalStorage from "@/hooks/useLocalStorage";
+
+const initialValues = {
+  addressLine1: "",
+  addressLine2: "",
+  country: "",
+  state: "",
+  city: "",
+  postalCode: "",
+};
 
 const ProfileForm = () => {
+  const dispatch = useDispatch();
+  const user = useLocalStorage("user");
+  const [isProfileLoading, isProfileError, callProfileApi] = useApi();
   const options = useMemo(() => {
     const data = countryList()
       .getData()
@@ -20,29 +41,33 @@ const ProfileForm = () => {
     return data;
   }, []);
 
-  const initialValues = {
-    addressLine1: "",
-    addressLine2: "",
-    country: "",
-    state: "",
-    city: "",
-    postalCode: "",
-  };
+  console.log(user);
 
-  const {
-    errors,
-    handleChange,
-    handleSubmit,
-    validateField,
-    values,
-    setValues,
-    setErrors,
-  } = useFormValidation(initialValues, ProfileSchema);
+  const { errors, handleChange, handleSubmit, validateField, values } =
+    useFormValidation(initialValues, ProfileSchema);
 
-  const onSubmit = () => {
-    // Your submission logic here
-
-    alert("Form submitted successfully!");
+  const onSubmit = async () => {
+    await callApiHook({
+      apiCall: callProfileApi(
+        ProfileSetupApi({
+          address_line_1: values?.addressLine1,
+          address_line_2: values?.addressLine2,
+          country: values?.country,
+          state: values?.state,
+          city: values?.city,
+          postal_code: values?.postalCode,
+        })
+      ),
+      successCallBack: (response) => {
+        dispatch(
+          setStep({
+            previous_step: STEPS.PROFILE,
+            current_step: STEPS.PHONEVALIDATION,
+            next_step: STEPS?.MFASETUP,
+          })
+        );
+      },
+    });
   };
   const onSubmitError = () => {
     window.scrollTo(0, 500);
@@ -51,9 +76,6 @@ const ProfileForm = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-      <h2 className="large_heading_bold">
-        Complete your profile to become a Trader
-      </h2>
       <p>
         Your personal information is crucial for us to identity you and keep
         your investments secure. The below profile information helps us to do
@@ -72,18 +94,19 @@ const ProfileForm = () => {
               placeholder="First Name*"
               className="input-field flex-1"
               disabled
-              value={"Mu"}
+              value={user?.first_name}
             />
             <TextField
               placeholder="Middle Name"
               className="input-field flex-1"
+              value={user?.middle_name}
               disabled
             />
             <TextField
               placeholder="Last Name*"
               className="input-field flex-1"
               disabled
-              value={"Ah"}
+              value={user?.last_name}
             />
           </div>
           <TextField
@@ -91,7 +114,7 @@ const ProfileForm = () => {
             className="input-field"
             fullWidth
             disabled
-            value={"YourMail@mail.com"}
+            value={user?.email}
           />
         </div>
       </div>
@@ -178,14 +201,18 @@ const ProfileForm = () => {
         </div>
       </div>
 
+      <ErrorApiText error={isProfileError} />
+
       <p className="note mt-14">
         Please ensure your provided details are correct. Once your details are
         submitted for KYC approval they will be locked.
       </p>
       <div className="btn_wrapper text-right">
-        <button className="header_step_btn active fl" type="submit">
-          Save & Next
-        </button>
+        <LoadingApi loading={isProfileLoading}>
+          <button className="header_step_btn active fl" type="submit">
+            Save & Next
+          </button>
+        </LoadingApi>
       </div>
     </form>
   );

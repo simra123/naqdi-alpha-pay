@@ -2,13 +2,38 @@
 import React, { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import OtpInput from "react-otp-input";
+import { callApiHook } from "@/utils/apifuncs";
+import { useApi } from "@/hooks/useApi";
+import { generateMFACodeApi, MfaSetupApi } from "@/services/onBoarding";
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import Image from "next/image";
+import { STEPS } from "@/constants/onboarding";
+import { useDispatch } from "react-redux";
+import { setStep } from "@/store/slices/onboarding.slice";
 
 const MFASetup = () => {
-  const [otp, setOtp] = useState(null);
-  const [otpError, setOtpError] = useState(null);
+  const dispatch = useDispatch();
+  const [isQrCodeLoading, isQrCodeError, callQrCodeApi] = useApi();
+  const [isVerifyLoading, isVerifyError, callVerifyApi] = useApi();
 
-  const handleSubmit = (e) => {
+  const [otp, setOtp] = useState(null);
+  const [qrCode, setQrCode] = useState(null);
+  const [otpError, setOtpError] = useState(null);
+  const [isVerified, setIsVerfied] = useState(null);
+
+  const qrCodeGenerator = async () => {
+    await callApiHook({
+      apiCall: callQrCodeApi(generateMFACodeApi()),
+      successCallBack: (response) => {
+        setQrCode(response);
+      },
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(otp);
 
     if (!otp) {
       return setOtpError("Please Enter Otp");
@@ -17,8 +42,26 @@ const MFASetup = () => {
       return setOtpError("Otp is not valid");
     }
     if (otp) {
-      return setOtpError(null);
+      setOtpError(null);
+      await callApiHook({
+        apiCall: callVerifyApi(
+          MfaSetupApi({ secret: qrCode?.secret, token: otp })
+        ),
+        successCallBack: (response) => {
+          setIsVerfied(true);
+        },
+      });
     }
+  };
+
+  const handleSubmitMfaSetup = () => {
+    dispatch(
+      setStep({
+        previous_step: STEPS.MFASETUP,
+        current_step: STEPS.IDENTITYCHECK,
+        next_step: STEPS?.KYCAPPROVAL,
+      })
+    );
   };
 
   return (
@@ -55,14 +98,26 @@ const MFASetup = () => {
           STEP 2: Generate and Scan the QR Code
         </h4>
         <div className="qr_code mt-6">
-          <QRCodeCanvas
-            value="https://reactjs.org/"
-            style={{ width: "200px", height: "200px" }}
-          />
+          {qrCode && (
+            <QRCodeCanvas
+              value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
+                qrCode?.secret
+              )}&issuer=Alphapay
+            `}
+              width={200}
+              height={200}
+            />
+          )}
         </div>
-        <button className="btn-secondary font-bold rounded-none mt-6 min-w-32">
-          Generate
-        </button>
+        <ErrorApiText error={isQrCodeError} />
+        <LoadingApi loading={isQrCodeLoading}>
+          <button
+            className="btn-secondary font-bold rounded-none mt-6 min-w-32"
+            onClick={qrCodeGenerator}
+          >
+            Generate
+          </button>
+        </LoadingApi>
       </div>
 
       <form onSubmit={handleSubmit}>
@@ -86,6 +141,7 @@ const MFASetup = () => {
               renderInput={(props) => (
                 <input
                   {...props}
+                  disabled={isVerified}
                   className="input-field min-w-14 p-4 outline-none"
                 />
               )}
@@ -95,21 +151,36 @@ const MFASetup = () => {
             {otpError && <div className="error_text">{otpError}</div>}
           </div>
 
-          <button
-            className="btn-secondary font-bold rounded-none mt-6 min-w-32"
-            type="submit"
-          >
-            Verify
-          </button>
+          <ErrorApiText error={isVerifyError} />
+
+          <LoadingApi loading={isVerifyLoading}>
+            {isVerified && (
+              <p className="success note mt-5">Verified Successfully.</p>
+            )}
+            {!isVerified && (
+              <button
+                className="btn-secondary font-bold rounded-none mt-6 min-w-32"
+                type="submit"
+                disabled={!qrCode}
+              >
+                Verify
+              </button>
+            )}
+          </LoadingApi>
         </div>
       </form>
 
       <p className="note mt-6">
-        Alphaspay does not charge any fees for using MFA. If you have any questions
-        or concerns, please Contact us
+        Alphaspay does not charge any fees for using MFA. If you have any
+        questions or concerns, please Contact us
       </p>
       <div className="btn_wrapper text-right">
-        <button className="header_step_btn active fl">Next</button>
+        <button
+          className="header_step_btn active fl"
+          onClick={isVerified && handleSubmitMfaSetup}
+        >
+          Next
+        </button>
       </div>
     </>
   );

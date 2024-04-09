@@ -1,11 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { Typography, TextField } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import useFormValidation from "@/hooks/useFormValidation";
 import { codeSchema, PhoneSchema } from "@/models/Phone";
+import { useDispatch } from "react-redux";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { PhoneSetupApi } from "@/services/onBoarding";
+import { STEPS } from "@/constants/onboarding";
+import { setStep } from "@/store/slices/onboarding.slice";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import LoadingApi from "@/components/common/LoadindApi";
 
 const PhoneValidation = () => {
+  const dispatch = useDispatch();
+  const [isPhoneLoading, isPhoneError, callPhoneApi] = useApi();
+  const [isCodeLoading, isCodeError, callCodeApi] = useApi();
+  const [showCode, setShowCode] = useState(false);
   const initialValuePhone = {
     phone: "",
   };
@@ -20,31 +32,37 @@ const PhoneValidation = () => {
     handleSubmit: handleSubmitPhone,
     validateField: validatePhone,
     values: phoneValues,
-    setValues: setPhoneValues,
   } = useFormValidation(initialValuePhone, PhoneSchema);
 
-  const {
-    errors,
-    handleChange,
-    handleSubmit,
-    validateField,
-    values,
-    setValues,
-  } = useFormValidation(initialValueCode, codeSchema);
+  const { errors, handleChange, handleSubmit, validateField, values } =
+    useFormValidation(initialValueCode, codeSchema);
 
-  const onSubmitPhone = () => {
-    // Your submission logic here
-
-    alert("Form submitted successfully!");
+  const onSubmitPhone = async () => {
+    await callApiHook({
+      apiCall: callPhoneApi(
+        PhoneSetupApi({
+          phone_number: phoneValues?.phone,
+        })
+      ),
+      successCallBack: (response) => {
+        setShowCode(true);
+      },
+    });
   };
+
+  console.log(values?.phone);
   const onSubmitPhoneError = () => {
     window.scrollTo(0, 0);
     console.log("Form Not submitted successfully!");
   };
   const onSubmit = () => {
-    // Your submission logic here
-
-    alert("Form submitted successfully!");
+    dispatch(
+      setStep({
+        previous_step: STEPS.PHONEVALIDATION,
+        current_step: STEPS.MFASETUP,
+        next_step: STEPS?.IDENTITYCHECK,
+      })
+    );
   };
   const onSubmitError = () => {
     window.scrollTo(0, 300);
@@ -71,65 +89,80 @@ const PhoneValidation = () => {
           </Typography>
         </div>
 
-        {/* <TextField placeholder="Phone*" className="input-field" fullWidth /> */}
-        <form
-          onSubmit={(e) => handleSubmit(e, onSubmitPhone, onSubmitPhoneError)}
-        >
-          <div>
-            <div className="flex items-center tel_input_wrapper">
-              <PhoneInput
-                buttonClass="input-field"
-                inputClass="input-field"
-                onChange={handleChangePhone}
-                value={phoneValues.phone}
-                onBlur={validatePhone}
-                enableSearch
-                specialLabel=""
-                inputProps={{
-                  name: "phone",
-                  autoFocus: true,
-                }}
-              />
+        <LoadingApi loading={isPhoneLoading}>
+          <form
+            onSubmit={(e) =>
+              handleSubmitPhone(e, onSubmitPhone, onSubmitPhoneError)
+            }
+          >
+            <div>
+              <div className="flex items-center tel_input_wrapper">
+                <PhoneInput
+                  buttonClass="input-field"
+                  inputClass="input-field"
+                  onChange={(value) =>
+                    handleChangePhone({
+                      target: { name: "phone", value },
+                    })
+                  }
+                  disabled={showCode}
+                  value={phoneValues.phone}
+                  onBlur={validatePhone}
+                  enableSearch
+                  specialLabel=""
+                  inputProps={{
+                    name: "phone",
+                  }}
+                />
 
-              <button className="btn-yellow w-1/5 font-semibold" type="submit">
-                Send Sms
+                <button
+                  className="btn-yellow w-1/5 font-semibold"
+                  type="submit"
+                >
+                  Send Sms
+                </button>
+              </div>
+
+              {phoneErrors.phone && (
+                <div className="error_text">{phoneErrors.phone}</div>
+              )}
+            </div>
+            <ErrorApiText error={isPhoneError} />
+            {showCode && (
+              <p className="success note mt-5">
+                An SMS was sent to the mobile phone number you entered. Please
+                enter the code received to validate your mobile number.
+              </p>
+            )}
+          </form>
+        </LoadingApi>
+        {showCode && (
+          <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
+            <div className="register_form__trader__heading mt-8">
+              <Typography variant="h5" color="primary" className="text-base">
+                Enter Code
+              </Typography>
+              <div>
+                <TextField
+                  className="input-field"
+                  onChange={handleChange}
+                  value={values.code}
+                  onBlur={validateField}
+                  name="code"
+                  fullWidth
+                  placeholder="EX: CODE!@"
+                />
+                {errors.code && <div className="error_text">{errors.code}</div>}
+              </div>
+            </div>
+
+            <div className="btn_wrapper text-right">
+              <button className="header_step_btn active fl" type="submit">
+                Validate & Next
               </button>
             </div>
-            {phoneErrors.phone && (
-              <div className="error_text">{phoneErrors.phone}</div>
-            )}
-          </div>
-          <p className="success note mt-5">
-            An SMS was sent to the mobile phone number you entered. Please enter
-            the code received to validate your mobile number.
-          </p>
-        </form>
-
-        <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-          <div className="register_form__trader__heading mt-8">
-            <Typography variant="h5" color="primary" className="text-base">
-              Enter Code
-            </Typography>
-            <div>
-              <TextField
-                className="input-field"
-                onChange={handleChange}
-                value={values.code}
-                onBlur={validateField}
-                name="code"
-                fullWidth
-                placeholder="EX: CODE!@"
-              />
-              {errors.code && <div className="error_text">{errors.code}</div>}
-            </div>
-          </div>
-
-          <div className="btn_wrapper text-right">
-            <button className="header_step_btn active fl" type="submit">
-              Validate & Next
-            </button>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
       <p className="note mt-6">
         This phone number is linked with your account and has been already

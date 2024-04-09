@@ -8,6 +8,7 @@ const useFormValidation = (initialState, validationSchema) => {
 
   const handleChange = (event) => {
     const { name, value, type, files, checked } = event.target;
+    console.log(event);
 
     if (type == "file") {
       const nameSplit = name.split(`.`);

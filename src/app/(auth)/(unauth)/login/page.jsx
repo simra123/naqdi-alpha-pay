@@ -34,6 +34,10 @@ const Login = () => {
       ),
       successCallBack: (response) => {
         window?.localStorage?.setItem("token", response?.data?.token);
+        window?.localStorage?.setItem(
+          "user",
+          JSON.stringify(response?.data?.user)
+        );
         router.push("/main");
       },
     });
