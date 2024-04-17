@@ -1,15 +1,10 @@
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Typography } from "@mui/material";
 
 const RootLoading = () => {
-  const router = useRouter();
 
-  // useEffect(() => {
-  //   router.push("/main/trader-registration");
-  // }, []);
 
   return (
     <section className="main_page">

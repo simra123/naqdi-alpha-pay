@@ -31,6 +31,23 @@ input {
   }
 }
 
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: $apy-primary-color; /* Color of the scrollbar handle */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.layout-wrapper {
+  height: calc(100vh - 109px);
+}
+
 .placeholder_gray {
   color: #b7b7b7 !important;
 }

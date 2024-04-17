@@ -7,13 +7,13 @@ import { useApi } from "@/hooks/useApi";
 import { generateMFACodeApi, MfaSetupApi } from "@/services/onBoarding";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import Image from "next/image";
 import { STEPS } from "@/constants/onboarding";
 import { useDispatch } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 
 const MFASetup = () => {
   const dispatch = useDispatch();
+  
   const [isQrCodeLoading, isQrCodeError, callQrCodeApi] = useApi();
   const [isVerifyLoading, isVerifyError, callVerifyApi] = useApi();
 
@@ -110,6 +110,7 @@ const MFASetup = () => {
           )}
         </div>
         <ErrorApiText error={isQrCodeError} />
+
         <LoadingApi loading={isQrCodeLoading}>
           <button
             className="btn-secondary font-bold rounded-none mt-6 min-w-32"

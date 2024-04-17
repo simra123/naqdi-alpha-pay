@@ -9,7 +9,7 @@ export const STEPS = {
 };
 
 export const IDENTITY_FORMATS = {
-  ID_CARD: "id-card",
-  PASSPORT: "passport",
-  DRIVER_LICENSE: "driver-license",
+  ID_CARD: "CNIC",
+  PASSPORT: "PASSPORT",
+  DRIVER_LICENSE: "DRIVER-LICENSE",
 };

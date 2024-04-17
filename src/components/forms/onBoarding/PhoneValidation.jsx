@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, TextField } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import useFormValidation from "@/hooks/useFormValidation";
 import { codeSchema, PhoneSchema } from "@/models/Phone";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { PhoneSetupApi } from "@/services/onBoarding";
@@ -18,12 +18,13 @@ const PhoneValidation = () => {
   const [isPhoneLoading, isPhoneError, callPhoneApi] = useApi();
   const [isCodeLoading, isCodeError, callCodeApi] = useApi();
   const [showCode, setShowCode] = useState(false);
+  const userDetails = useSelector((state) => state.user.data);
   const initialValuePhone = {
     phone: "",
   };
 
   const initialValueCode = {
-    code: "",
+    code: "000000",
   };
 
   const {
@@ -32,10 +33,22 @@ const PhoneValidation = () => {
     handleSubmit: handleSubmitPhone,
     validateField: validatePhone,
     values: phoneValues,
+    setValues: setPhoneValues,
   } = useFormValidation(initialValuePhone, PhoneSchema);
 
   const { errors, handleChange, handleSubmit, validateField, values } =
     useFormValidation(initialValueCode, codeSchema);
+
+  useEffect(() => {
+    console.log(userDetails, " --------------------");
+    const data = userDetails?.userDetails;
+    if (data && data?.phone_number) {
+      setPhoneValues({
+        phone: data?.phone_number,
+      });
+      setShowCode(true);
+    }
+  }, [userDetails]);
 
   const onSubmitPhone = async () => {
     await callApiHook({

@@ -1,0 +1,17 @@
+@import "../../../config/colors.scss";
+
+.SidebarWrapper {
+  border-right: 1px solid $apy-primary-color;
+  .navLink {
+    * {
+      color: rgb(202, 201, 201);
+      font-weight: 600;
+    }
+    &.active {
+      * {
+        color: $apy-note-gray-color;
+        font-weight: 700;
+      }
+    }
+  }
+}

@@ -5,12 +5,19 @@ import { Typography } from "@mui/material";
 import SelectBox from "@/components/common/SelectBox";
 import countryList from "react-select-country-list";
 import useFormValidation from "@/hooks/useFormValidation";
-import { IDENTITY_FORMATS } from "@/constants/onboarding";
+import { IDENTITY_FORMATS, STEPS } from "@/constants/onboarding";
 import { IdentityCheckSchema } from "@/models/IdentityCheck";
+import { useApi } from "@/hooks/useApi";
+import { useDispatch } from "react-redux";
+import { callApiHook } from "@/utils/apifuncs";
+import { SubmitKYCApi } from "@/services/onBoarding";
+import { setStep } from "@/store/slices/onboarding.slice";
 
 const IdentityCheck = () => {
+  const dispatch = useDispatch();
   const front = useRef(null);
   const back = useRef(null);
+  const [isSubmitKYCLoading, isSubmitKYCError, callSubmitKYCApi] = useApi();
   const options = useMemo(() => {
     const data = countryList()
       .getData()
@@ -58,10 +65,25 @@ const IdentityCheck = () => {
 
   console.log(values);
 
-  const onSubmit = () => {
-    // Your submission logic here
-
-    alert("Form submitted successfully!");
+  const onSubmit = async () => {
+    await callApiHook({
+      apiCall: callSubmitKYCApi(
+        SubmitKYCApi({
+          file_type: values?.documentFormat,
+          front_image: values.document?.front,
+          back_image: values.document?.back,
+        })
+      ),
+      successCallBack: (response) => {
+        dispatch(
+          setStep({
+            previous_step: STEPS.IDENTITYCHECK,
+            current_step: STEPS.KYCAPPROVAL,
+            next_step: STEPS?.FEESCHEDULE,
+          })
+        );
+      },
+    });
   };
   const onSubmitError = () => {
     window.scrollTo(0, 500);

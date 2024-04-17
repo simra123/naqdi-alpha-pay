@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { TextField, Typography } from "@mui/material";
 import SelectBox from "@/components/common/SelectBox";
 import countryList from "react-select-country-list";
@@ -9,26 +9,19 @@ import { ProfileSchema } from "@/models/Profile";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { ProfileSetupApi } from "@/services/onBoarding";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
-const initialValues = {
-  addressLine1: "",
-  addressLine2: "",
-  country: "",
-  state: "",
-  city: "",
-  postalCode: "",
-};
-
 const ProfileForm = () => {
   const dispatch = useDispatch();
   const user = useLocalStorage("user");
   const [isProfileLoading, isProfileError, callProfileApi] = useApi();
+  const userDetails = useSelector((state) => state.user.data);
+
   const options = useMemo(() => {
     const data = countryList()
       .getData()
@@ -41,10 +34,38 @@ const ProfileForm = () => {
     return data;
   }, []);
 
-  console.log(user);
+  const initialValues = {
+    addressLine1: "",
+    addressLine2: "",
+    country: "",
+    state: "",
+    city: "",
+    postalCode: "",
+  };
 
-  const { errors, handleChange, handleSubmit, validateField, values } =
-    useFormValidation(initialValues, ProfileSchema);
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    validateField,
+    values,
+    setValues,
+  } = useFormValidation(initialValues, ProfileSchema);
+
+  useEffect(() => {
+    console.log(userDetails, " --------------------");
+    const data = userDetails?.userDetails;
+    if (data) {
+      setValues({
+        addressLine1: data?.address_line_1,
+        addressLine2: data?.address_line_2,
+        country: data?.country,
+        state: data?.state,
+        city: data?.city,
+        postalCode: data?.postal_code,
+      });
+    }
+  }, [userDetails]);
 
   const onSubmit = async () => {
     await callApiHook({
@@ -69,6 +90,7 @@ const ProfileForm = () => {
       },
     });
   };
+
   const onSubmitError = () => {
     window.scrollTo(0, 500);
     console.log("Form Not submitted successfully!");

@@ -1,23 +1,45 @@
 "use client";
 
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import "./auth.scss";
 import { Typography } from "@mui/material";
 import useAuth from "@/hooks/useAuth";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { userDetailsApi } from "@/services/user";
+import { setUser } from "@/store/slices/userSlice";
+import { validateSteps } from "@/store/slices/onboarding.slice";
 
 const Authlayout = ({ children }) => {
+  const dispatch = useDispatch();
   const modal = useSelector((state) => state.modal.upgradeTrader);
   const router = useRouter();
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
+    useApi();
+
+  const getUserDetails = async () => {
+    await callApiHook({
+      apiCall: callUserDetailsApi(userDetailsApi()),
+      successCallBack: (response) => {
+        dispatch(setUser(response));
+        dispatch(validateSteps(response));
+      },
+    });
+  };
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
 
   const { isAuthenticated, loaded } = useAuth();
 
-  if (!loaded) {
+  if (!loaded || isUserDetailsLoading) {
     return "...Loading";
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || isUserDetailsError) {
     return router.push("/login");
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import api from "@/config/api";
+import api, { formHeader } from "@/config/api";
 
 export const ProfileSetupApi = (data) => {
   return () => api.post(`auth/user/address/add`, data);
@@ -12,6 +12,10 @@ export const PhoneSetupApi = (data) => {
 
 export const MfaSetupApi = (data) => {
   return () => api.post(`auth/verify-otp`, data);
+};
+
+export const SubmitKYCApi = (data) => {
+  return () => api.post(`auth/submit-kyc`, data, formHeader);
 };
 
 export const generateMFACodeApi = () => {

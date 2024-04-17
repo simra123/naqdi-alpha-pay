@@ -13,7 +13,11 @@ const ApprovedStepsBox = () => {
   );
 
   const checkStepState = (stepName, nextStepName) => {
-    console.log(!disabled_steps[stepName] , disabled_steps[nextStepName] , "++++++++++++");
+    console.log(
+      !disabled_steps[stepName],
+      disabled_steps[nextStepName],
+      "++++++++++++"
+    );
 
     if (!disabled_steps[stepName] && disabled_steps[nextStepName]) {
       return "current_step";
@@ -56,19 +60,10 @@ const ApprovedStepsBox = () => {
           <div
             className={`step ${checkStepState(
               STEPS.MFASETUP,
-              STEPS.CERTIFICATION
-            )}`}
-          >
-            <span>MFA Setup</span>
-            <Check />
-          </div>
-          <div
-            className={`step ${checkStepState(
-              STEPS.CERTIFICATION,
               STEPS.IDENTITYCHECK
             )}`}
           >
-            <span>Certification</span>
+            <span>MFA Setup</span>
             <Check />
           </div>
           <div
