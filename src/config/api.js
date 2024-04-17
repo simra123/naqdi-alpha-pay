@@ -21,6 +21,21 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add an interceptor to modify the headers
+api.interceptors.response.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    console.log();
+    if (error.response.status == 401) {
+      window?.localStorage?.removeItem("token");
+      window.location.pathname = "/login";
+      return Promise.reject({ expired: true });
+    }
+  }
+);
+
 export default api;
 
 // OTHER CONFIGS

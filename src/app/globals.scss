@@ -47,6 +47,9 @@ input {
 .layout-wrapper {
   height: calc(100vh - 109px);
 }
+.page-min-height {
+  min-height: calc(100vh - 125px);
+}
 
 .placeholder_gray {
   color: #b7b7b7 !important;

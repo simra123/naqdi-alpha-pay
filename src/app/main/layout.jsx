@@ -39,7 +39,7 @@ const Authlayout = ({ children }) => {
     return "...Loading";
   }
 
-  if (!isAuthenticated || isUserDetailsError) {
+  if (!isAuthenticated) {
     return router.push("/login");
   }
 
