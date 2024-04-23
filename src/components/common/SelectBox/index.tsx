@@ -1,19 +1,33 @@
 import React from "react";
 import { FormControl, Select, MenuItem } from "@mui/material";
 
-const SelectBox = ({ placeholder, options, value, onChange, name, onBlur }) => {
+const SelectBox = ({
+  placeholder,
+  options,
+  value,
+  onChange,
+  name,
+  onBlur,
+  IconName,
+  className = "input-field",
+  sx,
+}) => {
   const getSelectedLabel = () => {
     const selectedOption = options.find((option) => option.value === value);
     return selectedOption ? selectedOption.label : "";
   };
 
   return (
-    <FormControl fullWidth className="input-field">
+    <FormControl fullWidth className={`${className}`}>
       <Select
         value={value}
         className="primary-color"
         onChange={onChange}
         name={name}
+        IconComponent={() => (
+          <IconName sx={{ marginRight: "8px", marginLeft: "-8px" }} />
+        )}
+        sx={sx}
         onBlur={onBlur}
         displayEmpty
         renderValue={() => {

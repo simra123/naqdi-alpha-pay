@@ -17,6 +17,22 @@ const theme = createTheme({
       fontWeight: 800,
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        outlined: {
+          borderRadius: "2px",
+          borderColor: "lightgray",
+        },
+        contained: {
+          borderRadius: "2px",
+        },
+        text: {
+          borderRadius: "2px",
+        },
+      },
+    },
+  },
 });
 
 export default theme;

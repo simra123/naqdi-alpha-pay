@@ -15,11 +15,11 @@ import { usePathname } from "next/navigation";
 const nav_items = [
   { name: "Dashboard", icon: <Home />, path: "/" },
   { name: "Payments", icon: <Payments />, path: "/payments" },
-  { name: "Transactions", icon: <Receipt />, path: "transactions" },
-  { name: "Withdrawals", icon: <Paid />, path: "withdrawals" },
-  { name: "Payouts", icon: <ShoppingBasket />, path: "payouts" },
-  { name: "Profiles", icon: <People />, path: "profiles" },
-  { name: "Settings", icon: <Settings />, path: "settings" },
+  { name: "Transactions", icon: <Receipt />, path: "/transactions" },
+  { name: "Withdrawals", icon: <Paid />, path: "/withdrawals" },
+  { name: "Payouts", icon: <ShoppingBasket />, path: "/payouts" },
+  { name: "Profiles", icon: <People />, path: "/profiles" },
+  { name: "Settings", icon: <Settings />, path: "/settings" },
 ];
 
 const Sidebar = () => {

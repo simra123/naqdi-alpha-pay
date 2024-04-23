@@ -3,9 +3,9 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
-export const useApi = () => {
+export const useApi = (initailLoading = false) => {
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(initailLoading);
   const [error, setError] = useState(null);
 
   const makeApiCall = async (apiCall) => {
@@ -24,7 +24,7 @@ export const useApi = () => {
       return response;
     } catch (err) {
       setIsLoading(false);
-      console.log(err)
+      console.log(err);
       const errorMessage =
         err?.response?.data?.message ||
         "An error occurred. Please try again later";

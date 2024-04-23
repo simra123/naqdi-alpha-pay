@@ -51,10 +51,17 @@ const Home = () => {
 
   return (
     <DashboardPageWrapper>
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-xl font-semibold">Dashboard</h2>
+        <div className="actions flex gap-3">
+          <w3m-button />
+          <w3m-network-button />
+        </div>
+      </div>
       <div className="grid grid-cols-2 gap-10">
         <div className="walletsList">
           <div className="walletHeading">
-            <h3 className="medium_heading_bold mb-4">Crypto Wallets</h3>
+            <h3 className="text-[18px] mb-4">Crypto Wallets</h3>
           </div>
           <DataGrid
             rows={cryptos}
@@ -66,7 +73,7 @@ const Home = () => {
         </div>
         <div className="walletsList">
           <div className="walletHeading">
-            <h3 className="medium_heading_bold mb-4">Fiat Wallets</h3>
+            <h3 className="text-[18px] mb-4">Fiat Wallets</h3>
           </div>
           <DataGrid
             rows={fiat}

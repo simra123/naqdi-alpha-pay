@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 const UpgradeTraderModal = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const modalState = useSelector((state) => state.modal.upgradeTrader);
+  const modalState = useSelector((state:any) => state.modal.upgradeTrader);
 
   const closeModal = () => {
     dispatch(setModal(null));

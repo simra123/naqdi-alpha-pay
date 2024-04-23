@@ -117,7 +117,7 @@ const IdentityCheck = () => {
             onChange={handleChange}
             value={values.country}
           />
-          {errors.country && <div className="error_text">{errors.country}</div>}
+          {errors?.country && <div className="error_text">{errors?.country}</div>}
         </div>
 
         {values.country && (
