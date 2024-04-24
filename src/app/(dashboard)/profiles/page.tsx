@@ -37,7 +37,6 @@ const Profiles = () => {
         <DataGrid
           rows={rows}
           columns={profilesList_table_columns}
-          pageSize={5}
           className="border-t-0 primary-color font-semibold"
           sx={{
             ".MuiDataGrid-overlayWrapper": {
@@ -51,8 +50,6 @@ const Profiles = () => {
             console.log(params);
             router.push(`/profiles/${params?.row?.id}`);
           }}
-          // checkboxSelection
-          disableSelectionOnClick
           sortingOrder={["asc", "desc"]}
           pagination
         />

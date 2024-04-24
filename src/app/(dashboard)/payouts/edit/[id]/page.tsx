@@ -3,7 +3,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import { webhooks_table_columns } from "../columns";
+import { webhooks_table_columns } from "../../columns";
 
 const PayoutDetails = () => {
   return (

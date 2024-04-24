@@ -10,7 +10,7 @@ const useLocalStorage = (key, value) => {
     setData(JSON.parse(window.localStorage?.getItem(key)));
   };
   useEffect(() => {
-    getLocalStorage(key);
+    getLocalStorage();
   }, [key]);
 
   return data;

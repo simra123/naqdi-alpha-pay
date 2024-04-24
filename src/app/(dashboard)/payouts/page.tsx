@@ -18,7 +18,7 @@ const rows = [
   // Add more rows here if needed
 ];
 const Payouts = () => {
-  const router = useRouter()
+  const router = useRouter();
   return (
     <>
       <div className="data-grid-container">
@@ -40,7 +40,6 @@ const Payouts = () => {
         <DataGrid
           rows={rows}
           columns={payoutsList_table_columns}
-          pageSize={5}
           className="border-t-0 primary-color font-semibold"
           sx={{
             ".MuiDataGrid-overlayWrapper": {
@@ -52,10 +51,8 @@ const Payouts = () => {
           }}
           onRowClick={(params) => {
             console.log(params);
-            router.push(`/payouts/${params?.row?.id}`);
+            router.push(`/payouts/edit/${params?.row?.id}`);
           }}
-          // checkboxSelection
-          disableSelectionOnClick
           sortingOrder={["asc", "desc"]}
           pagination
         />

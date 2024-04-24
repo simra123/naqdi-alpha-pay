@@ -6,7 +6,7 @@ const _register = {
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
 
-  lastName: Yup.string("Invalid Format")
+  lastName: Yup.string()
     .required("Last name is required")
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),

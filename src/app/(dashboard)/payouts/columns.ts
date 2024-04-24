@@ -7,42 +7,38 @@ export const payoutsList_table_columns = [
 ];
 
 export const webhooks_table_columns = [
-    {
-      field: "info",
-      headerName: "Info",
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      type: "number",
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "successful",
-      headerName: "Successful",
-      sortable: false,
-      flex: 1,
-    },
-    {
-      field: "retries",
-      headerName: "Retries",
-      sortable: false,
-      flex: 1,
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      sortable: false,
-      flex: 1,
-    },
-  ];
-  
+  {
+    field: "info",
+    headerName: "Info",
+    flex: 1,
+  },
+  {
+    field: "date",
+    headerName: "Date",
+    flex: 1,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+   
+    flex: 1,
+  },
+  {
+    field: "successful",
+    headerName: "Successful",
+    sortable: false,
+    flex: 1,
+  },
+  {
+    field: "retries",
+    headerName: "Retries",
+    sortable: false,
+    flex: 1,
+  },
+  {
+    field: "actions",
+    headerName: "Actions",
+    sortable: false,
+    flex: 1,
+  },
+];

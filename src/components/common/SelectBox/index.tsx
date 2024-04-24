@@ -1,7 +1,25 @@
 import React from "react";
-import { FormControl, Select, MenuItem } from "@mui/material";
+import { FormControl, Select, MenuItem, SvgIconTypeMap } from "@mui/material";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
 
-const SelectBox = ({
+interface Option {
+  value: string;
+  label: string;
+}
+
+interface SelectBoxProps {
+  placeholder?: string;
+  options: Option[];
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  name?: string;
+  onBlur?: any;
+  IconName?: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
+  className?: string;
+  sx?: object;
+}
+
+const SelectBox: React.FC<SelectBoxProps> = ({
   placeholder,
   options,
   value,

@@ -1,6 +1,13 @@
-import React from "react";
+import React, { FC } from "react";
 
-const DetailsWrapper = ({ title, children, align, col }) => {
+interface WrapperProps {
+  title: string;
+  children: React.ReactNode;
+  col?: boolean;
+  align?: boolean;
+}
+
+const DetailsWrapper: FC<WrapperProps> = ({ title, children, align, col }) => {
   return (
     <div
       className={`grid-template-details ${

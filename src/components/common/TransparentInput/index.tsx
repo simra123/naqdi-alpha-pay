@@ -1,6 +1,18 @@
-import React from "react";
+import React, { FC } from "react";
 
-const TransparentInput = ({ disabled = true, value, label, textarea }) => {
+interface TransparentInputProps {
+  disabled?: boolean;
+  value: string;
+  label?: string;
+  textarea?: boolean;
+}
+
+const TransparentInput: FC<TransparentInputProps> = ({
+  disabled = true,
+  value,
+  label,
+  textarea,
+}) => {
   return (
     <div className="flex flex-col gap-2">
       {textarea ? (

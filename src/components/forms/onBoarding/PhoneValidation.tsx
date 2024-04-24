@@ -18,7 +18,7 @@ const PhoneValidation = () => {
   const [isPhoneLoading, isPhoneError, callPhoneApi] = useApi();
   const [isCodeLoading, isCodeError, callCodeApi] = useApi();
   const [showCode, setShowCode] = useState(false);
-  const userDetails = useSelector((state) => state.user.data);
+  const userDetails = useSelector((state: any) => state.user.data);
   const initialValuePhone = {
     phone: "",
   };

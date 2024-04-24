@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { callApiHook } from "@/utils/apifuncs";
 import { SubmitKYCApi } from "@/services/onBoarding";
 import { setStep } from "@/store/slices/onboarding.slice";
+import { IdentityCheckState } from './types';
 
 const IdentityCheck = () => {
   const dispatch = useDispatch();
@@ -45,7 +46,7 @@ const IdentityCheck = () => {
     },
   ];
 
-  const initialValues = {
+  const initialValues: IdentityCheckState = {
     country: "",
     documentFormat: "",
     document: {
@@ -55,12 +56,12 @@ const IdentityCheck = () => {
   };
 
   const {
+    values,
+    setValues,
     errors,
     handleChange,
     handleSubmit,
     validateField,
-    values,
-    setValues,
   } = useFormValidation(initialValues, IdentityCheckSchema);
 
   console.log(values);
@@ -74,7 +75,7 @@ const IdentityCheck = () => {
           back_image: values.document?.back,
         })
       ),
-      successCallBack: (response) => {
+      successCallBack: () => {
         dispatch(
           setStep({
             previous_step: STEPS.IDENTITYCHECK,
@@ -117,7 +118,9 @@ const IdentityCheck = () => {
             onChange={handleChange}
             value={values.country}
           />
-          {errors?.country && <div className="error_text">{errors?.country}</div>}
+          {errors?.country && (
+            <div className="error_text">{errors?.country}</div>
+          )}
         </div>
 
         {values.country && (
