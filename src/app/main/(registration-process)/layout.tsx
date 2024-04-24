@@ -68,6 +68,7 @@ const layout = ({ children }) => {
                     className={
                       pathname == activePath ? "active font-bold" : "font-bold"
                     }
+                    key={activePath}
                   >
                     {name}
                   </Link>

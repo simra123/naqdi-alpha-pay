@@ -9,7 +9,7 @@ const FormRadioTable = ({ items }) => {
             className={`border p-1 text-sm  ${
               index == 0 ? "!text-right" : "flex items-center justify-center"
             }`}
-            key={index}
+            key={item}
           >
             {item}
           </div>

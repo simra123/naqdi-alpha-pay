@@ -33,6 +33,7 @@ const Sidebar = () => {
             className={`flex gap-2 navLink items-center ${
               pathname == path && "active"
             }`}
+            key={name}
           >
             <div>{icon}</div>
             <Link href={path}>{name}</Link>

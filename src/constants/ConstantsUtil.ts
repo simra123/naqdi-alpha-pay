@@ -12,7 +12,7 @@ export const ConstantsUtil = {
   Metadata: {
     name: "ALPHAS",
     description: "ALPHASPAY",
-    url: "https://web3modal.com",
+    url: "http:localhost:3000",
     icons: ["https://avatars.githubusercontent.com/u/37784886"],
   },
   ProjectId: projectId,

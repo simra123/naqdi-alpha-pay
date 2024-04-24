@@ -9,15 +9,13 @@ import { getUrlBreadCrumb } from "@/utils/getUrlBreadCrumb";
 import { IconButton } from "@mui/material";
 import { HomeWork, Logout, Person } from "@mui/icons-material";
 import SelectBox from "@/components/common/SelectBox";
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers";
-import { ConstantsUtil } from "@/constants/ConstantsUtil";
-import { EthersConstants } from "@/constants/EthersConstants";
-import { ThemeStore } from "@/constants/StoreUtil";
+
 
 const DashboardLayout = ({ children }) => {
+  const router = useRouter();
+  const pathname = usePathname();
   const { date, time } = useCurrentTime();
   const { isAuthenticated, loaded } = useAuth();
-  const router = useRouter();
 
   if (!loaded) {
     return "...Loading";
@@ -54,7 +52,7 @@ const DashboardLayout = ({ children }) => {
         <div className="clearfix w-64"></div>
         <div className="w-full">
           <div className="flex justify-between items-center gap-2 pr-5">
-            <p className="font-bold">{getUrlBreadCrumb(usePathname())}</p>
+            <p className="font-bold">{getUrlBreadCrumb(pathname)}</p>
 
             <div className="flex gap-2">
               <SelectBox
@@ -73,7 +71,7 @@ const DashboardLayout = ({ children }) => {
                     padding: "8px 12px !important",
                   },
 
-                  "border-radius": 0,
+                  borderRadius: 0,
                 }}
                 onChange={() => {}}
               />
@@ -93,7 +91,7 @@ const DashboardLayout = ({ children }) => {
                     padding: "8px 12px !important",
                   },
 
-                  "border-radius": "0 !important",
+                  borderRadius: "0 !important",
                 }}
                 onChange={() => {}}
               />
