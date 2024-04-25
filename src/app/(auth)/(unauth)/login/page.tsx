@@ -103,12 +103,7 @@ const Login = () => {
         <ErrorApiText error={isLoginError} />
 
         <LoadingApi loading={isLoginLoading}>
-          <button
-            variant="contained"
-            color="primary"
-            className="btn gradient-btn"
-            type="submit"
-          >
+          <button className="btn gradient-btn" type="submit">
             Login
           </button>
         </LoadingApi>

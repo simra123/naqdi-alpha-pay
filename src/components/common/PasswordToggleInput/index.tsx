@@ -1,5 +1,5 @@
 // PasswordToggleInput.js
-import React, { useState } from "react";
+import React, { ChangeEventHandler, FC, useState } from "react";
 import {
   InputAdornment,
   IconButton,
@@ -8,7 +8,15 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const PasswordToggleInput = ({
+interface Props {
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  onBlur?: () => void;
+  name: string;
+  value: string;
+  placeholder?: string;
+}
+
+const PasswordToggleInput: FC<Props> = ({
   onChange,
   onBlur,
   name,

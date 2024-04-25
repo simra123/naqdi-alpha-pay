@@ -16,7 +16,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`Regulated`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value={true}
           name="previousInvestments.derivatives"
           selctedValue={values?.derivatives}
@@ -25,7 +24,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`State owned`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value="true"
           name="previousInvestments.bonds"
           selctedValue={values?.bonds}
@@ -34,7 +32,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`Listed`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value={true}
           name="previousInvestments.derivatives"
           selctedValue={values?.derivatives}
@@ -43,7 +40,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`None of the above`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value={true}
           name="previousInvestments.derivatives"
           selctedValue={values?.derivatives}
@@ -75,7 +71,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`Regulated`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value={true}
           name="previousInvestments.derivatives"
           selctedValue={values?.derivatives}
@@ -84,7 +79,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`State owned`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value="true"
           name="previousInvestments.bonds"
           selctedValue={values?.bonds}
@@ -93,7 +87,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`Listed`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value={true}
           name="previousInvestments.derivatives"
           selctedValue={values?.derivatives}
@@ -102,7 +95,6 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
         <RadioButton
           label={`None of the above`}
           type="checkbox"
-          className="form-checkbox h-5 w-5"
           value={true}
           name="previousInvestments.derivatives"
           selctedValue={values?.derivatives}
@@ -221,7 +213,9 @@ const Step2 = ({ values, errors, handleChange, validateField }) => {
           type="radio"
           value={"Government or sovereign entity"}
           name="riskTolerance"
-          selctedValue={values?.riskTolerance === "Government or sovereign entity"}
+          selctedValue={
+            values?.riskTolerance === "Government or sovereign entity"
+          }
           onChange={handleChange}
           label={`Government or sovereign entity`}
         />

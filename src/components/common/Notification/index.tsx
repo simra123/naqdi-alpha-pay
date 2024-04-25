@@ -6,7 +6,7 @@ import { Check } from "@mui/icons-material";
 import { setNotification } from "@/store/slices/modal.Slice";
 
 const Notification = () => {
-  const notification = useSelector((state) => state.modal.notification);
+  const notification = useSelector((state: any) => state.modal.notification);
   const dispatch = useDispatch();
 
   useEffect(() => {

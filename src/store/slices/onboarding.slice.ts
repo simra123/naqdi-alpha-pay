@@ -10,7 +10,6 @@ const initialState = {
     [STEPS.PROFILE]: true,
     [STEPS.PHONEVALIDATION]: true,
     [STEPS.MFASETUP]: true,
-    [STEPS.CERTIFICATION]: true,
     [STEPS.IDENTITYCHECK]: true,
     [STEPS.KYCAPPROVAL]: true,
     [STEPS.FEESCHEDULE]: true,

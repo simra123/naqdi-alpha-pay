@@ -77,18 +77,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Crypto Assets",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -100,18 +103,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Mutual Funds / ETFs",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -123,18 +129,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Individual Stocks",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -146,18 +155,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Bonds",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -169,18 +181,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Options",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -192,18 +207,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Securities Futures",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -215,18 +233,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Annuities",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -238,18 +259,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Margin",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -261,18 +285,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
             items={[
               "Other (Please describe below)",
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
                 selctedValue={values?.value}
               />,
               <RadioButton
+                label={"label"}
                 name={"accountAssetRisk"}
                 value={"Managing or trading crypto assets"}
                 onChange={handleChange}
@@ -294,18 +321,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Crypto Assets",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -317,18 +347,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Mutual Funds / ETFs",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -340,18 +373,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Individual Stocks",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -363,18 +399,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Bonds",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -386,18 +425,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Options",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -409,18 +451,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Securities Futures",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -432,18 +477,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Annuities",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -455,18 +503,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Margin",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
@@ -478,18 +529,21 @@ const Step4 = ({ errors, handleChange, validateField, values }) => {
           items={[
             "Other (Please describe below)",
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}
               selctedValue={values?.value}
             />,
             <RadioButton
+              label={"label"}
               name={"accountAssetRisk"}
               value={"Managing or trading crypto assets"}
               onChange={handleChange}

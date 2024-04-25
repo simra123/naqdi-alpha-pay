@@ -1,6 +1,18 @@
-import React from "react";
+import React, { FC, ReactNode } from "react";
 
-const FormSection = ({ heading, error, children, childWrapperClass }) => {
+interface Props {
+  heading?: string;
+  error?: string | boolean;
+  children: ReactNode;
+  childWrapperClass?: string;
+}
+
+const FormSection: FC<Props> = ({
+  heading,
+  error,
+  children,
+  childWrapperClass,
+}) => {
   return (
     <div className={`mb-8 `}>
       <h5 className="mb-[8px]">{heading}</h5>

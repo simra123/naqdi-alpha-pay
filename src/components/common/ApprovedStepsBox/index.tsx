@@ -9,7 +9,7 @@ import { STEPS } from "@/constants/onboarding";
 
 const ApprovedStepsBox = () => {
   const { current_step, disabled_steps } = useSelector(
-    (state) => state?.onboarding
+    (state: any) => state?.onboarding
   );
 
   const checkStepState = (stepName, nextStepName) => {

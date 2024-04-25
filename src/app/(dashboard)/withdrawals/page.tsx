@@ -43,7 +43,6 @@ const Withdrawals = () => {
         <DataGrid
           rows={rows}
           columns={withdrawalsList_table_columns}
-          pageSize={5}
           className="border-t-0 primary-color font-semibold"
           sx={{
             ".MuiDataGrid-overlayWrapper": {
@@ -57,8 +56,6 @@ const Withdrawals = () => {
             console.log(params);
             router.push(`/withdrawals/${params?.row?.id}`);
           }}
-          // checkboxSelection
-          disableSelectionOnClick
           sortingOrder={["asc", "desc"]}
           pagination
         />
