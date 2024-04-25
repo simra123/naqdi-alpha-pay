@@ -1,20 +1,23 @@
 "use client";
 import { setNotification } from "@/store/slices/modal.Slice";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 export const useApi = (initailLoading = false) => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(initailLoading);
   const [error, setError] = useState(null);
 
-  const makeApiCall = async (apiCall) => {
+  const makeApiCall = async (apiCall: Function) => {
     setIsLoading(true);
     setError(null);
 
+    console.log("MAKING AN API CALL IN HOOK");
+
     try {
       const response = await apiCall();
-      console.log(response);
       setIsLoading(false);
       setError(null);
       console.log("    <<<<    RESPONSE FROM THE API     >>>>    ", response);
@@ -22,15 +25,25 @@ export const useApi = (initailLoading = false) => {
         setNotification({ status: "success", message: response?.data?.message })
       );
       return response;
-    } catch (err) {
+    } catch (error) {
       setIsLoading(false);
-      console.log(err);
+      if (error.response.status == 401) {
+        window?.localStorage?.removeItem("token");
+        window?.localStorage?.removeItem("user");
+        router.replace("/login");
+        dispatch(
+          setNotification({
+            status: "error",
+            message: "Your Session has expired.",
+          })
+        );
+      }
       const errorMessage =
-        err?.response?.data?.message ||
+        error?.response?.data?.message ||
         "An error occurred. Please try again later";
       setError(errorMessage);
 
-      throw err;
+      throw error;
     }
   };
 

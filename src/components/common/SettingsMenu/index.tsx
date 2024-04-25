@@ -30,6 +30,7 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
     e.preventDefault();
     setOpen(false);
     window?.localStorage?.removeItem("token");
+    window?.localStorage?.removeItem("user");
     router.push(e.target.href);
   };
 

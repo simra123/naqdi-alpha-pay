@@ -26,7 +26,13 @@ const Notification = () => {
           : "top-4 fixed -right-56  transition-all"
       }
     >
-      <div className="content w-max mx-auto bg-green-400 text-green-700 font-bold px-5 py-3 rounded-md">
+      <div
+        className={`content w-max mx-auto ${
+          notification?.status == "success"
+            ? "bg-green-400 text-green-700"
+            : "bg-red-400 text-red-700"
+        } font-bold px-5 py-3 rounded-md`}
+      >
         <div className="flex gap-3 items-center justify-between">
           <div className="icon">
             <Check />

@@ -10,7 +10,6 @@ import { IconButton } from "@mui/material";
 import { HomeWork, Logout, Person } from "@mui/icons-material";
 import SelectBox from "@/components/common/SelectBox";
 
-
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
@@ -41,6 +40,7 @@ const DashboardLayout = ({ children }) => {
           <IconButton
             onClick={() => {
               window?.localStorage?.removeItem("token");
+              window?.localStorage?.removeItem("user");
               router.push("/login");
             }}
           >
