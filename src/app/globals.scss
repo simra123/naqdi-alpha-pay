@@ -33,6 +33,7 @@ input {
 
 ::-webkit-scrollbar {
   width: 8px; /* Width of the scrollbar */
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -45,10 +46,11 @@ input {
 }
 
 .layout-wrapper {
-  height: calc(100vh - 109px);
+  height: calc(100vh - 120px);
 }
 .page-min-height {
-  min-height: calc(100vh - 125px);
+  min-height: 100%;
+  overflow: auto;
 }
 
 .placeholder_gray {
@@ -297,9 +299,30 @@ input {
   margin: 8px;
   animation-duration: 3s;
 }
-button:disabled {
+
+.grid-template-details {
+  display: grid;
+  max-width: 800px;
+  width: 100%;
+  grid-template-columns: repeat(10, 320px);
+  gap: 10px;
+}
+
+.transparent {
+  outline: 0;
+  border: 1px solid lightgray;
+  padding: 8px 12px;
+  width: 100%;
+  background: none;
+}
+
+button:not(.MuiButton-text):disabled {
   background-color: rgb(195, 192, 192) !important;
 }
+button {
+  font-weight: 700 !important;
+}
+
 @keyframes l15 {
   100% {
     transform: rotate(1turn);
