@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import "./trader-registration.scss";
 import ProfileForm from "@/components/forms/onBoarding/ProfileForm";
 import { STEPS } from "@/constants/onboarding";
 import PhoneValidation from "@/components/forms/onBoarding/PhoneValidation";
@@ -14,6 +13,7 @@ import HelpBox from "@/components/ui/HelpBox";
 import ApprovedStepsBox from "@/components/common/ApprovedStepsBox";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
+import "./trader-registration.scss";
 
 const TraderRegistration = () => {
   const dipatch = useDispatch();

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const useLocalStorage = (key, value) => {
+const useLocalStorage = (key?: any, value?: any) => {
   const [data, setData] = useState({});
   const setLocalStorage = () => {
     window.localStorage?.setItem(key, JSON.stringify(value));

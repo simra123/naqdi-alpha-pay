@@ -13,7 +13,7 @@ import { setStep } from "@/store/slices/onboarding.slice";
 
 const MFASetup = () => {
   const dispatch = useDispatch();
-  
+
   const [isQrCodeLoading, isQrCodeError, callQrCodeApi] = useApi();
   const [isVerifyLoading, isVerifyError, callVerifyApi] = useApi();
 
@@ -44,10 +44,8 @@ const MFASetup = () => {
     if (otp) {
       setOtpError(null);
       await callApiHook({
-        apiCall: callVerifyApi(
-          MfaSetupApi({ secret: qrCode?.secret, token: otp })
-        ),
-        successCallBack: (response) => {
+        apiCall: callVerifyApi(MfaSetupApi({ token: otp })),
+        successCallBack: () => {
           setIsVerfied(true);
         },
       });

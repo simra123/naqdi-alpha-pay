@@ -1,6 +1,7 @@
 import React from "react";
 import { FormControl, Select, MenuItem, SvgIconTypeMap } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { ArrowDownward, ArrowDropDown } from "@mui/icons-material";
 
 interface Option {
   value: string;
@@ -42,9 +43,13 @@ const SelectBox: React.FC<SelectBoxProps> = ({
         className="primary-color"
         onChange={onChange}
         name={name}
-        IconComponent={() => (
-          <IconName sx={{ marginRight: "8px", marginLeft: "-8px" }} />
-        )}
+        IconComponent={() =>
+          IconName ? (
+            <IconName sx={{ marginRight: "8px", marginLeft: "-8px" }} />
+          ) : (
+            <ArrowDropDown  sx={{ marginRight: "8px", marginLeft: "-8px" }} />
+          )
+        }
         sx={sx}
         onBlur={onBlur}
         displayEmpty

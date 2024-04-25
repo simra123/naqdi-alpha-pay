@@ -151,7 +151,7 @@ const PhoneValidation = () => {
         </LoadingApi>
         {showCode && (
           <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-            <div className="register_form__trader__heading mt-8">
+            {/* <div className="register_form__trader__heading mt-8">
               <Typography variant="h5" color="primary" className="text-base">
                 Enter Code
               </Typography>
@@ -167,7 +167,7 @@ const PhoneValidation = () => {
                 />
                 {errors.code && <div className="error_text">{errors.code}</div>}
               </div>
-            </div>
+            </div> */}
 
             <div className="btn_wrapper text-right">
               <button className="header_step_btn active fl" type="submit">
