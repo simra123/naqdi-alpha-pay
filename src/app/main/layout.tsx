@@ -14,7 +14,7 @@ import { validateSteps } from "@/store/slices/onboarding.slice";
 
 const Authlayout = ({ children }) => {
   const dispatch = useDispatch();
-  const modal = useSelector((state:any) => state.modal.upgradeTrader);
+  const modal = useSelector((state: any) => state.modal.upgradeTrader);
   const router = useRouter();
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi();

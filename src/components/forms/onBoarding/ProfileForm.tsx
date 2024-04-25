@@ -16,13 +16,6 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
-interface USER {
-  first_name: string;
-  middle_name: string;
-  last_name: string;
-  email: string;
-}
-
 const ProfileForm = () => {
   const dispatch = useDispatch();
   const user: any = useLocalStorage("user");

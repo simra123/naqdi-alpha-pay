@@ -12,7 +12,9 @@ import { useDispatch } from "react-redux";
 import { callApiHook } from "@/utils/apifuncs";
 import { SubmitKYCApi } from "@/services/onBoarding";
 import { setStep } from "@/store/slices/onboarding.slice";
-import { IdentityCheckState } from './types';
+import { IdentityCheckState } from "./types";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import LoadingApi from "@/components/common/LoadindApi";
 
 const IdentityCheck = () => {
   const dispatch = useDispatch();
@@ -234,10 +236,13 @@ const IdentityCheck = () => {
         Please ensure your provided details are correct. Once your details are
         submitted for KYC approval they will be locked.
       </p>
+      <ErrorApiText error={isSubmitKYCError} />
       <div className="btn_wrapper text-right">
-        <button className="header_step_btn active fl" type="submit">
-          Save & Next
-        </button>
+        <LoadingApi loading={isSubmitKYCLoading}>
+          <button className="header_step_btn active fl" type="submit">
+            Save & Next
+          </button>
+        </LoadingApi>
       </div>
     </form>
   );
