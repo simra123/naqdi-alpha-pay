@@ -70,7 +70,6 @@ const UpdatePassword = ({ params }) => {
           <PasswordToggleInput
             value={values.confirmPassword}
             onChange={handleChange}
-            // onBlur={validateField}
             name="confirmPassword"
             placeholder={"Confirm Password*"}
             key={13}

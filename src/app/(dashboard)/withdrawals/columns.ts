@@ -24,7 +24,7 @@ export const converstion_table_columns = [
   {
     field: "amount_converted",
     headerName: "Amount Converted",
-    type: "number",
+
     flex: 1,
     editable: true,
   },
@@ -52,7 +52,7 @@ export const webhooks_table_columns = [
   {
     field: "status",
     headerName: "Status",
-    type: "number",
+
     flex: 1,
     editable: true,
   },

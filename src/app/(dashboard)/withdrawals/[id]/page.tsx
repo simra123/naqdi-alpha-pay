@@ -49,7 +49,7 @@ const WithdrawalDetails = () => {
             <DetailsWrapper title={"Withdrawal Fee"}>
               <TransparentInput value={`0.01 USD`} />
             </DetailsWrapper>
-            <DetailsWrapper title={"Payment"} algin>
+            <DetailsWrapper title={"Payment"}>
               <TransparentInput value={`1.0001 USD`} label={"Payment Amount"} />
               <TransparentInput
                 value={`0 USDT`}
@@ -63,7 +63,7 @@ const WithdrawalDetails = () => {
             <DetailsWrapper title={"Status"}>
               <TransparentInput value={`Pending`} />
             </DetailsWrapper>
-            <DetailsWrapper title={"Wallet Address"} algin>
+            <DetailsWrapper title={"Wallet Address"}>
               <TransparentInput
                 value={`0x0BE060762C1D69f04085646B8e285c3031741`}
                 label={"ETH Wallet Address "}

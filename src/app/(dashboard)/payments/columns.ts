@@ -11,7 +11,6 @@ export const paymentsList_table_columns = [
   { field: "status", headerName: "Status", flex: 1 },
 ];
 
-
 export const converstion_table_columns = [
   {
     field: "created_at",
@@ -28,14 +27,13 @@ export const converstion_table_columns = [
   {
     field: "amount_converted",
     headerName: "Amount Converted",
-    type: "number",
     flex: 1,
     editable: true,
   },
   {
     field: "amount_credited",
     headerName: "Amount Credited",
-    sortable: false,
+
     flex: 1,
   },
 ];
@@ -56,26 +54,22 @@ export const relatedTransactions_table_columns = [
   {
     field: "blockchain_transaction_hash",
     headerName: "Blockchain Transaction Hash",
-    type: "number",
     flex: 1,
     editable: true,
   },
   {
     field: "amount",
     headerName: "Amount",
-    sortable: false,
     flex: 1,
   },
   {
     field: "network",
     headerName: "Network",
-    sortable: false,
     flex: 1,
   },
   {
     field: "confirmed",
     headerName: "Confirmed",
-    sortable: false,
     flex: 1,
   },
 ];
@@ -96,26 +90,26 @@ export const relatedPayments_table_columns = [
   {
     field: "requested_amount",
     headerName: "Requested Amount",
-    type: "number",
+
     flex: 1,
     editable: true,
   },
   {
     field: "payment_amount",
     headerName: "Amount",
-    sortable: false,
+
     flex: 1,
   },
   {
     field: "payment_amount_received",
     headerName: "Payment Amount Received",
-    sortable: false,
+
     flex: 1,
   },
   {
     field: "status",
     headerName: "Status",
-    sortable: false,
+
     flex: 1,
   },
 ];
@@ -135,26 +129,26 @@ export const webhooks_table_columns = [
   {
     field: "status",
     headerName: "Status",
-    type: "number",
+
     flex: 1,
     editable: true,
   },
   {
     field: "successful",
     headerName: "Successful",
-    sortable: false,
+
     flex: 1,
   },
   {
     field: "retries",
     headerName: "Retries",
-    sortable: false,
+
     flex: 1,
   },
   {
     field: "actions",
     headerName: "Actions",
-    sortable: false,
+
     flex: 1,
   },
 ];

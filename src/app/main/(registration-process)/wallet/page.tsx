@@ -14,7 +14,7 @@ const Wallet = () => {
                 viewBox="0 0 150 150"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="ng-star-inserted"
+                className="ng-star-inserted"
               >
                 <circle
                   _ngcontent-lnb-c60=""
@@ -85,7 +85,7 @@ const Wallet = () => {
                 viewBox="0 0 150 150"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="ng-star-inserted"
+                className="ng-star-inserted"
               >
                 <circle
                   _ngcontent-lnb-c60=""
@@ -156,7 +156,7 @@ const Wallet = () => {
                 viewBox="0 0 150 150"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="ng-star-inserted"
+                className="ng-star-inserted"
               >
                 <circle
                   _ngcontent-lnb-c60=""
@@ -227,7 +227,7 @@ const Wallet = () => {
                 viewBox="0 0 150 150"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                class="ng-star-inserted"
+                className="ng-star-inserted"
               >
                 <circle
                   _ngcontent-lnb-c60=""
@@ -288,7 +288,6 @@ const Wallet = () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );

@@ -17,8 +17,8 @@ import "./trader-registration.scss";
 
 const TraderRegistration = () => {
   const dipatch = useDispatch();
-  const currentStep = useSelector((state) => state.onboarding.current_step);
-  const disabledSteps = useSelector((state) => state.onboarding.disabled_steps);
+  const currentStep = useSelector((state: any) => state.onboarding.current_step);
+  const disabledSteps = useSelector((state:any) => state.onboarding.disabled_steps);
 
   const handleStepChange = (stepName) => () => {
     dipatch(setStep({ current_step: stepName }));

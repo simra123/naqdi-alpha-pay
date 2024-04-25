@@ -25,7 +25,7 @@ interface USER {
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
-  const user: USER = useLocalStorage("user");
+  const user: any = useLocalStorage("user");
   const [isProfileLoading, isProfileError, callProfileApi] = useApi();
   const userDetails = useSelector((state: any) => state.user.data);
 

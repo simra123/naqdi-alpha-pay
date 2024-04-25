@@ -29,8 +29,6 @@ const Register = () => {
       <div className="register__form">
         <div className="register__form--buttonWrapper">
           <button
-            variant="text"
-            color="primary"
             className={activeForm === forms.INDIVIDUAL ? "active" : ""}
             onClick={toggleForm(forms.INDIVIDUAL)}
           >
@@ -38,8 +36,6 @@ const Register = () => {
             <span>Individual</span>
           </button>
           <button
-            variant="text"
-            color="primary"
             className={activeForm === forms.LegalEntity ? "active" : ""}
             onClick={toggleForm(forms.LegalEntity)}
           >

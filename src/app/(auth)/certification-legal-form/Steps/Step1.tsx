@@ -7,8 +7,8 @@ import FormSection from "@/components/common/FormSection";
 import RadioButton from "@/components/common/RadioButton";
 
 const Step1 = ({ values, handleChange, validateField, errors, countries }) => {
-  const addressProofRef = useRef()
-  const passportRef = useRef()
+  const addressProofRef = useRef();
+  const passportRef = useRef();
   return (
     <div>
       <FormSection heading={`1.1. Registered name of Legal Entity*`}>
@@ -136,7 +136,6 @@ const Step1 = ({ values, handleChange, validateField, errors, countries }) => {
               target: { name: "incorporateDate", value },
             })
           }
-          onBlur={validateField}
         />
       </FormSection>
       <FormSection heading={`1.5. Website URL*`}>
@@ -171,29 +170,26 @@ const Step1 = ({ values, handleChange, validateField, errors, countries }) => {
           type="checkbox"
           label={`Trading through Alphaspay`}
           value={true}
+          selctedValue={values?.value}
           name="previousInvestments.derivatives"
-          checked={values?.derivatives}
           onChange={handleChange}
-          onBlur={validateField}
         />
         <RadioButton
           type="checkbox"
           label={`Custody assets on Alphaspay`}
           value={true}
+          selctedValue={values?.value}
           name="previousInvestments.derivatives"
-          checked={values?.derivatives}
           onChange={handleChange}
-          onBlur={validateField}
         />
         <RadioButton
+          selctedValue={values?.value}
           type="checkbox"
           label={` Arranging transactions in virtual assets on behalf of others
           on the Alphaspay platform`}
           value={true}
           name="previousInvestments.derivatives"
-          checked={values?.derivatives}
           onChange={handleChange}
-          onBlur={validateField}
         />
       </FormSection>
 
@@ -201,24 +197,22 @@ const Step1 = ({ values, handleChange, validateField, errors, countries }) => {
         heading={`  1.8. Does your company conduct any business with any OFAC sanctioned
           countries? If yes, kindly disclose the country and nature of
           business.*`}
-          childWrapperClass={`flex flex-col gap-2`}
+        childWrapperClass={`flex flex-col gap-2`}
       >
         <RadioButton
           type="radio"
           name="advisor"
           value={true}
-          checked={values?.advisor === "true"}
           onChange={handleChange}
-          onBlur={validateField}
+          selctedValue={values?.selected}
           label={"Yes"}
         />
         <RadioButton
           type="radio"
           name="advisor"
           value={true}
-          checked={values?.advisor === "true"}
           onChange={handleChange}
-          onBlur={validateField}
+          selctedValue={values?.selected}
           label={"No"}
         />
       </FormSection>

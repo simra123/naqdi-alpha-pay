@@ -1,9 +1,11 @@
+import FileHiddenButton from "@/components/common/FileHiddenButton";
 import FormSection from "@/components/common/FormSection";
 import RadioButton from "@/components/common/RadioButton";
+import SelectBox from "@/components/common/SelectBox";
 import { TextField } from "@mui/material";
 import React from "react";
 
-const Step3 = () => {
+const Step3 = ({ errors, handleChange, validateField, values }) => {
   return (
     <>
       <FormSection
@@ -279,7 +281,7 @@ const Step3 = () => {
         <FileHiddenButton
           name={"additionalRelevantInfo"}
           onChange={handleChange}
-          ref={passport}
+          // ref={passport}
           value={values?.passport}
         />
       </FormSection>
@@ -291,7 +293,7 @@ const Step3 = () => {
         <FileHiddenButton
           name={"additionalRelevantInfo"}
           onChange={handleChange}
-          ref={passport}
+          // ref={passport}
           value={values?.passport}
         />
       </FormSection>
@@ -331,7 +333,7 @@ const Step3 = () => {
       <FormSection heading={"3.2. [Addendum] Bank's country of incorporation*"}>
         <SelectBox
           placeholder="Country*"
-          options={options}
+          options={[{ value: "hello", label: "label" }]}
           name={"country"}
           onBlur={validateField}
           onChange={handleChange}

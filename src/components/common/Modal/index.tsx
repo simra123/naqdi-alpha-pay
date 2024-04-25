@@ -1,8 +1,13 @@
-import { useState } from "react";
-
+import { FC } from "react";
 import "./modal.scss";
+import { ReactNode, useState } from "react";
 
-const Modal = ({ isOpen, setIsOpen, children }) => {
+interface Props {
+  isOpen: boolean;
+  children: ReactNode;
+}
+
+const Modal: FC<Props> = ({ isOpen, children }) => {
   return (
     <>
       <div

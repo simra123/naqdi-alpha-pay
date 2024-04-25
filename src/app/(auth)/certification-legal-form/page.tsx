@@ -126,7 +126,6 @@ const CertificationIndividualForm = () => {
 
         {step == 2 && (
           <Step2
-            countries={countries}
             errors={errors}
             handleChange={handleChange}
             validateField={validateField}
@@ -135,7 +134,6 @@ const CertificationIndividualForm = () => {
         )}
         {step == 3 && (
           <Step3
-            countries={countries}
             errors={errors}
             handleChange={handleChange}
             validateField={validateField}
@@ -145,7 +143,6 @@ const CertificationIndividualForm = () => {
 
         {step == 4 && (
           <Step4
-            countries={countries}
             errors={errors}
             handleChange={handleChange}
             validateField={validateField}

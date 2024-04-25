@@ -182,7 +182,6 @@ const IndividualForm = ({ activeForm }) => {
                   className="input-field"
                   fullWidth
                   onBlur={validateField}
-                  type="text"
                   value={values.firstName}
                   onChange={handleChange}
                   name="firstName"
@@ -197,7 +196,6 @@ const IndividualForm = ({ activeForm }) => {
                   className="input-field"
                   fullWidth
                   onBlur={validateField}
-                  type="text"
                   value={values.middleName}
                   onChange={handleChange}
                   name="middleName"
@@ -209,7 +207,6 @@ const IndividualForm = ({ activeForm }) => {
                   className="input-field"
                   fullWidth
                   onBlur={validateField}
-                  type="text"
                   value={values.lastName}
                   onChange={handleChange}
                   name="lastName"
@@ -238,7 +235,6 @@ const IndividualForm = ({ activeForm }) => {
                 className="input-field"
                 fullWidth
                 onBlur={validateField}
-                type="text"
                 value={values.userName}
                 onChange={handleChange}
                 name="userName"
@@ -265,7 +261,6 @@ const IndividualForm = ({ activeForm }) => {
                 <PasswordToggleInput
                   placeholder="Password*"
                   onBlur={validateField}
-                  type="text"
                   value={values.password}
                   onChange={handleChange}
                   name="password"

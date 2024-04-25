@@ -69,7 +69,7 @@ const PaymentDetails = ({ params }) => {
                 value={`0xEC56E02e6aDd6E2E7e6Ce054b00256F3aB6C…`}
               />
             </DetailsWrapper>
-            <DetailsWrapper title={"Requested"} algin>
+            <DetailsWrapper title={"Requested"}>
               <TransparentInput value={`1 USD`} label={"Requested Amount"} />
               <TransparentInput value={`_`} label={"Markup Amount"} />
             </DetailsWrapper>
@@ -79,7 +79,7 @@ const PaymentDetails = ({ params }) => {
             <DetailsWrapper title={"Payment Fee Amount"}>
               <TransparentInput value={`0.01 USD`} />
             </DetailsWrapper>
-            <DetailsWrapper title={"Payment"} algin>
+            <DetailsWrapper title={"Payment"}>
               <TransparentInput value={`1.0001 USD`} label={"Payment Amount"} />
               <TransparentInput
                 value={`0 USDT`}
@@ -95,11 +95,11 @@ const PaymentDetails = ({ params }) => {
             <DetailsWrapper title={"Net Amount Credited"}>
               <TransparentInput value={`0 USD`} />
             </DetailsWrapper>
-            <DetailsWrapper title={"Status"} algin>
+            <DetailsWrapper title={"Status"}>
               <TransparentInput value={`Unpaid`} label={"Paid Status"} />
               <TransparentInput value={`New`} label={"Payment Status"} />
             </DetailsWrapper>
-            <DetailsWrapper title={"Configuration"} algin>
+            <DetailsWrapper title={"Configuration"}>
               <TransparentInput value={`Alphaspay`} label={"Profile"} />
               <TransparentInput value={`service-alpha`} label={"User"} />
             </DetailsWrapper>
