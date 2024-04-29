@@ -5,37 +5,24 @@ import Link from "next/link";
 import {
   CancelOutlined,
   CheckCircleOutline,
-  PauseCircle,
   PauseCircleOutline,
-  Pending,
 } from "@mui/icons-material";
-import { useApi } from "@/hooks/useApi";
-import { useDispatch } from "react-redux";
-import { callApiHook } from "@/utils/apifuncs";
-import { userDetailsApi } from "@/services/user";
+import { useDispatch, useSelector } from "react-redux";
 import { STEPS } from "@/constants/onboarding";
 import { setStep } from "@/store/slices/onboarding.slice";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
+import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 
 const KYCApproval = () => {
   const dispatch = useDispatch();
-  const [user, setUser] = useState(null);
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi();
+  const { isUserDetailsLoading, isUserDetailsError, getUserDetails } =
+    useGetUserDetaiils();
+  const user: any = useSelector((state: any) => state?.user?.data);
 
   useEffect(() => {
     getUserDetails();
   }, []);
-
-  const getUserDetails = async () => {
-    await callApiHook({
-      apiCall: callUserDetailsApi(userDetailsApi()),
-      successCallBack: (response) => {
-        setUser(response);
-      },
-    });
-  };
 
   const onSubmit = () => {
     dispatch(
@@ -91,11 +78,15 @@ const KYCApproval = () => {
               remarks and try again.
             </p>
 
-            <h2 className="medium_heading_light mt-6 !font-semibold">
-              Remarks
-            </h2>
+            {user?.userDetails.reason && (
+              <>
+                <h2 className="medium_heading_light mt-6 !font-semibold">
+                  Remarks
+                </h2>
 
-            <p className="font-semibold mt-2">Your reason for being rejected</p>
+                <p className="font-semibold mt-2">{user?.userDetails.reason}</p>
+              </>
+            )}
           </div>
         )}
 

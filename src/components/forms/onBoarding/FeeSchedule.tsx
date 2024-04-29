@@ -25,24 +25,24 @@ const FeeSchedule = () => {
   const getUserDetails = async () => {
     await callApiHook({
       apiCall: callUserDetailsApi(userDetailsApi()),
-      successCallBack: (response) => {
+      successCallBack: (response: any) => {
         setUser(response);
       },
     });
   };
 
-  const handleScheduleSelect = (id) => () => {
-    setSelectedSchedule(id);
-  };
+  // const handleScheduleSelect = (id) => () => {
+  //   setSelectedSchedule(id);
+  // };
 
-  const handleSubmit = () => {
-    if (!selectedSchedule) {
-      return setError("Please Select a Schedule");
-    }
+  // const handleSubmit = () => {
+  //   if (!selectedSchedule) {
+  //     return setError("Please Select a Schedule");
+  //   }
 
-    setError(null);
-    // submit logic
-  };
+  //   setError(null);
+  //   // submit logic
+  // };
 
   return (
     <>
