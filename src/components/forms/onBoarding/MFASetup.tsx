@@ -26,7 +26,9 @@ const MFASetup = () => {
   const [isVerified, setIsVerfied] = useState(null);
 
   useEffect(() => {
-    setQrCode(user?.userDetails?.mfa_secret);
+    if (!qrCode) {
+      setQrCode(user?.userDetails?.mfa_secret);
+    }
   }, [user]);
 
   const qrCodeGenerator = async () => {

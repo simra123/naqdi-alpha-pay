@@ -1,3 +1,5 @@
+const errorsArray = [400, 401, 404, 500];
+
 export const callApiHook = async ({
   apiCall,
   statusCode = 200,

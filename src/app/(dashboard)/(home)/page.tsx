@@ -5,43 +5,34 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DataGrid } from "@mui/x-data-grid";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
-import {
-  createWeb3Modal,
-  defaultConfig,
-  useWeb3ModalAccount,
-  useWeb3ModalProvider,
-  useWalletInfo,
-} from "@web3modal/ethers/react";
+import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
 import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
 import { ConstantsUtil } from "@/constants/ConstantsUtil";
 import { EthersConstants } from "@/constants/EthersConstants";
-import { proxy } from "valtio/vanilla";
+import { Button } from "@mui/material";
+import { Add, Sync } from "@mui/icons-material";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import {
+  createDepoistAddressApi,
+  getAllWalletBalancesApi,
+} from "@/services/wallet";
+import LoadingApi from "@/components/common/LoadindApi";
+import DepositModal from "@/components/common/DepoistModal";
+import ErrorApiText from "@/components/common/ErrorApiText";
+
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
-  { field: "available_balance", headerName: "Available Balance", flex: 1 },
-  { field: "pending_balance", headerName: "Pending Balance", flex: 1 },
+  { field: "network", headerName: "Network", flex: 1 },
+  { field: "totalAmount", headerName: "Available Balance", flex: 1 },
 ];
 
-const cryptos = [
-  {
-    id: 1,
-    currency: "Bitcoin",
-    available_balance: "0.00003 BTC",
-    pending_balance: "3 BTC",
-  },
-  {
-    id: 2,
-    currency: "Ethereum",
-    available_balance: "0.00003 BTC",
-    pending_balance: "3 ETH",
-  },
-  {
-    id: 3,
-    currency: "Solana",
-    available_balance: "0.00003 BTC",
-    pending_balance: "3 ETC",
-  },
+const fiatCols = [
+  { field: "currency", headerName: "Currency", flex: 1 },
+  { field: "pending_balance", headerName: "Pending Balance", flex: 1 },
+  { field: "available_balance", headerName: "Available Balance", flex: 1 },
 ];
+
 const fiat = [
   {
     id: 1,
@@ -58,6 +49,10 @@ const fiat = [
 ];
 
 const Home = () => {
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
+  const [balance, setBalance] = useState([]);
+  const [openDeposit, setOpenDeposit] = useState(null);
+
   const modal = createWeb3Modal({
     themeMode: "light",
 
@@ -74,7 +69,7 @@ const Home = () => {
     privacyPolicyUrl: "https://walletconnect.com/privacy",
   });
 
-  async function onSendTransaction() {
+  const onSendTransaction = async () => {
     const walletProvider = modal?.getWalletProvider();
     const walletConnected = modal?.getIsConnected();
     const walletChain = modal?.getChainId();
@@ -95,10 +90,38 @@ const Home = () => {
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
+
+  const handleDepoist = () => {
+    setOpenDeposit(true);
+  };
+
+  const getBalances = async () => {
+    await callApiHook({
+      apiCall: callBalanceApi(getAllWalletBalancesApi()),
+      successCallBack: (response: any) => {
+        const tableData = response?.result?.map((item: any) => ({
+          id: item?.wallet_id,
+          currency: capitalize(item?.wallet_blockchain),
+          network: capitalize(item?.wallet_network),
+          totalAmount: item?.totalAmount,
+        }));
+        setBalance(tableData);
+      },
+    });
+  };
+
+  const capitalize = (value) => {
+    return value.charAt(0).toUpperCase() + value.slice(1);
+  };
+
+  useEffect(() => {
+    getBalances();
+  }, []);
 
   return (
     <DashboardPageWrapper>
+      <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} />
       <div className="flex items-center justify-between mb-5 dark">
         <h2 className="text-xl font-semibold">Dashboard</h2>
         <div className="actions flex gap-3">
@@ -111,24 +134,47 @@ const Home = () => {
       </div>
       <div className="grid grid-cols-2 gap-10">
         <div className="walletsList">
-          <div className="walletHeading">
-            <h3 className="text-[18px] mb-4">Crypto Wallets</h3>
+          <div className="walletHeading flex justify-between items-center mb-[8px]">
+            <h3 className="text-[18px]">Crypto Wallets</h3>
+            <div className="flex gap-1">
+              <Button className="transparent !w-auto" onClick={getBalances}>
+                <Sync />
+              </Button>
+              <Button
+                className="transparent !w-auto"
+                endIcon={<Add />}
+                onClick={handleDepoist}
+              >
+                Depoist Crypto
+              </Button>
+            </div>
           </div>
-          <DataGrid
-            rows={cryptos}
-            columns={columns}
-            hideFooter
-            className="font-semibold primary-color"
-            autoHeight
-          />
+          <ErrorApiText error={isBalanceError} />
+          <LoadingApi loading={isBalanceLoading}>
+            <DataGrid
+              rows={balance}
+              columns={columns}
+              hideFooter
+              className="font-semibold primary-color"
+              autoHeight
+            />
+          </LoadingApi>
         </div>
         <div className="walletsList">
-          <div className="walletHeading">
-            <h3 className="text-[18px] mb-4">Fiat Wallets</h3>
+          <div className="walletHeading flex justify-between items-center mb-[8px]">
+            <h3 className="text-[18px]">Fiat Wallets</h3>
+            <div className="flex gap-1">
+            <Button className="transparent !w-auto">
+                <Sync />
+              </Button>
+            <Button className="transparent !w-auto" endIcon={<Add />}>
+              Depoist Fiat
+            </Button>
+            </div>
           </div>
           <DataGrid
             rows={fiat}
-            columns={columns}
+            columns={fiatCols}
             className="font-semibold primary-color"
             hideFooter
             autoHeight

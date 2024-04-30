@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://91.108.110.23:5000";
+const API_URL = "https://dev-client.alphaspay.com/";
 
 const api = axios.create({
   baseURL: API_URL,
