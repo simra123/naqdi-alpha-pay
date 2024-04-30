@@ -18,6 +18,7 @@ interface SelectBoxProps {
   IconName?: OverridableComponent<SvgIconTypeMap<{}, "svg">>;
   className?: string;
   sx?: object;
+  disabled?: boolean;
 }
 
 const SelectBox: React.FC<SelectBoxProps> = ({
@@ -30,6 +31,7 @@ const SelectBox: React.FC<SelectBoxProps> = ({
   IconName,
   className = "input-field",
   sx,
+  disabled,
 }) => {
   const getSelectedLabel = () => {
     const selectedOption = options.find((option) => option.value === value);
@@ -43,11 +45,12 @@ const SelectBox: React.FC<SelectBoxProps> = ({
         className="primary-color"
         onChange={onChange}
         name={name}
+        disabled={disabled}
         IconComponent={() =>
           IconName ? (
             <IconName sx={{ marginRight: "8px", marginLeft: "-8px" }} />
           ) : (
-            <ArrowDropDown  sx={{ marginRight: "8px", marginLeft: "-8px" }} />
+            <ArrowDropDown sx={{ marginRight: "8px", marginLeft: "-8px" }} />
           )
         }
         sx={sx}

@@ -12,12 +12,16 @@ import { STEPS } from "@/constants/onboarding";
 import { setStep } from "@/store/slices/onboarding.slice";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
+import { userDetailsApi } from "@/services/user";
+import { setUser } from "@/store/slices/userSlice";
+import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 
 const PhoneValidation = () => {
   const dispatch = useDispatch();
   const [isPhoneLoading, isPhoneError, callPhoneApi] = useApi();
   const [isCodeLoading, isCodeError, callCodeApi] = useApi();
   const [showCode, setShowCode] = useState(false);
+  const { getUserDetails } = useGetUserDetaiils();
   const userDetails = useSelector((state: any) => state.user.data);
   const initialValuePhone = {
     phone: "",
@@ -59,6 +63,7 @@ const PhoneValidation = () => {
       ),
       successCallBack: (response) => {
         setShowCode(true);
+        getUserDetails();
       },
     });
   };
@@ -131,6 +136,7 @@ const PhoneValidation = () => {
                 <button
                   className="btn-yellow w-1/5 font-semibold"
                   type="submit"
+                  disabled={showCode}
                 >
                   Send Sms
                 </button>

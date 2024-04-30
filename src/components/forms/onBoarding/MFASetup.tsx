@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import OtpInput from "react-otp-input";
 import { callApiHook } from "@/utils/apifuncs";
@@ -8,25 +8,35 @@ import { generateMFACodeApi, MfaSetupApi } from "@/services/onBoarding";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { STEPS } from "@/constants/onboarding";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
+import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 
 const MFASetup = () => {
   const dispatch = useDispatch();
-
+  const user = useSelector((state: any) => state?.user?.data);
   const [isQrCodeLoading, isQrCodeError, callQrCodeApi] = useApi();
   const [isVerifyLoading, isVerifyError, callVerifyApi] = useApi();
+
+  const { getUserDetails } = useGetUserDetaiils();
 
   const [otp, setOtp] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [otpError, setOtpError] = useState(null);
   const [isVerified, setIsVerfied] = useState(null);
 
+  useEffect(() => {
+    if (!qrCode) {
+      setQrCode(user?.userDetails?.mfa_secret);
+    }
+  }, [user]);
+
   const qrCodeGenerator = async () => {
     await callApiHook({
       apiCall: callQrCodeApi(generateMFACodeApi()),
       successCallBack: (response) => {
         setQrCode(response);
+        getUserDetails();
       },
     });
   };
@@ -47,6 +57,7 @@ const MFASetup = () => {
         apiCall: callVerifyApi(MfaSetupApi({ token: otp })),
         successCallBack: () => {
           setIsVerfied(true);
+          getUserDetails();
         },
       });
     }
@@ -114,9 +125,15 @@ const MFASetup = () => {
             className="btn-secondary font-bold rounded-none mt-6 min-w-32"
             onClick={qrCodeGenerator}
           >
-            Generate
+            {user?.userDetails?.mfa_secret ? "Generate New" : "Generate"}
           </button>
         </LoadingApi>
+        {user?.userDetails?.mfa_secret && (
+          <p className="text-yellow-600 font-semibold mt-2">
+            <strong>Warning!! :</strong> If you generate a new code. your last
+            code will not be useable anymore.
+          </p>
+        )}
       </div>
 
       <form onSubmit={handleSubmit}>

@@ -15,13 +15,23 @@ import { STEPS } from "@/constants/onboarding";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
+
+const initialValues = {
+  addressLine1: "",
+  addressLine2: "",
+  country: "",
+  state: "",
+  city: "",
+  postalCode: "",
+};
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
   const user: any = useLocalStorage("user");
-  const [isProfileLoading, isProfileError, callProfileApi] = useApi();
   const userDetails = useSelector((state: any) => state.user.data);
-
+  const { getUserDetails } = useGetUserDetaiils();
+  const [isProfileLoading, isProfileError, callProfileApi] = useApi();
   const options = useMemo(() => {
     const data = countryList()
       .getData()
@@ -33,15 +43,6 @@ const ProfileForm = () => {
       });
     return data;
   }, []);
-
-  const initialValues = {
-    addressLine1: "",
-    addressLine2: "",
-    country: "",
-    state: "",
-    city: "",
-    postalCode: "",
-  };
 
   const {
     errors,
@@ -79,7 +80,7 @@ const ProfileForm = () => {
           postal_code: values?.postalCode,
         })
       ),
-      successCallBack: (response) => {
+      successCallBack: (response: any) => {
         dispatch(
           setStep({
             previous_step: STEPS.PROFILE,
@@ -87,6 +88,7 @@ const ProfileForm = () => {
             next_step: STEPS?.MFASETUP,
           })
         );
+        getUserDetails();
       },
     });
   };
