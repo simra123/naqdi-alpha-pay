@@ -12,19 +12,7 @@ import { callApiHook } from "@/utils/apifuncs";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import SelectBox from "@/components/common/SelectBox";
-
-const rows = [
-  {
-    id: 1,
-    dateReceived: "2024-04-18",
-    transactionHash: "0x1234567890abcdef",
-    amount: "0.5 ETH",
-    sourceWalletAddress: "0xABCDEF1234567890",
-    paymentAddress: "0x0987654321ABCDEF",
-    network: "Ethereum",
-    confirmed: "Yes",
-  },
-];
+import moment from "moment";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -46,13 +34,16 @@ const Transactions = () => {
         getAllTransactionsApi(selectedStatus == "all" ? "" : selectedStatus)
       ),
       successCallBack: (response: any) => {
-        // const tableData = response?.result?.map((item: any) => ({
-        //   id: item?.wallet_id,
-        //   currency: capitalize(item?.wallet_blockchain),
-        //   network: capitalize(item?.wallet_network),
-        //   totalAmount: item?.totalAmount,
-        // }));
-        setTransactions(response);
+        const tableData = response?.map((item: any) => ({
+          id: item?.id,
+          dateReceived: moment(item?.createdAt).format("DD-MM-YYYY"),
+          transactionHash: item?.transaction_hash,
+          amount: `${item?.amount} ${item?.unit}`,
+          network: capitalize(item?.wallet?.network),
+          blockchain: capitalize(item?.wallet?.blockchain),
+          status: item?.status,
+        }));
+        setTransactions(tableData);
       },
     });
   };
@@ -70,7 +61,6 @@ const Transactions = () => {
 
   return (
     <>
-      {" "}
       <div className="data-grid-container">
         <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Transactions</h2>
@@ -104,7 +94,8 @@ const Transactions = () => {
         <ErrorApiText error={isTransactionsError} />
         <LoadingApi loading={isTransactionsLoading}>
           <DataGrid
-            rows={rows}
+            autoHeight
+            rows={transactions}
             columns={transactionsList_table_columns}
             className="border-t-0 primary-color font-semibold"
             sx={{

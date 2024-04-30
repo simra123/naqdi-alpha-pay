@@ -3,17 +3,16 @@
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
-import useCurrentTime from "@/hooks/useCurrentTime";
 import Sidebar from "@/components/common/Sidebar";
 import { getUrlBreadCrumb } from "@/utils/getUrlBreadCrumb";
 import { IconButton } from "@mui/material";
 import { HomeWork, Logout, Person } from "@mui/icons-material";
 import SelectBox from "@/components/common/SelectBox";
+import Clock from "@/components/ui/Clock";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { date, time } = useCurrentTime();
   const { isAuthenticated, loaded } = useAuth();
 
   if (!loaded) {
@@ -26,10 +25,7 @@ const DashboardLayout = ({ children }) => {
     <>
       <div className="grid grid-cols-3 py-1 px-6 items-center">
         <div className="time">
-          <p className="text-sm primary-color font-bold">
-            {date} {" / "}
-            {time}
-          </p>
+          <Clock />
         </div>
         <div className="center-heading">
           <p className="text-sm text-center primary-color font-bold">

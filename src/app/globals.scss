@@ -276,6 +276,10 @@ input {
   font-weight: 700;
 }
 
+.rotate-infinite {
+  animation: l15 1s infinite linear;
+}
+
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 50px;
@@ -325,7 +329,7 @@ button {
 
 @keyframes l15 {
   100% {
-    transform: rotate(1turn);
+    transform: rotate(-1turn);
   }
 }
 

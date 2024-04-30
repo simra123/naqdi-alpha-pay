@@ -138,7 +138,7 @@ const Home = () => {
             <h3 className="text-[18px]">Crypto Wallets</h3>
             <div className="flex gap-1">
               <Button className="transparent !w-auto" onClick={getBalances}>
-                <Sync />
+                <Sync className={isBalanceLoading && "rotate-infinite"} />
               </Button>
               <Button
                 className="transparent !w-auto"
@@ -164,12 +164,12 @@ const Home = () => {
           <div className="walletHeading flex justify-between items-center mb-[8px]">
             <h3 className="text-[18px]">Fiat Wallets</h3>
             <div className="flex gap-1">
-            <Button className="transparent !w-auto">
+              <Button className="transparent !w-auto">
                 <Sync />
               </Button>
-            <Button className="transparent !w-auto" endIcon={<Add />}>
-              Depoist Fiat
-            </Button>
+              <Button className="transparent !w-auto" endIcon={<Add />}>
+                Depoist Fiat
+              </Button>
             </div>
           </div>
           <DataGrid

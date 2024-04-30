@@ -3,12 +3,12 @@
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
-import "./globals.scss";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import theme from "@/config/theme";
 import store from "@/store";
 import Notification from "@/components/common/Notification";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import "./globals.scss";
 
 const inter = Inter({ subsets: ["latin"] });
 
