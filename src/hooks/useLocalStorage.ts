@@ -1,14 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const useLocalStorage = (key?: any, value?: any) => {
-  const getLocalStorage = () => {
-    return (
-      window.localStorage?.getItem(key) &&
-      JSON.parse(window.localStorage?.getItem(key))
-    );
-  };
+const useLocalStorage = (key: string) => {
+  const [storedValue, setStoredValue] = useState<any>(() => {
+    try {
+      const item =
+        typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
+      return item ? JSON.parse(item) : null;
+    } catch (error) {
+      console.error("Error accessing local storage:", error);
+      return null;
+    }
+  });
 
-  return getLocalStorage();
+  return storedValue;
 };
 
 export default useLocalStorage;
