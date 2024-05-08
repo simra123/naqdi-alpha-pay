@@ -13,7 +13,7 @@ const Clock = () => {
       const currentTime = new Date();
       const currentDate = formatDate(currentTime);
       const formattedTime = currentTime.toLocaleTimeString();
-      console.log(currentDate);
+
       if (inputRef.current) {
         inputRef.current.innerText = `${currentDate} / ${formattedTime}`;
       }

@@ -11,6 +11,7 @@ import { loginApi } from "@/services/auth";
 import { callApiHook } from "@/utils/apifuncs";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
+import { Role } from "@/constants/roles";
 
 const Login = () => {
   const router = useRouter();
@@ -32,12 +33,15 @@ const Login = () => {
         })
       ),
       successCallBack: (response) => {
-        window?.localStorage?.setItem("token", response?.data?.token);
-        window?.localStorage?.setItem(
-          "user",
-          JSON.stringify(response?.data?.user)
-        );
-        router.push("/main");
+        const { token, user } = response?.data;
+        window?.localStorage?.setItem("token", token);
+        window?.localStorage?.setItem("user", JSON.stringify(user));
+        if (user.role == Role.USER) {
+          router.push("/main");
+        }
+        if (user.role == Role.ADMIN) {
+          router.push("/");
+        }
       },
     });
   };

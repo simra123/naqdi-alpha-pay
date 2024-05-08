@@ -12,18 +12,65 @@ import Image from "next/image";
 import LoadingApi from "../LoadindApi";
 import ErrorApiText from "../ErrorApiText";
 
+enum STANDARD {
+  BITCOIN = "Omni-layer",
+  ETHEREUM = "ERC-20",
+  TRON = "TRC-20",
+}
+
 const blockchains = [
   { label: "Bitcoin", value: "bitcoin" },
   { label: "Ethereum", value: "ethereum" },
+  { label: "Tron", value: "tron" },
+  { label: "USDT", value: "USDT" },
+  { label: "USDC", value: "USDC" },
 ];
+
 const networks = {
   bitcoin: [
     { label: "Mainnet", value: "mainnet" },
     { label: "Testnet", value: "testnet" },
   ],
+
   ethereum: [
     { label: "Mainnet", value: "mainnet" },
     { label: "Sepolia", value: "sepolia" },
+  ],
+  tron: [
+    { label: "Mainnet", value: "mainnet" },
+    { label: "Nile", value: "nile" },
+  ],
+  USDT: [
+    {
+      label: "Bitcoin(Omni Layer)",
+      value: "mainnet(btc)",
+      standard: STANDARD.BITCOIN,
+    },
+    {
+      label: "Testnet(BTC)(Omni Layer)",
+      value: "testnet",
+      standard: STANDARD.BITCOIN,
+    },
+    {
+      label: "Ethereum(ERC-20)",
+      value: "mainnet(eth)",
+      standard: STANDARD.ETHEREUM,
+    },
+    {
+      label: "Sepolia(ETH)(ERC-20)",
+      value: "sepolia",
+      standard: STANDARD.ETHEREUM,
+    },
+    { label: "Tron(TRC-20)", value: `mainnet(tron)`, standard: STANDARD.TRON },
+    {
+      label: "Nile(Tron)(TRC-20)",
+      value: `nile(tron)`,
+      standard: STANDARD.TRON,
+    },
+  ],
+  USDC: [
+    { label: "Ethereum", value: "mainnet(eth)", standard: STANDARD.ETHEREUM },
+    { label: "Sepolia(ETH)", value: "sepolia", standard: STANDARD.ETHEREUM },
   ],
 };
 
@@ -35,15 +82,22 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   const [seletedOption, setSelectedOption] = useState({
     network: "",
     blockchain: "",
+    standard: "",
   });
 
   const createDepoistAddress = async () => {
+    const CoinData = {
+      blockchain: seletedOption?.blockchain,
+      network: getValidValue(seletedOption?.network),
+    };
+    const TokenData = {
+      blockchain: seletedOption?.blockchain,
+      network: getValidValue(seletedOption?.network),
+      standard: seletedOption?.standard,
+    };
     await callApiHook({
       apiCall: callDeposistApi(
-        createDepoistAddressApi({
-          blockchain: seletedOption?.blockchain,
-          network: seletedOption?.network,
-        })
+        createDepoistAddressApi(seletedOption?.standard ? TokenData : CoinData)
       ),
       successCallBack: (response: any) => {
         console.log("deposit address created ", response);
@@ -68,6 +122,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
     setSelectedOption({
       blockchain: "",
       network: "",
+      standard: "",
     });
     setDepositAddress(null);
     setDepoistError(null);
@@ -75,12 +130,36 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   const handleChange = (event) => {
     const { value, name } = event.target;
-    if (name == "blockchain") {
+
+    if (name === "blockchain") {
       setFilteredNets(networks[value]);
-      setSelectedOption((pre) => ({ ...pre, network: "" }));
+      setSelectedOption((prev) => ({
+        blockchain: value,
+        network: "",
+        standard: "", // Reset standard when blockchain changes
+      }));
       setDepositAddress(null);
+    } else if (name === "network") {
+      const standard = filteredNetworks(seletedOption.blockchain, value);
+      console.log("SSTADNADRD", standard);
+      setSelectedOption((prev) => ({
+        ...prev,
+        [name]: value,
+        standard: standard || "", // Set standard if available, otherwise reset
+      }));
     }
-    setSelectedOption((pre) => ({ ...pre, [name]: value }));
+  };
+
+  const getValidValue = (str) => {
+    let index = str.indexOf("(");
+    let result = index !== -1 ? str.substring(0, index) : str;
+    return result;
+  };
+
+  const filteredNetworks = (blockchain, network) => {
+    console.log({ network, blockchain });
+
+    return networks[blockchain].find((item) => item.value == network)?.standard;
   };
 
   return (

@@ -1,8 +1,5 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
-
-import { useRouter } from "next/navigation";
 import { DataGrid } from "@mui/x-data-grid";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
@@ -20,6 +17,9 @@ import {
 import LoadingApi from "@/components/common/LoadindApi";
 import DepositModal from "@/components/common/DepoistModal";
 import ErrorApiText from "@/components/common/ErrorApiText";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
@@ -49,6 +49,7 @@ const fiat = [
 ];
 
 const Home = () => {
+  const user = useLocalStorage("user");
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
   const [balance, setBalance] = useState([]);
   const [openDeposit, setOpenDeposit] = useState(null);
@@ -97,22 +98,27 @@ const Home = () => {
   };
 
   const getBalances = async () => {
-    await callApiHook({
-      apiCall: callBalanceApi(getAllWalletBalancesApi()),
-      successCallBack: (response: any) => {
-        const tableData = response?.result?.map((item: any) => ({
-          id: item?.wallet_id,
-          currency: capitalize(item?.wallet_blockchain),
-          network: capitalize(item?.wallet_network),
-          totalAmount: item?.totalAmount,
-        }));
-        setBalance(tableData);
-      },
-    });
+    if (user.role == Role.USER) {
+      await callApiHook({
+        apiCall: callBalanceApi(getAllWalletBalancesApi()),
+        successCallBack: (response: any) => {
+          console.log(response);
+          const tableData = response?.result?.map((item: any) => ({
+            id: item?.id,
+            network: capitalize(item?.network),
+            wallet_address: item?.wallet_address,
+            currency: capitalize(item?.blockchain),
+            totalAmount: item?.amount,
+          }));
+
+          setBalance(tableData);
+        },
+      });
+    }
   };
 
   const capitalize = (value) => {
-    return value.charAt(0).toUpperCase() + value.slice(1);
+    return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
   };
 
   useEffect(() => {
@@ -138,7 +144,7 @@ const Home = () => {
             <h3 className="text-[18px]">Crypto Wallets</h3>
             <div className="flex gap-1">
               <Button className="transparent !w-auto" onClick={getBalances}>
-                <Sync className={isBalanceLoading && "rotate-infinite"} />
+                <Sync />
               </Button>
               <Button
                 className="transparent !w-auto"
@@ -150,7 +156,18 @@ const Home = () => {
             </div>
           </div>
           <ErrorApiText error={isBalanceError} />
-          <LoadingApi loading={isBalanceLoading}>
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <LoadingApi loading={isBalanceLoading}>
+              <DataGrid
+                rows={balance}
+                columns={columns}
+                hideFooter
+                className="font-semibold primary-color"
+                autoHeight
+              />
+            </LoadingApi>
+          </RenderRoleBased>
+          <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
             <DataGrid
               rows={balance}
               columns={columns}
@@ -158,7 +175,7 @@ const Home = () => {
               className="font-semibold primary-color"
               autoHeight
             />
-          </LoadingApi>
+          </RenderRoleBased>
         </div>
         <div className="walletsList">
           <div className="walletHeading flex justify-between items-center mb-[8px]">

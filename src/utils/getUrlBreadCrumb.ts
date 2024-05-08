@@ -1,6 +1,8 @@
 export const getUrlBreadCrumb = (pathname) => {
   if (pathname === "/") {
     return "Home";
+  } else if (pathname == "/kyc") {
+    return "Know Your Customer";
   } else {
     const pathSegments = pathname
       .split("/")

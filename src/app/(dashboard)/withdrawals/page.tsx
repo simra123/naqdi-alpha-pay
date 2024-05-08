@@ -5,6 +5,8 @@ import { withdrawalsList_table_columns } from "./columns";
 import { Button } from "@mui/material";
 import { Sync } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { withAuth } from "@/middleware/RoleBaseAuth";
+import { Role } from "@/constants/roles";
 
 const rows = [
   {
@@ -64,4 +66,4 @@ const Withdrawals = () => {
   );
 };
 
-export default Withdrawals;
+export default withAuth(Withdrawals, [Role.ADMIN, Role.USER]);

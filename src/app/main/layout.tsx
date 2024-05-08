@@ -11,9 +11,12 @@ import { callApiHook } from "@/utils/apifuncs";
 import { userDetailsApi } from "@/services/user";
 import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
 
 const Authlayout = ({ children }) => {
   const dispatch = useDispatch();
+  const user = useLocalStorage("user");
   const modal = useSelector((state: any) => state.modal.upgradeTrader);
   const router = useRouter();
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
