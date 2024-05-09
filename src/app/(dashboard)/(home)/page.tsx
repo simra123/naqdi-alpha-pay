@@ -103,13 +103,29 @@ const Home = () => {
         apiCall: callBalanceApi(getAllWalletBalancesApi()),
         successCallBack: (response: any) => {
           console.log(response);
-          const tableData = response?.result?.map((item: any) => ({
-            id: item?.id,
-            network: capitalize(item?.network),
-            wallet_address: item?.wallet_address,
-            currency: capitalize(item?.blockchain),
-            totalAmount: item?.amount,
-          }));
+
+          const tableData = [];
+          response?.result?.forEach((item: any) => {
+            const data = {
+              id: item?.id,
+              network: capitalize(item?.network),
+              wallet_address: item?.wallet_address,
+              currency: capitalize(item?.blockchain),
+              totalAmount: item?.amount,
+            };
+            tableData.push(data);
+            for (let currency in item?.tokens) {
+              if (item?.tokens.hasOwnProperty(currency)) {
+                tableData.push({
+                  id: item?.id + currency,
+                  network: capitalize(item?.network),
+                  wallet_address: item?.wallet_address,
+                  currency: capitalize(currency),
+                  totalAmount: item?.tokens[currency],
+                });
+              }
+            }
+          });
 
           setBalance(tableData);
         },

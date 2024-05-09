@@ -48,9 +48,11 @@ const Transactions = () => {
               item?.unit != null
                 ? `${item?.amount} ${item?.unit}`
                 : item?.amount,
+            receiveAddress: item?.wallet?.wallet_address,
+            transactionType: capitalize(item?.transaction_type),
             network: capitalize(item?.wallet?.network),
             blockchain: capitalize(item?.wallet?.blockchain),
-            status: item?.status,
+            status: capitalize(item?.status),
           }));
           setTransactions(tableData);
         },
