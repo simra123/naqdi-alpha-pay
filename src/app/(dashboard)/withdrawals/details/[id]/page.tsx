@@ -1,16 +1,19 @@
-import React from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import { webhooks_table_columns } from "../../columns";
+import { DataGrid } from "@mui/x-data-grid";
+import React from "react";
+import {
+  converstion_table_columns,
+  webhooks_table_columns,
+} from "../../columns";
 
-const PayoutDetails = () => {
+const WithdrawalDetails = () => {
   return (
     <DashboardPageWrapper>
       <div className="data-grid-container">
         <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Payments</h2>
+          <h2 className="text-xl font-semibold">Withdrawal Details</h2>
         </div>
 
         <div className="detailspage mt-6">
@@ -38,26 +41,41 @@ const PayoutDetails = () => {
             `}
               />
             </DetailsWrapper>
+            <DetailsWrapper title={"Source Amount"}>
+              <TransparentInput value={`2 USDT`} />
+            </DetailsWrapper>
 
             <DetailsWrapper title={"Gross Amount"}>
               <TransparentInput value={`1 USD`} />
             </DetailsWrapper>
-            <DetailsWrapper title={"Fee"}>
+            <DetailsWrapper title={"Withdrawal Fee"}>
               <TransparentInput value={`0.01 USD`} />
+            </DetailsWrapper>
+            <DetailsWrapper title={"Payment"}>
+              <TransparentInput value={`1.0001 USD`} label={"Payment Amount"} />
+              <TransparentInput
+                value={`0 USDT`}
+                label={"Payment Amount Received"}
+              />
             </DetailsWrapper>
 
             <DetailsWrapper title={"Net Amount "}>
               <TransparentInput value={`0 USD`} />
             </DetailsWrapper>
-
-            <DetailsWrapper title={"To Bank Account "}>
-              <TransparentInput value={`News Bank`} />
-            </DetailsWrapper>
-
             <DetailsWrapper title={"Status"}>
               <TransparentInput value={`Pending`} />
             </DetailsWrapper>
+            <DetailsWrapper title={"Wallet Address"}>
+              <TransparentInput
+                value={`0x0BE060762C1D69f04085646B8e285c3031741`}
+                label={"ETH Wallet Address "}
+              />
+              <TransparentInput value={`Eth`} label={"Network"} />
+            </DetailsWrapper>
 
+            <DetailsWrapper title={"Transaction Hash"}>
+              <TransparentInput value={`_`} />
+            </DetailsWrapper>
             <DetailsWrapper title={"Profile"}>
               <TransparentInput value={`Alphaspay`} />
             </DetailsWrapper>
@@ -65,8 +83,25 @@ const PayoutDetails = () => {
             <DetailsWrapper title={"Notes"}>
               <TransparentInput value={`Hellow`} textarea />
             </DetailsWrapper>
+            <DetailsWrapper title={"Pass Through"}>
+              <TransparentInput value={`_`} textarea />
+            </DetailsWrapper>
 
             {/* TABLES BELOW */}
+
+            <div className="data-grid-container">
+              <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Conversions</h2>
+              </div>
+
+              <DataGrid
+                rows={[]}
+                columns={converstion_table_columns}
+                className="font-semibold primary-color border-t-0"
+                hideFooter
+                autoHeight
+              />
+            </div>
 
             <div className="data-grid-container">
               <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
@@ -88,4 +123,4 @@ const PayoutDetails = () => {
   );
 };
 
-export default PayoutDetails;
+export default WithdrawalDetails;

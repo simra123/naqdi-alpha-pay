@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
+import { Button } from "@mui/material";
 import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
 import RadioButton from "@/components/common/RadioButton";
 import CheckboxWithInput from "@/components/common/CheckBoxWithInput";
-import { Button } from "@mui/material";
 
 const ProfileDetails = ({ params }) => {
   const profileId = params?.id;
@@ -79,8 +79,12 @@ const ProfileDetails = ({ params }) => {
             </DetailsWrapper>
 
             <div className="flex gap-2 justify-center max-w-[75%] mt-6">
-              <Button variant="text" className="py-2 px-8" disabled>Edit</Button>
-              <Button variant="outlined" className="py-2 px-8">Delete</Button>
+              <Button variant="text" className="py-2 px-8" disabled>
+                Edit
+              </Button>
+              <Button variant="outlined" className="py-2 px-8">
+                Delete
+              </Button>
             </div>
           </div>
         </div>

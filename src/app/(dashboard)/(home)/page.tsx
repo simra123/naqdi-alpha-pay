@@ -20,6 +20,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { roundToPrecision } from "@/utils/math";
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
@@ -111,7 +112,7 @@ const Home = () => {
               network: capitalize(item?.network),
               wallet_address: item?.wallet_address,
               currency: capitalize(item?.blockchain),
-              totalAmount: item?.amount,
+              totalAmount: roundToPrecision(+item?.amount, 10),
             };
             tableData.push(data);
             for (let currency in item?.tokens) {
@@ -121,7 +122,7 @@ const Home = () => {
                   network: capitalize(item?.network),
                   wallet_address: item?.wallet_address,
                   currency: capitalize(currency),
-                  totalAmount: item?.tokens[currency],
+                  totalAmount: roundToPrecision(+item?.tokens[currency], 10),
                 });
               }
             }

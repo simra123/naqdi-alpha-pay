@@ -1,24 +1,26 @@
 "use client";
 
+import React from "react";
+import { Button } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+
 import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import { Button } from "@mui/material";
-import React from "react";
+
 import {
   converstion_table_columns,
   relatedPayments_table_columns,
   relatedTransactions_table_columns,
   webhooks_table_columns,
-} from "../columns";
-import { DataGrid } from "@mui/x-data-grid";
+} from "../../columns";
 
 const PaymentDetails = ({ params }) => {
   return (
     <DashboardPageWrapper>
       <div className="data-grid-container">
         <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Payments</h2>
+          <h2 className="text-xl font-semibold">Payment Details</h2>
           <div className="actions flex gap-5">
             <Button variant="text" color="primary" disabled>
               Cancel

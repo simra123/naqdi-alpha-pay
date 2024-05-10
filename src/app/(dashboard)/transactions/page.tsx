@@ -121,7 +121,7 @@ const Transactions = () => {
               }}
               onRowClick={(params) => {
                 console.log(params);
-                router.push(`/transactions/${params?.row?.id}`);
+                router.push(`/transactions/details/${params?.row?.id}`);
               }}
               sortingOrder={["asc", "desc"]}
               pagination
@@ -144,7 +144,7 @@ const Transactions = () => {
             }}
             onRowClick={(params) => {
               console.log(params);
-              router.push(`/transactions/${params?.row?.id}`);
+              router.push(`/transactions/details/${params?.row?.id}`);
             }}
             sortingOrder={["asc", "desc"]}
             pagination

@@ -1,17 +1,15 @@
+import React from "react";
 import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import React from "react";
-import { converstion_table_columns, webhooks_table_columns } from "../columns";
 
 const WithdrawalDetails = () => {
   return (
     <DashboardPageWrapper>
       <div className="data-grid-container">
         <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Payments</h2>
+          <h2 className="text-xl font-semibold">New Withdrawal</h2>
         </div>
 
         <div className="detailspage mt-6">
@@ -84,36 +82,6 @@ const WithdrawalDetails = () => {
             <DetailsWrapper title={"Pass Through"}>
               <TransparentInput value={`_`} textarea />
             </DetailsWrapper>
-
-            {/* TABLES BELOW */}
-
-            <div className="data-grid-container">
-              <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Conversions</h2>
-              </div>
-
-              <DataGrid
-                rows={[]}
-                columns={converstion_table_columns}
-                className="font-semibold primary-color border-t-0"
-                hideFooter
-                autoHeight
-              />
-            </div>
-
-            <div className="data-grid-container">
-              <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                <h2 className="text-xl font-semibold">Webhooks</h2>
-              </div>
-
-              <DataGrid
-                rows={[]}
-                columns={webhooks_table_columns}
-                className="font-semibold primary-color  border-t-0"
-                hideFooter
-                autoHeight
-              />
-            </div>
           </div>
         </div>
       </div>

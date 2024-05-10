@@ -5,6 +5,7 @@ import { payoutsList_table_columns } from "./columns";
 import { Button } from "@mui/material";
 import { Sync } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const rows = [
   {
@@ -31,7 +32,7 @@ const Payouts = () => {
             <Button variant="outlined" color="primary">
               Export CSV
             </Button>
-            <Button variant="text" color="primary" disabled>
+            <Button variant="text" color="primary" LinkComponent={Link} href="/payouts/create">
               New Payout
             </Button>
           </div>
@@ -51,7 +52,7 @@ const Payouts = () => {
           }}
           onRowClick={(params) => {
             console.log(params);
-            router.push(`/payouts/edit/${params?.row?.id}`);
+            router.push(`/payouts/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}
           pagination

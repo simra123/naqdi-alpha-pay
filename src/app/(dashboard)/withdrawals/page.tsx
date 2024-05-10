@@ -7,6 +7,7 @@ import { Sync } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
+import Link from "next/link";
 
 const rows = [
   {
@@ -36,7 +37,12 @@ const Withdrawals = () => {
             <Button variant="outlined" color="primary">
               Export CSV
             </Button>
-            <Button variant="text" color="primary" disabled>
+            <Button
+              variant="text"
+              color="primary"
+              LinkComponent={Link}
+              href="/withdrawals/create"
+            >
               New Withdrawal
             </Button>
           </div>
@@ -56,7 +62,7 @@ const Withdrawals = () => {
           }}
           onRowClick={(params) => {
             console.log(params);
-            router.push(`/withdrawals/${params?.row?.id}`);
+            router.push(`/withdrawals/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}
           pagination

@@ -48,7 +48,7 @@ const Users = () => {
           }}
           onRowClick={(params) => {
             console.log(params);
-            router.push(`/settings/users/${params?.row?.id}`);
+            router.push(`/settings/users/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}
           pagination
