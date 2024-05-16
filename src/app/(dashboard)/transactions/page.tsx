@@ -34,7 +34,7 @@ const Transactions = () => {
     useApi(true);
 
   const getTransactions = async () => {
-    if (user.role == Role.USER) {
+    if (user?.role == Role.USER) {
       await callApiHook({
         apiCall: callTransactionsApi(
           getAllTransactionsApi(selectedStatus == "all" ? "" : selectedStatus)
@@ -120,7 +120,7 @@ const Transactions = () => {
                 },
               }}
               onRowClick={(params) => {
-                console.log(params);
+                
                 router.push(`/transactions/details/${params?.row?.id}`);
               }}
               sortingOrder={["asc", "desc"]}
@@ -143,7 +143,7 @@ const Transactions = () => {
               },
             }}
             onRowClick={(params) => {
-              console.log(params);
+              
               router.push(`/transactions/details/${params?.row?.id}`);
             }}
             sortingOrder={["asc", "desc"]}

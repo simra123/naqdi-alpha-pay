@@ -19,7 +19,10 @@ const DashboardLayout = ({ children }) => {
     return "...Loading";
   }
 
-  if (!isAuthenticated) return router.push("/login");
+  if (!isAuthenticated) {
+    console.log("Unautheticated");
+    return router.push("/login");
+  }
 
   return (
     <>

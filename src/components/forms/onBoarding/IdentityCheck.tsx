@@ -70,7 +70,7 @@ const IdentityCheck = () => {
     validateField,
   } = useFormValidation(initialValues, IdentityCheckSchema);
 
-  console.log(values);
+
 
   const setUserData = async () => {
     setValues({
@@ -112,7 +112,6 @@ const IdentityCheck = () => {
   };
   const onSubmitError = () => {
     window.scrollTo(0, 500);
-    console.log("Form Not submitted successfully!");
   };
 
   const handleFormatChange = (format) => () => {

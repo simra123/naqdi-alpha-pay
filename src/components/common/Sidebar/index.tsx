@@ -27,6 +27,12 @@ const nav_items = [
     roles: [Role.ADMIN, Role.USER],
   },
   {
+    name: "Users",
+    icon: <Assignment />,
+    path: "/users",
+    roles: [Role.ADMIN],
+  },
+  {
     name: "KYC Requests",
     icon: <Assignment />,
     path: "/kyc",

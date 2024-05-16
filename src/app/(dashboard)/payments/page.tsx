@@ -60,7 +60,6 @@ const Payments = () => {
             },
           }}
           onRowClick={(params) => {
-            console.log(params);
             router.push(`/payments/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}

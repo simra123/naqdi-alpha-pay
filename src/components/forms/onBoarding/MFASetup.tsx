@@ -43,7 +43,6 @@ const MFASetup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(otp);
 
     if (!otp) {
       return setOtpError("Please Enter Otp");

@@ -13,11 +13,6 @@ const ApprovedStepsBox = () => {
   );
 
   const checkStepState = (stepName, nextStepName) => {
-    console.log(
-      !disabled_steps[stepName],
-      disabled_steps[nextStepName],
-      "++++++++++++"
-    );
 
     if (!disabled_steps[stepName] && disabled_steps[nextStepName]) {
       return "current_step";

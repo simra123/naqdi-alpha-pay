@@ -54,7 +54,6 @@ const ProfileForm = () => {
   } = useFormValidation(initialValues, ProfileSchema);
 
   useEffect(() => {
-    console.log(userDetails, " --------------------");
     const data = userDetails?.userDetails;
     if (data) {
       setValues({

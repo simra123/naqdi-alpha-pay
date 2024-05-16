@@ -12,6 +12,12 @@ import { ProfileSchema } from "@/models/ProfilePage";
 import useFormValidation from "@/hooks/useFormValidation";
 import { useRouter } from "next/navigation";
 import RequestEditModal from "@/components/common/RequestEditModal";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { ChangePassowordApi } from "@/services/auth";
+import { Button } from "@mui/material";
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
 
 const initialValues = {
   oldPassword: "",
@@ -21,6 +27,11 @@ const initialValues = {
 };
 
 const Profile = () => {
+  const [
+    isChangePasswordLoading,
+    isChangePasswordError,
+    callChangePasswordApi,
+  ] = useApi();
   const {
     errors,
     handleChange,
@@ -37,14 +48,24 @@ const Profile = () => {
     setEditOpen(!editOpen);
   };
 
-  const onSubmit = () => {
-    // Your submission logic here
-    router.push("/main");
+  const onSubmit = async () => {
+    await callApiHook({
+      apiCall: callChangePasswordApi(
+        ChangePassowordApi({
+          currentPassword: values?.oldPassword,
+          newPassword: values?.newPassword,
+          confirmPassword: values?.confirmNewPassword,
+          token: values?.otp,
+        })
+      ),
+      successCallBack: () => {
+        console.log("Password changed successfully");
+      },
+    });
   };
 
   const onSubmitError = () => {
     window.scrollTo(0, 800);
-    console.log("Form Not submitted successfully!");
   };
 
   return (
@@ -129,8 +150,8 @@ const Profile = () => {
             <p className="mt-4">
               Your verified Multi-Factor Authentication (MFA) devices are listed
               here. A valid MFA authorisation code is required for certain
-              restricted actions on Alphaspay. You can use any one of the devices
-              listed below.
+              restricted actions on Alphaspay. You can use any one of the
+              devices listed below.
             </p>
 
             <div className="devices_wrapper flex gap-2 justify-between">
@@ -254,8 +275,12 @@ const Profile = () => {
                 If you have lost your device, please contact support.
               </p>
             </div>
-
-            <button className="btn gradient-btn">confirm</button>
+            <ErrorApiText error={isChangePasswordError} />
+            <LoadingApi loading={isChangePasswordLoading}>
+              <Button className="btn gradient-btn" type="submit">
+                confirm
+              </Button>
+            </LoadingApi>
           </form>
         </div>
 

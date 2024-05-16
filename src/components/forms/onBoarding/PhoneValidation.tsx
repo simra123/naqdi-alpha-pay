@@ -44,7 +44,6 @@ const PhoneValidation = () => {
     useFormValidation(initialValueCode, codeSchema);
 
   useEffect(() => {
-    console.log(userDetails, " --------------------");
     const data = userDetails?.userDetails;
     if (data && data?.phone_number) {
       setPhoneValues({
@@ -67,11 +66,8 @@ const PhoneValidation = () => {
       },
     });
   };
-
-  console.log(values?.phone);
   const onSubmitPhoneError = () => {
     window.scrollTo(0, 0);
-    console.log("Form Not submitted successfully!");
   };
   const onSubmit = () => {
     dispatch(

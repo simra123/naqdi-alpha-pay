@@ -48,7 +48,7 @@ const Login = () => {
 
   const onSubmitError = () => {
     window.scrollTo(0, 500);
-    console.log("Form Not submitted successfully!");
+   
   };
 
   return (

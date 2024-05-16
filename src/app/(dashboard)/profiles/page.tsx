@@ -47,7 +47,7 @@ const Profiles = () => {
             },
           }}
           onRowClick={(params) => {
-            console.log(params);
+            
             router.push(`/profiles/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}

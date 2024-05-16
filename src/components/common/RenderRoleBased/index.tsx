@@ -7,7 +7,7 @@ type Props = {
 };
 
 const RenderRoleBased = ({ user, allowedRoles, children }: Props) => {
-  return allowedRoles.includes(user.role) && children;
+  return allowedRoles.includes(user?.role) && children;
 };
 
 export default RenderRoleBased;

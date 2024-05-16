@@ -61,7 +61,7 @@ const Withdrawals = () => {
             },
           }}
           onRowClick={(params) => {
-            console.log(params);
+            
             router.push(`/withdrawals/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}

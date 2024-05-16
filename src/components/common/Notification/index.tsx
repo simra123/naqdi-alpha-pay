@@ -10,7 +10,6 @@ const Notification = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("USE EFFECT RIGGERED");
     if (notification?.message) {
       setTimeout(() => {
         dispatch(setNotification({ status: null, message: null }));

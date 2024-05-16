@@ -70,7 +70,7 @@ const CertificationIndividualForm = () => {
 
   const { errors, handleChange, handleSubmit, validateField, values } =
     useFormValidation(initialValues, currentSchema);
-  console.log({ values, errors });
+ 
 
   const onSubmit = () => {
     if (step != 3) {
@@ -80,7 +80,6 @@ const CertificationIndividualForm = () => {
   };
   const onSubmitError = () => {
     window.scrollTo(0, 100);
-    console.log("Form Not submitted successfully!");
   };
 
   const handleNext = () => {

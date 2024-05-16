@@ -3,10 +3,24 @@
 import React from "react";
 import { Typography } from "@mui/material";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { resendEmailApi } from "@/services/auth";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import LoadingApi from "@/components/common/LoadindApi";
 
 const page = () => {
-  const router = useRouter();
-  const email = useSearchParams().get("email");
+  const email = decodeURIComponent(useSearchParams().get("email") || "");
+  const [isResendLoading, isResendError, callResendApi] = useApi();
+
+  const handleResendEmail = async () => {
+    await callApiHook({
+      apiCall: callResendApi(resendEmailApi({ email: email })),
+      successCallBack: () => {
+        console.log("Email Send");
+      },
+    });
+  };
 
   return (
     <div className="mx-auto max-w-screen-md">
@@ -16,11 +30,11 @@ const page = () => {
 
       <div className="flex flex-col gap-5 mt-12 max-w-xl">
         <p className="color-primary">
-          A verification email was sent to{" "}
+          A verification email was sent to
           <span className="font-bold"> {email}</span>
         </p>
         <p className="color-primary">
-          Please click on the link to{" "}
+          Please click on the link to
           <span className="font-bold"> verify you Alphaspay account.</span>
         </p>
         <p className="color-primary">
@@ -33,12 +47,15 @@ const page = () => {
         </p>
       </div>
       <div className="text-center mt-14 pb-10">
-        <button
-          className="btn secondary-btn max-w-fit px-6 py-1"
-          onClick={() => router.push("/main")}
-        >
-          resend verification email
-        </button>
+        <ErrorApiText error={isResendError} />
+        <LoadingApi loading={isResendLoading}>
+          <button
+            className="btn secondary-btn max-w-fit px-6 py-1"
+            onClick={handleResendEmail}
+          >
+            resend verification email
+          </button>
+        </LoadingApi>
       </div>
     </div>
   );

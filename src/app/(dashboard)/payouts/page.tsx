@@ -51,7 +51,7 @@ const Payouts = () => {
             },
           }}
           onRowClick={(params) => {
-            console.log(params);
+            
             router.push(`/payouts/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}

@@ -116,7 +116,6 @@ const UsersPage = () => {
             },
           }}
           onRowClick={(params) => {
-            console.log(params);
             router.push(`/kyc/${params?.row?.userId}`);
           }}
           sortingOrder={["asc", "desc"]}

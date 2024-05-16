@@ -88,7 +88,6 @@ const Home = () => {
         // maxFeePerGas: ethers.parseUnits("200", "gwei"),
         // maxPriorityFeePerGas: ethers.parseUnits("200", "gwei"),
       });
-      console.log(tx);
     } catch (error) {
       console.log(error.message);
     }
@@ -103,7 +102,7 @@ const Home = () => {
       await callApiHook({
         apiCall: callBalanceApi(getAllWalletBalancesApi()),
         successCallBack: (response: any) => {
-          console.log(response);
+       
 
           const tableData = [];
           response?.result?.forEach((item: any) => {

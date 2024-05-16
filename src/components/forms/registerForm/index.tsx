@@ -89,7 +89,11 @@ const IndividualForm = ({ activeForm }) => {
     await callApiHook({
       apiCall: callRegisterApi(registerApi(registerData)),
       successCallBack: () =>
-        router.push(`/email-verification-required?email=${values?.email}`),
+        router.push(
+          `/email-verification-required?email=${encodeURIComponent(
+            values?.email
+          )}`
+        ),
       statusCode: 201,
     });
   };

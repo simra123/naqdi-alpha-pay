@@ -16,7 +16,7 @@ const UpdatePassword = ({ params }) => {
   const router = useRouter();
   const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi();
   const email = decodeURIComponent(params?.email);
-  console.log(email);
+
 
   const initialValues = {
     password: "",
@@ -41,7 +41,6 @@ const UpdatePassword = ({ params }) => {
 
   const onSubmitError = () => {
     window.scrollTo(0, 500);
-    console.log("Form Not submitted successfully!");
   };
 
   return (

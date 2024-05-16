@@ -141,7 +141,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
       setDepositAddress(null);
     } else if (name === "network") {
       const standard = filteredNetworks(seletedOption.blockchain, value);
-      console.log("SSTADNADRD", standard);
+    
       setSelectedOption((prev) => ({
         ...prev,
         [name]: value,
