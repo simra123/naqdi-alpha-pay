@@ -1,22 +1,19 @@
 "use client";
 
 import { Sync } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button, Chip } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { transactionsList_table_columns } from "./columns";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
-import { getAllTransactionsApi } from "@/services/transaction";
 import { callApiHook } from "@/utils/apifuncs";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import SelectBox from "@/components/common/SelectBox";
-import moment from "moment";
 import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { getAllUsersByAdminApi } from "@/services/admin/users";
+import { formatUsers } from "@/utils/dataFormatters";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -24,18 +21,58 @@ const statusList = [
   { label: "Unverified", value: "unverified" },
 ];
 
+const ChipMaker = (verified: boolean) => {
+  return (
+    <Chip
+      label={verified ? "Verified" : "UnVerified"}
+      variant="filled"
+      color={verified ? "success" : "warning"}
+    />
+  );
+};
+
+const usersList_table_columns: any = [
+  { field: "id", headerName: "ID", flex: 1 },
+  { field: "first_name", headerName: "First Name", flex: 1 },
+  { field: "last_name", headerName: "Last Name", flex: 1 },
+  { field: "username", headerName: "Username", flex: 1 },
+  { field: "email", headerName: "Email", flex: 1 },
+  { field: "user_type", headerName: "User Type", flex: 1 },
+  {
+    field: "verified",
+    headerName: "Verified",
+    flex: 1,
+    renderCell: (params) => {
+      const { value } = params;
+      return ChipMaker(value);
+    },
+  },
+  { field: "created_at", headerName: "Created", flex: 1 },
+  { field: "updated_at", headerName: "Updated", flex: 1 },
+];
+
 const Users = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
   const [users, setUsers] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [isUsersLoading, isUsersError, callUsersApi] = useApi(true);
 
-  const getTransactions = async () => {};
+  const getAllUsersAdmin = async () => {
+    await callApiHook({
+      apiCall: callUsersApi(getAllUsersByAdminApi()),
+      successCallBack: (response) => {
+        setUsers(formatUsers(response));
+      },
+    });
+  };
 
   const handleChange = (event) => {
     setSelectedStatus(event?.target?.value);
   };
+
+  useEffect(() => {
+    getAllUsersAdmin();
+  }, []);
 
   return (
     <>
@@ -46,7 +83,7 @@ const Users = () => {
             <Button
               variant="outlined"
               color="primary"
-              onClick={getTransactions}
+              onClick={getAllUsersAdmin}
             >
               <Sync />
             </Button>
@@ -70,29 +107,31 @@ const Users = () => {
           </div>
         </div>
         <ErrorApiText error={isUsersError} />
-
-        <DataGrid
-          autoHeight
-          rows={users}
-          columns={transactionsList_table_columns}
-          className="border-t-0 primary-color font-semibold"
-          sx={{
-            ".MuiDataGrid-overlayWrapper": {
-              padding: "25px",
-            },
-            ".MuiDataGrid-overlayWrapperInner": {
-              height: "10px !important",
-            },
-          }}
-          onRowClick={(params) => {
-            router.push(`/users/details/${params?.row?.id}`);
-          }}
-          sortingOrder={["asc", "desc"]}
-          pagination
-        />
+        <LoadingApi loading={isUsersLoading}>
+          <DataGrid
+            autoHeight
+            rows={users}
+            columns={usersList_table_columns}
+            className="border-t-0 primary-color font-semibold"
+            sx={{
+              ".MuiDataGrid-overlayWrapper": {
+                padding: "25px",
+              },
+              ".MuiDataGrid-overlayWrapperInner": {
+                height: "10px !important",
+              },
+            }}
+            onRowClick={(params) => {
+              router.push(`/users/details/${params?.row?.id}`);
+            }}
+            sortingOrder={["asc", "desc"]}
+            pageSizeOptions={[10, 25, 50, 100]}
+            pagination
+          />
+        </LoadingApi>
       </div>
     </>
   );
 };
 
-export default Users;
+export default withAuth(Users, [Role.ADMIN]);

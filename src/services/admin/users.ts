@@ -2,11 +2,14 @@
 
 import api from "@/config/api";
 
-export const getUsersListApi = (status) => {
+export const getAllUsersByAdminApi = () => {
+  return () => api.get(`auth/get-all-users`);
+};
+export const getKYCUsersListApi = (status) => {
   return () => api.get(`auth/userDetails/list`, { params: { status } });
 };
 
-export const getUserDetailsApi = (data) => {
+export const getUserDetailsApi = (data: { userId: number }) => {
   console.log(data);
   return () => api.post(`auth/getUserByAdmin`, data);
 };

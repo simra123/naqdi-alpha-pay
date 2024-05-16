@@ -17,6 +17,8 @@ import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { capitalize, formatTransactions } from "@/utils/dataFormatters";
+import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -40,29 +42,22 @@ const Transactions = () => {
           getAllTransactionsApi(selectedStatus == "all" ? "" : selectedStatus)
         ),
         successCallBack: (response: any) => {
-          const tableData = response?.map((item: any) => ({
-            id: item?.id,
-            dateReceived: moment(item?.createdAt).format("DD-MM-YYYY"),
-            transactionHash: item?.transaction_hash,
-            amount:
-              item?.unit != null
-                ? `${item?.amount} ${item?.unit}`
-                : item?.amount,
-            receiveAddress: item?.wallet?.wallet_address,
-            transactionType: capitalize(item?.transaction_type),
-            network: capitalize(item?.wallet?.network),
-            blockchain: capitalize(item?.wallet?.blockchain),
-            status: capitalize(item?.status),
-          }));
+          const tableData = formatTransactions(response);
+          setTransactions(tableData);
+        },
+      });
+    }
+    if (user?.role == Role.ADMIN) {
+      await callApiHook({
+        apiCall: callTransactionsApi(getAllTransactionsByAdminApi()),
+        successCallBack: (response: any) => {
+          const tableData = formatTransactions(response);
           setTransactions(tableData);
         },
       });
     }
   };
 
-  const capitalize = (value) => {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  };
   const handleChange = (event) => {
     setSelectedStatus(event?.target?.value);
   };
@@ -104,31 +99,8 @@ const Transactions = () => {
           </div>
         </div>
         <ErrorApiText error={isTransactionsError} />
-        <RenderRoleBased user={user} allowedRoles={[Role.USER]}>
-          <LoadingApi loading={isTransactionsLoading}>
-            <DataGrid
-              autoHeight
-              rows={transactions}
-              columns={transactionsList_table_columns}
-              className="border-t-0 primary-color font-semibold"
-              sx={{
-                ".MuiDataGrid-overlayWrapper": {
-                  padding: "25px",
-                },
-                ".MuiDataGrid-overlayWrapperInner": {
-                  height: "10px !important",
-                },
-              }}
-              onRowClick={(params) => {
-                
-                router.push(`/transactions/details/${params?.row?.id}`);
-              }}
-              sortingOrder={["asc", "desc"]}
-              pagination
-            />
-          </LoadingApi>
-        </RenderRoleBased>
-        <RenderRoleBased user={user} allowedRoles={[Role.ADMIN]}>
+
+        <LoadingApi loading={isTransactionsLoading}>
           <DataGrid
             autoHeight
             rows={transactions}
@@ -143,13 +115,12 @@ const Transactions = () => {
               },
             }}
             onRowClick={(params) => {
-              
               router.push(`/transactions/details/${params?.row?.id}`);
             }}
             sortingOrder={["asc", "desc"]}
             pagination
           />
-        </RenderRoleBased>
+        </LoadingApi>
       </div>
     </>
   );

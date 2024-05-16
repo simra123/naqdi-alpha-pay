@@ -21,6 +21,11 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { roundToPrecision } from "@/utils/math";
+import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
+import {
+  formatBalanceForAdmin,
+  formatBalanceForUser,
+} from "@/utils/dataFormatters";
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
@@ -99,42 +104,34 @@ const Home = () => {
 
   const getBalances = async () => {
     if (user.role == Role.USER) {
-      await callApiHook({
-        apiCall: callBalanceApi(getAllWalletBalancesApi()),
-        successCallBack: (response: any) => {
-       
-
-          const tableData = [];
-          response?.result?.forEach((item: any) => {
-            const data = {
-              id: item?.id,
-              network: capitalize(item?.network),
-              wallet_address: item?.wallet_address,
-              currency: capitalize(item?.blockchain),
-              totalAmount: roundToPrecision(+item?.amount, 10),
-            };
-            tableData.push(data);
-            for (let currency in item?.tokens) {
-              if (item?.tokens.hasOwnProperty(currency)) {
-                tableData.push({
-                  id: item?.id + currency,
-                  network: capitalize(item?.network),
-                  wallet_address: item?.wallet_address,
-                  currency: capitalize(currency),
-                  totalAmount: roundToPrecision(+item?.tokens[currency], 10),
-                });
-              }
-            }
-          });
-
-          setBalance(tableData);
-        },
-      });
+      _getUserBalance();
+    } else if (user?.role == Role.ADMIN) {
+      _getAdminBalance();
     }
   };
 
-  const capitalize = (value) => {
-    return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+  const _getUserBalance = async () => {
+    await callApiHook({
+      apiCall: callBalanceApi(getAllWalletBalancesApi()),
+      successCallBack: (response: any) => {
+        const tableData = formatBalanceForUser(response?.result);
+
+        setBalance(tableData);
+      },
+    });
+  };
+
+  const _getAdminBalance = async () => {
+    await callApiHook({
+      apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
+      successCallBack: (response: any) => {
+        const tokens = response?.data?.item?.fungibleTokens;
+        const coins = response?.data?.item?.coins;
+
+        const tableData = formatBalanceForAdmin(coins, tokens);
+        setBalance(tableData);
+      },
+    });
   };
 
   useEffect(() => {
@@ -162,28 +159,20 @@ const Home = () => {
               <Button className="transparent !w-auto" onClick={getBalances}>
                 <Sync />
               </Button>
-              <Button
-                className="transparent !w-auto"
-                endIcon={<Add />}
-                onClick={handleDepoist}
-              >
-                Depoist Crypto
-              </Button>
+              <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+                <Button
+                  className="transparent !w-auto"
+                  endIcon={<Add />}
+                  onClick={handleDepoist}
+                >
+                  Depoist Crypto
+                </Button>
+              </RenderRoleBased>
             </div>
           </div>
           <ErrorApiText error={isBalanceError} />
-          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-            <LoadingApi loading={isBalanceLoading}>
-              <DataGrid
-                rows={balance}
-                columns={columns}
-                hideFooter
-                className="font-semibold primary-color"
-                autoHeight
-              />
-            </LoadingApi>
-          </RenderRoleBased>
-          <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+
+          <LoadingApi loading={isBalanceLoading}>
             <DataGrid
               rows={balance}
               columns={columns}
@@ -191,7 +180,7 @@ const Home = () => {
               className="font-semibold primary-color"
               autoHeight
             />
-          </RenderRoleBased>
+          </LoadingApi>
         </div>
         <div className="walletsList">
           <div className="walletHeading flex justify-between items-center mb-[8px]">
@@ -200,9 +189,11 @@ const Home = () => {
               <Button className="transparent !w-auto">
                 <Sync />
               </Button>
-              <Button className="transparent !w-auto" endIcon={<Add />}>
-                Depoist Fiat
-              </Button>
+              <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+                <Button className="transparent !w-auto" endIcon={<Add />}>
+                  Depoist Fiat
+                </Button>
+              </RenderRoleBased>
             </div>
           </div>
           <DataGrid

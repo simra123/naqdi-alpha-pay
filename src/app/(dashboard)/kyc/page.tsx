@@ -5,7 +5,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
-import { getUsersListApi } from "@/services/admin/users";
+import { getKYCUsersListApi } from "@/services/admin/users";
 import LoadingApi from "@/components/common/LoadindApi";
 import moment from "moment";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -34,7 +34,7 @@ const statusList = [
   { label: "Pending", value: "pending" },
 ];
 
-const UsersPage = () => {
+const KYCUsersPage = () => {
   const router = useRouter();
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [usersList, setUsersList] = useState(null);
@@ -44,7 +44,7 @@ const UsersPage = () => {
     setUsersList(null);
     await callApiHook({
       apiCall: callUsersListApi(
-        getUsersListApi(selectedStatus == "all" ? "" : selectedStatus)
+        getKYCUsersListApi(selectedStatus == "all" ? "" : selectedStatus)
       ),
       successCallBack: (response) => {
         const filteredData = response?.map((data) => {
@@ -128,4 +128,4 @@ const UsersPage = () => {
   );
 };
 
-export default withAuth(UsersPage, [Role.ADMIN]);
+export default withAuth(KYCUsersPage, [Role.ADMIN]);

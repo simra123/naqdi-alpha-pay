@@ -30,7 +30,17 @@ const theme = createTheme({
         text: {
           borderRadius: "2px",
           textTransform: "none",
-          fontWeight: 700
+          fontWeight: 700,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        outlined: {
+          borderRadius: "4px",
+        },
+        filled: {
+          borderRadius: "4px",
         },
       },
     },
