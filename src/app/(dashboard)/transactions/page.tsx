@@ -4,7 +4,10 @@ import { Sync } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { transactionsList_table_columns } from "./columns";
+import {
+  transactionsList_Admin_table_columns,
+  transactionsList_table_columns,
+} from "./columns";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { getAllTransactionsApi } from "@/services/transaction";
@@ -17,7 +20,11 @@ import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
-import { capitalize, formatTransactions } from "@/utils/dataFormatters";
+import {
+  capitalize,
+  formatTransactions,
+  formatTransactionsByAdmin,
+} from "@/utils/dataFormatters";
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 
 const statusList = [
@@ -51,7 +58,10 @@ const Transactions = () => {
       await callApiHook({
         apiCall: callTransactionsApi(getAllTransactionsByAdminApi()),
         successCallBack: (response: any) => {
-          const tableData = formatTransactions(response);
+          const tableData =
+            user?.role == Role.ADMIN
+              ? formatTransactionsByAdmin(response)
+              : formatTransactions(response);
           setTransactions(tableData);
         },
       });
@@ -104,8 +114,12 @@ const Transactions = () => {
           <DataGrid
             autoHeight
             rows={transactions}
-            columns={transactionsList_table_columns}
-            className="border-t-0 primary-color font-semibold"
+            columns={
+              user?.role == Role.ADMIN
+                ? transactionsList_Admin_table_columns
+                : transactionsList_table_columns
+            }
+            className="border-t-0 primary-color"
             sx={{
               ".MuiDataGrid-overlayWrapper": {
                 padding: "25px",

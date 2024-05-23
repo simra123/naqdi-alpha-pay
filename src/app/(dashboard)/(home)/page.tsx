@@ -125,10 +125,9 @@ const Home = () => {
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-        const tokens = response?.data?.item?.fungibleTokens;
-        const coins = response?.data?.item?.coins;
-
-        const tableData = formatBalanceForAdmin(coins, tokens);
+        console.log("ADMIN BALANCE", response);
+        const tableData = formatBalanceForAdmin(response);
+        console.log("ADMIN Formatted BALANCE", tableData);
         setBalance(tableData);
       },
     });
@@ -177,7 +176,7 @@ const Home = () => {
               rows={balance}
               columns={columns}
               hideFooter
-              className="font-semibold primary-color"
+              className="primary-color"
               autoHeight
             />
           </LoadingApi>
@@ -199,7 +198,7 @@ const Home = () => {
           <DataGrid
             rows={fiat}
             columns={fiatCols}
-            className="font-semibold primary-color"
+            className="primary-color"
             hideFooter
             autoHeight
           />

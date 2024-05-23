@@ -9,11 +9,22 @@ import { getUserDetailsApi } from "@/services/admin/users";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
-import { capitalize } from "@/utils/dataFormatters";
+import {
+  capitalize,
+  formatBalanceForUser,
+  formatTransactions,
+} from "@/utils/dataFormatters";
+import { DataGrid } from "@mui/x-data-grid";
+import {
+  transactionsList_table_columns,
+  wallet_table_columns,
+} from "../../columns";
 
 const TransactionDetails = ({ params }) => {
-  const userId = params?.userId;
+  const userId = params?.id;
   const [userDetails, setUserDetails]: any = useState({});
+  const [wallets, setWallets] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi(true);
 
@@ -22,6 +33,8 @@ const TransactionDetails = ({ params }) => {
       apiCall: callUserDetailsApi(getUserDetailsApi({ userId })),
       successCallBack: (response) => {
         setUserDetails(response);
+        setWallets(formatBalanceForUser(response?.wallets));
+        setTransactions(formatTransactions(response?.transactions));
       },
     });
   };
@@ -53,6 +66,11 @@ const TransactionDetails = ({ params }) => {
               <DetailsWrapper title={"First Name"}>
                 <TransparentInput value={userDetails?.user?.first_name} />
               </DetailsWrapper>
+              {userDetails?.user?.legal_name && (
+                <DetailsWrapper title={"Legal Name"}>
+                  <TransparentInput value={userDetails?.user?.legal_name} />
+                </DetailsWrapper>
+              )}
               <DetailsWrapper title={"Last Name"}>
                 <TransparentInput value={userDetails?.user?.last_name} />
               </DetailsWrapper>
@@ -66,7 +84,11 @@ const TransactionDetails = ({ params }) => {
                 <TransparentInput value={userDetails?.user?.user_type} />
               </DetailsWrapper>
               <DetailsWrapper title={"Status"}>
-                <TransparentInput value={userDetails?.user?.status} />
+                <TransparentInput
+                  value={
+                    userDetails?.user?.verified ? "Verified" : "UnVerified"
+                  }
+                />
               </DetailsWrapper>
 
               <DetailsWrapper title={"Address"}>
@@ -88,6 +110,32 @@ const TransactionDetails = ({ params }) => {
                 <TransparentInput value={userDetails?.postal_code} />
               </DetailsWrapper>
             </div>
+          </div>
+          <div className="data-grid-container mt-1">
+            <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Wallets</h2>
+            </div>
+
+            <DataGrid
+              rows={wallets}
+              columns={wallet_table_columns}
+              className="font-semibold primary-color border-t-0"
+              hideFooter
+              autoHeight
+            />
+          </div>
+          <div className="data-grid-container mt-1">
+            <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Transactions</h2>
+            </div>
+
+            <DataGrid
+              rows={transactions}
+              columns={transactionsList_table_columns}
+              className="font-semibold primary-color border-t-0"
+              hideFooter
+              autoHeight
+            />
           </div>
         </LoadingApi>
       </div>

@@ -41,7 +41,7 @@ const Payouts = () => {
         <DataGrid
           rows={rows}
           columns={payoutsList_table_columns}
-          className="border-t-0 primary-color font-semibold"
+          className="border-t-0 primary-color"
           sx={{
             ".MuiDataGrid-overlayWrapper": {
               padding: "25px",

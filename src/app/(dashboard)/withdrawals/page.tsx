@@ -51,7 +51,7 @@ const Withdrawals = () => {
         <DataGrid
           rows={rows}
           columns={withdrawalsList_table_columns}
-          className="border-t-0 primary-color font-semibold"
+          className="border-t-0 primary-color"
           sx={{
             ".MuiDataGrid-overlayWrapper": {
               padding: "25px",

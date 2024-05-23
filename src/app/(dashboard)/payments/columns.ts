@@ -64,11 +64,11 @@ export const relatedTransactions_table_columns = [
   },
   {
     field: "network",
-    headerName: "Network",
+    headerName: "Transacion Type",
     flex: 1,
   },
   {
-    field: "confirmed",
+    field: "status",
     headerName: "Confirmed",
     flex: 1,
   },

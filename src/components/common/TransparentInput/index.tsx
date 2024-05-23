@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, ChangeEventHandler, FC } from "react";
 
 interface TransparentInputProps {
   disabled?: boolean;
@@ -6,6 +6,7 @@ interface TransparentInputProps {
   label?: string;
   textarea?: boolean;
   inputClass?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TransparentInput: FC<TransparentInputProps> = ({
@@ -14,6 +15,7 @@ const TransparentInput: FC<TransparentInputProps> = ({
   label,
   textarea,
   inputClass,
+  onChange,
 }) => {
   return (
     <div className={`flex flex-col gap-2  ${inputClass}`}>
@@ -29,6 +31,7 @@ const TransparentInput: FC<TransparentInputProps> = ({
             disabled={disabled}
             className={`transparent font-semibold text-[14px]`}
             value={value}
+            onChange={onChange}
           />
           <span className="text-[12px] font-semibold  text-gray-500">
             {label}

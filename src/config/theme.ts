@@ -11,7 +11,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Mulish",
+    // fontFamily: "Monsterrat",
     h2: {
       fontSize: "44px",
       fontWeight: 800,
@@ -30,7 +30,7 @@ const theme = createTheme({
         text: {
           borderRadius: "2px",
           textTransform: "none",
-          fontWeight: 700,
+          fontWeight: 300,
         },
       },
     },
