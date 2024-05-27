@@ -32,7 +32,7 @@ const Authlayout = ({ children }) => {
           <path d="M23 13H29V33H23V13Z" className="secondary-color"></path>
           <path d="M47 13H53V33H47V13Z" className="secondary-color"></path>
         </svg>
-        <Typography>Copyright 2024. All Rights Reserved Alphaspay.</Typography>
+        <Typography>Copyright 2024. All Rights Reserved @Alphaspay.</Typography>
       </footer>
     </main>
   );
