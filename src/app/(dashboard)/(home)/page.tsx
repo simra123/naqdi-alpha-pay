@@ -29,7 +29,7 @@ import {
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
-  { field: "network", headerName: "Network", flex: 1 },
+  // { field: "network", headerName: "Network", flex: 1 },
   { field: "totalAmount", headerName: "Available Balance", flex: 1 },
 ];
 

@@ -5,15 +5,19 @@ import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
-import { getTransactionDetailsApi } from "@/services/transaction";
+import { getTransactionDetailsByUserApi } from "@/services/transaction";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 import { capitalize } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
+import { getTransactionDetailsByAdminApi } from "@/services/admin/transaction";
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
+  const user = useLocalStorage("user");
   const [transactionDetails, setTransactionDetails]: any = useState({});
   const [
     isTransactionDetailsLoading,
@@ -22,14 +26,27 @@ const TransactionDetails = ({ params }) => {
   ] = useApi(true);
 
   const getTransactionDetails = async () => {
-    await callApiHook({
-      apiCall: callTransactionDetailsApi(
-        getTransactionDetailsApi({ id: tranascionId })
-      ),
-      successCallBack: (response: any) => {
-        setTransactionDetails(response);
-      },
-    });
+    if (user.role == Role.USER) {
+      await callApiHook({
+        apiCall: callTransactionDetailsApi(
+          getTransactionDetailsByUserApi({ id: tranascionId })
+        ),
+        successCallBack: (response: any) => {
+          setTransactionDetails(response);
+        },
+      });
+    }
+
+    if (user.role == Role.ADMIN) {
+      await callApiHook({
+        apiCall: callTransactionDetailsApi(
+          getTransactionDetailsByAdminApi({ id: tranascionId })
+        ),
+        successCallBack: (response: any) => {
+          setTransactionDetails(response);
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -54,9 +71,7 @@ const TransactionDetails = ({ params }) => {
                 />
               </DetailsWrapper>
               <DetailsWrapper title={"Related Payment"}>
-                <TransparentInput
-                  value={"Payments in progress....."}
-                />
+                <TransparentInput value={"Payments in progress....."} />
               </DetailsWrapper>
               <DetailsWrapper title={"Transaction Hash"}>
                 <TransparentInput
@@ -69,7 +84,12 @@ const TransactionDetails = ({ params }) => {
                 />
               </DetailsWrapper>
               <DetailsWrapper title={"Amount"}>
-                <TransparentInput value={`${roundToPrecision(+transactionDetails?.amount,10)} ${transactionDetails?.unit}`} />
+                <TransparentInput
+                  value={`${roundToPrecision(
+                    +transactionDetails?.amount,
+                    10
+                  )} ${transactionDetails?.unit}`}
+                />
               </DetailsWrapper>
               <DetailsWrapper title={"Source Wallet Address"}>
                 <TransparentInput
@@ -77,15 +97,17 @@ const TransactionDetails = ({ params }) => {
                 />
               </DetailsWrapper>
               <DetailsWrapper title={"Payment Address"}>
-                <TransparentInput
-                  value={`In Progress...`}
-                />
+                <TransparentInput value={`In Progress...`} />
               </DetailsWrapper>
               <DetailsWrapper title={"Network"}>
-                <TransparentInput value={capitalize(transactionDetails?.wallet?.blockchain)} />
+                <TransparentInput
+                  value={capitalize(transactionDetails?.wallet?.blockchain)}
+                />
               </DetailsWrapper>
               <DetailsWrapper title={"Status"}>
-                <TransparentInput value={capitalize(transactionDetails?.status)} />
+                <TransparentInput
+                  value={capitalize(transactionDetails?.status)}
+                />
               </DetailsWrapper>
             </div>
           </div>

@@ -13,6 +13,9 @@ export const PhoneSetupApi = (data) => {
 export const MfaSetupApi = (data) => {
   return () => api.post(`auth/verify-otp`, data);
 };
+export const FeeSetupApi = (data:{merchant_fees:boolean,client_fees:boolean}) => {
+  return () => api.post(`auth/set-fees`, data);
+};
 
 export const SubmitKYCApi = (data) => {
   return () => api.post(`auth/submit-kyc`, data, formHeader);

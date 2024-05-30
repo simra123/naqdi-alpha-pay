@@ -14,11 +14,16 @@ import ApprovedStepsBox from "@/components/common/ApprovedStepsBox";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import "./trader-registration.scss";
+import FeeSetup from "@/components/forms/onBoarding/FeeSetup";
 
 const TraderRegistration = () => {
   const dipatch = useDispatch();
-  const currentStep = useSelector((state: any) => state.onboarding.current_step);
-  const disabledSteps = useSelector((state:any) => state.onboarding.disabled_steps);
+  const currentStep = useSelector(
+    (state: any) => state.onboarding.current_step
+  );
+  const disabledSteps = useSelector(
+    (state: any) => state.onboarding.disabled_steps
+  );
 
   const handleStepChange = (stepName) => () => {
     dipatch(setStep({ current_step: stepName }));
@@ -78,6 +83,17 @@ const TraderRegistration = () => {
         <button
           className={
             "px-4 py-3 header_step_btn  flex-1" +
+            returnActiveStep(STEPS.FEESETUP)
+          }
+          disabled={disabledSteps[STEPS.FEESETUP]}
+          onClick={handleStepChange(STEPS.FEESETUP)}
+        >
+          Fee Setup
+        </button>
+
+        <button
+          className={
+            "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.IDENTITYCHECK)
           }
           disabled={disabledSteps[STEPS.IDENTITYCHECK]}
@@ -112,6 +128,7 @@ const TraderRegistration = () => {
           {returnActiveForm(STEPS.PROFILE, ProfileForm)}
           {returnActiveForm(STEPS.PHONEVALIDATION, PhoneValidation)}
           {returnActiveForm(STEPS.MFASETUP, MFASetup)}
+          {returnActiveForm(STEPS.FEESETUP, FeeSetup)}
           {/* {returnActiveForm(STEPS.CERTIFICATION, Certification)} */}
           {returnActiveForm(STEPS.IDENTITYCHECK, IdentityCheck)}
           {returnActiveForm(STEPS.KYCAPPROVAL, KYCApproval)}

@@ -3,6 +3,7 @@ export const STEPS = {
   PHONEVALIDATION: "phone-validation",
   MFASETUP: "mfa-setup",
   // CERTIFICATION: "certification",
+  FEESETUP: "fee-setup",
   IDENTITYCHECK: "identity-check",
   KYCAPPROVAL: "kyc-approval",
   FEESCHEDULE: "fee-schedule",

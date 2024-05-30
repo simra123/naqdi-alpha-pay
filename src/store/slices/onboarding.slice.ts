@@ -10,6 +10,7 @@ const initialState = {
     [STEPS.PROFILE]: true,
     [STEPS.PHONEVALIDATION]: true,
     [STEPS.MFASETUP]: true,
+    [STEPS.FEESETUP]: true,
     [STEPS.IDENTITYCHECK]: true,
     [STEPS.KYCAPPROVAL]: true,
     [STEPS.FEESCHEDULE]: true,
@@ -46,6 +47,10 @@ export const onBoardingSlice = createSlice({
         {
           name: STEPS.MFASETUP,
           condition: details?.mfa,
+        },
+        {
+          name: STEPS.FEESETUP,
+          condition: details?.client_fees || details?.merchant_fees,
         },
         {
           name: STEPS.IDENTITYCHECK,

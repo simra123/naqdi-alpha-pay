@@ -66,8 +66,8 @@ const MFASetup = () => {
     dispatch(
       setStep({
         previous_step: STEPS.MFASETUP,
-        current_step: STEPS.IDENTITYCHECK,
-        next_step: STEPS?.KYCAPPROVAL,
+        current_step: STEPS.FEESETUP,
+        next_step: STEPS?.IDENTITYCHECK,
       })
     );
   };
