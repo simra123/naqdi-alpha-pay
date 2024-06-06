@@ -78,7 +78,7 @@ const IndividualForm = ({ activeForm }) => {
 
     const legalEntityData = {
       legal_name: values?.legalName,
-      legal_entity: values?.LegalEntity,
+      legal_type: values?.entityType,
     };
 
     const registerData =

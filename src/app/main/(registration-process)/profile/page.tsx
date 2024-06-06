@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./profile.scss";
 import HelpBox from "@/components/ui/HelpBox";
@@ -18,6 +18,9 @@ import { ChangePassowordApi } from "@/services/auth";
 import { Button } from "@mui/material";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { capitalize } from "@/utils/dataFormatters";
+import { userDetailsApi } from "@/services/user";
 
 const initialValues = {
   oldPassword: "",
@@ -32,6 +35,8 @@ const Profile = () => {
     isChangePasswordError,
     callChangePasswordApi,
   ] = useApi();
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
+    useApi();
   const {
     errors,
     handleChange,
@@ -43,6 +48,7 @@ const Profile = () => {
 
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
+  const [info, setInfo] = useState(null);
 
   const closeEditModal = () => {
     setEditOpen(!editOpen);
@@ -64,6 +70,19 @@ const Profile = () => {
     });
   };
 
+  const fetchUserDetails = async () => {
+    await callApiHook({
+      apiCall: callUserDetailsApi(userDetailsApi()),
+      successCallBack: (response) => {
+        setInfo(response?.userDetails);
+      },
+    });
+  };
+
+  useEffect(() => {
+    fetchUserDetails();
+  }, []);
+
   const onSubmitError = () => {
     window.scrollTo(0, 800);
   };
@@ -75,72 +94,93 @@ const Profile = () => {
       <div className="form_section flex justify-between mt-16 gap-12">
         <div className="form_wrapper w-4/6">
           {/* PROFILE BOX STARTS HERE */}
+          <ErrorApiText error={isUserDetailsError} />
+          <LoadingApi loading={isUserDetailsLoading}>
+            <div className="profile_box shadow-sm border py-4">
+              <div className="account_type">
+                <h5 className="text-center bg-slate-100 font-bold text-lg p-2">
+                  Standard User
+                </h5>
 
-          <div className="profile_box shadow-sm border py-4">
-            <div className="account_type">
-              <h5 className="text-center bg-slate-100 font-bold text-lg p-2">
-                Standard User
-              </h5>
+                <div className="account_details flex flex-col gap-8 p-7 border-b">
+                  <h3 className="medium_heading_light !font-semibold">
+                    Account
+                  </h3>
 
-              <div className="account_details flex flex-col gap-8 p-7 border-b">
-                <h3 className="medium_heading_light !font-semibold">Account</h3>
+                  <div className="flex items-center justify-between">
+                    <span className="title">First Name</span>
+                    <span className="value">
+                      {capitalize(info?.user?.first_name)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="title">Middle Name</span>
+                    <span className="value">
+                      {info?.user?.middle_name
+                        ? capitalize(info?.user?.middle_name)
+                        : "_"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="title">Last Name</span>
+                    <span className="value">
+                      {capitalize(info?.user?.last_name)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="title">Registered Email</span>
+                    <span className="value">{info?.user?.email}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="title">Username</span>
+                    <span className="value">{info?.user?.username}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="title">Registered Address</span>
+                    <span className="value">{info?.city}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="title">Mobile No.</span>
+                    <span className="value">{info?.phone_number}</span>
+                  </div>
+                </div>
 
-                <div className="flex items-center justify-between">
-                  <span className="title">First Name</span>
-                  <span className="value">Muhammad</span>
+                {info?.user?.legal_type && (
+                  <div className="account_details flex flex-col gap-1 p-7">
+                    <div className="flex items-center justify-between">
+                      <span className="title">Account Type</span>
+                      <span className="value">
+                        {capitalize(info?.user?.user_type)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="title">Instituition Name</span>
+                      <span className="value">
+                        {capitalize(info?.user?.legal_name)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="title">Institution Type</span>
+                      <span className="value">
+                        {capitalize(info?.user?.legal_type)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+                <div className="px-7 py-3">
+                  <button
+                    className="gradient_bg text-white uppercase px-4 py-2 text-sm font-semibold"
+                    onClick={closeEditModal}
+                  >
+                    request edit
+                  </button>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Middle Name</span>
-                  <span className="value">_</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Last Name</span>
-                  <span className="value">Muhammad</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Registered Email</span>
-                  <span className="value">aw708596@gmail.com</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Username</span>
-                  <span className="value">Ahmed_123</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Registered Address</span>
-                  <span className="value">Lahore</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Mobile No.</span>
-                  <span className="value">+92*******300</span>
-                </div>
-              </div>
-              <div className="account_details flex flex-col gap-1 p-7">
-                <div className="flex items-center justify-between">
-                  <span className="title">Account Type</span>
-                  <span className="value">Instituitional</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Instituition Name</span>
-                  <span className="value">Ahmed Legal Entity</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="title">Institution Type</span>
-                  <span className="value">Private Company (Non-Regulated)</span>
-                </div>
-              </div>
-              <div className="px-7 py-3">
-                <button
-                  className="gradient_bg text-white uppercase px-4 py-2 text-sm font-semibold"
-                  onClick={closeEditModal}
-                >
-                  request edit
-                </button>
               </div>
             </div>
-          </div>
+          </LoadingApi>
 
           {/* MFA BOX STARTS HERE */}
-          <div className="MFA_box mt-12">
+          {/* <div className="MFA_box mt-12">
             <div className="heading flex justify-between items-center">
               <h5 className="medium_heading_bold">MFA Devices</h5>
               <button className="gradient_bg text-white uppercase px-8 py-2 text-[10px] font-semibold">
@@ -196,7 +236,7 @@ const Profile = () => {
                 </button>
               </div>
             </div>
-          </div>
+          </div> */}
 
           {/* Change Passworf below */}
 

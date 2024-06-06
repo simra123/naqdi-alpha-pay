@@ -7,6 +7,8 @@ import { Security, Settings } from "@mui/icons-material";
 import UpgradeTraderModal from "@/components/common/UpgradeTraderModal";
 import SettingsMenu from "@/components/common/SettingsMenu";
 import "./registration_process.scss";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { capitalize } from "@/utils/dataFormatters";
 
 const Nav_items = [
   {
@@ -25,6 +27,7 @@ const Nav_items = [
 
 const layout = ({ children }) => {
   const router = useRouter();
+  const user = useLocalStorage("user");
   const pathname = usePathname();
 
   const [isSettingOpen, setSettingOpen] = useState(false);
@@ -79,8 +82,11 @@ const layout = ({ children }) => {
             <div className="right_nav flex items-center gap-14">
               <div className="user_name flex items-center gap-5">
                 <div className="name text-end">
-                  <div className="font-bold"> Muhammad Ahmed </div>
-                  <div className="text-sm">Standard User</div>
+                  <div className="font-bold">
+                    {" "}
+                    {capitalize(user?.first_name)} {capitalize(user?.last_name)}{" "}
+                  </div>
+                  <div className="text-sm"> {capitalize(user?.user_type)}</div>
                 </div>
                 <div className="icon">
                   <Security />
