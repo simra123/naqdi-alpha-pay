@@ -90,7 +90,10 @@ const Profile = () => {
   return (
     <div className={"container-custom mx-auto py-3"}>
       <RequestEditModal isOpen={editOpen} setIsOpen={setEditOpen} />
-      <h2 className="large_heading_bold mt-6">Ahmed Legal Entity</h2>
+      <h2 className="large_heading_bold mt-6">
+        {info?.user?.first_name} {info?.user?.last_name} (
+        {capitalize(info?.user?.user_type)})
+      </h2>
       <div className="form_section flex justify-between mt-16 gap-12">
         <div className="form_wrapper w-4/6">
           {/* PROFILE BOX STARTS HERE */}
@@ -99,7 +102,7 @@ const Profile = () => {
             <div className="profile_box shadow-sm border py-4">
               <div className="account_type">
                 <h5 className="text-center bg-slate-100 font-bold text-lg p-2">
-                  Standard User
+                  {capitalize(info?.user?.user_type)} User
                 </h5>
 
                 <div className="account_details flex flex-col gap-8 p-7 border-b">
