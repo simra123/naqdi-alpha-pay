@@ -26,6 +26,7 @@ import {
   formatBalanceForAdmin,
   formatBalanceForUser,
 } from "@/utils/dataFormatters";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
@@ -155,9 +156,7 @@ const Home = () => {
           <div className="walletHeading flex justify-between items-center mb-[8px]">
             <h3 className="text-[18px]">Crypto Wallets</h3>
             <div className="flex gap-1">
-              <Button className="transparent !w-auto" onClick={getBalances}>
-                <Sync />
-              </Button>
+              <LoaderButton content={ <Sync />} loading={isBalanceLoading} onClick={getBalances}/>
               <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
                 <Button
                   className="transparent !w-auto"

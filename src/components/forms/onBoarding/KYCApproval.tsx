@@ -90,10 +90,12 @@ const KYCApproval = () => {
           </div>
         )}
 
-        <p className="note mt-6">
-          Once your documents have been approved, you will be notified and you
-          will be able to move to next step.
-        </p>
+        {user?.userDetails.kyc_status !== "approved" && (
+          <p className="note mt-6">
+            Once your documents have been approved, you will be notified and you
+            will be able to move to next step.
+          </p>
+        )}
         {user?.userDetails?.kyc_approved && (
           <div className="btn_wrapper text-right">
             <button className="header_step_btn active fl" onClick={onSubmit}>

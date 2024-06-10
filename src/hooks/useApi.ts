@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
+const UNVERIFIED_MESSAGE = "User is not verified";
+
 export const useApi = (initailLoading = false) => {
   const dispatch = useDispatch();
   const router = useRouter();
@@ -27,16 +29,28 @@ export const useApi = (initailLoading = false) => {
       return response;
     } catch (error) {
       setIsLoading(false);
+
       if (error.response.status == 401) {
-        window?.localStorage?.removeItem("token");
-        window?.localStorage?.removeItem("user");
-        router.replace("/login");
-        dispatch(
-          setNotification({
-            status: "error",
-            message: "Your Session has expired.",
-          })
-        );
+        if (error?.response?.data?.message == UNVERIFIED_MESSAGE) {
+          router.replace("/email-verification-required");
+          dispatch(
+            setNotification({
+              status: "error",
+              message:
+                "You are not verified. Check Spam or get Email for verification.",
+            })
+          );
+        } else {
+          window?.localStorage?.removeItem("token");
+          window?.localStorage?.removeItem("user");
+          router.replace("/login");
+          dispatch(
+            setNotification({
+              status: "error",
+              message: "Your Session has expired.",
+            })
+          );
+        }
       }
       const errorMessage =
         error?.response?.data?.message ||

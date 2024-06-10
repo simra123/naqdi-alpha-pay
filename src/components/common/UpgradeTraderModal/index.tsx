@@ -29,7 +29,7 @@ const UpgradeTraderModal = () => {
 
         <div className="user_cards grid grid-cols-2 max-w-3xl mx-auto gap-6">
           <div className="flex flex-col gap-8">
-            <div className="mt-6 continue_modal px-14 py-24 min-h-[570px]">
+            <div className="mt-6 continue_modal px-14 py-24 min-h-[600px]">
               <div className="flex flex-col gap-8 ">
                 <div className="secure_icon text-center">
                   <Security />
@@ -59,7 +59,7 @@ const UpgradeTraderModal = () => {
             </button>
           </div>
           <div className="flex flex-col gap-8">
-            <div className="mt-6 upgrade_modal px-10 py-24  min-h-[570px]">
+            <div className="mt-6 upgrade_modal px-10 py-24  min-h-[600px]">
               <div className="flex flex-col gap-8 ">
                 <div className="secure_icon text-center">
                   <Security />
@@ -69,7 +69,7 @@ const UpgradeTraderModal = () => {
                   Trader Account
                 </h5>
 
-                <div className="details font-semibold leading-6">
+                <div className="details leading-6">
                   <p>
                     With a Alphaspay Trader Account you have full access to the
                     Alphaspay platform.

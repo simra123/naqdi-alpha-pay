@@ -9,11 +9,14 @@ import { IconButton } from "@mui/material";
 import { HomeWork, Logout, Person } from "@mui/icons-material";
 import SelectBox from "@/components/common/SelectBox";
 import Clock from "@/components/ui/Clock";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { isAuthenticated, loaded } = useAuth();
+  const user = useLocalStorage("user");
 
   if (!loaded) {
     return "...Loading";
@@ -38,9 +41,14 @@ const DashboardLayout = ({ children }) => {
         <div className="text-end">
           <IconButton
             onClick={() => {
-              window?.localStorage?.removeItem("token");
-              window?.localStorage?.removeItem("user");
-              router.push("/login");
+              if (user?.role == Role.ADMIN) {
+                window?.localStorage?.removeItem("token");
+                window?.localStorage?.removeItem("user");
+
+                router.push("/login");
+              } else {
+                router.push("/main/trader-registration");
+              }
             }}
           >
             <Logout />

@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { getAllTransactionsApi } from "@/services/transaction";
-import { callApiHook } from "@/utils/apifuncs";
+import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import SelectBox from "@/components/common/SelectBox";
@@ -26,6 +26,8 @@ import {
   formatTransactionsByAdmin,
 } from "@/utils/dataFormatters";
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
+import { generateCSVApi } from "@/services/common";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -41,6 +43,7 @@ const Transactions = () => {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [isTransactionsLoading, isTransactionsError, callTransactionsApi] =
     useApi(true);
+  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getTransactions = async () => {
     if (user?.role == Role.USER) {
@@ -68,6 +71,15 @@ const Transactions = () => {
     }
   };
 
+  const ExportCSVHandler = async () => {
+    await callApiHook({
+      apiCall: callCSVApi(generateCSVApi(transactions)),
+      successCallBack: (response: any) => {
+        downloadCSV(response, "transactions.csv");
+      },
+    });
+  };
+
   const handleChange = (event) => {
     setSelectedStatus(event?.target?.value);
   };
@@ -82,16 +94,16 @@ const Transactions = () => {
         <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Transactions</h2>
           <div className="actions grid grid-flow-col gap-3">
-            <Button
-              variant="outlined"
-              color="primary"
+            <LoaderButton
               onClick={getTransactions}
-            >
-              <Sync />
-            </Button>
-            <Button variant="outlined" color="primary">
-              Export CSV
-            </Button>
+              loading={isTransactionsLoading}
+              content={<Sync />}
+            />
+            <LoaderButton
+              content={"Export CSV"}
+              onClick={ExportCSVHandler}
+              loading={isCSVLoading}
+            />
             <SelectBox
               className="transparent !border-0 min-w-32 !p-0"
               options={statusList}

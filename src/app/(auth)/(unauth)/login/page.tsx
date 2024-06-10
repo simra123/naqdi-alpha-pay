@@ -43,12 +43,12 @@ const Login = () => {
           router.push("/");
         }
       },
+     
     });
   };
 
   const onSubmitError = () => {
     window.scrollTo(0, 500);
-   
   };
 
   return (

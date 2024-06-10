@@ -2,19 +2,21 @@
 
 import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { Sync } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import { paymentsList_table_columns } from "./columns";
 import Link from "next/link";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
-import { callApiHook } from "@/utils/apifuncs";
+import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { getAllPaymentsApi } from "@/services/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
+import { generateCSVApi } from "@/services/common";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const rows = [
   {
@@ -33,7 +35,9 @@ const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const [paymentsList, setPaymentsList] = useState([]);
+
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
+  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getPayments = async () => {
     if (user?.role == Role.USER) {
@@ -57,6 +61,15 @@ const Payments = () => {
     }
   };
 
+  const ExportCSVHandler = async () => {
+    await callApiHook({
+      apiCall: callCSVApi(generateCSVApi(paymentsList)),
+      successCallBack: (response: any) => {
+        downloadCSV(response, "payments.csv");
+      },
+    });
+  };
+
   useEffect(() => {
     getPayments();
   }, []);
@@ -67,12 +80,18 @@ const Payments = () => {
         <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Payments</h2>
           <div className="actions flex gap-3">
-            <Button variant="outlined" color="primary" onClick={getPayments}>
-              <Sync />
-            </Button>
-            <Button variant="outlined" color="primary">
-              Export CSV
-            </Button>
+            <LoaderButton
+              onClick={getPayments}
+              loading={isPaymentLoading}
+              content={<Sync />}
+            />
+
+            <LoaderButton
+              content={"Export CSV"}
+              onClick={ExportCSVHandler}
+              loading={isCSVLoading}
+            />
+
             {/* <Button
               variant="text"
               color="primary"

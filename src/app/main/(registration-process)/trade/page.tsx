@@ -1,12 +1,52 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { TextField } from "@mui/material";
 import { Bars, Bitcoin, Dollar } from "@/assets/Svgs";
 
 import "./trade.scss";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { userDetailsApi } from "@/services/user";
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import ComingSoon from "@/components/ui/ComingSoon";
 
 const Trade = () => {
+  const [Component, setComponent] = useState(null);
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
+    useApi(true);
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
+  const getUserDetails = async () => {
+    await callApiHook({
+      apiCall: callUserDetailsApi(userDetailsApi()),
+      successCallBack: (response: any) => {
+        if (response?.userDetails?.fees) {
+          setComponent(<ComingSoon />);
+        } else {
+          setComponent(<TradeOptions />);
+        }
+      },
+    });
+  };
+
   return (
     <div className="container-custom mx-auto mt-24">
+      <ErrorApiText error={isUserDetailsError} />
+      <LoadingApi loading={isUserDetailsLoading}>{Component}</LoadingApi>
+    </div>
+  );
+};
+
+export default Trade;
+
+const TradeOptions = () => {
+  return (
+    <>
       <div className="text-center max-w-80 mx-auto">
         <h2 className="large_heading_bold mb-16">Select a Market</h2>
         <TextField
@@ -136,8 +176,6 @@ const Trade = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
-
-export default Trade;
