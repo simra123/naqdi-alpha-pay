@@ -41,6 +41,7 @@ const Withdrawals = () => {
               variant="text"
               color="primary"
               LinkComponent={Link}
+              className="font-semibold"
               href="/withdrawals/create"
             >
               New Withdrawal
