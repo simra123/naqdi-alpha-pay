@@ -10,6 +10,8 @@ import { blockchains, networks } from "@/constants/blockchains";
 import LoaderButton from "@/components/common/LoaderButton";
 import { Button } from "@mui/material";
 import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
+import { withAuth } from "@/middleware/RoleBaseAuth";
+import { Role } from "@/constants/roles";
 
 const CreateWithdrawal = () => {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
@@ -227,4 +229,4 @@ const CreateWithdrawal = () => {
   );
 };
 
-export default CreateWithdrawal;
+export default withAuth(CreateWithdrawal, [Role.USER]);

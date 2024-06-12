@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 import Link from "next/link";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const rows = [
   {
@@ -24,6 +25,8 @@ const rows = [
 
 const Withdrawals = () => {
   const router = useRouter();
+  const user = useLocalStorage("user");
+
   return (
     <>
       {" "}
@@ -37,15 +40,17 @@ const Withdrawals = () => {
             <Button variant="outlined" color="primary">
               Export CSV
             </Button>
-            <Button
-              variant="text"
-              color="primary"
-              LinkComponent={Link}
-              className="font-semibold"
-              href="/withdrawals/create"
-            >
-              New Withdrawal
-            </Button>
+            {user?.role == Role.USER && (
+              <Button
+                variant="text"
+                color="primary"
+                LinkComponent={Link}
+                className="font-semibold"
+                href="/withdrawals/create"
+              >
+                New Withdrawal
+              </Button>
+            )}
           </div>
         </div>
 
@@ -62,7 +67,6 @@ const Withdrawals = () => {
             },
           }}
           onRowClick={(params) => {
-            
             router.push(`/withdrawals/details/${params?.row?.id}`);
           }}
           sortingOrder={["asc", "desc"]}

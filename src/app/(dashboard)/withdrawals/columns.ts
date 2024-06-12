@@ -36,6 +36,30 @@ export const converstion_table_columns = [
   },
 ];
 
+export const availableWallets_table_columns = [
+  {
+    field: "wallet_address",
+    headerName: "Wallet Address",
+    flex: 1,
+  },
+  {
+    field: "wallet_network",
+    headerName: "Network",
+    flex: 1,
+  },
+  {
+    field: "user_amount",
+    headerName: "User Amount",
+
+    flex: 1,
+  },
+  {
+    field: "total_amount",
+    headerName: "Total Amount",
+    flex: 1,
+  },
+];
+
 export const webhooks_table_columns = [
   {
     field: "info",
