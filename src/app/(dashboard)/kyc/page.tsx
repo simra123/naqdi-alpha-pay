@@ -12,8 +12,18 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import SelectBox from "@/components/common/SelectBox";
 import { withAuth } from "../../../middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
-import { Button } from "@mui/material";
+import { Button, Chip } from "@mui/material";
 import { Sync } from "@mui/icons-material";
+
+const ChipMaker = (status: boolean) => {
+  return (
+    <Chip
+      label={status ? "Approved" : "UnApproved"}
+      variant="filled"
+      color={status ? "success" : "warning"}
+    />
+  );
+};
 
 const columns = [
   { field: "id", headerName: "ID", flex: 1 },
@@ -23,7 +33,15 @@ const columns = [
   { field: "phone", headerName: "Phone", flex: 1 },
   { field: "country", headerName: "Country", flex: 1 },
   { field: "userType", headerName: "User Type", flex: 1 },
-  { field: "kycStatus", headerName: "KYC Status", flex: 1 },
+  {
+    field: "kycStatus",
+    headerName: "KYC Status",
+    flex: 1,
+    renderCell: (params) => {
+      const { value } = params;
+      return ChipMaker(value);
+    },
+  },
   { field: "createdAt", headerName: "Created At", flex: 1 },
 ];
 
@@ -56,7 +74,7 @@ const KYCUsersPage = () => {
             email: data?.user?.email,
             phone: data?.phone_number,
             country: data?.country,
-            kycStatus: data?.kyc_status,
+            kycStatus: data?.kyc_approved,
             userType: data?.user?.user_type,
             createdAt: moment(data?.user?.created_at).format("DD-MM-YYYY"),
           };

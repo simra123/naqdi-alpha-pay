@@ -11,10 +11,13 @@ import {
   updateUserFeeApi,
 } from "@/services/admin/users";
 import { callApiHook } from "@/utils/apifuncs";
-import { Cancel, Check, Close, OpenInNew } from "@mui/icons-material";
-import { Link, TextareaAutosize, TextField } from "@mui/material";
+import { Check, Close, OpenInNew } from "@mui/icons-material";
+import { Button, TextareaAutosize } from "@mui/material";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import TransparentInput from "@/components/common/TransparentInput";
+import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const statuses = {
   APPROVED: "approved",
@@ -81,94 +84,101 @@ const KYCUserID = ({ params }) => {
           </div>
 
           <div className="kycpage mt-6 flex flex-col gap-4 items-start">
-            <div className="flex flex-col gap-3">
-              <p className="font-bold text-md">Set a Fee ( % )</p>
-              <div className="flex items-center">
-                <LoadingApi loading={isFeeUpdateLoading}>
-                  <input
-                    className="input-field type outline-none px-3 py-3 min-w-56 "
-                    minLength={0}
-                    min={0}
-                    max={100}
-                    maxLength={100}
+            <div className="border-2 w-full p-3">
+              <div className="flex flex-col gap-3">
+                <p className="font-bold text-md">Set a Fee ( % )</p>
+                <div className="w-[350px]">
+                  <TransparentInput
                     value={fee}
                     onChange={(event) => setFee(event.target.value)}
+                    disabled={false}
                     type="number"
                   />
-                  <button
-                    className="btn gradient-btn px-4 !m-0 no-radius"
+                </div>
+                <ErrorApiText error={isFeeUpdateError} />
+                <div className="flex gap-2 justify-end">
+                  <LoaderButton
+                    variant="outlined"
+                    content="Update"
+                    loading={isFeeUpdateLoading}
                     onClick={handleFeeSubmit}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="border-2 w-full p-3">
+              <p className="font-bold text-md mb-6">KYC Details</p>
+
+              <div className="flex gap-3 items-baseline">
+                <p className="font-bold text-md">Format </p>
+
+                <TransparentInput value={userDetails?.file_type} />
+              </div>
+              <div className="mt-4">
+                <span className="font-bold text-md">Attachments </span>
+                <div className="attachments flex gap-3 mt-4">
+                  <div
+                    className="wrapper relative border  cursor-pointer group"
+                    onClick={() => setUrl(userDetails?.front_image)}
                   >
-                    Update
-                  </button>
-                </LoadingApi>
-              </div>
-              <ErrorApiText error={isFeeUpdateError} />
-            </div>
-            <div className="flex gap-3">
-              <p className="font-bold text-md">Format : </p>
-              <p className="font-semibold text-md">{userDetails?.file_type}</p>
-            </div>
-            <div>
-              <span className="font-bold text-md">Attachments </span>
-              <div className="attachments flex gap-3 mt-4">
-                <div
-                  className="wrapper relative  cursor-pointer group"
-                  onClick={() => setUrl(userDetails?.front_image)}
-                >
-                  <img
-                    src={userDetails?.front_image}
-                    alt="front side"
-                    className="max-w-full"
-                  />
-                  <div className="opener absolute top-0 right-0 left-0 bottom-0 grid-cols-1 place-items-center backdrop-blur-sm hidden group-hover:grid">
-                    <OpenInNew color="inherit" accentHeight={100} />
+                    <img
+                      src={userDetails?.front_image}
+                      alt="front side"
+                      className="max-w-full w-60"
+                    />
+                    <div className="opener absolute top-0 right-0 left-0 bottom-0 grid-cols-1 place-items-center backdrop-blur-sm hidden group-hover:grid">
+                      <OpenInNew color="inherit" accentHeight={100} />
+                    </div>
                   </div>
-                </div>
-                <div
-                  className="wrapper relative  cursor-pointer group"
-                  onClick={() => setUrl(userDetails?.back_image)}
-                >
-                  <img
-                    src={userDetails?.back_image}
-                    alt="front side"
-                    className="max-w-full"
-                  />
-                  <div className="opener absolute top-0 right-0 left-0 bottom-0 grid-cols-1 place-items-center backdrop-blur-sm hidden group-hover:grid">
-                    <OpenInNew color="inherit" accentHeight={100} />
+                  <div
+                    className="wrapper relative border  cursor-pointer group"
+                    onClick={() => setUrl(userDetails?.back_image)}
+                  >
+                    <img
+                      src={userDetails?.back_image}
+                      alt="front side"
+                      className="max-w-full  w-60"
+                    />
+                    <div className="opener absolute top-0 right-0 left-0 bottom-0 grid-cols-1 place-items-center backdrop-blur-sm hidden group-hover:grid">
+                      <OpenInNew color="inherit" accentHeight={100} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex flex-col ">
-              <span className="font-bold text-md">Remarks </span>
-              <TextareaAutosize
-                className="input-field p-3 outline-none min-h-14 min-w-96 block mt-4"
-                onChange={(e) => setReason(e.target.value)}
-                value={reason}
-              />
-            </div>
-
-            <LoadingApi loading={isKYCSubmitLoading}>
-              <div className="buttons-wrapper flex items-center gap-2 justify-center">
-                <button
-                  className="btn-status success"
-                  onClick={handleSubmit(statuses.APPROVED)}
-                >
-                  <Check />
-                  <span>Accept</span>
-                </button>
-                <button
-                  className="btn-status error"
-                  onClick={handleSubmit(statuses.REJECTED)}
-                >
-                  <Close />
-                  <span> Reject</span>
-                </button>
-                <ErrorApiText error={isKYCSubmitError} />
+              <div className="flex flex-col my-4">
+                <span className="font-bold text-md mb-3">Remarks </span>
+                <TransparentInput
+                  textarea
+                  disabled={false}
+                  onChange={(e) => setReason(e.target.value)}
+                  value={reason}
+                />
               </div>
-            </LoadingApi>
+
+              <LoadingApi loading={isKYCSubmitLoading}>
+                <div className="buttons-wrapper flex items-center gap-2 justify-center">
+                  <Button
+                    color="success"
+                    variant="outlined"
+                    onClick={handleSubmit(statuses.APPROVED)}
+                    endIcon={<Check />}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    color="error"
+                    variant="outlined"
+                    onClick={handleSubmit(statuses.REJECTED)}
+                    endIcon={<Close />}
+                  >
+                    Reject
+                  </Button>
+                  <ErrorApiText error={isKYCSubmitError} />
+                </div>
+              </LoadingApi>
+            </div>
           </div>
         </div>
       </ErrorApiText>

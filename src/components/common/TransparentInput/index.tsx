@@ -8,6 +8,7 @@ interface TransparentInputProps {
   inputClass?: string;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   name?: string;
+  type?: string;
 }
 
 const TransparentInput: FC<TransparentInputProps> = ({
@@ -18,6 +19,7 @@ const TransparentInput: FC<TransparentInputProps> = ({
   inputClass,
   name,
   onChange,
+  type,
 }) => {
   return (
     <div className={`flex flex-col gap-2  ${inputClass}`}>
@@ -35,6 +37,9 @@ const TransparentInput: FC<TransparentInputProps> = ({
             className={`transparent font-semibold text-[14px]`}
             value={value}
             name={name}
+            min={type == "number" && 0}
+            max={type == "number" && 100}
+            type={type}
             onChange={onChange}
           />
           <span className="text-[12px] font-semibold  text-gray-500">
