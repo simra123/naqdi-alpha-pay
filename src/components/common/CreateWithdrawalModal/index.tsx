@@ -1,15 +1,70 @@
+"use client";
 import React from "react";
 import Modal from "../Modal";
 import OTPInput from "react-otp-input";
 import LoaderButton from "../LoaderButton";
 import { Button } from "@mui/material";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { createWithdrawalApi } from "@/services/withdrawal";
+import { useDispatch } from "react-redux";
+import ErrorApiText from "../ErrorApiText";
+import { networks_available } from "@/constants/blockchains";
+import { setNotification } from "@/store/slices/modal.Slice";
 
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
+  data: {
+    amount: string;
+    recipientAddress: string;
+    fee: number;
+    netAmount: number;
+    network: string;
+    blockchain: string;
+    notes?: string;
+  };
 };
 
-const CreateWithdrawalModal = ({ isOpen, handleClose }: Props) => {
+const CreateWithdrawalModal = ({
+  isOpen,
+  handleClose,
+  data: {
+    amount,
+    blockchain,
+    fee,
+    netAmount,
+    network,
+    recipientAddress,
+    notes,
+  },
+}: Props) => {
+  const dispatch = useDispatch();
+  const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
+
+  const handleWithdrawal = async () => {
+    await callApiHook({
+      apiCall: callWithdrawalApi(
+        createWithdrawalApi({
+          amount,
+          recipient_address: recipientAddress,
+          blockchain,
+          notes,
+          standard: networks_available[blockchain] ? network : "",
+        })
+      ),
+      successCallBack: (response: any) => {
+        dispatch(
+          setNotification({
+            message: "Withdrawal Request Created Successfully",
+            status: "success",
+          })
+        );
+        handleClose();
+      },
+    });
+  };
+
   return (
     <Modal isOpen={isOpen}>
       <div className="min-h-full p-8 flex place-items-center place-content-center">
@@ -23,39 +78,39 @@ const CreateWithdrawalModal = ({ isOpen, handleClose }: Props) => {
                 <h5 className="text-[14px] font-semibold primary-color">
                   Withdrawal Amount
                 </h5>
-                <p className="text-[14px] primary-color">83 USDT</p>
+                <p className="text-[14px] primary-color">{amount}</p>
               </div>
-              <div className="data-row grid grid-cols-2 py-3 border-b px-5">
+              {/* <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
                   Gross Amount
                 </h5>
                 <p className="text-[14px] primary-color">82.9 USDT</p>
-              </div>
+              </div> */}
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
                   Withdrawal Fee
                 </h5>
-                <p className="text-[14px] primary-color">0.9 USDT</p>
+                <p className="text-[14px] primary-color">{fee}</p>
               </div>
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
                   Net Amount
                 </h5>
-                <p className="text-[14px] primary-color">81 USDT</p>
+                <p className="text-[14px] primary-color">{netAmount}</p>
               </div>
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
                   Recipient Wallet Address
                 </h5>
                 <p className="text-[14px] primary-color break-words">
-                  0x1D3aD849121Af6B0183aEc00224C74F52102D3f9
+                  {recipientAddress}
                 </p>
               </div>
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
                   Network
                 </h5>
-                <p className="text-[14px] primary-color">ERC-20</p>
+                <p className="text-[14px] primary-color">{network}</p>
               </div>
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
@@ -96,14 +151,16 @@ const CreateWithdrawalModal = ({ isOpen, handleClose }: Props) => {
                 </div>
               </div>
 
+              <ErrorApiText error={isWithdrawalError} textClass="p-3" />
+
               <div className="flex gap-4 justify-end px-5">
                 <Button variant="text" onClick={handleClose} color="primary">
                   Cancel
                 </Button>
                 <LoaderButton
                   content={"Proceed"}
-                  loading={false}
-                  onClick={handleClose}
+                  loading={isWithdrawalLoading}
+                  onClick={handleWithdrawal}
                 />
               </div>
             </div>

@@ -170,3 +170,17 @@ export const formatUsers = (response: []) => {
   }));
   return tableData;
 };
+
+export const formatWithdrawals = (response: []) => {
+  const tableData = response?.map((item: any) => ({
+    id: item?.id,
+    created_at: moment(item?.created_at).format("DD-MM-YYYY"),
+    requested_amount: item?.requested_amount,
+    unit: item?.unit,
+    transaction_hash: item?.transaction_hash || "_",
+    standard: item?.standard || "_",
+    recipient_address: item?.recipient_address,
+    status: item?.status,
+  }));
+  return tableData;
+};

@@ -12,6 +12,18 @@ export const blockchains = [
   { label: "USDC", value: "USDC" },
 ];
 
+export const blockchain_standards = {
+  bitcoin: "Omni-layer",
+  Btc: "Omni-layer",
+  BTC: "Omni-layer",
+  ethereum: "ERC-20",
+  Eth: "ERC-20",
+  ETH: "ERC-20",
+  tron: "TRC-20",
+  Tron: "TRC-20",
+  TRON: "TRC-20",
+};
+
 export const networks = {
   bitcoin: [
     { label: "Mainnet", value: "mainnet" },
@@ -58,4 +70,31 @@ export const networks = {
     { label: "Ethereum", value: "mainnet(eth)", standard: STANDARD.ETHEREUM },
     { label: "Sepolia(ETH)", value: "sepolia", standard: STANDARD.ETHEREUM },
   ],
+  Btc: [
+    { label: "Mainnet", value: "mainnet" },
+    { label: "Testnet", value: "testnet" },
+  ],
+
+  Eth: [
+    { label: "Mainnet", value: "mainnet" },
+    { label: "Sepolia", value: "sepolia" },
+  ],
+  Tron: [
+    { label: "Mainnet", value: "mainnet" },
+    { label: "Nile", value: "nile" },
+  ],
+};
+
+export const networks_available = {
+  bitcoin: false,
+  BTC: false,
+  Btc: false,
+  ethereum: false,
+  ETH: false,
+  Eth: false,
+  tron: false,
+  Tron: false,
+  TRON: false,
+  USDT: true,
+  USDC: true,
 };

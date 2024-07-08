@@ -1,11 +1,11 @@
 export const withdrawalsList_table_columns = [
   { field: "id", headerName: "ID", flex: 1 },
   { field: "createdAt", headerName: "Created At", flex: 1 },
-  { field: "sourceAmount", headerName: "Source Amount", flex: 1 },
-  { field: "netAmount", headerName: "Net Amount", flex: 1 },
+  { field: "requested_amount", headerName: "Requested Amount", flex: 1 },
+  { field: "unit", headerName: "Unit", flex: 1 },
+  { field: "transaction_hash", headerName: "Transaction Hash", flex: 1 },
+  { field: "recipient_address", headerName: "Recipient Address", flex: 1 },
   { field: "status", headerName: "Status", flex: 1 },
-  { field: "walletAddress", headerName: "Wallet Address", flex: 1 },
-  { field: "profile", headerName: "Profile", flex: 1 },
 ];
 
 export const converstion_table_columns = [

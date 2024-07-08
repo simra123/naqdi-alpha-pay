@@ -67,7 +67,7 @@ const IndividualForm = ({ activeForm }) => {
     const individualData = {
       first_name: values?.firstName,
       last_name: values.lastName,
-      middleName: values?.middleName,
+      middle_name: values?.middleName,
       username: values?.userName,
       email: values?.email,
       password: values?.password,

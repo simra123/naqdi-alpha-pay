@@ -4,7 +4,7 @@ import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
 import { DataGrid } from "@mui/x-data-grid";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   availableWallets_table_columns,
   converstion_table_columns,
@@ -16,6 +16,9 @@ import { Button, Chip } from "@mui/material";
 import { Check } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { getWithdrawalDetilsApi } from "@/services/withdrawal";
 
 const dummyRows = [
   {
@@ -55,8 +58,9 @@ const dummyRows = [
   },
 ];
 
-const WithdrawalDetails = () => {
+const WithdrawalDetails = ({ params }) => {
   const user = useLocalStorage("user");
+  const withdraw_id = +params?.id;
 
   const [withdrawalData, setWithdrawalData] = useState({
     transaction_hash: "",
@@ -67,6 +71,28 @@ const WithdrawalDetails = () => {
   const [withdrawalType, setWithdrawalType] = useState(Withdrawal_Type.MANUAL);
 
   const [selectionModel, setSelectionModel] = useState([]);
+
+  const [withdrawalDetails, setwithdrawalDetails] = useState();
+  const [
+    isWithdrawalDetailsLoading,
+    isWithdrawalDetailsError,
+    callWithdrawalDetailsApi,
+  ] = useApi(true);
+
+  const getWithdrawalDetails = async () => {
+    await callApiHook({
+      apiCall: callWithdrawalDetailsApi(
+        getWithdrawalDetilsApi({ withdraw_id })
+      ),
+      successCallBack: (response: any) => {
+        setwithdrawalDetails(response);
+      },
+    });
+  };
+
+  useEffect(() => {
+    getWithdrawalDetails();
+  }, []);
 
   const handleSelectionChange = (newSelection) => {
     setSelectionModel(newSelection);

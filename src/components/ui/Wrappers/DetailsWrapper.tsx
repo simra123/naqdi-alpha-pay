@@ -5,12 +5,19 @@ interface WrapperProps {
   children: React.ReactNode;
   col?: boolean;
   align?: boolean;
+  className?: string;
 }
 
-const DetailsWrapper: FC<WrapperProps> = ({ title, children, align, col }) => {
+const DetailsWrapper: FC<WrapperProps> = ({
+  title,
+  children,
+  align,
+  col,
+  className,
+}) => {
   return (
     <div
-      className={`grid-template-details ${
+      className={`grid-template-details ${className} ${
         col ? "items-start" : "items-center "
       }`}
     >
