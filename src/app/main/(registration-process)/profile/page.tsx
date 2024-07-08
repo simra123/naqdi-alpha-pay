@@ -92,7 +92,7 @@ const Profile = () => {
       <RequestEditModal isOpen={editOpen} setIsOpen={setEditOpen} />
       <h2 className="large_heading_bold mt-6">
         {info?.user?.first_name} {info?.user?.last_name} (
-        {capitalize(info?.user?.user_type)})
+        {info?.user?.user_type && capitalize(info?.user?.user_type)})
       </h2>
       <div className="form_section flex justify-between mt-16 gap-12">
         <div className="form_wrapper w-4/6">
