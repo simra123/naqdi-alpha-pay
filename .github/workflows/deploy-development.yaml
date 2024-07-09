@@ -1,0 +1,66 @@
+name: Deploy Next.js to VPS
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      NEXT_PUBLIC_PROJECT_ID: ${{secrets.NEXT_PUBLIC_PROJECT_ID }}   
+      NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
+      NEXT_PUBLIC_RECAPTCHA_SECRET_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Create .env file
+      run: |
+        echo NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_PROJECT_ID  }} >> .env
+        echo NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} >> .env
+        echo NEXT_PUBLIC_RECAPTCHA_SECRET_KEY=${{ secrets.NEXT_PUBLIC_RECAPTCHA_SECRET_KEY }} >> .env
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Next.js application
+      run: npm run build
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          # Load NVM and ensure npm and pm2 are available
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+          # Ensure the correct Node version is used
+          nvm use 20
+
+          # Navigate to the application directory
+          cd /home/portal-development/portal-client-admin
+
+          # Pull the latest changes
+          git pull origin main
+
+          # Install dependencies
+          npm install
+
+          # Build the application
+          npm run build
+
+          # Restart the application with pm2
+          ~/.nvm/versions/node/$(nvm current)/bin/pm2 restart portal-development
