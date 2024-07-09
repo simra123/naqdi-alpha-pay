@@ -16,7 +16,7 @@ const monsterrat = Montserrat({
 
 });
 
-console.log("STAGGING ENIVRONMENT 2")
+console.log("Development ENIVRONMENT 2")
 
 export default function RootLayout({ children }) {
   return (
