@@ -47,8 +47,8 @@ const Payments = () => {
           const tableData = response.map((item) => {
             return {
               id: item?.id,
-              createdAt: moment(item?.created_at).format("DD-MM-YYYY"),
-              updatedAt: moment(item?.updated_at).format("DD-MM-YYYY"),
+              createdAt: moment(item?.created_at).format('DD-MM-YYYY : hh:mm A'),
+              updatedAt: moment(item?.updated_at).format('DD-MM-YYYY : hh:mm A'),
               requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
               amountPaid: `${item?.payment_currency_amount} ${item?.payment_currency}`,
               paid: item?.status == "Complete" ? "Yes" : "No",
