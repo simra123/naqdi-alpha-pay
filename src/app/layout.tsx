@@ -13,7 +13,10 @@ import "./globals.scss";
 const monsterrat = Montserrat({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+
 });
+
+console.log("STAGGING ENIVRONMENT 2")
 
 export default function RootLayout({ children }) {
   return (
