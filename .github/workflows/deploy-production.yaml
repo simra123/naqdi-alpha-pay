@@ -1,9 +1,9 @@
-name: Deploying On the Development Server
+name: Deploy Next.js to VPS
 
 on:
   push:
     branches:
-      - development
+      - main
 
 jobs:
   build:
@@ -51,10 +51,10 @@ jobs:
           nvm use 20
 
           # Navigate to the application directory
-          cd /home/portal-development/portal-client-admin
+          cd /home/portal-client-admin
 
           # Pull the latest changes
-          git pull origin development
+          git pull origin main
 
           # Install dependencies
           npm install
@@ -63,4 +63,4 @@ jobs:
           npm run build
 
           # Restart the application with pm2
-          ~/.nvm/versions/node/$(nvm current)/bin/pm2 restart portal-development
+          ~/.nvm/versions/node/$(nvm current)/bin/pm2 restart client
