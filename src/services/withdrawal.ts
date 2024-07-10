@@ -1,6 +1,7 @@
 "use client";
 
 import api from "@/config/api";
+import { Withdrawal_Type } from "@/constants/roles";
 
 export const createWithdrawalApi = (data: {
   blockchain: string;
@@ -18,4 +19,17 @@ export const getWithdrawalsListApi = () => {
 
 export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {
   return () => api.post(`wallet/withdrawal-details`, data);
+};
+
+export const withdrawalRejectAdminApi = (data: { withdraw_id: number }) => {
+  return () => api.post(`wallet/reject-withdraw`, data);
+};
+
+export const withdrawalApproveAdminApi = (data: {
+  withdraw_id: number;
+  sender_address?: string;
+  withdrawal_mode: Withdrawal_Type;
+  txhash?: string;
+}) => {
+  return () => api.post(`wallet/crypto-withdrawals`, data);
 };

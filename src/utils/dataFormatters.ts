@@ -174,11 +174,12 @@ export const formatUsers = (response: []) => {
 export const formatWithdrawals = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
-    created_at: moment(item?.created_at).format("DD-MM-YYYY"),
+    created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+    updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
     requested_amount: item?.requested_amount,
-    unit: item?.unit,
+    network: `${item?.unit}${item?.standard && `(${item?.standard})`}`,
+    withdrawal_type: capitalize(item?.transaction_type),
     transaction_hash: item?.transaction_hash || "_",
-    standard: item?.standard || "_",
     recipient_address: item?.recipient_address,
     status: item?.status,
   }));

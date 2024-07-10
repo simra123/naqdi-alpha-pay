@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import ErrorApiText from "../ErrorApiText";
 import { networks_available } from "@/constants/blockchains";
 import { setNotification } from "@/store/slices/modal.Slice";
+import { useRouter } from "next/navigation";
 
 type Props = {
   isOpen: boolean;
@@ -40,6 +41,7 @@ const CreateWithdrawalModal = ({
   },
 }: Props) => {
   const dispatch = useDispatch();
+  const router = useRouter()
   const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
 
   const handleWithdrawal = async () => {
@@ -61,6 +63,7 @@ const CreateWithdrawalModal = ({
           })
         );
         handleClose();
+        router.push('/withdrawals')
       },
     });
   };

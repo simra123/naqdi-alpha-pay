@@ -9,6 +9,7 @@ type Props = {
   handleClose: () => void;
   title: string;
   handleConfirm: () => void;
+  confirmLoading?: boolean;
   content?: string;
 };
 
@@ -17,6 +18,7 @@ const ConfirmationModal = ({
   handleClose,
   handleConfirm,
   title,
+  confirmLoading,
   content = "Kindly Confirm to proceed with this request.",
 }: Props) => {
   return (
@@ -38,7 +40,7 @@ const ConfirmationModal = ({
               </Button>
               <LoaderButton
                 content={"Confirm"}
-                loading={false}
+                loading={confirmLoading}
                 onClick={handleConfirm}
               />
             </div>
