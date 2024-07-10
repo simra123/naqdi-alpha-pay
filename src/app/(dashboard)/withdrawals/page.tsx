@@ -17,18 +17,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import LoaderButton from "@/components/common/LoaderButton";
 
-const rows = [
-  {
-    id: 1,
-    createdAt: "2024-04-18",
-    sourceAmount: "500 USD",
-    netAmount: "450 USD",
-    status: "Pending",
-    walletAddress: "0x1234567890abcdef",
-    profile: "Customer",
-  },
-  // Add more rows here if needed
-];
+
 
 const Withdrawals = () => {
   const router = useRouter();
