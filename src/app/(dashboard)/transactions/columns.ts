@@ -9,7 +9,7 @@ export const transactionsList_table_columns = [
   // },
   { field: "receiveAddress", headerName: "Receive Address", flex: 1 },
   { field: "transactionType", headerName: "Transacion Type", flex: 1 },
-  { field: "network", headerName: "Network", flex: 1 },
+  // { field: "network", headerName: "Network", flex: 1 },
   { field: "blockchain", headerName: "Blockchain", flex: 1 },
   { field: "status", headerName: "Status", flex: 1 },
 ];
@@ -22,7 +22,7 @@ export const transactionsList_Admin_table_columns = [
   { field: "email", headerName: "Email", flex: 1 },
   { field: "receiveAddress", headerName: "Receive Address", flex: 1 },
   { field: "transactionType", headerName: "Transacion Type", flex: 1 },
-  { field: "network", headerName: "Network", flex: 1 },
+  // { field: "network", headerName: "Network", flex: 1 },
   { field: "blockchain", headerName: "Blockchain", flex: 1 },
   { field: "status", headerName: "Status", flex: 1 },
 ];

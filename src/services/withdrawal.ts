@@ -13,8 +13,12 @@ export const createWithdrawalApi = (data: {
   return () => api.post(`wallet/withdrawal`, data);
 };
 
-export const getWithdrawalsListApi = () => {
+export const getAdminWithdrawalsListApi = () => {
   return () => api.get(`wallet/withdrawals`);
+};
+
+export const getUserWithdrawalsListApi = () => {
+  return () => api.get(`wallet/user-withdrawals`);
 };
 
 export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {

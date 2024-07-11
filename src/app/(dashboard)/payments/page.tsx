@@ -31,6 +31,8 @@ const rows = [
   // Add more rows here if needed
 ];
 
+const unpaidStatuses = ['Pending','Cancel']
+
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
@@ -51,7 +53,7 @@ const Payments = () => {
               updatedAt: moment(item?.updated_at).format('DD-MM-YYYY : hh:mm A'),
               requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
               amountPaid: `${item?.payment_currency_amount} ${item?.payment_currency}`,
-              paid: item?.status == "Complete" ? "Yes" : "No",
+              paid: unpaidStatuses.some(status => status == item?.status) ? "No" : "Yes",
               status: item?.status,
             };
           });
@@ -106,6 +108,7 @@ const Payments = () => {
         <LoadingApi loading={isPaymentLoading}>
           <DataGrid
             rows={paymentsList}
+            autoHeight
             columns={paymentsList_table_columns}
             className="border-t-0 primary-color"
             sx={{
