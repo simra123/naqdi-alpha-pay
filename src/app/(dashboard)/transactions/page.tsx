@@ -104,7 +104,7 @@ const Transactions = () => {
               onClick={ExportCSVHandler}
               loading={isCSVLoading}
             />
-            <SelectBox
+            {/* <SelectBox
               className="transparent !border-0 min-w-32 !p-0"
               options={statusList}
               value={selectedStatus}
@@ -117,7 +117,7 @@ const Transactions = () => {
 
                 borderRadius: "0 !important",
               }}
-            />
+            /> */}
           </div>
         </div>
         <ErrorApiText error={isTransactionsError} />

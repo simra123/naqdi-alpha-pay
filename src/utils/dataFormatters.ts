@@ -62,11 +62,24 @@ export const capitalize = (value) => {
 
 export const formatBalanceForUser = (balance: []) => {
   const tableData = balance.map(
-    (item: { unit: string; totalAmount: string | number }, index) => {
+    (
+      item: {
+        unit: string;
+        totalAmount: number;
+        transactionTotal: number;
+        paymentTransactionTotal: number;
+      },
+      index
+    ) => {
       return {
         id: index,
         currency: item?.unit,
-        totalAmount: item?.totalAmount,
+        totalAmount: roundToPrecision(+item?.totalAmount, 8),
+        transactionTotal: roundToPrecision(+item?.transactionTotal, 8),
+        paymentTransactionTotal: roundToPrecision(
+          +item?.paymentTransactionTotal,
+          8
+        ),
       };
     }
   );
@@ -126,7 +139,10 @@ export const formatTransactions = (response: []) => {
     id: item?.id,
     dateReceived: moment(item?.createdAt).format("DD-MM-YYYY"),
     transactionHash: item?.transaction_hash,
-    amount: item?.unit != null ? `${item?.amount} ${item?.unit}` : item?.amount,
+    amount:
+      item?.unit != null
+        ? `${item?.transaction_amount} ${item?.unit}`
+        : item?.transaction_amount,
     receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
     transactionType: capitalize(item?.payment?.id ? "Payment" : "Self Deposit"),
     network: capitalize(item?.wallet?.network),
@@ -143,7 +159,10 @@ export const formatTransactionsByAdmin = (response: []) => {
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
     transactionHash: item?.transaction_hash,
-    amount: item?.unit != null ? `${item?.amount} ${item?.unit}` : item?.amount,
+    amount:
+      item?.unit != null
+        ? `${item?.transaction_amount} ${item?.unit}`
+        : item?.transaction_amount,
     receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
     transactionType: capitalize(item?.transaction_type),
     network: capitalize(item?.wallet?.network),
@@ -181,7 +200,7 @@ export const formatWithdrawals = (response: []) => {
     withdrawal_type: capitalize(item?.transaction_type),
     transaction_hash: item?.transaction_hash || "_",
     recipient_address: item?.recipient_address,
-    status: item?.status,
+    status: capitalize(item?.status),
   }));
   return tableData;
 };
