@@ -23,7 +23,7 @@ import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
-const unpaidStatuses = ['Pending','Cancel']
+const unpaidStatuses = ["Pending", "Cancel", "New"];
 
 const PaymentDetails = ({ params }) => {
   const paymentId = params?.id;
@@ -143,7 +143,11 @@ const PaymentDetails = ({ params }) => {
             </DetailsWrapper> */}
                 <DetailsWrapper title={"Status"}>
                   <TransparentInput
-                    value={unpaidStatuses.some(status => status == payment?.status) ? "Unpaid" : "Paid"}
+                    value={
+                      unpaidStatuses.some((status) => status == payment?.status)
+                        ? "Unpaid"
+                        : "Paid"
+                    }
                     label={"Paid Status"}
                   />
                   <TransparentInput

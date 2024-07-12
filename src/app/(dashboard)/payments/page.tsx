@@ -31,7 +31,7 @@ const rows = [
   // Add more rows here if needed
 ];
 
-const unpaidStatuses = ['Pending','Cancel']
+const unpaidStatuses = ['Pending','Cancel','New']
 
 const Payments = () => {
   const router = useRouter();
