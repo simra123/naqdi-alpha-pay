@@ -15,7 +15,7 @@ const LoaderButton = ({
   content,
 }: Props) => {
   return (
-    <Button variant={variant} color="primary" onClick={onClick}>
+    <Button variant={variant} color="primary" className="py-2 px-8" onClick={onClick}>
       {loading ? <CircularProgress size={20} /> : content}
     </Button>
   );

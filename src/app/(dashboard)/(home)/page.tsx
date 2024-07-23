@@ -127,9 +127,9 @@ const Home = () => {
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-        console.log("ADMIN BALANCE", response);
-        const tableData = formatBalanceForAdmin(response);
-        console.log("ADMIN Formatted BALANCE", tableData);
+      
+        const tableData = formatBalanceForUser(response?.result);
+       
         setBalance(tableData);
       },
     });

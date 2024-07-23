@@ -27,12 +27,9 @@ export const rejectPayoutApi = (data: {
   payout_id: number;
   reason: string;
 }) => {
-  return () => api.post(`payouts/user-payouts`, data);
+  return () => api.post(`payouts/reject-payout`, data);
 };
 
-export const approvePayoutApi = (data: {
-  payout_id: number;
-  sender_address: string;
-}) => {
+export const approvePayoutApi = (data: { payout_id: number }) => {
   return () => api.post(`payouts/approve-payout`, data);
 };

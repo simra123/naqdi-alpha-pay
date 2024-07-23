@@ -1,10 +1,164 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
 import { Button } from "@mui/material";
+import SelectBox from "@/components/common/SelectBox";
+import {
+  blockchain_standards,
+  networks,
+  networks_available,
+} from "@/constants/blockchains";
+import { useApi } from "@/hooks/useApi";
+import { getAllWalletBalancesApi } from "@/services/wallet";
+import { callApiHook } from "@/utils/apifuncs";
+import { formatBalanceForUser } from "@/utils/dataFormatters";
+import { getFeesApi } from "@/services/common";
+import { clamp } from "@/utils/math";
+import { fiatOptions } from "@/constants/fiat";
+import { createPayoutRequestApi } from "@/services/payout";
+import { useDispatch } from "react-redux";
+import { setNotification } from "@/store/slices/modal.Slice";
+import { useRouter } from "next/navigation";
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
 
 const PayoutDetails = () => {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [balance, setBalance] = useState([]);
+  const [destinationAmount, setDestinationAmount] = useState("0");
+  const [withdrawalFee, setWithdrawalFee] = useState(0);
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
+  const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
+  const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
+    useApi();
+
+  const [sourceOptions, setSourceOptions] = useState({
+    filteredNets: [],
+    blockchain: "",
+    network: "",
+    standard: "",
+  });
+
+  const [data, setData] = useState({
+    requested_currency: "",
+    bank_account: "",
+    account_title: "",
+    amount: "",
+  });
+
+  const handleSourceChange = (event) => {
+    const { value, name } = event.target;
+
+    if (name === "blockchain") {
+      console.log(networks, value);
+
+      setSourceOptions((prev) => ({
+        ...prev,
+        filteredNets: networks[value],
+        blockchain: value,
+        network: "",
+        standard: blockchain_standards[value], // Reset standard when blockchain changes
+      }));
+    } else if (name === "network") {
+      const standard = filteredNetworks(value, sourceOptions.blockchain);
+
+      setSourceOptions((prev) => ({
+        ...prev,
+        [name]: value,
+        standard: standard || "", // Set standard if available, otherwise reset
+      }));
+    }
+  };
+
+  const handleInputChange = (event, name) => {
+    const { value } = event.target;
+
+    if (name == "amount") {
+      const maxVal = clamp(
+        value,
+        getCurrentAssetAmount(sourceOptions.blockchain)
+      );
+      return setData((pre) => ({ ...pre, [name]: maxVal }));
+    }
+
+    setData((pre) => ({ ...pre, [name]: value }));
+  };
+
+  const handleCreatePayout = async () => {
+    await callApiHook({
+      apiCall: callCreatePayoutApi(
+        createPayoutRequestApi({
+          account_title: data.account_title,
+          amount: data.amount,
+          bank_account: data.bank_account,
+          requested_currency: data.requested_currency,
+          unit: sourceOptions.blockchain,
+          standard: networks_available[sourceOptions.blockchain]
+            ? filteredNetworks(sourceOptions.network, sourceOptions.blockchain)
+            : "",
+        })
+      ),
+      successCallBack: (response: any) => {
+        dispatch(
+          setNotification({
+            message: "Payout Request Created Successfully",
+            status: "success",
+          })
+        );
+        router.push("/payouts");
+      },
+    });
+  };
+
+  const _getUserBalance = async () => {
+    await callApiHook({
+      apiCall: callBalanceApi(getAllWalletBalancesApi()),
+      successCallBack: (response: any) => {
+        const tableData = formatBalanceForUser(response?.result);
+        const withdraw_currency_options = tableData.map((item) => {
+          return {
+            label: item?.currency,
+            value: item.currency,
+            amount: item?.totalAmount,
+          };
+        });
+        setBalance(withdraw_currency_options);
+      },
+    });
+  };
+
+  const getAlphasPayFee = async () => {
+    await callApiHook({
+      apiCall: callFeeApi(getFeesApi(data?.amount)),
+      successCallBack: (response: any) => {
+        setWithdrawalFee(response?.alphaspayFees);
+        setDestinationAmount(response?.netAmount);
+      },
+    });
+  };
+
+  useEffect(() => {
+    _getUserBalance();
+  }, []);
+
+  useEffect(() => {
+    getAlphasPayFee();
+  }, [data.amount]);
+
+  const filteredNetworks = (network, blockchain) => {
+    console.log({ network, blockchain });
+
+    return networks[blockchain].find((item) => item.value == network)?.standard;
+  };
+
+  const getCurrentAssetAmount = (value) => {
+    return balance.find((item) => item.value == value)?.amount;
+  };
+
   return (
     <DashboardPageWrapper>
       <div className="data-grid-container">
@@ -12,38 +166,119 @@ const PayoutDetails = () => {
           <h2 className="text-xl font-semibold">New Payout</h2>
         </div>
 
-        <div className="detailspage mt-6">
-          <div className="flex flex-col gap-4">
-            <DetailsWrapper title={"Gross Amount"}>
-              <TransparentInput value={`1 USD`} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Fee"}>
-              <TransparentInput value={`0.01 USD`} />
-            </DetailsWrapper>
+        <LoadingApi loading={isCreatePayoutLoading}>
+          <div className="detailspage mt-6">
+            <div className="flex flex-col gap-4">
+              <DetailsWrapper
+                title={"Source Currency & Network"}
+                className="items-baseline"
+              >
+                <div className="flex flex-col gap-1">
+                  <SelectBox
+                    className="transparent !border-0 min-w-44 !p-0"
+                    options={balance}
+                    name="blockchain"
+                    value={sourceOptions.blockchain}
+                    placeholder="Select a Blockchain"
+                    onChange={handleSourceChange}
+                    sx={{
+                      ".MuiSelect-outlined": {
+                        padding: "8px 12px !important",
+                      },
 
-            <DetailsWrapper title={"Net Amount "}>
-              <TransparentInput value={`0 USD`} />
-            </DetailsWrapper>
+                      borderRadius: "0 !important",
+                    }}
+                  />
+                  {sourceOptions.blockchain && (
+                    <p className="note">
+                      <span className="font-bold">Available Balance : </span>
+                      {getCurrentAssetAmount(sourceOptions.blockchain)}
+                    </p>
+                  )}
+                </div>
+                {networks_available[sourceOptions.blockchain] && (
+                  <SelectBox
+                    className="transparent !border-0 min-w-44 !p-0"
+                    options={sourceOptions.filteredNets}
+                    name="network"
+                    disabled={!sourceOptions.blockchain}
+                    value={sourceOptions.network}
+                    placeholder="Select a Network"
+                    onChange={handleSourceChange}
+                    sx={{
+                      ".MuiSelect-outlined": {
+                        padding: "8px 12px !important",
+                      },
 
-            <DetailsWrapper title={"To Bank Account "}>
-              <TransparentInput value={`News Bank`} />
-            </DetailsWrapper>
+                      borderRadius: "0 !important",
+                    }}
+                  />
+                )}
+              </DetailsWrapper>
+              <DetailsWrapper
+                title={"Source Amount & Destination Amount"}
+                align
+              >
+                <TransparentInput
+                  value={data?.amount}
+                  label="Amount"
+                  disabled={false}
+                  onChange={(e) => handleInputChange(e, "amount")}
+                />
+                <TransparentInput
+                  value={destinationAmount}
+                  label="Destination Amount"
+                />
+              </DetailsWrapper>
 
-            <DetailsWrapper title={"Profile"}>
-              <TransparentInput value={`Alphaspay`} />
-            </DetailsWrapper>
+              <DetailsWrapper title={"Requested Currency"}>
+                <SelectBox
+                  className="transparent !border-0 min-w-44 !p-0"
+                  options={fiatOptions}
+                  name="fiat"
+                  value={data.requested_currency}
+                  placeholder="Select a Currency"
+                  onChange={(e) => handleInputChange(e, "requested_currency")}
+                  sx={{
+                    ".MuiSelect-outlined": {
+                      padding: "8px 12px !important",
+                    },
 
-            <DetailsWrapper title={"Notes"}>
-              <TransparentInput value={`Hellow`} textarea />
-            </DetailsWrapper>
+                    borderRadius: "0 !important",
+                  }}
+                />
+              </DetailsWrapper>
 
-            <div className="flex gap-2 justify-center max-w-[75%] mt-6">
-              <Button variant="text" className="py-2 px-8" disabled>
-                Create
-              </Button>
+              <DetailsWrapper title={"To Bank Account (IBAN)"}>
+                <TransparentInput
+                  value={data.bank_account}
+                  disabled={false}
+                  onChange={(e) => handleInputChange(e, "bank_account")}
+                />
+              </DetailsWrapper>
+
+              <DetailsWrapper title={"Account Title"}>
+                <TransparentInput
+                  value={data.account_title}
+                  disabled={false}
+                  onChange={(e) => handleInputChange(e, "account_title")}
+                />
+              </DetailsWrapper>
+
+              <ErrorApiText error={isCreatePayoutError} />
+
+              <div className="flex gap-2 justify-center max-w-[75%] mt-6">
+                <Button
+                  variant="outlined"
+                  className="py-2 px-8"
+                  onClick={handleCreatePayout}
+                >
+                  Create
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        </LoadingApi>
       </div>
     </DashboardPageWrapper>
   );
