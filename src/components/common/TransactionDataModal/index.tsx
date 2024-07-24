@@ -4,14 +4,9 @@ import Modal from "../Modal";
 import OTPInput from "react-otp-input";
 import LoaderButton from "../LoaderButton";
 import { Button } from "@mui/material";
-import { useApi } from "@/hooks/useApi";
-import { callApiHook } from "@/utils/apifuncs";
-import { createWithdrawalApi } from "@/services/withdrawal";
-import { useDispatch } from "react-redux";
+
 import ErrorApiText from "../ErrorApiText";
-import { networks_available } from "@/constants/blockchains";
-import { setNotification } from "@/store/slices/modal.Slice";
-import { useRouter } from "next/navigation";
+
 
 type Props = {
   isOpen: boolean;
@@ -24,10 +19,17 @@ type Props = {
     network: string;
     blockchain: string;
     notes?: string;
+    from_currency?: string;
+    to_currency?: string;
+    converted_amount?: string;
   };
+  type?: string;
+  buttonLoading: boolean;
+  handleTransaction: () => void;
+  transactionError: string | boolean;
 };
 
-const CreateWithdrawalModal = ({
+const TransactionDataModal = ({
   isOpen,
   handleClose,
   data: {
@@ -38,36 +40,15 @@ const CreateWithdrawalModal = ({
     network,
     recipientAddress,
     notes,
+    converted_amount,
+    from_currency,
+    to_currency,
   },
+  type,
+  buttonLoading,
+  handleTransaction,
+  transactionError,
 }: Props) => {
-  const dispatch = useDispatch();
-  const router = useRouter()
-  const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
-
-  const handleWithdrawal = async () => {
-    await callApiHook({
-      apiCall: callWithdrawalApi(
-        createWithdrawalApi({
-          amount,
-          recipient_address: recipientAddress,
-          blockchain,
-          notes,
-          standard: networks_available[blockchain] ? network : "",
-        })
-      ),
-      successCallBack: (response: any) => {
-        dispatch(
-          setNotification({
-            message: "Withdrawal Request Created Successfully",
-            status: "success",
-          })
-        );
-        handleClose();
-        router.push('/withdrawals')
-      },
-    });
-  };
-
   return (
     <Modal isOpen={isOpen}>
       <div className="min-h-full p-8 flex place-items-center place-content-center">
@@ -103,12 +84,38 @@ const CreateWithdrawalModal = ({
               </div>
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
-                  Recipient Wallet Address
+                  {type == "payout"
+                    ? "Bank Account No."
+                    : "Recipient Wallet Address"}
                 </h5>
                 <p className="text-[14px] primary-color break-words">
                   {recipientAddress}
                 </p>
               </div>
+              {type == "payout" && (
+                <>
+                  <div className="data-row grid grid-cols-2 py-3 border-b px-5">
+                    <h5 className="text-[14px] font-semibold primary-color">
+                      From Currency
+                    </h5>
+                    <p className="text-[14px] primary-color">{from_currency}</p>
+                  </div>
+                  <div className="data-row grid grid-cols-2 py-3 border-b px-5">
+                    <h5 className="text-[14px] font-semibold primary-color">
+                      To Currency
+                    </h5>
+                    <p className="text-[14px] primary-color">{to_currency}</p>
+                  </div>
+                  <div className="data-row grid grid-cols-2 py-3 border-b px-5">
+                    <h5 className="text-[14px] font-semibold primary-color">
+                      Converted Amount ({to_currency})
+                    </h5>
+                    <p className="text-[14px] primary-color">
+                      {converted_amount}
+                    </p>
+                  </div>
+                </>
+              )}
               <div className="data-row grid grid-cols-2 py-3 border-b px-5">
                 <h5 className="text-[14px] font-semibold primary-color">
                   Network
@@ -120,10 +127,15 @@ const CreateWithdrawalModal = ({
                   Disclaimer
                 </h5>
                 <p className="text-[14px] primary-color">
+                  {type == "payout"
+                    ? ` Please be advised if the conversion process is successful, you
+                  will recieve the projected amount. The converted price is subjected to change at the time of approval due to changes in cryptocurrency value.`
+                    : `
                   Please be advised if the conversion process is successful, you
                   will recieve the projected amount. In the event of an
                   unsuccessful conversion, there will be no effect on your
                   balance.
+                  `}
                 </p>
               </div>
 
@@ -154,7 +166,7 @@ const CreateWithdrawalModal = ({
                 </div>
               </div>
 
-              <ErrorApiText error={isWithdrawalError} textClass="p-3" />
+              <ErrorApiText error={transactionError} textClass="p-3" />
 
               <div className="flex gap-4 justify-end px-5">
                 <Button variant="text" onClick={handleClose} color="primary">
@@ -162,8 +174,8 @@ const CreateWithdrawalModal = ({
                 </Button>
                 <LoaderButton
                   content={"Proceed"}
-                  loading={isWithdrawalLoading}
-                  onClick={handleWithdrawal}
+                  loading={buttonLoading}
+                  onClick={handleTransaction}
                 />
               </div>
             </div>
@@ -174,4 +186,4 @@ const CreateWithdrawalModal = ({
   );
 };
 
-export default CreateWithdrawalModal;
+export default TransactionDataModal;

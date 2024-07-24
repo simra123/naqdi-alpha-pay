@@ -8,12 +8,7 @@ import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
 
-import {
-  converstion_table_columns,
-  relatedPayments_table_columns,
-  relatedTransactions_table_columns,
-  webhooks_table_columns,
-} from "../../columns";
+import { relatedTransactions_table_columns } from "../../columns";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";

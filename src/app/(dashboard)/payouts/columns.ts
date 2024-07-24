@@ -1,8 +1,10 @@
 export const payoutsList_table_columns = [
-  { field: "createdAt", headerName: "Created At", flex: 1 },
-  { field: "payoutId", headerName: "Payout ID", flex: 1 },
-  { field: "grossAmount", headerName: "Gross Amount", flex: 1 },
-  { field: "toBankAccount", headerName: "To Bank Account", flex: 1 },
+  { field: "id", headerName: "ID", flex: 1 },
+  { field: "created_at", headerName: "Date", flex: 1 },
+  { field: "from_currency", headerName: "From Currency", flex: 1 },
+  { field: "to_currency", headerName: "To Currency", flex: 1 },
+  { field: "requested_amount", headerName: "Requested Amount", flex: 1 },
+  { field: "account_title", headerName: "Account Title", flex: 1 },
   { field: "status", headerName: "Status", flex: 1 },
 ];
 
@@ -20,7 +22,7 @@ export const webhooks_table_columns = [
   {
     field: "status",
     headerName: "Status",
-   
+
     flex: 1,
   },
   {
