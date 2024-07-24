@@ -6,6 +6,7 @@ interface Props {
   onClick: () => void;
   variant?: any;
   content: any;
+  disabled?: boolean;
 }
 
 const LoaderButton = ({
@@ -13,9 +14,16 @@ const LoaderButton = ({
   onClick,
   variant = "outlined",
   content,
+  disabled,
 }: Props) => {
   return (
-    <Button variant={variant} color="primary" className="py-2 px-8" onClick={onClick}>
+    <Button
+      variant={variant}
+      color="primary"
+      className="py-2 px-8"
+      onClick={onClick}
+      disabled={disabled}
+    >
       {loading ? <CircularProgress size={20} /> : content}
     </Button>
   );

@@ -15,8 +15,8 @@ import { useApi } from "@/hooks/useApi";
 import { getAllWalletBalancesApi } from "@/services/wallet";
 import { callApiHook } from "@/utils/apifuncs";
 import { formatBalanceForUser } from "@/utils/dataFormatters";
-import { getFeesApi } from "@/services/common";
-import { clamp } from "@/utils/math";
+import { getCrpyoToFiatApi, getFeesApi } from "@/services/common";
+import { clamp, roundToPrecision } from "@/utils/math";
 import { fiatOptions } from "@/constants/fiat";
 import { createPayoutRequestApi } from "@/services/payout";
 import { useDispatch } from "react-redux";
@@ -24,15 +24,20 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
+import TransactionDataModal from "@/components/common/TransactionDataModal";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const PayoutDetails = () => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [balance, setBalance] = useState([]);
+  const [convertedAmount, setConvertedAmount] = useState("0");
+  const [isCreateOpen, setisCreateOpen] = useState(false);
   const [destinationAmount, setDestinationAmount] = useState("0");
-  const [withdrawalFee, setWithdrawalFee] = useState(0);
+  const [trnasctionFee, settrnasctionFee] = useState(0);
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
   const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
+  const [isConversionLoading, isConversionError, callConversionApi] = useApi();
   const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
     useApi();
 
@@ -135,8 +140,24 @@ const PayoutDetails = () => {
     await callApiHook({
       apiCall: callFeeApi(getFeesApi(data?.amount)),
       successCallBack: (response: any) => {
-        setWithdrawalFee(response?.alphaspayFees);
+        settrnasctionFee(response?.alphaspayFees);
         setDestinationAmount(response?.netAmount);
+      },
+    });
+  };
+
+  const getConvertedAmount = async () => {
+    await callApiHook({
+      apiCall: callConversionApi(
+        getCrpyoToFiatApi({
+          cryptoAmount: destinationAmount,
+          currency: data.requested_currency,
+          unit: sourceOptions?.blockchain,
+        })
+      ),
+      successCallBack: (response: any) => {
+        setConvertedAmount(response?.convertedAmount);
+        !isCreateOpen && toggleCreateModal();
       },
     });
   };
@@ -159,8 +180,32 @@ const PayoutDetails = () => {
     return balance.find((item) => item.value == value)?.amount;
   };
 
+  const toggleCreateModal = () => {
+    setisCreateOpen(!isCreateOpen);
+  };
+
   return (
     <DashboardPageWrapper>
+      <TransactionDataModal
+        type="payout"
+        isOpen={isCreateOpen}
+        handleClose={toggleCreateModal}
+        buttonLoading={isCreatePayoutLoading}
+        handleTransaction={handleCreatePayout}
+        transactionError={isCreatePayoutError}
+        data={{
+          amount: data?.amount,
+          fee: trnasctionFee,
+          netAmount: +destinationAmount,
+          network: sourceOptions.standard,
+          recipientAddress: data.bank_account,
+          blockchain: sourceOptions.blockchain,
+          from_currency: sourceOptions.blockchain,
+          converted_amount: convertedAmount,
+          to_currency: data.requested_currency,
+        }}
+      />
+
       <div className="data-grid-container">
         <div className=" flex items-center justify-between">
           <h2 className="text-xl font-semibold">New Payout</h2>
@@ -268,13 +313,19 @@ const PayoutDetails = () => {
               <ErrorApiText error={isCreatePayoutError} />
 
               <div className="flex gap-2 justify-center max-w-[75%] mt-6">
-                <Button
+                <LoaderButton
+                  loading={isConversionLoading}
                   variant="outlined"
-                  className="py-2 px-8"
-                  onClick={handleCreatePayout}
-                >
-                  Create
-                </Button>
+                  content={"Create"}
+                  disabled={
+                    !sourceOptions.blockchain ||
+                    !data.amount ||
+                    !data?.account_title ||
+                    !data?.bank_account ||
+                    !data?.requested_currency
+                  }
+                  onClick={getConvertedAmount}
+                />
               </div>
             </div>
           </div>

@@ -1,4 +1,6 @@
 export const roundToPrecision = (number: number, precision: number) => {
+  console.log({ number, precision });
+
   return parseFloat(number.toFixed(precision));
 };
 

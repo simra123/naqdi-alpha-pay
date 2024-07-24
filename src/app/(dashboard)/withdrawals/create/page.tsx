@@ -14,7 +14,7 @@ import {
 } from "@/constants/blockchains";
 import LoaderButton from "@/components/common/LoaderButton";
 import { Button } from "@mui/material";
-import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
+import TransactionDataModal from "@/components/common/TransactionDataModal";
 import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 import { useApi } from "@/hooks/useApi";
@@ -23,11 +23,18 @@ import { getAllWalletBalancesApi } from "@/services/wallet";
 import { formatBalanceForUser } from "@/utils/dataFormatters";
 import { getFeesApi } from "@/services/common";
 import { clamp } from "@/utils/math";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { createWithdrawalApi } from "@/services/withdrawal";
+import { setNotification } from "@/store/slices/modal.Slice";
 
 const CreateWithdrawal = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
   const [balance, setBalance] = useState([]);
   const [destinationAmount, setDestinationAmount] = useState("0");
   const [withdrawalFee, setWithdrawalFee] = useState(0);
+  const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
   const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
@@ -103,6 +110,32 @@ const CreateWithdrawal = () => {
     });
   };
 
+  const handleWithdrawal = async () => {
+    await callApiHook({
+      apiCall: callWithdrawalApi(
+        createWithdrawalApi({
+          amount: data?.sourceAmount,
+          recipient_address: data.walletAddress,
+          blockchain: sourceOptions.blockchain,
+          notes: data.notes,
+          standard: networks_available[sourceOptions.blockchain]
+            ? sourceOptions.standard
+            : "",
+        })
+      ),
+      successCallBack: (response: any) => {
+        dispatch(
+          setNotification({
+            message: "Withdrawal Request Created Successfully",
+            status: "success",
+          })
+        );
+        toggleWithdrawModal();
+        router.push("/withdrawals");
+      },
+    });
+  };
+
   useEffect(() => {
     _getUserBalance();
   }, []);
@@ -169,9 +202,13 @@ const CreateWithdrawal = () => {
 
   return (
     <DashboardPageWrapper>
-      <CreateWithdrawalModal
+      <TransactionDataModal
+        type="withdraw"
         isOpen={withdrawOpen}
         handleClose={toggleWithdrawModal}
+        buttonLoading={isWithdrawalLoading}
+        handleTransaction={handleWithdrawal}
+        transactionError={isWithdrawalError}
         data={{
           amount: data?.sourceAmount,
           fee: withdrawalFee,
