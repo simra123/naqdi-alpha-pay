@@ -32,6 +32,7 @@ const CreateWithdrawal = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [balance, setBalance] = useState([]);
+  const [otp, setOtp] = useState();
   const [destinationAmount, setDestinationAmount] = useState("0");
   const [withdrawalFee, setWithdrawalFee] = useState(0);
   const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
@@ -121,6 +122,7 @@ const CreateWithdrawal = () => {
           standard: networks_available[sourceOptions.blockchain]
             ? sourceOptions.standard
             : "",
+          token: otp,
         })
       ),
       successCallBack: (response: any) => {
@@ -204,6 +206,8 @@ const CreateWithdrawal = () => {
     <DashboardPageWrapper>
       <TransactionDataModal
         type="withdraw"
+        otp={otp}
+        setOtp={setOtp}
         isOpen={withdrawOpen}
         handleClose={toggleWithdrawModal}
         buttonLoading={isWithdrawalLoading}
