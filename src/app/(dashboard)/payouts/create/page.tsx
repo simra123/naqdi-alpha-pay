@@ -32,6 +32,7 @@ const PayoutDetails = () => {
   const router = useRouter();
   const [balance, setBalance] = useState([]);
   const [convertedAmount, setConvertedAmount] = useState("0");
+  const [otp, setOtp] = useState();
   const [isCreateOpen, setisCreateOpen] = useState(false);
   const [destinationAmount, setDestinationAmount] = useState("0");
   const [trnasctionFee, settrnasctionFee] = useState(0);
@@ -105,6 +106,7 @@ const PayoutDetails = () => {
           standard: networks_available[sourceOptions.blockchain]
             ? filteredNetworks(sourceOptions.network, sourceOptions.blockchain)
             : "",
+            token: otp
         })
       ),
       successCallBack: (response: any) => {
@@ -187,6 +189,8 @@ const PayoutDetails = () => {
   return (
     <DashboardPageWrapper>
       <TransactionDataModal
+        otp={otp}
+        setOtp={setOtp}
         type="payout"
         isOpen={isCreateOpen}
         handleClose={toggleCreateModal}
