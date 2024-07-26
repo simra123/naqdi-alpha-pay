@@ -26,7 +26,7 @@ module.exports = {
         purple: "#3D1554",
         gray: "#9D9D9D",
         "light-gray": "#D9D9D9",
-        error: "#E52E2E",
+        "error-dark": "#B00020",
       },
       borderRadius: {
         large: "12px",
@@ -44,6 +44,7 @@ module.exports = {
         p120: ["20px", "1.5"],
         p16: ["16px", "1.5"],
         caption: ["14px", "1.5"],
+        subtitle: ["12px", "1.2"],
         button: ["18px", "1.5"],
         input: ["15px", "1.2"],
       },
@@ -134,7 +135,7 @@ module.exports = {
           placeholder: "#BEBEBE",
         },
         red: {
-          error: "#C70000",
+          "error-dark": "#B00020",
         },
         blue: {
           label: "#01579B",

@@ -1,8 +1,32 @@
 // components/IconField.js
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { ChangeEventHandler, useState } from "react";
 
-const IconField = ({ label, type = "text", placeholder, icon: Icon }) => {
+interface Props {
+  label?: string;
+  type?: string;
+  placeholder?: string;
+  icon?: any;
+  wrapperClassName?: string;
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  onBlur?: ChangeEventHandler<HTMLInputElement>;
+  name?: string;
+  value?: string;
+  error?: string | boolean;
+}
+
+const IconField = ({
+  label,
+  type = "text",
+  placeholder,
+  icon: Icon,
+  wrapperClassName,
+  onChange,
+  onBlur,
+  name,
+  value,
+  error,
+}: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordField = type === "password";
 
@@ -11,7 +35,7 @@ const IconField = ({ label, type = "text", placeholder, icon: Icon }) => {
   };
 
   return (
-    <div className="mb-4 text-input">
+    <div className={`mb-4 text-input ${wrapperClassName}`}>
       <label className="block mb-2 font-medium">{label}</label>
       <div className="relative">
         {Icon && (
@@ -19,10 +43,16 @@ const IconField = ({ label, type = "text", placeholder, icon: Icon }) => {
         )}
         <input
           type={isPasswordField && !showPassword ? "password" : "text"}
+          onChange={onChange}
+          onBlur={onBlur}
+          name={name}
+          value={value}
           placeholder={placeholder}
-          className={`w-full p-4 ${
-            Icon ? "pl-12" : "pl-4"
-          } border-[1.5px] border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
+          className={`w-full p-4 ${Icon ? "pl-12" : "pl-4"} border-[1.5px] ${
+            error
+              ? "border-error-dark"
+              : "border-light-gray focus:border-purple"
+          } border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
         />
         {isPasswordField && (
           <div
@@ -33,6 +63,11 @@ const IconField = ({ label, type = "text", placeholder, icon: Icon }) => {
           </div>
         )}
       </div>
+      {error && (
+        <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

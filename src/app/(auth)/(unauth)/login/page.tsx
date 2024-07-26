@@ -16,11 +16,9 @@ import IconField from "@/components/common/IconField";
 import { Lock, Mail, Person } from "@mui/icons-material";
 import Loader from "@/components/common/Loader";
 import LoaderButton from "@/components/common/LoaderButton";
-import { useState } from "react";
 
 const Login = () => {
   const router = useRouter();
-  const [loader, setLoader] = useState(false);
   const [isLoginLoading, isLoginError, callLoginApi] = useApi();
   const initialValues = {
     email: "",
@@ -55,110 +53,65 @@ const Login = () => {
   const onSubmitError = () => {
     window.scrollTo(0, 500);
   };
-  const loaderUpdate = () => {
-    setLoader(!loader);
-  };
+
 
   return (
-    // <section>
-    //   <Typography variant="h2" color="primary">
-    //     Autheticate
-    //   </Typography>
-    //   <form
-    //     id="login-form"
-    //     onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
-    //   >
-    //     <div>
-    //       <TextField
-    //         label={null}
-    //         className="input-field"
-    //         placeholder="Email* or Username*"
-    //         type="text"
-    //         fullWidth
-    //         value={values.email}
-    //         onChange={handleChange}
-    //         onBlur={validateField}
-    //         name="email"
-    //         inputProps={{
-    //           autoComplete: "new-password",
-    //           form: {
-    //             autoComplete: "off",
-    //           },
-    //         }}
-    //       />
-    //       {errors.email && <div className="error_text">{errors.email}</div>}
-    //     </div>
-
-    //     <div>
-    //       <PasswordToggleInput
-    //         value={values.password}
-    //         onChange={handleChange}
-    //         onBlur={validateField}
-    //         name="password"
-    //         placeholder={"Password*"}
-    //       />
-    //       {errors.password && (
-    //         <div className="error_text">{errors.password}</div>
-    //       )}
-    //     </div>
-
-    //     <Typography
-    //       component={Link}
-    //       href={"/recover-password"}
-    //       variant="body1"
-    //       color="primary"
-    //       className="Link"
-    //     >
-    //       Forgot Password?
-    //     </Typography>
-
-    //     <ErrorApiText error={isLoginError} />
-
-    //     <LoadingApi loading={isLoginLoading}>
-    //       <button className="btn gradient-btn" type="submit">
-    //         Login
-    //       </button>
-    //     </LoadingApi>
-
-    //     <div className="register">
-    //       <Typography variant="body1" color="primary">
-    //         Don't have an account?
-    //       </Typography>
-    //       <Link className="btn secondary-btn block" href={"/register"}>
-    //         Register
-    //       </Link>
-    //     </div>
-    //   </form>
-    // </section>
-    <section>
-      <h1 className="text-2xl font-bold mb-4">Welcome Back!</h1>
-      <p className="mb-4">Enter your credentials to access your account.</p>
-      <form onSubmit={(event) => handleSubmit(event, onSubmit, onSubmitError)}>
+    <section className="mt-[100px]">
+      <h1 className="text-h2 font-semibold mb-4 text-blackGrey-100">
+        Welcome Back!
+      </h1>
+      <p className="mb-4 text-p120">
+        Enter your credentials to access your account.
+      </p>
+      <form
+        onSubmit={(event) => handleSubmit(event, onSubmit, onSubmitError)}
+        className="mt-20"
+      >
         <IconField
           label="Username"
+          wrapperClassName="mb-6"
           type="text"
-          placeholder="Enter Your Username"
+          error={errors.email}
+          value={values.email}
+          onChange={handleChange}
+          onBlur={validateField}
+          name="email"
+          placeholder="Enter Your Email"
           icon={Mail}
         />
         <IconField
           label="Password"
           type="password"
+          error={errors.password}
+          value={values.password}
+          onChange={handleChange}
+          onBlur={validateField}
+          name="password"
           icon={Lock}
           placeholder="Enter Your Password"
         />
+        <Link
+          href={"/recover-password"}
+          className="text-purple-100 text-input font-semibold block text-end mb-14"
+        >
+          Forgot Password?
+        </Link>
+
+        <ErrorApiText error={isLoginError} />
+
         <LoaderButton
           content={"Login"}
           variant={"contained"}
           type="submit"
-          loading={loader}
-          onClick={loaderUpdate}
+          loading={isLoginLoading}
         />
       </form>
-      <p className="mt-4 text-center">
+      <p className="mt-6 text-center text-button">
         New here?{" "}
-        <a href="#" className="text-blue-500">
-          Sign Up for Free!
-        </a>
+        <Link href="/register" className="text-purple-100 font-medium">
+          Sign Up
+        </Link>{" "}
+        for Free!
       </p>
     </section>
   );
