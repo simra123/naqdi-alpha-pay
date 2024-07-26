@@ -282,24 +282,26 @@ input {
 .loader {
   width: 50px;
   aspect-ratio: 1;
-  display: grid;
-  border: 4px solid #0000;
-  border-radius: 50%;
-  border-right-color: $apy-primary-color;
-  animation: l15 1s infinite linear;
+  --c: no-repeat radial-gradient(farthest-side, #fff 92%, #0000);
+  background: var(--c) 50% 0, var(--c) 50% 100%, var(--c) 100% 50%,
+    var(--c) 0 50%;
+  background-size: 10px 10px;
+  animation: l18 1s infinite;
+  position: relative;
 }
-.loader::before,
-.loader::after {
+.loader::before {
   content: "";
-  grid-area: 1/1;
-  margin: 2px;
-  border: inherit;
+  position: absolute;
+  inset: 0;
+  margin: 3px;
+  background: repeating-conic-gradient(#0000 0 35deg, #fff 0 90deg);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 3px), #000 0);
   border-radius: 50%;
-  animation: l15 2s infinite;
 }
-.loader::after {
-  margin: 8px;
-  animation-duration: 3s;
+@keyframes l18 {
+  100% {
+    transform: rotate(0.5turn);
+  }
 }
 
 .grid-template-details {
@@ -318,11 +320,8 @@ input {
   background: none;
 }
 
-button:not(.MuiButton-text):disabled {
-  background-color: rgb(195, 192, 192) !important;
-}
-button {
-  font-weight: 700 !important;
+.pink-gradient-button {
+  @apply bg-pink-gradient text-white text-button rounded-[10px] py-[14px];
 }
 
 @keyframes l15 {

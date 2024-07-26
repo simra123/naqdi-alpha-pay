@@ -1,40 +1,35 @@
 import React from "react";
-import Image from "next/image";
-import "./auth.scss";
-import { Typography } from "@mui/material";
 
 const Authlayout = ({ children }) => {
   return (
-    <main id="auth_layout">
-      <header className="auth_header">
-        <div className="flex flex-col items-center">
-          <Image src={"/logo.png"} height={100} width={150} alt="logo" priority/>
-          <Typography variant="h5" color="primary">
-            Alphaspay
-          </Typography>
+    <div className="min-h-screen flex">
+      <div className="flex w-full overflow-hidden shadow-lg">
+        {/* Left Side (Form) */}
+        <div className="w-full md:w-1/2 pt-20 px-6 bg-bluish-gray">
+          <section className="content max-w-[500px] m-auto">{children}</section>
         </div>
-      </header>
-      {children}
-      <footer>
-        {/* <Image src={"/logo.png"} height={100} width={150} /> */}
-        <svg
-          width="110"
-          height="85"
-          viewBox="0 0 76 59"
-          fill="none"
-          className="mx-auto"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M35 0H41V20H35V0Z" className="secondary-color"></path>
-          <path d="M35 26H41V46H35V26Z" className="secondary-color"></path>
-          <path d="M12 26H18V46H12V26Z" className="primary-color"></path>
-          <path d="M58 26H64V46H58V26Z" className="primary-color"></path>
-          <path d="M23 13H29V33H23V13Z" className="secondary-color"></path>
-          <path d="M47 13H53V33H47V13Z" className="secondary-color"></path>
-        </svg>
-        <Typography>Copyright 2024. All Rights Reserved @Alphaspay.</Typography>
-      </footer>
-    </main>
+
+        {/* Right Side (Image) */}
+
+        <div className="fixed-background-wrapper">
+          <div className="fixed bg-auth-bg-purple h-screen w-full md:w-1/2  flex items-center justify-center">
+            <img
+              src={"/auth-bg-person.png"}
+              alt="Crypto Image"
+              className="relative z-10 max-h-[674px]"
+              draggable={false}
+            />
+            <img
+              src="/auth-bg-footer.png"
+              alt="background footer"
+              className="absolute z-0 bottom-0 left-0 w-full"
+              draggable={false}
+            />
+          </div>
+          {/* Add any overlay text or icons here */}
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -15,6 +15,12 @@ module.exports = {
           "linear-gradient(to top right, #140B37 0%, #260B42 53%, #74189D 100%)",
         "light-purple-gradient":
           "linear-gradient(to right, #6D2BE1 0%,  #9F5DE9 100%)",
+        "auth-bg-purple":
+          "linear-gradient(to bottom left, #0F1329 0%, #0F1329 20%, #1D174D 100%)",
+        "pink-gradient": "linear-gradient(to right, #6D2BE1 0%,  #9F5DE9 100%)",
+      },
+      backgroundColor: {
+        "bluish-gray": "#F8FAFF",
       },
       borderColor: {
         purple: "#3D1554",
@@ -39,6 +45,7 @@ module.exports = {
         p16: ["16px", "1.5"],
         caption: ["14px", "1.5"],
         button: ["18px", "1.5"],
+        input: ["15px", "1.2"],
       },
       spacing: {
         1: "4px",

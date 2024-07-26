@@ -461,3 +461,5 @@ export const legalEntity = ({ iconColor, bgColor }) => {
     </svg>
   );
 };
+
+
