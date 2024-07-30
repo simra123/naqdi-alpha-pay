@@ -1,13 +1,12 @@
-@import "../../../config/colors.scss";
 .registration_layout_header {
   .upgrade_message {
-    background-color: $apy-secondary-color;
+    @apply bg-light-purple-gradient;
     padding: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     p {
-      color: $apy-white-color;
+      color: #fff;
     }
     overflow: hidden;
 
@@ -24,17 +23,13 @@
     }
   }
   .navbar {
-    background: linear-gradient(
-      140deg,
-      $apy-primary-color,
-      $apy-secondary-color
-    );
+    @apply bg-pink-gradient;
     * {
-      color: $apy-white-color;
+      color: #fff;
     }
     a:hover,
     a.active {
-      color: $apy-secondary-color;
+      @apply text-purple-100;
     }
   }
   #setting_btn {

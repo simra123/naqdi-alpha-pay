@@ -1,10 +1,10 @@
-@import "../../../../config/colors.scss";
+
 
 .currency_item {
   position: relative;
   cursor: pointer;
-  background-color: $apy-primary-color;
-  color: $apy-white-color;
+  @apply bg-purple-100;
+  color: #fff;
   padding: 1.8rem 1rem;
   transition: all 0.2s;
 
@@ -32,7 +32,7 @@
   }
 
   &:hover {
-    background-color: $apy-secondary-color;
+    @apply bg-purple-100;
   }
 
   &:hover .bar_svg {

@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import "./auth.scss";
 import { Typography } from "@mui/material";
 import useAuth from "@/hooks/useAuth";
 import { useApi } from "@/hooks/useApi";
@@ -12,7 +11,6 @@ import { userDetailsApi } from "@/services/user";
 import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { Role } from "@/constants/roles";
 
 const Authlayout = ({ children }) => {
   const dispatch = useDispatch();

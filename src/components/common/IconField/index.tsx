@@ -1,5 +1,5 @@
 // components/IconField.js
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Info, Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { ChangeEventHandler, useState } from "react";
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
   name?: string;
   value?: string;
   error?: string | boolean;
+  info?: string;
 }
 
 const IconField = ({
@@ -26,6 +27,7 @@ const IconField = ({
   name,
   value,
   error,
+  info,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordField = type === "password";
@@ -36,7 +38,22 @@ const IconField = ({
 
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`}>
-      <label className="block mb-2 font-medium">{label}</label>
+      <div className="flex gap-2 items-center">
+        <label className="block mb-2 font-medium">{label}</label>
+        {info && (
+          <div className="relative flex items-center group">
+            <Info className="text-blue-info mb-1 text-[18px]" />
+
+            <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+              <div className="relative p-2">
+                <p className="w-full text-center">{info}</p>
+
+                <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       <div className="relative">
         {Icon && (
           <Icon className="absolute left-4 top-0 flex h-full items-center text-gray-400" />

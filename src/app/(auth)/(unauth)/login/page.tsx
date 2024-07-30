@@ -1,20 +1,15 @@
 "use client";
-import { Typography, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
-import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 import Link from "next/link";
-import "../../auth.scss";
 import useFormValidation from "@/hooks/useFormValidation";
 import { loginSchema } from "@/models/login";
 import { useApi } from "@/hooks/useApi";
 import { loginApi } from "@/services/auth";
 import { callApiHook } from "@/utils/apifuncs";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import LoadingApi from "@/components/common/LoadindApi";
 import { Role } from "@/constants/roles";
 import IconField from "@/components/common/IconField";
-import { Lock, Mail, Person } from "@mui/icons-material";
-import Loader from "@/components/common/Loader";
+import { Lock, Mail } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
 
 const Login = () => {
@@ -54,7 +49,6 @@ const Login = () => {
     window.scrollTo(0, 500);
   };
 
-
   return (
     <section className="mt-[100px]">
       <h1 className="text-h2 font-semibold mb-4 text-blackGrey-100">
@@ -85,6 +79,8 @@ const Login = () => {
           error={errors.password}
           value={values.password}
           onChange={handleChange}
+          info="Use 8 or more characters with a mix of letters, numbers,
+                special & uppercase characters."
           onBlur={validateField}
           name="password"
           icon={Lock}

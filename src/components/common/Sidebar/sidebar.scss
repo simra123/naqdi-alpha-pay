@@ -1,7 +1,6 @@
-@import "../../../config/colors.scss";
-
 .SidebarWrapper {
-  border-right: 1px solid $apy-primary-color;
+  border-right: 1px solid;
+  @apply border-purple;
   .navLink {
     * {
       color: rgb(202, 201, 201);
@@ -9,7 +8,7 @@
     }
     &.active {
       * {
-        color: $apy-note-gray-color;
+        color: gray;
         font-weight: 700;
       }
     }

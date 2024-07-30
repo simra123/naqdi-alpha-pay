@@ -21,11 +21,14 @@ module.exports = {
       },
       backgroundColor: {
         "bluish-gray": "#F8FAFF",
+        "light-gray": "#F4F4F4",
+        "dark-gray": "#3F4141",
       },
       borderColor: {
         purple: "#3D1554",
         gray: "#9D9D9D",
         "light-gray": "#D9D9D9",
+        "light-purple": "#D2D2EB",
         "error-dark": "#B00020",
       },
       borderRadius: {
@@ -40,6 +43,7 @@ module.exports = {
         h1: ["48px", "1.2"],
         h2: ["36px", "1.2"],
         h3: ["32px", "1.2"],
+        "h3.5": ["28px", "1.2"],
         h4: ["26px", "1.2"],
         p120: ["20px", "1.5"],
         p16: ["16px", "1.5"],

@@ -5,7 +5,7 @@ const Authlayout = ({ children }) => {
     <div className="min-h-screen flex">
       <div className="flex w-full overflow-hidden shadow-lg">
         {/* Left Side (Form) */}
-        <div className="w-full md:w-1/2 pt-20 px-6 bg-bluish-gray">
+        <div className="w-full md:w-1/2 py-20 px-6 bg-bluish-gray">
           <section className="content max-w-[500px] m-auto">
             <div className="logo-wrapper">
               <h4 className="text-h4 text-purple-100 font-bold">Alphaspay</h4>

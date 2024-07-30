@@ -14,7 +14,6 @@ import {
 } from "@/models/CertificationForm";
 import { Step1, Step2, Step3, Step4 } from "./Steps";
 
-import "../auth.scss";
 
 const CertificationIndividualForm = () => {
   const router = useRouter();
