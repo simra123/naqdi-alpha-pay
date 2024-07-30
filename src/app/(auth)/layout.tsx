@@ -21,7 +21,7 @@ const Authlayout = ({ children }) => {
             <img
               src={"/auth-bg-person.png"}
               alt="Crypto Image"
-              className="relative z-10 max-h-[674px]"
+              className="relative z-10 max-h-[674px] max-w-[85%]"
               draggable={false}
             />
             <img

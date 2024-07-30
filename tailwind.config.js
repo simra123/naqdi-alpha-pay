@@ -23,6 +23,7 @@ module.exports = {
         "bluish-gray": "#F8FAFF",
         "light-gray": "#F4F4F4",
         "dark-gray": "#3F4141",
+        "light-purple": "#E4D7F9",
       },
       borderColor: {
         purple: "#3D1554",

@@ -22,8 +22,9 @@ import { registerApi } from "@/services/auth";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import IconField from "@/components/common/IconField";
-import { Lock, Mail, Person } from "@mui/icons-material";
+import { Business, Lock, Mail, Person } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
+import IconSelectBox from "@/components/common/IconSelectBox";
 
 const options = [
   {
@@ -43,9 +44,9 @@ const IndividualForm = ({ activeForm }) => {
   const initialValues = {
     legalName: "",
     entityType: "",
-    firstName: "",
-    middleName: "",
-    lastName: "",
+    // firstName: "",
+    // middleName: "",
+    // lastName: "",
     email: "",
     userName: "",
     password: "",
@@ -68,9 +69,9 @@ const IndividualForm = ({ activeForm }) => {
 
   const onSubmit = async () => {
     const individualData = {
-      first_name: values?.firstName,
-      last_name: values.lastName,
-      middle_name: values?.middleName,
+      // first_name: values?.firstName,
+      // last_name: values.lastName,
+      // middle_name: values?.middleName,
       username: values?.userName,
       email: values?.email,
       password: values?.password,
@@ -129,7 +130,7 @@ const IndividualForm = ({ activeForm }) => {
               label="Legal Name"
               icon={Person}
             />
-            <IconField
+            {/* <IconField
               placeholder="Enter Entity Type"
               onBlur={validateField}
               type="text"
@@ -139,6 +140,14 @@ const IndividualForm = ({ activeForm }) => {
               error={errors.entityType}
               label="Select Entity Type"
               icon={Person}
+            /> */}
+            <IconSelectBox
+              label="Select Entity Type"
+              placeholder="Enter Entity Type"
+              icon={Business}
+              onChange={handleChange}
+              value={values?.legal_type}
+              options={options}
             />
           </>
         )}
@@ -180,7 +189,7 @@ const IndividualForm = ({ activeForm }) => {
         <IconField
           placeholder="Enter You Password"
           onBlur={validateField}
-          type="confirmPassword"
+          type="password"
           value={values.confirmPassword}
           onChange={handleChange}
           name="confirmPassword"
