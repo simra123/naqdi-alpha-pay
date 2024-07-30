@@ -1,12 +1,6 @@
-@import "../../../config/colors.scss";
-
 .approved_steps_box {
-  background: linear-gradient(
-    44.71deg,
-    $apy-primary-color 0%,
-    $apy-secondary-color 100%
-  );
-  color: $apy-white-color;
+  @apply bg-pink-gradient;
+  color: #fff;
   padding: 40px 20px;
 
   .heading {
@@ -55,7 +49,7 @@
       }
       &.current_step {
         background-color: #fff;
-        color: $apy-primary-color;
+        @apply text-purple-100;
       }
     }
   }

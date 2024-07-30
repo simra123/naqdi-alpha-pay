@@ -1,12 +1,9 @@
 "use client";
-import { TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import useFormValidation from "@/hooks/useFormValidation";
 import { useMemo, useRef, useState } from "react";
-import SelectBox from "@/components/common/SelectBox";
 import countryList from "react-select-country-list";
 import { LinearProgress } from "@mui/material";
-import "../auth.scss";
 import {
   Step1Schema,
   Step2Schema,

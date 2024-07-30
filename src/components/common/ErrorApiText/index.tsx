@@ -10,7 +10,7 @@ const ErrorApiText = ({
   error: any;
 }) => {
   return error ? (
-    <div className={"error_text !text-base font-semibold" + textClass}>
+    <div className={"text-red-error-dark !text-base my-3 font-semibold" + textClass}>
       <span className="font-bold">ERROR : </span> {error}
     </div>
   ) : (

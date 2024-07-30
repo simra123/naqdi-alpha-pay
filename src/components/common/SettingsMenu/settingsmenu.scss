@@ -1,8 +1,6 @@
-@import "../../../config/colors.scss";
-
 .settings_menu_wrapper {
-  background-color: $apy-primary-color;
-  color: $apy-white-color;
+  @apply bg-purple-100;
+  color: #fff;
   position: absolute;
   top: 80px;
   right: 0;
@@ -39,15 +37,15 @@
       &:hover {
         background-color: rgba(0, 0, 0, 0.2);
         cursor: pointer;
-        color: $apy-white-color;
+        color: #fff;
       }
       &.active {
         font-weight: 800;
-        color: $apy-secondary-color;
+        @apply text-blackGrey-placeholder;
       }
     }
     &.heading {
-      background: $apy-gradient-color;
+      @apply text-purple-100;
       font-weight: 800;
       margin-bottom: 14px;
     }

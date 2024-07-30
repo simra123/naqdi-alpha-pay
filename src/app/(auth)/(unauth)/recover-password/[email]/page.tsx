@@ -1,22 +1,20 @@
 "use client";
-import { Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 import useFormValidation from "@/hooks/useFormValidation";
 import { useApi } from "@/hooks/useApi";
 import { updatePasswordApi } from "@/services/auth";
 import { callApiHook } from "@/utils/apifuncs";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { recoverSchema } from "@/models/recoverPassword";
-import LoadingApi from "@/components/common/LoadindApi";
+import IconField from "@/components/common/IconField";
+import LoaderButton from "@/components/common/LoaderButton";
+import { Lock } from "@mui/icons-material";
 
-import "../../../auth.scss";
 
 const UpdatePassword = ({ params }) => {
   const router = useRouter();
   const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi();
   const email = decodeURIComponent(params?.email);
-
 
   const initialValues = {
     password: "",
@@ -44,49 +42,70 @@ const UpdatePassword = ({ params }) => {
   };
 
   return (
-    <section>
-      <Typography variant="h2" color="primary">
-        Reset Password
-      </Typography>
+    <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
+      <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+        Reset Your Password
+      </h2>
+
+      <p className="text-p120 text-blackGrey-100 leading-7 mt-2">
+        Enter the new password you want to use with your {email} Alphaspay
+        account.
+      </p>
+
       <form
         id="login-form"
         onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
+        className="mt-12"
       >
-        <div>
-          <PasswordToggleInput
-            value={values.password}
-            onChange={handleChange}
-            onBlur={validateField}
-            name="password"
-            placeholder={"Password*"}
-          />
-          {errors.password && (
-            <div className="error_text">{errors.password}</div>
-          )}
-        </div>
-
-        <div>
-          <PasswordToggleInput
-            value={values.confirmPassword}
-            onChange={handleChange}
-            name="confirmPassword"
-            placeholder={"Confirm Password*"}
-            key={13}
-          />
-          {values.confirmPassword != values.password && (
-            <div className="error_text">{errors.confirmPassword}</div>
-          )}
-        </div>
+        <IconField
+          type="password"
+          onBlur={validateField}
+          name="password"
+          onChange={handleChange}
+          value={values.password}
+          error={errors.password}
+          icon={Lock}
+          label="Password"
+          placeholder="Enter Your Password"
+        />
+        <IconField
+          type="password"
+          onBlur={validateField}
+          name="confirmPassword"
+          onChange={handleChange}
+          value={values.confirmPassword}
+          error={errors.confirmPassword}
+          icon={Lock}
+          label="Confirm Password"
+          placeholder="Enter Your Password"
+        />
 
         <ErrorApiText error={isRecoverError} />
-
-        <LoadingApi loading={isRecoverLoading}>
-          <button className="btn gradient-btn" type="submit">
-            Update Password
-          </button>
-        </LoadingApi>
+        <div className="mt-8">
+          <LoaderButton
+            content={"Reset"}
+            loading={isRecoverLoading}
+            type="submit"
+            variant={"contained"}
+          />
+        </div>
       </form>
-    </section>
+
+      <p className="text-blackGrey-100 mt-6">
+        NOTE: It is extremely important to ensure that email registered for your
+        account is valid and up-to-date. If you lose your password or otherwise
+        lose access to your account, the only way to regain access is by
+        resetting the password, which requires access to the email address
+        registered. If you do not have access to the email address, you may not
+        be able to recover your account. In this case, please contact us at{" "}
+        <a
+          href={`mailto:info@alphaspay.com`}
+          className="text-purple-100 underline"
+        >
+          info@alphaspay.com
+        </a>
+      </p>
+    </div>
   );
 };
 
