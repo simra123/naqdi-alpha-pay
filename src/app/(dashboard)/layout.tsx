@@ -1,25 +1,45 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import Sidebar from "@/components/common/Sidebar";
-import { getUrlBreadCrumb } from "@/utils/getUrlBreadCrumb";
-import { IconButton } from "@mui/material";
-import { HomeWork, Logout, Person } from "@mui/icons-material";
-import SelectBox from "@/components/common/SelectBox";
-import Clock from "@/components/ui/Clock";
+
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { Role } from "@/constants/roles";
+import LoadingScreen from "@/components/common/LoadingScreen";
+import Header from "@/components/common/Header";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { userDetailsApi } from "@/services/user";
+import { setUser } from "@/store/slices/userSlice";
+import { validateSteps } from "@/store/slices/onboarding.slice";
+import { useDispatch } from "react-redux";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const { isAuthenticated, loaded } = useAuth();
-  const user = useLocalStorage("user");
+  const dispatch = useDispatch();
 
-  if (!loaded) {
-    return "...Loading";
+  const { isAuthenticated, loaded } = useAuth();
+
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
+    useApi();
+
+  const getUserDetails = async () => {
+    await callApiHook({
+      apiCall: callUserDetailsApi(userDetailsApi()),
+      successCallBack: (response) => {
+        dispatch(setUser(response));
+        dispatch(validateSteps(response));
+      },
+    });
+  };
+
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
+  if (!loaded || isUserDetailsLoading) {
+    return <LoadingScreen />;
   }
 
   if (!isAuthenticated) {
@@ -29,90 +49,17 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <div className="grid grid-cols-3 py-1 px-6 items-center">
-        <div className="time">
-          <Clock />
-        </div>
-        <div className="center-heading">
-          <p className="text-sm text-center primary-color font-bold">
-            Alphaspay
-          </p>
-        </div>
-        <div className="text-end">
-          <IconButton
-            onClick={() => {
-              if (user?.role == Role.ADMIN) {
-                window?.localStorage?.removeItem("token");
-                window?.localStorage?.removeItem("user");
-
-                router.push("/login");
-              } else {
-                router.push("/main/trader-registration");
-              }
-            }}
-          >
-            <Logout />
-          </IconButton>
-        </div>
-      </div>
-      <div className="flex gap-4 mt-5 mb-3">
-        <div className="clearfix w-64"></div>
-        <div className="w-full">
-          <div className="flex justify-between items-center gap-2 pr-5">
-            <p className="font-bold">{getUrlBreadCrumb(pathname)}</p>
-
-            <div className="flex gap-2">
-              <SelectBox
-                IconName={HomeWork}
-                name="profile"
-                className="transparent !border-0 min-w-44 !p-0"
-                options={[
-                  {
-                    label: "Profile",
-                    value: "profile",
-                  },
-                ]}
-                value={"profile"}
-                sx={{
-                  ".MuiSelect-outlined": {
-                    padding: "8px 12px !important",
-                  },
-
-                  borderRadius: 0,
-                }}
-                onChange={() => {}}
-              />
-              <SelectBox
-                IconName={Person}
-                name="user"
-                className="transparent  !border-0 min-w-32 !p-0"
-                options={[
-                  {
-                    label: "User",
-                    value: "user",
-                  },
-                ]}
-                value={"user"}
-                sx={{
-                  ".MuiSelect-outlined": {
-                    padding: "8px 12px !important",
-                  },
-
-                  borderRadius: "0 !important",
-                }}
-                onChange={() => {}}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex layout-wrapper">
-        <div className="sidebar w-64 h-full">
+      <div className="flex gap-8 min-h-screen bg-bluish-gray">
+        <div className="sidebar w-64 py-5 pl-5 hidden md:block">
           <Sidebar />
         </div>
-        <div className="children h-full w-full me-2 px-3 py-2 overflow-auto">
-          {children}
+        <div className="children h-[inherit] w-full p-5 md:px-0">
+          <div className=" md:pr-5">
+            <Header />
+          </div>
+          <div className="max-h-[calc(100vh-170px)] overflow-auto md:pr-5">
+            {children}
+          </div>
         </div>
       </div>
     </>

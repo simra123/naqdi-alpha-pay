@@ -36,7 +36,7 @@ const Login = () => {
         window?.localStorage?.setItem("token", token);
         window?.localStorage?.setItem("user", JSON.stringify(user));
         if (user.role == Role.USER) {
-          router.push("/main");
+          router.push("/onboarding");
         }
         if (user.role == Role.ADMIN) {
           router.push("/");

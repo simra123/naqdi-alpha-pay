@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Typography } from "@mui/material";
-import SelectBox from "@/components/common/SelectBox";
-import countryList from "react-select-country-list";
+
+import countriesJson from "@/constants/countries.json";
 import useFormValidation from "@/hooks/useFormValidation";
 import { IDENTITY_FORMATS, STEPS } from "@/constants/onboarding";
 import { IdentityCheckSchema } from "@/models/IdentityCheck";
@@ -17,6 +16,10 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import { getUrlOrObjectUrl, urlToFile } from "@/utils/getImageSrcType";
+import IconSelectBox from "@/components/common/IconSelectBox";
+import { Add, LocationOn } from "@mui/icons-material";
+import { DocumentFormat } from "@/assets/Svgs";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const IdentityCheck = () => {
   const dispatch = useDispatch();
@@ -26,17 +29,7 @@ const IdentityCheck = () => {
   const back = useRef(null);
   const [updateLoading, setUpdateLoading] = useState(true);
   const [isSubmitKYCLoading, isSubmitKYCError, callSubmitKYCApi] = useApi();
-  const options = useMemo(() => {
-    const data = countryList()
-      .getData()
-      .map(({ label }) => {
-        return {
-          label: label,
-          value: label,
-        };
-      });
-    return data;
-  }, []);
+
   const documentFormatsList = [
     {
       name: "National Identity Card",
@@ -69,8 +62,6 @@ const IdentityCheck = () => {
     handleSubmit,
     validateField,
   } = useFormValidation(initialValues, IdentityCheckSchema);
-
-
 
   const setUserData = async () => {
     setValues({
@@ -120,49 +111,39 @@ const IdentityCheck = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-      <h2 className="large_heading_bold">Know Your Customer Identity Check</h2>
-      <LoadingApi loading={updateLoading}>
-        <p>
-          Please fill in the details so we can proceed with you Identity
-          Confirmation
-        </p>
+      <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
+        <h4 className="text-black-100 text-h3.5 font-semibold">
+          Identity Check
+        </h4>
+        <LoadingApi loading={updateLoading}>
+          <p className="text-button text-black-100">
+            Please fill in the details so we can proceed with you Identity
+            Confirmation
+          </p>
 
-        <div className="register_form__trader">
-          <div className="register_form__trader__heading">
-            <Typography
-              variant="h5"
-              color="primary"
-              className="form-label-bold"
-            >
-              Country
-            </Typography>
-          </div>
-          <div>
-            <SelectBox
-              placeholder="Country*"
-              options={options}
-              name={"country"}
-              onBlur={validateField}
+          <div className="max-w-[360px] mt-3">
+            <IconSelectBox
+              options={countriesJson}
               onChange={handleChange}
+              searchable
+              error={errors.country}
+              icon={LocationOn}
+              label="Country"
+              name="country"
+              placeholder="Select your country"
+              inputContainerClassName="!bg-blackGrey-filled-input"
               value={values.country}
             />
-            {errors?.country && (
-              <div className="error_text">{errors?.country}</div>
-            )}
           </div>
 
           {values.country && (
             <>
-              <div className="register_form__trader__heading mt-10">
-                <Typography
-                  variant="h5"
-                  color="primary"
-                  className="form-label-bold"
-                >
+              <div className="mt-2">
+                <h4 className="font-semibold text-p120">
                   Select Document Format
-                </Typography>
+                </h4>
               </div>
-              <div className="mt-4 flex flex-col gap-3">
+              <div className="mt-4 flex gap-3 flex-wrap">
                 {documentFormatsList.map(({ format, name }) => (
                   <DocumentFormatCard
                     format={format}
@@ -177,100 +158,122 @@ const IdentityCheck = () => {
               )}
             </>
           )}
-        </div>
 
-        {values.documentFormat && (
-          <div>
-            <div className="register_form__trader__heading mt-10">
-              <Typography
-                variant="h5"
-                color="primary"
-                className="form-label-bold"
-              >
-                Select Documents
-              </Typography>
-            </div>
-            <div className="mb-2">
-              <input
-                type="file"
-                name="document.front"
-                onBlur={validateField}
-                onChange={handleChange}
-                ref={front}
-                hidden
-                accept="image/*"
-              />
-              <div className="flex gap-6 items-center mb-2">
-                <button
-                  type="button"
-                  className="btn-secondary min-w-max"
-                  onClick={() => front?.current?.click()}
-                >
-                  Choose Front File
-                </button>
-                <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
-                  {values.document?.front?.name}
-                </span>
+          <div className="mt-8"></div>
+
+          {values.document.back && values.document.front && (
+            <h4 className="text-black-100 font-semibold text-p120">Images</h4>
+          )}
+
+          {values.documentFormat && (
+            <>
+              <div className="flex gap-6 flex-wrap">
+                <div className="mb-2">
+                  {!values.document.front ? (
+                    <>
+                      <p className="my-2 font-semibold text-input text-black-100">
+                        Choose Front Side
+                      </p>
+                      <input
+                        type="file"
+                        name="document.front"
+                        onBlur={validateField}
+                        onChange={handleChange}
+                        ref={front}
+                        hidden
+                        accept="image/*"
+                      />
+                      <div className="flex gap-6 items-center mb-2">
+                        <button
+                          type="button"
+                          className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
+                          onClick={() => front?.current?.click()}
+                        >
+                          <Add className="text-purple-100" />
+                          <span className="text-blackGrey-placeholder text-input">
+                            {" "}
+                            Drop Files Here Or Click To Upload{" "}
+                          </span>
+                        </button>
+                        <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
+                          {values.document?.front?.name}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <img
+                      src={getUrlOrObjectUrl(values.document.front)}
+                      alt="front side"
+                      className="w-[320px] max-w-full"
+                    />
+                  )}
+                </div>
+
+                <div>
+                  {!values.document.back ? (
+                    <>
+                      <p className="my-2 font-semibold text-input text-black-100">
+                        Choose Back Side
+                      </p>
+                      <input
+                        type="file"
+                        name="document.back"
+                        onBlur={validateField}
+                        onChange={handleChange}
+                        ref={back}
+                        hidden
+                        accept="image/*"
+                      />
+                      <div className="flex gap-6 items-center mb-2">
+                        <button
+                          type="button"
+                          className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
+                          onClick={() => back?.current?.click()}
+                        >
+                          <Add className="text-purple-100" />
+                          <span className="text-blackGrey-placeholder text-input">
+                            {" "}
+                            Drop Files Here Or Click To Upload{" "}
+                          </span>
+                        </button>
+                        <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
+                          {values.document?.back?.name}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <img
+                      src={getUrlOrObjectUrl(values.document.back)}
+                      alt="bak side"
+                      className="w-[320px] max-w-full"
+                    />
+                  )}
+                </div>
               </div>
-              {values.document.front && (
-                <img
-                  src={getUrlOrObjectUrl(values.document.front)}
-                  alt="front side"
-                  className="min-w-full"
-                />
-              )}
-            </div>
 
-            <div>
-              <input
-                type="file"
-                name="document.back"
-                onBlur={validateField}
-                onChange={handleChange}
-                ref={back}
-                hidden
-                accept="image/*"
-              />
-              <div className="flex gap-6 items-center mb-2">
-                <button
-                  type="button"
-                  className="btn-secondary  min-w-max"
-                  onClick={() => back?.current?.click()}
-                >
-                  Choose Back File
-                </button>
-                <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
-                  {values.document?.back?.name}
-                </span>
-              </div>
-              {values.document.back && (
-                <img
-                  src={getUrlOrObjectUrl(values.document.back)}
-                  alt="bak side"
-                  className="min-w-full"
-                />
+              {errors.document && (
+                <div className="error_text">{errors?.document}</div>
               )}
-            </div>
+            </>
+          )}
 
-            {errors.document && (
-              <div className="error_text">{errors?.document}</div>
-            )}
+          <p className="text-black-100">
+            Please ensure your provided details are correct. Once your details
+            are submitted for KYC approval they will be locked.
+          </p>
+
+          <ErrorApiText error={isSubmitKYCError} />
+
+          <div className="mt-8 max-w-[360px]">
+            <LoaderButton
+              loading={isSubmitKYCLoading}
+              content={"Continue"}
+              type="submit"
+              variant={"contained"}
+            />
           </div>
-        )}
-
-        <p className="note mt-14">
-          Please ensure your provided details are correct. Once your details are
-          submitted for KYC approval they will be locked.
-        </p>
-        <ErrorApiText error={isSubmitKYCError} />
-        <div className="btn_wrapper text-right">
-          <LoadingApi loading={isSubmitKYCLoading}>
-            <button className="header_step_btn active fl" type="submit">
-              Save & Next
-            </button>
-          </LoadingApi>
-        </div>
-      </LoadingApi>
+        </LoadingApi>
+      </div>
     </form>
   );
 };
@@ -286,24 +289,20 @@ export const DocumentFormatCard = ({
   return (
     <div
       onClick={handleFormatChange(format)}
-      className={`card p-5 items-center flex gap-6 shadow-md border cursor-pointer transition-all ${
+      className={`p-5 items-center max-w-full w-[360px] flex gap-4 rounded-[14px] shadow-md border cursor-pointer transition-all ${
         value == format
-          ? `bg-slate-500 text-white`
-          : `hover:bg-slate-100 hover:text-gray-950 bg-white`
+          ? `text-purple-100 border-purple-100`
+          : "#AFAFAF  border-light-gray"
       }`}
     >
-      <div className="rounded-full secondary_section p-1">
-        <img src="/Id_card.svg" alt="ID_Card" />
+      <div className="p-1">
+        <DocumentFormat
+          fill={value == format ? "rgba(119, 53, 227, 1)" : "#AFAFAF"}
+        />
       </div>
       <div className="name flex flex-col gap-0">
-        <span className="font-bold">{name}</span>
-        <span
-          className={
-            value == format ? `text-white text-sm` : `text-sm text-slate-500`
-          }
-        >
-          Front & Back
-        </span>
+        <span className="font-semibold">{name}</span>
+        <span>Front & Back</span>
       </div>
     </div>
   );

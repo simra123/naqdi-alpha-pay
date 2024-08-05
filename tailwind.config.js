@@ -18,19 +18,27 @@ module.exports = {
         "auth-bg-purple":
           "linear-gradient(to bottom left, #0F1329 0%, #0F1329 20%, #1D174D 100%)",
         "pink-gradient": "linear-gradient(to right, #6D2BE1 0%,  #9F5DE9 100%)",
+        "pink-gradient-vertical":
+          "linear-gradient(to bottom, #6D2BE1 0%,  #9F5DE9 100%)",
       },
       backgroundColor: {
         "bluish-gray": "#F8FAFF",
+        "light-blue": "#F1F6FD",
         "light-gray": "#F4F4F4",
         "dark-gray": "#3F4141",
         "light-purple": "#E4D7F9",
+        "light-gray-10": "#EAECF4",
+        "light-gray-20": "#F7F9FF",
+        disabled: "#F1F1F1",
       },
       borderColor: {
         purple: "#3D1554",
+        "purple-100": "rgba(119, 53, 227, 1)",
         gray: "#9D9D9D",
         "light-gray": "#D9D9D9",
         "light-purple": "#D2D2EB",
         "error-dark": "#B00020",
+        "placeholder-gray": "#BEBEBE",
       },
       borderRadius: {
         large: "12px",
@@ -46,6 +54,7 @@ module.exports = {
         h3: ["32px", "1.2"],
         "h3.5": ["28px", "1.2"],
         h4: ["26px", "1.2"],
+        h5: ["24px", "1.2"],
         p120: ["20px", "1.5"],
         p16: ["16px", "1.5"],
         caption: ["14px", "1.5"],
@@ -146,7 +155,21 @@ module.exports = {
           label: "#01579B",
           info: "#0172F5",
         },
+        custom: {
+          "caption-gray": "#959595",
+          "title-gray": "#555659",
+        },
       },
+    },
+    screens: {
+      xs: "480px", // Custom extra small breakpoint
+      sm: "640px", // Small breakpoint (default)
+      md: "768px", // Medium breakpoint (default)
+      lg: "1050px", // Large breakpoint (default)
+      xl: "1280px", // Extra large breakpoint (default)
+      "2xl": "1324px", // 2x large breakpoint (default)
+      "3xl": "1536px", // 2x large breakpoint (default)
+      "4xl": "1920px", // Custom extra large breakpoint
     },
   },
   plugins: [],

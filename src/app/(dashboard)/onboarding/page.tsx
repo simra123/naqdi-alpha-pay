@@ -1,21 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import ProfileForm from "@/components/forms/onBoarding/ProfileForm";
 import { STEPS } from "@/constants/onboarding";
 import PhoneValidation from "@/components/forms/onBoarding/PhoneValidation";
 import MFASetup from "@/components/forms/onBoarding/MFASetup";
-// import Certification from "@/components/forms/onBoarding/Certification";
 import IdentityCheck from "@/components/forms/onBoarding/IdentityCheck";
 import KYCApproval from "@/components/forms/onBoarding/KYCApproval";
 import FeeSchedule from "@/components/forms/onBoarding/FeeSchedule";
-import HelpBox from "@/components/ui/HelpBox";
-import ApprovedStepsBox from "@/components/common/ApprovedStepsBox";
+
 import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import FeeSetup from "@/components/forms/onBoarding/FeeSetup";
+import "./onboarding.scss";
 
-const TraderRegistration = () => {
+const Onboarding = () => {
   const dipatch = useDispatch();
   const currentStep = useSelector(
     (state: any) => state.onboarding.current_step
@@ -38,16 +37,25 @@ const TraderRegistration = () => {
   console.log(currentStep);
 
   return (
-    <div className="container-custom mx-auto py-3">
+    <>
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+        Onboarding
+      </h3>
       {/* Header steps */}
-      <div className="flex justify-between gap-3">
+      <div className="justify-between gap-3 px-4 hidden lg:flex bg-white rounded-small">
         <button
           className={
             "px-4 py-3 header_step_btn flex-1" + returnActiveStep(STEPS.PROFILE)
           }
           onClick={handleStepChange(STEPS.PROFILE)}
         >
-          Profile
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">1</span>
+            <span>Basic Information</span>
+          </div>
         </button>
         <button
           className={
@@ -57,7 +65,13 @@ const TraderRegistration = () => {
           disabled={disabledSteps[STEPS.PHONEVALIDATION]}
           onClick={handleStepChange(STEPS.PHONEVALIDATION)}
         >
-          Phone Vaidation
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">2</span>
+            <span> Phone Vaidation </span>
+          </div>
         </button>
         <button
           className={
@@ -67,18 +81,15 @@ const TraderRegistration = () => {
           disabled={disabledSteps[STEPS.MFASETUP]}
           onClick={handleStepChange(STEPS.MFASETUP)}
         >
-          MFA Setup
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">3</span>
+            <span>MFA Setup</span>
+          </div>
         </button>
-        {/* <button
-          className={
-            "px-4 py-3 header_step_btn  flex-1" +
-            returnActiveStep(STEPS.CERTIFICATION)
-          }
-          disabled={disabledSteps[STEPS.CERTIFICATION]}
-          onClick={handleStepChange(STEPS.CERTIFICATION)}
-        >
-          certifification
-        </button> */}
+
         <button
           className={
             "px-4 py-3 header_step_btn  flex-1" +
@@ -87,7 +98,13 @@ const TraderRegistration = () => {
           disabled={disabledSteps[STEPS.FEESETUP]}
           onClick={handleStepChange(STEPS.FEESETUP)}
         >
-          Fee Setup
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">4</span>
+            <span>Fee Setup</span>
+          </div>
         </button>
 
         <button
@@ -98,7 +115,13 @@ const TraderRegistration = () => {
           disabled={disabledSteps[STEPS.IDENTITYCHECK]}
           onClick={handleStepChange(STEPS.IDENTITYCHECK)}
         >
-          Identity Check
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">5</span>
+            <span>Identity Check</span>
+          </div>
         </button>
         <button
           className={
@@ -108,7 +131,13 @@ const TraderRegistration = () => {
           disabled={disabledSteps[STEPS.KYCAPPROVAL]}
           onClick={handleStepChange(STEPS.KYCAPPROVAL)}
         >
-          KYC Approval
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">6</span>
+            <span>KYC Approval</span>
+          </div>
         </button>
         <button
           className={
@@ -118,31 +147,25 @@ const TraderRegistration = () => {
           disabled={disabledSteps[STEPS.FEESCHEDULE]}
           onClick={handleStepChange(STEPS.FEESCHEDULE)}
         >
-          Fee Schedule
+          <div
+            className="flex gap-2 
+          items-center"
+          >
+            <span className="step-no">7</span>
+            <span>Fee Schedule</span>
+          </div>
         </button>
       </div>
 
-      <div className="form_section flex justify-between mt-16 gap-12">
-        <div className="form_wrapper w-4/6">
-          {returnActiveForm(STEPS.PROFILE, ProfileForm)}
-          {returnActiveForm(STEPS.PHONEVALIDATION, PhoneValidation)}
-          {returnActiveForm(STEPS.MFASETUP, MFASetup)}
-          {returnActiveForm(STEPS.FEESETUP, FeeSetup)}
-          {/* {returnActiveForm(STEPS.CERTIFICATION, Certification)} */}
-          {returnActiveForm(STEPS.IDENTITYCHECK, IdentityCheck)}
-          {returnActiveForm(STEPS.KYCAPPROVAL, KYCApproval)}
-          {returnActiveForm(STEPS.FEESCHEDULE, FeeSchedule)}
-        </div>
-
-        {/* RIGHT SIDE OF FLEX BELOW */}
-
-        <div className="wrapper w-1/3">
-          <HelpBox />
-          <ApprovedStepsBox />
-        </div>
-      </div>
-    </div>
+      {returnActiveForm(STEPS.PROFILE, ProfileForm)}
+      {returnActiveForm(STEPS.PHONEVALIDATION, PhoneValidation)}
+      {returnActiveForm(STEPS.MFASETUP, MFASetup)}
+      {returnActiveForm(STEPS.FEESETUP, FeeSetup)}
+      {returnActiveForm(STEPS.IDENTITYCHECK, IdentityCheck)}
+      {returnActiveForm(STEPS.KYCAPPROVAL, KYCApproval)}
+      {returnActiveForm(STEPS.FEESCHEDULE, FeeSchedule)}
+    </>
   );
 };
 
-export default TraderRegistration;
+export default Onboarding;

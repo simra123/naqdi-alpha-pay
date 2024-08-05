@@ -28,11 +28,11 @@ import IconSelectBox from "@/components/common/IconSelectBox";
 
 const options = [
   {
-    value: "private-company-non-regulated",
+    value: "Private Company (Non-regulated)",
     label: "Private Company (Non-regulated)",
   },
   {
-    value: "listed-company-non-regulated",
+    value: "Listed Company (Non-regulated)",
     label: "Listed Company (Non-regulated)",
   },
 ];
@@ -44,9 +44,9 @@ const IndividualForm = ({ activeForm }) => {
   const initialValues = {
     legalName: "",
     entityType: "",
-    // firstName: "",
-    // middleName: "",
-    // lastName: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
     email: "",
     userName: "",
     password: "",
@@ -69,9 +69,9 @@ const IndividualForm = ({ activeForm }) => {
 
   const onSubmit = async () => {
     const individualData = {
-      // first_name: values?.firstName,
-      // last_name: values.lastName,
-      // middle_name: values?.middleName,
+      first_name: values?.firstName,
+      last_name: values.lastName,
+      middle_name: values?.middleName,
       username: values?.userName,
       email: values?.email,
       password: values?.password,
@@ -145,12 +145,47 @@ const IndividualForm = ({ activeForm }) => {
               label="Select Entity Type"
               placeholder="Enter Entity Type"
               icon={Business}
+              name="entityType"
               onChange={handleChange}
-              value={values?.legal_type}
+              value={values?.entityType}
               options={options}
+              error={errors?.entityType}
             />
           </>
         )}
+        <IconField
+          placeholder="Enter You First Name"
+          onBlur={validateField}
+          type="text"
+          value={values.firstName}
+          onChange={handleChange}
+          name="firstName"
+          error={errors.firstName}
+          label="First Name"
+          icon={Person}
+        />
+        <IconField
+          placeholder="Enter You Middle Name"
+          onBlur={validateField}
+          type="text"
+          value={values.middleName}
+          onChange={handleChange}
+          name="middleName"
+          error={errors.middleName}
+          label="Middle Name"
+          icon={Person}
+        />
+        <IconField
+          placeholder="Enter You Last Name"
+          onBlur={validateField}
+          type="text"
+          value={values.lastName}
+          onChange={handleChange}
+          name="lastName"
+          error={errors.lastName}
+          label="Last Name"
+          icon={Person}
+        />
         <IconField
           placeholder="Enter You Username"
           onBlur={validateField}

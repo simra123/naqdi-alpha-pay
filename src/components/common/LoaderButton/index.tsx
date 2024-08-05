@@ -3,7 +3,7 @@ import React from "react";
 import Loader from "../Loader";
 
 interface Props {
-  loading: boolean;
+  loading?: boolean;
   onClick?: () => void;
   variant?: any;
   content: any;
@@ -23,6 +23,8 @@ const LoaderButton = ({
     <div className="flex justify-center">
       <button
         className={`transition-[width]  ease-in-out ${
+          disabled ? "!bg-disabled !bg-none !text-purple-100 font-medium" : ""
+        } ${
           loading
             ? "w-16 p-2 rounded-full bg-pink-gradient"
             : "w-full pink-gradient-button"

@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
-import { TextField, Typography } from "@mui/material";
-import SelectBox from "@/components/common/SelectBox";
-import countryList from "react-select-country-list";
+import React, { useEffect, useState } from "react";
+import { TextField } from "@mui/material";
 import useFormValidation from "@/hooks/useFormValidation";
 import { ProfileSchema } from "@/models/Profile";
 import { useApi } from "@/hooks/useApi";
@@ -16,6 +14,12 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
+import { LocationOn, Mail, Person } from "@mui/icons-material";
+
+import countriesJson from "@/constants/countries.json";
+import IconSelectBox from "@/components/common/IconSelectBox";
+import IconField from "@/components/common/IconField";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const initialValues = {
   addressLine1: "",
@@ -32,17 +36,8 @@ const ProfileForm = () => {
   const userDetails = useSelector((state: any) => state.user.data);
   const { getUserDetails } = useGetUserDetaiils();
   const [isProfileLoading, isProfileError, callProfileApi] = useApi();
-  const options = useMemo(() => {
-    const data = countryList()
-      .getData()
-      .map(({ label }) => {
-        return {
-          label: label,
-          value: label,
-        };
-      });
-    return data;
-  }, []);
+  const [states, setStates] = useState(null);
+  const [cities, setCities] = useState(null);
 
   const {
     errors,
@@ -64,8 +59,59 @@ const ProfileForm = () => {
         city: data?.city,
         postalCode: data?.postal_code,
       });
+
+      setStates(
+        countriesJson.find((country) => country?.value == data?.country)?.states
+      );
+      const currentCities = countriesJson
+        .find((country) => country?.value == data?.country)
+        .states.find((state) => state.value == data?.state)?.cities;
+
+      const mappedCities = currentCities?.map((city) => {
+        return {
+          label: city,
+          value: city,
+        };
+      });
+
+      setCities(mappedCities);
     }
   }, [userDetails]);
+
+  const handleChangeMiddleware = (e) => {
+    const { name, value } = e.target;
+
+    if (name == "country") {
+      setValues({ ...values, country: value, state: null, city: null });
+      setCities(null);
+      setStates(null);
+
+      setStates(
+        countriesJson.find((country) => country?.value == value).states
+      );
+
+      return;
+    }
+    if (name == "state") {
+      setValues({ ...values, state: value, city: null });
+      setCities(null);
+
+      const currentCities = countriesJson
+        .find((country) => country?.value == values?.country)
+        .states.find((state) => state.value == value)?.cities;
+
+      const mappedCities = currentCities?.map((city) => {
+        return {
+          label: city,
+          value: city,
+        };
+      });
+
+      setCities(mappedCities);
+
+      return;
+    }
+  };
 
   const onSubmit = async () => {
     await callApiHook({
@@ -97,145 +143,148 @@ const ProfileForm = () => {
     console.log("Form Not submitted successfully!");
   };
 
+  console.log(values);
+
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-      <p>
-        Your personal information is crucial for us to identity you and keep
-        your investments secure. The below profile information helps us to do
-        that.
-      </p>
+      <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
+        <h4 className="text-blackGrey-100 text-h3.5 font-semibold">Trader</h4>
 
-      <div className="register_form__trader">
-        <div className="register_form__trader__heading">
-          <Typography variant="h5" color="primary" className="form-label-bold">
-            Trader
-          </Typography>
-        </div>
-        <div className="flex input_gap flex-col gap-5">
-          <div className="flex input_gap gap-5">
-            <TextField
-              placeholder="First Name*"
-              className="input-field flex-1"
-              disabled
-              value={user?.first_name}
-            />
-            <TextField
-              placeholder="Middle Name"
-              className="input-field flex-1"
-              value={user?.middle_name}
-              disabled
-            />
-            <TextField
-              placeholder="Last Name*"
-              className="input-field flex-1"
-              disabled
-              value={user?.last_name}
-            />
+        <div className="details flex mt-3 flex-wrap">
+          <div className="gap-3 flex items-center p-2 gap-3 md:w-1/3">
+            <div className="text-purple-100 bg-light-gray-10 aspect-square w-12 rounded-full p-3">
+              <Person />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className=" text-custom-title-gray font-medium">
+                {user?.first_name} {user?.last_name}
+              </span>
+              <span className="text-[13px] text-custom-caption-gray font-medium">
+                Full Name
+              </span>
+            </div>
           </div>
-          <TextField
-            placeholder="Email*"
-            className="input-field"
-            fullWidth
-            disabled
-            value={user?.email}
+
+          <div className="gap-3 flex items-center p-2">
+            <div className="text-purple-100 bg-light-gray-10 aspect-square w-12 rounded-full p-3">
+              <Mail />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <span className="text-custom-title-gray font-medium">
+                {user?.email}
+              </span>
+              <span className="text-[13px] text-custom-caption-gray font-medium">
+                Email
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white p-12 flex flex-col gap-3 mt-8">
+        <div className="register_form__trader__heading">
+          <h4 className="text-blackGrey-100 text-h3.5 font-semibold">
+            Contry of Domicile Details
+          </h4>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-2">
+          <IconSelectBox
+            options={countriesJson}
+            onChange={handleChangeMiddleware}
+            searchable
+            error={errors.country}
+            icon={LocationOn}
+            label="Country"
+            name="country"
+            placeholder="Select your country"
+            inputContainerClassName="!bg-blackGrey-filled-input"
+            value={values.country}
+          />
+
+          <IconSelectBox
+            options={states}
+            inputContainerClassName="!bg-blackGrey-filled-input"
+            onChange={handleChangeMiddleware}
+            searchable
+            error={errors.state}
+            icon={LocationOn}
+            label="State/Province"
+            name="state"
+            placeholder="Select your state/province"
+            value={values.state}
+          />
+
+          <IconSelectBox
+            options={cities}
+            inputContainerClassName="!bg-blackGrey-filled-input"
+            onChange={handleChange}
+            searchable
+            error={errors.city}
+            icon={LocationOn}
+            label="City"
+            name="city"
+            placeholder="Select your City"
+            value={values.city}
+          />
+
+          <IconField
+            inputContainerClassName="!bg-blackGrey-filled-input"
+            placeholder="Enter Your Address"
+            name={"addressLine1"}
+            onBlur={validateField}
+            onChange={handleChange}
+            value={values.addressLine1}
+            error={errors.addressLine1}
+            icon={LocationOn}
+            label="Address Line 1"
+          />
+          <IconField
+            inputContainerClassName="!bg-blackGrey-filled-input"
+            placeholder="Enter Your Address"
+            name={"addressLine2"}
+            onBlur={validateField}
+            onChange={handleChange}
+            value={values.addressLine2}
+            icon={LocationOn}
+            label="Address Line 2"
+          />
+
+          <IconField
+            inputContainerClassName="!bg-blackGrey-filled-input"
+            placeholder="Enter Postal Code"
+            name={"postalCode"}
+            onBlur={validateField}
+            onChange={handleChange}
+            value={values.postalCode}
+            icon={LocationOn}
+            label="Postal Code"
           />
         </div>
-      </div>
+        <ErrorApiText error={isProfileError} />
 
-      <div className="register_form__trader mt-16">
-        <div className="register_form__trader__heading">
-          <Typography variant="h5" color="primary" className="form-label-bold">
-            Country of Domicile Details
-          </Typography>
+        <p className="text-blackGrey-100">
+          Please ensure your provided details are correct. Once your details are
+          submitted for KYC approval they will be locked.
+        </p>
+
+        <div className="mt-12 max-w-[360px]">
+          <LoaderButton
+            content={"Save & Continue"}
+            loading={isProfileLoading}
+            type="submit"
+            disabled={
+              !values?.country ||
+              !values?.state ||
+              !values?.city ||
+              !values?.addressLine1 ||
+              !values?.postalCode
+            }
+            variant={"contained"}
+          />
         </div>
-        <div className="flex input_gap flex-col gap-5">
-          <div>
-            <TextField
-              placeholder="Address (line 1)*"
-              className="input-field"
-              onBlur={validateField}
-              onChange={handleChange}
-              value={values.addressLine1}
-              name="addressLine1"
-              fullWidth
-            />
-            {errors.addressLine1 && (
-              <div className="error_text">{errors.addressLine1}</div>
-            )}
-          </div>
-          <div>
-            <TextField
-              placeholder="Address (line 2)"
-              className="input-field"
-              value={values.addressLine2}
-              onChange={handleChange}
-              name="addressLine2"
-              fullWidth
-            />
-          </div>
-          <div>
-            <SelectBox
-              placeholder="Country*"
-              options={options}
-              name={"country"}
-              onBlur={validateField}
-              onChange={handleChange}
-              value={values.country}
-            />
-            {errors.country && (
-              <div className="error_text">{errors.country}</div>
-            )}
-          </div>
-          <div>
-            <TextField
-              placeholder="Country/State*"
-              className="input-field"
-              name={"state"}
-              onBlur={validateField}
-              onChange={handleChange}
-              value={values.state}
-              fullWidth
-            />
-            {errors.state && <div className="error_text">{errors.state}</div>}
-          </div>
-          <div>
-            <TextField
-              placeholder="City*"
-              className="input-field"
-              fullWidth
-              name={"city"}
-              onBlur={validateField}
-              onChange={handleChange}
-              value={values.city}
-            />
-            {errors.city && <div className="error_text">{errors.city}</div>}
-          </div>
-          <div>
-            <TextField
-              placeholder="Postal Code"
-              className="input-field"
-              name={"postalCode"}
-              onBlur={validateField}
-              onChange={handleChange}
-              value={values.postalCode}
-              fullWidth
-            />
-          </div>
-        </div>
-      </div>
-
-      <ErrorApiText error={isProfileError} />
-
-      <p className="note mt-14">
-        Please ensure your provided details are correct. Once your details are
-        submitted for KYC approval they will be locked.
-      </p>
-      <div className="btn_wrapper text-right">
-        <LoadingApi loading={isProfileLoading}>
-          <button className="header_step_btn active fl" type="submit">
-            Save & Next
-          </button>
-        </LoadingApi>
       </div>
     </form>
   );
