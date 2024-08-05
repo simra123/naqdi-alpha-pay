@@ -11,6 +11,7 @@ import { STEPS } from "@/constants/onboarding";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const MFASetup = () => {
   const dispatch = useDispatch();
@@ -73,16 +74,17 @@ const MFASetup = () => {
   };
 
   return (
-    <>
-      <h2 className="large_heading_bold">Multi-Factor Authentication</h2>
-      <p>
-        Multi-Factor Authentication (MFA) is a simple best practice that uses
-        Google Authenticator to add an extra layer of protection for your
-        account.
+    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
+      <h4 className="text-black-100 text-h3.5 font-semibold">
+        Phone Validation
+      </h4>
+      <p className="text-button text-black-100">
+        MFA is a simple best practice that uses Google Authenticator to add an
+        extra layer of protection for your account.
       </p>
 
-      <div className="form_steps mt-14">
-        <h4 className="text-lg font-bold">
+      <div className="form_steps mt-4">
+        <h4 className="text-p120 text-black-100 font-semibold">
           STEP 1: Download Google Authenticator
         </h4>
         <div className="flex gap-4 mt-8">
@@ -101,11 +103,11 @@ const MFASetup = () => {
         </div>
       </div>
 
-      <div className="form_steps mt-14">
-        <h4 className="text-lg font-bold">
+      <div className="form_steps mt-6 w-fit">
+        <h4 className="text-p120 text-black-100 font-semibold">
           STEP 2: Generate and Scan the QR Code
         </h4>
-        <div className="qr_code mt-6">
+        <div className="qr_code mt-6 flex justify-center">
           {qrCode && (
             <QRCodeCanvas
               value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
@@ -119,45 +121,38 @@ const MFASetup = () => {
         </div>
         <ErrorApiText error={isQrCodeError} />
 
-        <LoadingApi loading={isQrCodeLoading}>
-          <button
-            className="btn-secondary font-bold rounded-none mt-6 min-w-32"
+        {!user?.userDetails?.mfa_secret && (
+          <LoaderButton
+            content={"Generate Code"}
+            loading={isQrCodeLoading}
             onClick={qrCodeGenerator}
-          >
-            {user?.userDetails?.mfa_secret ? "Generate New" : "Generate"}
-          </button>
-        </LoadingApi>
-        {user?.userDetails?.mfa_secret && (
-          <p className="text-yellow-600 font-semibold mt-2">
-            <strong>Warning!! :</strong> If you generate a new code. your last
-            code will not be useable anymore.
-          </p>
+            variant={"contained"}
+          />
         )}
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="form_steps mt-14">
-          <h4 className="text-lg font-bold">
+        <div className="form_steps mt-8">
+          <h4 className="text-p120 text-black-100 font-semibold">
             STEP 3: Enter your personal generated MFA Code (6-Digit Code)
           </h4>
           <p className="text-lg mt-3">
             Make a note of the MFA code that appears on your device and enter
             that code in the box below, and then choose Verify.
           </p>
-          <div className="my-5">
+          <div className="mt-8">
             <OtpInput
               numInputs={6}
-              placeholder="XXXXXX"
               containerStyle={{
                 display: "flex",
 
-                gap: "1.5rem",
+                gap: "1rem",
               }}
               renderInput={(props) => (
                 <input
                   {...props}
                   disabled={isVerified}
-                  className="input-field min-w-14 p-4 outline-none"
+                  className="!w-10 md:!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
                 />
               )}
               onChange={(value) => setOtp(value)}
@@ -166,38 +161,39 @@ const MFASetup = () => {
             {otpError && <div className="error_text">{otpError}</div>}
           </div>
 
+          {isVerified && (
+            <p className="success note mt-5">Verified Successfully.</p>
+          )}
+
           <ErrorApiText error={isVerifyError} />
 
-          <LoadingApi loading={isVerifyLoading}>
-            {isVerified && (
-              <p className="success note mt-5">Verified Successfully.</p>
-            )}
-            {!isVerified && (
-              <button
-                className="btn-secondary font-bold rounded-none mt-6 min-w-32"
-                type="submit"
-                disabled={!qrCode}
-              >
-                Verify
-              </button>
-            )}
-          </LoadingApi>
+          {!user?.userDetails?.mfa && (
+            <LoaderButton
+              content={"Verify"}
+              loading={isVerifyLoading}
+              type="submit"
+              variant={"contained"}
+            />
+          )}
         </div>
       </form>
 
-      <p className="note mt-6">
+      <p className="text-black-100 mt-4">
         Alphaspay does not charge any fees for using MFA. If you have any
         questions or concerns, please Contact us
       </p>
-      <div className="btn_wrapper text-right">
-        <button
-          className="header_step_btn active fl"
-          onClick={isVerified && handleSubmitMfaSetup}
-        >
-          Next
-        </button>
-      </div>
-    </>
+
+      {user?.userDetails?.mfa_secret && user?.userDetails?.mfa && (
+        <div className="mt-8 max-w-[360px]">
+          <LoaderButton
+            content={"Continue"}
+            onClick={handleSubmitMfaSetup}
+            type="submit"
+            variant={"contained"}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

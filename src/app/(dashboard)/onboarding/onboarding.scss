@@ -1,0 +1,39 @@
+.form_wrapper {
+  .note {
+    font-size: 14px;
+  }
+  .header_step_btn {
+    padding: 1rem 2.5rem;
+    margin-top: 2.5rem;
+  }
+}
+
+.header_step_btn {
+  padding: 12px 2px;
+  max-width: fit-content;
+  @apply font-bold;
+  font-size: 14px;
+  .step-no {
+    @apply rounded-full;
+    @apply w-8;
+    aspect-ratio: 1;
+    // @apply h-4;
+    padding: 6px;
+    @apply bg-light-gray-10;
+  }
+  &.active {
+    font-weight: 800;
+    @apply text-purple-100;
+    @apply border-b-[3px];
+    @apply rounded-b-[3px];
+    @apply border-purple-100;
+
+    .step-no {
+      @apply text-white;
+      @apply bg-purple-100;
+    }
+  }
+  &:disabled {
+    color: grey;
+  }
+}

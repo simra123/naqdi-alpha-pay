@@ -9,11 +9,11 @@ import { callApiHook } from "@/utils/apifuncs";
 import { userDetailsApi } from "@/services/user";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useRouter } from "next/navigation";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const FeeSchedule = () => {
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const router = useRouter();
-  const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi(true);
@@ -45,18 +45,20 @@ const FeeSchedule = () => {
   // };
 
   return (
-    <>
-      <h2 className="large_heading_bold">Your Fee Schdeule</h2>
-      <p>You will be paying the following fee for alphaspay. </p>
+    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
+      <h4 className="text-black-100 text-h3.5 font-semibold">
+        Your Fee Schdeule
+      </h4>
+      <p className="text-button text-black-100">
+        You will be paying the following fee for alphaspay.
+      </p>
 
       <div>
-        <div className="register_form__trader__heading mt-10">
-          <Typography variant="h5" color="primary" className="form-label-bold">
-            Schedule
-          </Typography>
+        <div className=" mt-10 mb-2">
+          <h4 className="text-p120 font-semibold text-black-100">Schedule</h4>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex gap-3">
           <LoadingApi loading={isUserDetailsLoading}>
             {user?.userDetails?.fees ? (
               <FeeCard
@@ -64,7 +66,7 @@ const FeeSchedule = () => {
                 // selected={selectedSchedule}
               />
             ) : (
-              <p>
+              <p className="text-black-100">
                 We are setting your fees currently, Once done you will be able
                 to move forward. Thanks for your patience
               </p>
@@ -73,25 +75,22 @@ const FeeSchedule = () => {
           </LoadingApi>
         </div>
       </div>
-      <div className="mt-2">
-        <ErrorApiText error={error} />
-      </div>
 
-      <p className="note mt-14">
+      <p className="text-black-100  mt-5">
         Your Fee Schedule is mentioned above. For any querires you can contact
         us.
       </p>
+
       {user?.userDetails?.fees && (
-        <div className="btn_wrapper text-right">
-          <button
-            className="header_step_btn active fl"
+        <div className="mt-8 max-w-[360px]">
+          <LoaderButton
+            content={"Go to Dashboard"}
             onClick={() => router.push("/")}
-          >
-            <span>Go to Dashboard </span> <Forward />
-          </button>
+            variant={"contained"}
+          />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -100,14 +99,12 @@ export default FeeSchedule;
 export const FeeCard = ({ schedule }) => {
   return (
     <div
-      className={`card p-5 gap-6 shadow-md border cursor-pointer transition-all relative`}
+      className={`p-5 gap-6 shadow-md border w-[360px] max-w-full rounded-large border-purple-100 cursor-pointer transition-all text-purple-100`}
     >
-      <div className="text-center p-6">
-        <span className="font-bold text-4xl">
-          {schedule?.value} <span className="text-3xl">%</span>
-        </span>
+      <div className="text-center">
+        <span className="font-semibold text-h4">{schedule?.value} %</span>
 
-        <p className=" mt-[1px] !text-[12px] font-semibold">Per Month*</p>
+        <p className=" mt-[2px]">Per Month*</p>
       </div>
     </div>
   );

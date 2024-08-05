@@ -1,15 +1,15 @@
 import * as Yup from "yup";
 
 const _register = {
-  // firstName: Yup.string()
-  //   .required("First name is Required")
-  //   .min(2, "Minimum 2 letters required")
-  //   .max(50, "Maximum 50 letters only."),
+  firstName: Yup.string()
+    .required("First name is Required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
 
-  // lastName: Yup.string()
-  //   .required("Last name is required")
-  //   .min(2, "Minimum 2 letters required")
-  //   .max(50, "Maximum 50 letters only."),
+  lastName: Yup.string()
+    .required("Last name is required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
   email: Yup.string()
     .required("Email is required")
     .email("Invalid Format")

@@ -1,6 +1,6 @@
 // components/IconSelectBox.js
 import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface Props {
   label?: string;
@@ -12,7 +12,9 @@ interface Props {
   value?: string;
   error?: string | boolean;
   info?: string;
-  options: { value: string; label: string }[];
+  inputContainerClassName?: string;
+  options: { value: string; label: string }[] | any[];
+  searchable?: boolean; // New prop to enable search functionality
 }
 
 interface OptionType {
@@ -32,9 +34,20 @@ const IconSelectBox = ({
   error,
   info,
   options,
+  searchable = false, // Default to false if not provided
+  inputContainerClassName,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [selectedOption, setselectedOption] = useState<OptionType>();
+  const [searchQuery, setSearchQuery] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (value) {
+      const currentOption = options?.find((item) => item?.value == value);
+      setselectedOption(currentOption);
+    }
+  }, [value]);
 
   const toggleOpen = (e) => {
     e.stopPropagation();
@@ -42,13 +55,33 @@ const IconSelectBox = ({
   };
 
   const handleSelect = (optionValue: OptionType) => {
+    console.log(optionValue);
     setselectedOption(optionValue);
     onChange({ target: { value: optionValue.value, name: name } });
     setOpen(false);
   };
 
+  const filteredOptions = options?.filter(
+    (option) =>
+      option.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      option?.value?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={`mb-4 text-input ${wrapperClassName}`}>
+    <div className={`mb-4 text-input ${wrapperClassName}`} ref={dropdownRef}>
       <div className="flex gap-2 items-center">
         <label className="block mb-2 font-medium">{label}</label>
         {info && (
@@ -71,13 +104,13 @@ const IconSelectBox = ({
           onClick={toggleOpen}
           className={`w-full p-4 cursor-pointer ${
             Icon ? "pl-12" : "pl-4"
-          } border-[1.5px] bg-white ${
+          } border-[1.5px] bg-white ${inputContainerClassName} ${
             error
               ? "border-error-dark"
-              : "border-light-gray focus:border-purple"
+              : "border-light-gray focus:border-purple-100"
           } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
         >
-          {selectedOption?.label || (
+          {value || (
             <span className="text-blackGrey-placeholder">{placeholder}</span>
           )}
 
@@ -91,8 +124,17 @@ const IconSelectBox = ({
           </div>
         </div>
         {open && (
-          <div className="absolute w-full bg-white border p-3 border-light-gray rounded-large mt-1 shadow-lg z-10">
-            {options.map((option, index) => (
+          <div className="absolute w-full max-h-80 overflow-auto bg-white border p-3 border-light-gray rounded-large mt-1 shadow-lg z-10">
+            {searchable && (
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full p-2 border-b mb-2 outline-none"
+                placeholder="Search..."
+              />
+            )}
+            {filteredOptions?.map((option, index) => (
               <div
                 key={option.value}
                 onClick={() => handleSelect(option)}
@@ -106,7 +148,7 @@ const IconSelectBox = ({
                     : "hover:bg-light-purple hover:text-black-100"
                 }`}
               >
-                {option.label}
+                {option?.label || option?.value}
               </div>
             ))}
           </div>

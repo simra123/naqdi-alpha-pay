@@ -8,4 +8,5 @@ export const ProfileSchema = Yup.object().shape({
   country: Yup.string().required("Please select a country"),
   state: Yup.string().required("State is required"),
   city: Yup.string().required("City is required"),
+  postalCode: Yup.string().required("Postal Code is required"),
 });

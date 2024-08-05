@@ -13,6 +13,8 @@ import { setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
 import { useDispatch } from "react-redux";
 import { FeeSetupApi } from "@/services/onBoarding";
+import { FeePayer } from "@/assets/Svgs";
+import LoaderButton from "@/components/common/LoaderButton";
 
 enum FEEROLES {
   MERCHANT = "Me",
@@ -86,21 +88,19 @@ const FeeSetup = () => {
   };
 
   return (
-    <>
-      <h2 className="large_heading_bold">Fee Setup</h2>
-      <p>
+    <div className="bg-white rounded-small p-12 flex flex-col gap-4 mt-8">
+      <h4 className="text-black-100 text-h3.5 font-semibold">Fee Setup</h4>
+      <p className="text-button text-black-100">
         Please decide whether you will be paying the fees or your client will
         for Alphaspay.
       </p>
 
       <div>
-        <div className="register_form__trader__heading mt-10">
-          <Typography variant="h5" color="primary" className="form-label-bold">
-            Setup
-          </Typography>
+        <div className=" mt-6 text-p120 font-semibold">
+          <h5 className="form-label-bold">Setup</h5>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-wrap gap-3">
           <LoadingApi loading={isUserDetailsLoading}>
             <FeeCard
               name={FEEROLES.MERCHANT}
@@ -123,23 +123,23 @@ const FeeSetup = () => {
         <ErrorApiText error={error} />
       </div>
 
-      <p className="note mt-14">
+      <p className="text-black-100">
         After Choosing, Alphaspay Fee will be deducted as per user settings.
       </p>
+
       <ErrorApiText error={isFeeSetupError} />
+
       {(selectedRole?.merchant || selectedRole?.client) && (
-        <div className="btn_wrapper text-right">
-          <LoadingApi loading={isFeeSetupLoading}>
-            <button
-              className="header_step_btn active fl"
-              onClick={handleUserFeeSetup}
-            >
-              <span>Next </span>
-            </button>
-          </LoadingApi>
+        <div className="mt-8 max-w-[360px]">
+          <LoaderButton
+            loading={isFeeSetupLoading}
+            content={"Continue"}
+            onClick={handleUserFeeSetup}
+            variant={"contained"}
+          />
         </div>
       )}
-    </>
+    </div>
   );
 };
 
@@ -148,21 +148,24 @@ export default FeeSetup;
 export const FeeCard = ({ name, description, selected, handleSelect }) => {
   return (
     <div
-      className={`card p-5 gap-6 shadow-md border cursor-pointer transition-all relative ${
-        selected && "bg-gray-200"
+      className={`p-5 gap-8 shadow-md border w-[320px] max-w-full border-light-gray cursor-pointer transition-all rounded-[14px]  ${
+        selected && "bg-light-gray-20 !border-purple-100"
       }`}
       onClick={() => handleSelect(name)}
     >
-      <div className="text-center p-6">
-        <span className="font-bold text-4xl">{name}</span>
-
-        <p className=" mt-[1px] !text-[12px] font-semibold">{description}</p>
+      <div className="flex justify-center">
+        <FeePayer fill={selected ? "rgba(119, 53, 227, 1)" : "#AFAFAF"} />
       </div>
-      {selected && (
-        <div className="absolute top-2 right-2">
-          <CheckCircle color="success" />
-        </div>
-      )}
+
+      <div
+        className={`text-center mt-2 ${
+          !selected ? "text-blackGrey-70" : "text-purple-100"
+        }`}
+      >
+        <span className="font-semibold">{name}</span>
+
+        <p className=" mt-[1px]">{description}</p>
+      </div>
     </div>
   );
 };

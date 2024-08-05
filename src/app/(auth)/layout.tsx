@@ -3,9 +3,9 @@ import React from "react";
 const Authlayout = ({ children }) => {
   return (
     <div className="min-h-screen flex">
-      <div className="flex w-full overflow-hidden shadow-lg">
+      <div className="flex w-full shadow-lg">
         {/* Left Side (Form) */}
-        <div className="w-full md:w-1/2 py-20 px-6 bg-bluish-gray">
+        <div className="w-full lg:w-1/2 py-20 px-6 bg-bluish-gray">
           <section className="content max-w-[500px] m-auto">
             <div className="logo-wrapper">
               <h4 className="text-h4 text-purple-100 font-bold">Alphaspay</h4>
@@ -16,8 +16,8 @@ const Authlayout = ({ children }) => {
 
         {/* Right Side (Image) */}
 
-        <div className="fixed-background-wrapper">
-          <div className="fixed bg-auth-bg-purple h-screen w-full md:w-1/2  flex items-center justify-center">
+        <div className="fixed-background-wrapper w-1/2 hidden lg:block">
+          <div className="fixed bg-auth-bg-purple h-screen w-1/2 flex items-center justify-center">
             <img
               src={"/auth-bg-person.png"}
               alt="Crypto Image"

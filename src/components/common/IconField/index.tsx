@@ -14,6 +14,7 @@ interface Props {
   value?: string;
   error?: string | boolean;
   info?: string;
+  inputContainerClassName?: string;
 }
 
 const IconField = ({
@@ -28,6 +29,7 @@ const IconField = ({
   value,
   error,
   info,
+  inputContainerClassName
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordField = type === "password";
@@ -54,7 +56,9 @@ const IconField = ({
           </div>
         )}
       </div>
-      <div className="relative">
+      <div
+        className={`relative rounded-large bg-white ${inputContainerClassName}`}
+      >
         {Icon && (
           <Icon className="absolute left-4 top-0 flex h-full items-center text-gray-400" />
         )}
@@ -65,7 +69,9 @@ const IconField = ({
           name={name}
           value={value}
           placeholder={placeholder}
-          className={`w-full p-4 ${Icon ? "pl-12" : "pl-4"} border-[1.5px] ${
+          className={`w-full p-4 bg-transparent ${
+            Icon ? "pl-12" : "pl-4"
+          } border-[1.5px] ${
             error
               ? "border-error-dark"
               : "border-light-gray focus:border-purple"
