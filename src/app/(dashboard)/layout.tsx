@@ -14,9 +14,11 @@ import { userDetailsApi } from "@/services/user";
 import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
+import { Role } from "@/constants/roles";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
+  const user = useLocalStorage("user");
   const dispatch = useDispatch();
 
   const { isAuthenticated, loaded } = useAuth();
@@ -25,13 +27,15 @@ const DashboardLayout = ({ children }) => {
     useApi();
 
   const getUserDetails = async () => {
-    await callApiHook({
-      apiCall: callUserDetailsApi(userDetailsApi()),
-      successCallBack: (response) => {
-        dispatch(setUser(response));
-        dispatch(validateSteps(response));
-      },
-    });
+    if (user?.role == Role.USER) {
+      await callApiHook({
+        apiCall: callUserDetailsApi(userDetailsApi()),
+        successCallBack: (response) => {
+          dispatch(setUser(response));
+          dispatch(validateSteps(response));
+        },
+      });
+    }
   };
 
   useEffect(() => {

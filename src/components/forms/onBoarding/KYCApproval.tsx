@@ -77,10 +77,13 @@ const KYCApproval = () => {
         {user?.userDetails.kyc_status == "rejected" && (
           <div className="status my-8">
             <div className="flex flex-col justify-center items-center gap-1">
-              <CancelOutlined className="text-9xl text-red-500" />
-              <span className="font-bold text-xl text-red-500">Rejected</span>
+              <img
+                src="/kyc-rejected.png"
+                className="max-w-full w-[450px]"
+                alt="KYC Approved"
+              />
             </div>
-            <p className="text-base font-semibold mt-6">
+            <p className="text-black-100 mt-8">
               We have not been able to verify your documents. Please check the
               remarks and try again.
             </p>
