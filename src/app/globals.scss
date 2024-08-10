@@ -23,105 +23,8 @@
   border-radius: 5px; /* Rounded corners */
 }
 
-.layout-wrapper {
-  height: calc(100vh - 120px);
-}
-
-.page-min-height {
-  min-height: 100%;
-  overflow: auto;
-}
-
-.tel_input_wrapper {
-  .form-control {
-    background-color: #ebebeb !important;
-    transition: all 0.3s !important;
-    width: 100% !important;
-    border: 0 !important;
-    padding: 17px 68px !important;
-    border-radius: 0 !important;
-    font-size: 15px !important;
-    &:hover,
-    &:focus-within,
-    &:focus {
-      background-color: #e8e6ee !important;
-      outline: 0 !important;
-      border: 0 !important;
-      box-shadow: none !important;
-    }
-  }
-  .arrow {
-    left: 36px !important;
-  }
-  .search {
-    input {
-      width: 90%;
-      padding: 10px;
-    }
-  }
-  .country-list {
-    border-radius: 0 !important;
-  }
-  .flag-dropdown {
-    min-width: 4rem;
-    > div {
-      width: 100%;
-    }
-  }
-  .btn-yellow {
-    padding: 16.5px 16px !important;
-    border-radius: 0 !important;
-    height: 100%;
-    min-width: fit-content;
-  }
-}
-
-.btn {
-  border-radius: 0;
-  width: 100%;
-}
-.capsule_btn {
-  border: 1px solid;
-  @apply border-purple;
-  &.active {
-    color: #fff;
-    @apply bg-purple-gradient;
-  }
-}
-
-.input-field {
-  background-color: #ebebeb;
-  transition: all 0.3s;
-
-  &:hover,
-  &:focus-within {
-    background-color: #e8e6ee !important;
-  }
-
-  input:invalid {
-    border: 1px solid;
-    @apply border-error-dark;
-  }
-
-  fieldset {
-    border: none;
-  }
-}
-
-.form-label-bold {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-.note {
-  font-size: 12.6px;
-  @apply text-blackGrey-placeholder;
-  line-height: 1.5;
-  &.success {
-    color: #71cc71;
-  }
+.res-4-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 items-center;
 }
 
 .rotate-infinite {
@@ -182,29 +85,5 @@
 @keyframes l15 {
   100% {
     transform: rotate(-1turn);
-  }
-}
-
-@screen sm {
-  .container-custom {
-    max-width: 640px; /* Your custom width for small screens */
-  }
-}
-
-@screen md {
-  .container-custom {
-    max-width: 768px; /* Your custom width for medium screens */
-  }
-}
-
-@screen lg {
-  .container-custom {
-    max-width: 1024px; /* Your custom width for large screens */
-  }
-}
-
-@screen xl {
-  .container-custom {
-    max-width: 1140px; /* Your custom width for extra large screens */
   }
 }

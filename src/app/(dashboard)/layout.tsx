@@ -57,7 +57,7 @@ const DashboardLayout = ({ children }) => {
         <div className="sidebar w-64 py-5 pl-5 hidden md:block">
           <Sidebar />
         </div>
-        <div className="children h-[inherit] w-full p-5 md:px-0">
+        <div className="children h-[inherit] w-full p-5 md:px-0 flex-1 overflow-y-hidden">
           <div className=" md:pr-5">
             <Header />
           </div>

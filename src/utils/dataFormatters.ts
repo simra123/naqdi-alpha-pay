@@ -2,7 +2,10 @@ import moment from "moment";
 import { roundToPrecision } from "./math";
 
 export const capitalize = (value) => {
-  return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+  if (typeof value == "number") {
+    return value;
+  }
+  return value ? value?.charAt(0).toUpperCase() + value.slice(1) : "";
 };
 
 // export const formatBalanceForAdmin = (

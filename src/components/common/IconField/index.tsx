@@ -15,6 +15,7 @@ interface Props {
   error?: string | boolean;
   info?: string;
   inputContainerClassName?: string;
+  inputClassName?: string;
 }
 
 const IconField = ({
@@ -29,7 +30,8 @@ const IconField = ({
   value,
   error,
   info,
-  inputContainerClassName
+  inputContainerClassName,
+  inputClassName,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordField = type === "password";
@@ -40,22 +42,24 @@ const IconField = ({
 
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`}>
-      <div className="flex gap-2 items-center">
-        <label className="block mb-2 font-medium">{label}</label>
-        {info && (
-          <div className="relative flex items-center group">
-            <Info className="text-blue-info mb-1 text-[18px]" />
+      {label && (
+        <div className="flex gap-2 items-center">
+          <label className="block mb-2 font-medium">{label}</label>
+          {info && (
+            <div className="relative flex items-center group">
+              <Info className="text-blue-info mb-1 text-[18px]" />
 
-            <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
-              <div className="relative p-2">
-                <p className="w-full text-center">{info}</p>
+              <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                <div className="relative p-2">
+                  <p className="w-full text-center">{info}</p>
 
-                <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                  <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
       <div
         className={`relative rounded-large bg-white ${inputContainerClassName}`}
       >
@@ -69,7 +73,7 @@ const IconField = ({
           name={name}
           value={value}
           placeholder={placeholder}
-          className={`w-full p-4 bg-transparent ${
+          className={`w-full p-4 bg-transparent ${inputClassName} ${
             Icon ? "pl-12" : "pl-4"
           } border-[1.5px] ${
             error

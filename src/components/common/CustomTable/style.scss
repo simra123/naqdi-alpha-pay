@@ -1,0 +1,56 @@
+.custom-checkbox {
+  position: relative;
+  padding-left: 26px;
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Custom checkmark */
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: -9px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background-color: #ffffff;
+
+  border: 1px solid #BFBFBF;
+  border-radius: 4px;
+}
+
+/* When the checkbox is checked */
+.custom-checkbox input:checked ~ .checkmark {
+  @apply bg-purple-100;
+  border: 0;
+}
+
+/* Create the checkmark/indicator */
+.custom-checkbox .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.custom-checkbox .checkmark:after {
+  left: 7px;
+  top: 4px;
+  width: 6px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}

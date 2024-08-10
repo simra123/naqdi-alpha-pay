@@ -1,14 +1,52 @@
 export const paymentsList_table_columns = [
-  { field: "createdAt", headerName: "Created At", flex: 1 },
-  { field: "updatedAt", headerName: "Updated At", flex: 1 },
+  {
+    field: "createdAt",
+    headerName: "Created At",
+    flex: 1,
+    filterable: true,
+    sortable: true,
+    type: "date",
+  },
+  {
+    field: "updatedAt",
+    headerName: "Updated At",
+    flex: 1,
+    filterable: true,
+    sortable: true,
+    type: "date",
+  },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
     flex: 1,
+    filterable: true,
+    sortable: true,
+    type: "string",
   },
-  { field: "amountPaid", headerName: "Amount Paid", flex: 1 },
-  { field: "paid", headerName: "Paid", flex: 1 },
-  { field: "status", headerName: "Status", flex: 1 },
+  {
+    field: "amountPaid",
+    headerName: "Amount Paid",
+    flex: 1,
+    filterable: true,
+    sortable: true,
+    type: "string",
+  },
+  {
+    field: "paid",
+    headerName: "Paid",
+    flex: 1,
+    filterable: true,
+    sortable: true,
+    type: "string",
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    flex: 1,
+    filterable: true,
+    sortable: true,
+    type: "list",
+  },
 ];
 
 export const converstion_table_columns = [
