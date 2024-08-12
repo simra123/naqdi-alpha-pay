@@ -22,6 +22,7 @@ interface TableProps {
   rowClickHandler?: (row: object) => void;
   csv?: { loading: boolean; error?: string | boolean; handler: () => void };
   pdf?: { loading: boolean; error?: string | boolean; handler: () => void };
+  Filters?: any;
 }
 
 const CustomTable = ({
@@ -32,7 +33,9 @@ const CustomTable = ({
   rowClickHandler,
   csv,
   pdf,
+  Filters,
 }: TableProps) => {
+  const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRows, setCurrentRows] = useState(rows);
@@ -160,9 +163,18 @@ const CustomTable = ({
               wrapperClassName="!mb-0 !w-[250px] max-w-full"
               inputClassName="py-3"
             />
-            <button className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
-              <Tune />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setFiltersOpen(!filtersOpen)}
+                className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
+              >
+                <Tune />
+              </button>
+
+              {Filters && filtersOpen && (
+                <Filters data={rows} setData={setCurrentRows} />
+              )}
+            </div>
           </div>
         </div>
 
@@ -211,13 +223,15 @@ const CustomTable = ({
               <div
                 key={index}
                 onClick={() => rowClickHandler(row)}
-                className="bg-white border-b hover:bg-gray-50 flex"
+                className="bg-white border-b hover:bg-gray-50 flex cursor-pointer"
               >
                 {/* Mapping Columns inside rows */}
                 {columns.map((column, colIndex) => (
                   <div
                     key={column.field}
-                    className="py-4 px-6 font-semibold text-nowrap text-ellipsis overflow-hidden"
+                    className={`${
+                      column.dataValidator ? "py-4" : "py-6"
+                    } px-6 font-semibold text-nowrap text-ellipsis overflow-hidden`}
                     style={{ width: columnWidths[colIndex] }}
                   >
                     {column.dataValidator

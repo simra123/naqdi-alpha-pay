@@ -1,8 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import TransparentInput from "@/components/common/TransparentInput";
-import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
+
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import { getTransactionDetailsByUserApi } from "@/services/transaction";
@@ -14,6 +12,8 @@ import { roundToPrecision } from "@/utils/math";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import { getTransactionDetailsByAdminApi } from "@/services/admin/transaction";
+import { Mail, Person } from "@mui/icons-material";
+import Details from "@/components/common/Details";
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
@@ -54,66 +54,60 @@ const TransactionDetails = ({ params }) => {
   }, []);
 
   return (
-    <DashboardPageWrapper>
-      <div className="data-grid-container">
-        <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Transaction Details</h2>
+    <div className="rounded-medium flex flex-col  bg-white p-6">
+      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+        Transaction Details
+      </h3>
+
+      <ErrorApiText error={isTransactionDetailsError} />
+      <LoadingApi loading={isTransactionDetailsLoading}>
+        <div className="res-3-grid py-6 mt-4">
+          <Details
+            Icon={Person}
+            label="Date Recieved"
+            value={moment(transactionDetails?.createdAt).format("DD-MM-YYYY")}
+          />
+          <Details Icon={Mail} label="Related Payment" value={"test"} />
+          <Details
+            Icon={Mail}
+            label="Transaction Type"
+            value={transactionDetails?.transaction_type}
+          />
         </div>
-        <ErrorApiText error={isTransactionDetailsError} />
-        <LoadingApi loading={isTransactionDetailsLoading}>
-          <div className="detailspage mt-6">
-            <div className="flex flex-col gap-4">
-              <DetailsWrapper title={"Date Received"}>
-                <TransparentInput
-                  value={moment(transactionDetails?.createdAt).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Related Payment"}>
-                <TransparentInput value={"Payments in progress....."} />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Transaction Hash"}>
-                <TransparentInput
-                  value={transactionDetails?.transaction_hash}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Transaction Type"}>
-                <TransparentInput
-                  value={capitalize(transactionDetails?.transaction_type)}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Amount"}>
-                <TransparentInput
-                  value={`${roundToPrecision(
-                    +transactionDetails?.amount,
-                    10
-                  )} ${transactionDetails?.unit}`}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Source Wallet Address"}>
-                <TransparentInput
-                  value={transactionDetails?.wallet?.wallet_address}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Payment Address"}>
-                <TransparentInput value={`In Progress...`} />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Network"}>
-                <TransparentInput
-                  value={capitalize(transactionDetails?.wallet?.blockchain)}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Status"}>
-                <TransparentInput
-                  value={capitalize(transactionDetails?.status)}
-                />
-              </DetailsWrapper>
-            </div>
-          </div>
-        </LoadingApi>
-      </div>
-    </DashboardPageWrapper>
+        <div className="res-3-grid py-6 mt-4">
+          <Details
+            Icon={Person}
+            label="Transaction Hash"
+            value={transactionDetails?.transaction_hash}
+          />
+          <Details
+            Icon={Mail}
+            label="Source Wallet Address"
+            value={transactionDetails?.wallet?.wallet_address}
+          />
+          <Details
+            Icon={Mail}
+            label="Amount"
+            value={`${roundToPrecision(+transactionDetails?.amount, 10)} ${
+              transactionDetails?.unit
+            }`}
+          />
+        </div>
+        <div className="res-3-grid py-6 mt-4">
+          <Details Icon={Person} label="Payment Address" value={"test"} />
+          <Details
+            Icon={Mail}
+            label="Network"
+            value={transactionDetails?.wallet?.blockchain}
+          />
+          <Details
+            Icon={Mail}
+            label="Status"
+            value={transactionDetails?.status}
+          />
+        </div>
+      </LoadingApi>
+    </div>
   );
 };
 

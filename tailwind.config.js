@@ -33,6 +33,9 @@ module.exports = {
         disabled: "#F1F1F1",
         "table-header": "#F2F4FC",
         "detail-circle": "#F6F8FC",
+        "chip-red": "#FEDBDB",
+        "chip-green": "#f2f7f4",
+        "chip-blue": "#f2f4f7",
       },
       borderColor: {
         purple: "#3D1554",
@@ -154,10 +157,15 @@ module.exports = {
         },
         red: {
           "error-dark": "#B00020",
+          chip: "#AC0606",
+        },
+        green: {
+          chip: "#29824C",
         },
         blue: {
           label: "#01579B",
           info: "#0172F5",
+          chip: "#294A82",
         },
         custom: {
           "caption-gray": "#959595",

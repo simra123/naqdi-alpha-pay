@@ -1,25 +1,15 @@
 "use client";
-
-import { Sync } from "@mui/icons-material";
-import { Button } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import {
-  transactionsList_Admin_table_columns,
-  transactionsList_table_columns,
-} from "./columns";
+
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { getAllTransactionsApi } from "@/services/transaction";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import SelectBox from "@/components/common/SelectBox";
-import moment from "moment";
-import { withAuth } from "@/middleware/RoleBaseAuth";
+
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import RenderRoleBased from "@/components/common/RenderRoleBased";
 import {
   capitalize,
   formatTransactions,
@@ -27,13 +17,52 @@ import {
 } from "@/utils/dataFormatters";
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import { generateCSVApi } from "@/services/common";
-import LoaderButton from "@/components/common/LoaderButton";
+import CustomTable from "@/components/common/CustomTable";
 
 const statusList = [
   { label: "All", value: "all" },
   { label: "Confirmed", value: "confirm" },
   { label: "Rejected", value: "reject" },
   { label: "Pending", value: "pending" },
+];
+
+export const transactionsList_table_columns = [
+  { field: "id", headerName: "ID", sortable: true },
+  { field: "dateReceived", headerName: "Date Received", sortable: true },
+  { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
+  { field: "amount", headerName: "Amount", sortable: true },
+
+  { field: "receiveAddress", headerName: "Receive Address", sortable: true },
+  { field: "transactionType", headerName: "Transacion Type", sortable: true },
+  { field: "blockchain", headerName: "Blockchain", sortable: true },
+  {
+    field: "status",
+    headerName: "Status",
+    sortable: true,
+    dataValidator: (value) => {
+      return <TransactionStatusChip status={value} />;
+    },
+  },
+];
+
+export const transactionsList_Admin_table_columns = [
+  { field: "id", headerName: "ID", sortable: true },
+  { field: "dateReceived", headerName: "Date Received", sortable: true },
+  { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
+  { field: "amount", headerName: "Amount", sortable: true },
+  { field: "userName", headerName: "UserName", sortable: true },
+  { field: "email", headerName: "Email", sortable: true },
+  { field: "receiveAddress", headerName: "Receive Address", sortable: true },
+  { field: "transactionType", headerName: "Transacion Type", sortable: true },
+  { field: "blockchain", headerName: "Blockchain", sortable: true },
+  {
+    field: "status",
+    headerName: "Status",
+    sortable: true,
+    dataValidator: (value) => {
+      return <TransactionStatusChip status={value} />;
+    },
+  },
 ];
 
 const Transactions = () => {
@@ -80,76 +109,60 @@ const Transactions = () => {
     });
   };
 
-  const handleChange = (event) => {
-    setSelectedStatus(event?.target?.value);
-  };
-
   useEffect(() => {
     getTransactions();
   }, [selectedStatus]);
 
   return (
     <>
-      <div className="data-grid-container">
-        <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Transactions</h2>
-          <div className="actions grid grid-flow-col gap-3">
-            <LoaderButton
-              onClick={getTransactions}
-              loading={isTransactionsLoading}
-              content={<Sync />}
-            />
-            <LoaderButton
-              content={"Export CSV"}
-              onClick={ExportCSVHandler}
-              loading={isCSVLoading}
-            />
-            {/* <SelectBox
-              className="transparent !border-0 min-w-32 !p-0"
-              options={statusList}
-              value={selectedStatus}
-              placeholder="Status"
-              onChange={handleChange}
-              sx={{
-                ".MuiSelect-outlined": {
-                  padding: "8px 12px !important",
-                },
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+        Transactions
+      </h3>
 
-                borderRadius: "0 !important",
-              }}
-            /> */}
-          </div>
-        </div>
+      <LoadingApi loading={isTransactionsLoading}>
+        <CustomTable
+          columns={
+            user?.role == Role.ADMIN
+              ? transactionsList_Admin_table_columns
+              : transactionsList_table_columns
+          }
+          rows={transactions}
+          csv={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+            error: isCSVError,
+          }}
+          initialPageSize={10}
+          rowClickHandler={(row: any) =>
+            router.push(`/transactions/details/${row?.id}`)
+          }
+        />
+
         <ErrorApiText error={isTransactionsError} />
-
-        <LoadingApi loading={isTransactionsLoading}>
-          <DataGrid
-            autoHeight
-            rows={transactions}
-            columns={
-              user?.role == Role.ADMIN
-                ? transactionsList_Admin_table_columns
-                : transactionsList_table_columns
-            }
-            className="border-t-0 primary-color"
-            sx={{
-              ".MuiDataGrid-overlayWrapper": {
-                padding: "25px",
-              },
-              ".MuiDataGrid-overlayWrapperInner": {
-                height: "10px !important",
-              },
-            }}
-            onRowClick={(params) => {
-              router.push(`/transactions/details/${params?.row?.id}`);
-            }}
-            sortingOrder={["asc", "desc"]}
-            pagination
-          />
-        </LoadingApi>
-      </div>
+      </LoadingApi>
     </>
   );
 };
 
 export default Transactions;
+
+const TransactionStatusChip = ({ status }) => {
+  let statusColor: string, statusBg: string;
+
+  if (capitalize(status) == "Withdrawn") {
+    statusColor = "text-red-chip";
+    statusBg = "bg-chip-red";
+  }
+  if (capitalize(status) == "Complete") {
+    statusColor = "text-green-chip";
+    statusBg = "bg-chip-green";
+  }
+
+  return (
+    <p
+      className={`${statusColor} ${statusBg}  p-2 min-w-20 max-w-24 text-center text-[14px] font-semibold px-3 rounded-medium`}
+    >
+      {capitalize(status)}
+    </p>
+  );
+};

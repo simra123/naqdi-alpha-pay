@@ -12,7 +12,7 @@ import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import { CalendarMonth, Mail, Person } from "@mui/icons-material";
+import { CalendarMonth, Mail, Payment, Person } from "@mui/icons-material";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -101,14 +101,14 @@ const PaymentDetails = ({ params }) => {
 
           <div className="res-4-grid py-6 border-b border-light-gray">
             <Details
-              Icon={CalendarMonth}
-              label="Created Date"
-              value={moment(payment?.created_at).format("DD-MM-YYYY")}
+              Icon={Payment}
+              label="Payment Amount"
+              value={`${payment?.requested_amount} ${payment?.requested_currency}`}
             />
             <Details
-              Icon={CalendarMonth}
-              label="Updated Date"
-              value={moment(payment?.updated_at).format("DD-MM-YYYY")}
+              Icon={Payment}
+              label="Payment Amount Recieved"
+              value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
             />
           </div>
           <h4 className="text-button font-semibold mt-6">Status</h4>
@@ -116,13 +116,17 @@ const PaymentDetails = ({ params }) => {
           <div className="res-4-grid py-6">
             <Details
               Icon={CalendarMonth}
-              label="Created Date"
-              value={moment(payment?.created_at).format("DD-MM-YYYY")}
+              label="Paid Stauts"
+              value={
+                unpaidStatuses.some((status) => status == payment?.status)
+                  ? "Unpaid"
+                  : "Paid"
+              }
             />
             <Details
               Icon={CalendarMonth}
-              label="Updated Date"
-              value={moment(payment?.updated_at).format("DD-MM-YYYY")}
+              label="Payment Status"
+              value={payment?.status}
             />
           </div>
 
