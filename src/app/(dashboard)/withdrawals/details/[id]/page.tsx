@@ -546,7 +546,7 @@ const WithdrawalDetails = ({ params }) => {
                 <LoaderButton
                   loading={isRejectWithdrawalLoading}
                   content={"Reject"}
-                  variant={"text"}
+                  variant={"outlined"}
                   onClick={handleReject}
                 />
 
