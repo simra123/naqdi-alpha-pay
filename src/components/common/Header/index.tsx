@@ -4,14 +4,17 @@ import { capitalize } from "@/utils/dataFormatters";
 import { KeyboardArrowDown, Menu, Notifications } from "@mui/icons-material";
 import React from "react";
 
-const Header = () => {
+const Header = ({ navHandler }) => {
   const user = useLocalStorage("user");
 
   return (
     <div className="md:bg-white py-2 md:px-7 rounded-small mb-10">
-      <div className="flex items-center gap-6 justify-between">
-        <div className="flex items-center gap-3">
-          <button className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
+      <div className="flex items-center gap-6 justify-between md:justify-end">
+        <div className="items-center gap-3 flex md:hidden">
+          <button
+            onClick={navHandler}
+            className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
+          >
             <Menu />
           </button>
           <h5 className="text-h5 text-black-100 font-semibold">Profile</h5>

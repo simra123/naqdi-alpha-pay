@@ -5,7 +5,7 @@ import Loader from "../Loader";
 interface Props {
   loading?: boolean;
   onClick?: () => void;
-  variant?: any;
+  variant?: "contained" | "outlined";
   content: any;
   disabled?: boolean;
   type?: "reset" | "submit";
@@ -14,7 +14,7 @@ interface Props {
 const LoaderButton = ({
   loading,
   onClick,
-  variant = "outlined",
+  variant,
   content,
   disabled,
   type,
@@ -26,14 +26,30 @@ const LoaderButton = ({
           disabled ? "!bg-disabled !bg-none !text-purple-100 font-medium" : ""
         } ${
           loading
-            ? "w-16 p-2 rounded-full bg-pink-gradient"
-            : "w-full pink-gradient-button"
+            ? `${
+                variant == "contained"
+                  ? "w-16 p-2 rounded-full bg-pink-gradient"
+                  : "border-purple-100 border rounded-medium p-3 flex"
+              }`
+            : `w-full ${
+                variant == "outlined"
+                  ? "bg-transparent border-purple-100 border hover:bg-purple-10 transition-all text-purple-100 p-3 px-8 rounded-medium text-input"
+                  : "pink-gradient-button"
+              }`
         }`}
         onClick={onClick}
         disabled={disabled || loading}
         type={type}
       >
-        {loading ? <Loader /> : content}
+        {loading ? (
+          variant == "contained" ? (
+            <Loader />
+          ) : (
+            <CircularProgress className="text-purple-100" size={20} />
+          )
+        ) : (
+          content
+        )}
       </button>
     </div>
   );

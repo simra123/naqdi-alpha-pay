@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ["class"],
   content: [
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -30,6 +31,11 @@ module.exports = {
         "light-gray-10": "#EAECF4",
         "light-gray-20": "#F7F9FF",
         disabled: "#F1F1F1",
+        "table-header": "#F2F4FC",
+        "detail-circle": "#F6F8FC",
+        "chip-red": "#FEDBDB",
+        "chip-green": "#f2f7f4",
+        "chip-blue": "#f2f4f7",
       },
       borderColor: {
         purple: "#3D1554",
@@ -39,6 +45,7 @@ module.exports = {
         "light-purple": "#D2D2EB",
         "error-dark": "#B00020",
         "placeholder-gray": "#BEBEBE",
+        "table-gray": "#DCDCE3",
       },
       borderRadius: {
         large: "12px",
@@ -150,10 +157,15 @@ module.exports = {
         },
         red: {
           "error-dark": "#B00020",
+          chip: "#AC0606",
+        },
+        green: {
+          chip: "#29824C",
         },
         blue: {
           label: "#01579B",
           info: "#0172F5",
+          chip: "#294A82",
         },
         custom: {
           "caption-gray": "#959595",
@@ -172,5 +184,5 @@ module.exports = {
       "4xl": "1920px", // Custom extra large breakpoint
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };

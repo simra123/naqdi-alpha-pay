@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import Sidebar from "@/components/common/Sidebar";
@@ -14,9 +14,17 @@ import { userDetailsApi } from "@/services/user";
 import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
+import { Role } from "@/constants/roles";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
+  const user = useLocalStorage("user");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+    console.log("TOGGLING");
+  };
   const dispatch = useDispatch();
 
   const { isAuthenticated, loaded } = useAuth();
@@ -25,13 +33,15 @@ const DashboardLayout = ({ children }) => {
     useApi();
 
   const getUserDetails = async () => {
-    await callApiHook({
-      apiCall: callUserDetailsApi(userDetailsApi()),
-      successCallBack: (response) => {
-        dispatch(setUser(response));
-        dispatch(validateSteps(response));
-      },
-    });
+    if (user?.role == Role.USER) {
+      await callApiHook({
+        apiCall: callUserDetailsApi(userDetailsApi()),
+        successCallBack: (response) => {
+          dispatch(setUser(response));
+          dispatch(validateSteps(response));
+        },
+      });
+    }
   };
 
   useEffect(() => {
@@ -49,13 +59,12 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <div className="flex gap-8 min-h-screen bg-bluish-gray">
-        <div className="sidebar w-64 py-5 pl-5 hidden md:block">
-          <Sidebar />
-        </div>
-        <div className="children h-[inherit] w-full p-5 md:px-0">
+      <div className="md:flex md:gap-8 min-h-screen bg-bluish-gray">
+        <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
+
+        <div className="children h-[inherit] w-full p-5 md:px-0 flex-1 overflow-y-hidden">
           <div className=" md:pr-5">
-            <Header />
+            <Header navHandler={toggleSidebar} />
           </div>
           <div className="max-h-[calc(100vh-170px)] overflow-auto md:pr-5">
             {children}

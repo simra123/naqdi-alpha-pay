@@ -151,7 +151,7 @@ const ProfileForm = () => {
         <h4 className="text-blackGrey-100 text-h3.5 font-semibold">Trader</h4>
 
         <div className="details flex mt-3 flex-wrap">
-          <div className="gap-3 flex items-center p-2 gap-3 md:w-1/3">
+          <div className="gap-3 flex items-center p-2 md:w-1/3">
             <div className="text-purple-100 bg-light-gray-10 aspect-square w-12 rounded-full p-3">
               <Person />
             </div>

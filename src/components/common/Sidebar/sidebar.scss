@@ -1,4 +1,6 @@
 .SidebarWrapper {
+  @apply transition-transform duration-300 ease-in-out;
+
   .navLink {
     padding: 10px 22px;
     * {
