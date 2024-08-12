@@ -213,7 +213,7 @@ const PayoutDetails = ({ params }) => {
                 <LoaderButton
                   loading={isRejectPayoutLoading}
                   content={"Reject"}
-                  variant={"text"}
+                  variant={"outlined"}
                   onClick={handleReject}
                 />
               </div>
