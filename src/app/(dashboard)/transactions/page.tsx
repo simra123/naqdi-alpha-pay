@@ -26,7 +26,7 @@ const statusList = [
   { label: "Pending", value: "pending" },
 ];
 
-export const transactionsList_table_columns = [
+const transactionsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
   { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
@@ -45,7 +45,7 @@ export const transactionsList_table_columns = [
   },
 ];
 
-export const transactionsList_Admin_table_columns = [
+const transactionsList_Admin_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
   { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
