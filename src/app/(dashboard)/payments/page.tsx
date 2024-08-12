@@ -13,11 +13,10 @@ import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import { capitalize } from "@/utils/dataFormatters";
 import { KeyboardArrowRight } from "@mui/icons-material";
-import { log } from "console";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
-export const paymentsList_table_columns = [
+const paymentsList_table_columns = [
   {
     field: "id",
     headerName: "ID",
