@@ -1,16 +1,18 @@
-@import "../../../config/colors.scss";
-
 .SidebarWrapper {
-  border-right: 1px solid $apy-primary-color;
+  @apply transition-transform duration-300 ease-in-out;
+
   .navLink {
+    padding: 10px 22px;
     * {
-      color: rgb(202, 201, 201);
-      font-weight: 600;
+      @apply text-white;
+      @apply font-bold;
     }
     &.active {
+      @apply bg-white;
+      @apply rounded-medium;
       * {
-        color: $apy-note-gray-color;
-        font-weight: 700;
+        @apply text-purple-100;
+        @apply font-bold;
       }
     }
   }

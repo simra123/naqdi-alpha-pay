@@ -8,7 +8,7 @@ import TransparentInput from "@/components/common/TransparentInput";
 import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
 
-const PaymentDetails = () => {
+const CreatePayment = () => {
   return (
     <DashboardPageWrapper>
       <div className="data-grid-container">
@@ -112,4 +112,4 @@ const PaymentDetails = () => {
   );
 };
 
-export default PaymentDetails;
+export default CreatePayment;

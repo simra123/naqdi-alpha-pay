@@ -13,7 +13,6 @@ import HelpBox from "@/components/ui/HelpBox";
 import ApprovedStepsBox from "@/components/common/ApprovedStepsBox";
 import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
-import "./trader-registration.scss";
 import FeeSetup from "@/components/forms/onBoarding/FeeSetup";
 
 const TraderRegistration = () => {

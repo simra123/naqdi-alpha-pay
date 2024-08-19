@@ -1,17 +1,16 @@
 "use client";
-import { Typography, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
-import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 import Link from "next/link";
-import "../../auth.scss";
 import useFormValidation from "@/hooks/useFormValidation";
 import { loginSchema } from "@/models/login";
 import { useApi } from "@/hooks/useApi";
 import { loginApi } from "@/services/auth";
 import { callApiHook } from "@/utils/apifuncs";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import LoadingApi from "@/components/common/LoadindApi";
 import { Role } from "@/constants/roles";
+import IconField from "@/components/common/IconField";
+import { Lock, Mail } from "@mui/icons-material";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const Login = () => {
   const router = useRouter();
@@ -36,14 +35,13 @@ const Login = () => {
         const { token, user } = response?.data;
         window?.localStorage?.setItem("token", token);
         window?.localStorage?.setItem("user", JSON.stringify(user));
-        if (user.role == Role.USER) {
-          router.push("/main");
+        if (user?.role == Role.USER) {
+          router.push("/onboarding");
         }
-        if (user.role == Role.ADMIN) {
+        if (user?.role == Role.ADMIN) {
           router.push("/");
         }
       },
-     
     });
   };
 
@@ -52,75 +50,65 @@ const Login = () => {
   };
 
   return (
-    <section>
-      <Typography variant="h2" color="primary">
-        Autheticate
-      </Typography>
+    <section className="mt-[100px]">
+      <h1 className="text-h2 font-semibold mb-4 text-blackGrey-100">
+        Welcome Back!
+      </h1>
+      <p className="mb-4 text-p120">
+        Enter your credentials to access your account.
+      </p>
       <form
-        id="login-form"
-        onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
+        onSubmit={(event) => handleSubmit(event, onSubmit, onSubmitError)}
+        className="mt-20"
       >
-        <div>
-          <TextField
-            label={null}
-            className="input-field"
-            placeholder="Email* or Username*"
-            type="text"
-            fullWidth
-            value={values.email}
-            onChange={handleChange}
-            onBlur={validateField}
-            name="email"
-            inputProps={{
-              autoComplete: "new-password",
-              form: {
-                autoComplete: "off",
-              },
-            }}
-          />
-          {errors.email && <div className="error_text">{errors.email}</div>}
-        </div>
-
-        <div>
-          <PasswordToggleInput
-            value={values.password}
-            onChange={handleChange}
-            onBlur={validateField}
-            name="password"
-            placeholder={"Password*"}
-          />
-          {errors.password && (
-            <div className="error_text">{errors.password}</div>
-          )}
-        </div>
-
-        <Typography
-          component={Link}
+        <IconField
+          label="Username"
+          wrapperClassName="mb-6"
+          type="text"
+          error={errors.email}
+          value={values.email}
+          onChange={handleChange}
+          onBlur={validateField}
+          name="email"
+          placeholder="Enter Your Email"
+          icon={Mail}
+        />
+        <IconField
+          label="Password"
+          type="password"
+          error={errors.password}
+          value={values.password}
+          onChange={handleChange}
+          info="Use 8 or more characters with a mix of letters, numbers,
+                special & uppercase characters."
+          onBlur={validateField}
+          name="password"
+          icon={Lock}
+          placeholder="Enter Your Password"
+        />
+        <Link
           href={"/recover-password"}
-          variant="body1"
-          color="primary"
-          className="Link"
+          className="text-purple-100 text-input font-semibold block text-end mb-14"
         >
           Forgot Password?
-        </Typography>
+        </Link>
 
         <ErrorApiText error={isLoginError} />
 
-        <LoadingApi loading={isLoginLoading}>
-          <button className="btn gradient-btn" type="submit">
-            Login
-          </button>
-        </LoadingApi>
-
-        <div className="register">
-          <Typography variant="body1" color="primary">
-            Don't have an account?
-          </Typography>
-          <Link className="btn secondary-btn block" href={"/register"}>
-            Register
-          </Link>
-        </div>
+        <LoaderButton
+          content={"Login"}
+          variant={"contained"}
+          type="submit"
+          loading={isLoginLoading}
+        />
       </form>
+      <p className="mt-6 text-center text-button">
+        New here?{" "}
+        <Link href="/register" className="text-purple-100 font-medium">
+          Sign Up
+        </Link>{" "}
+        for Free!
+      </p>
     </section>
   );
 };

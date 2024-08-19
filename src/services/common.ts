@@ -10,3 +10,11 @@ export const generateCSVApi = (dataInArray: object[]) => {
 export const getFeesApi = (amount: number | string) => {
   return () => api.post(`wallet/alphaspay-fee`, { amount });
 };
+
+export const getCrpyoToFiatApi = (data: {
+  unit: string;
+  currency: string;
+  cryptoAmount: string;
+}) => {
+  return () => api.post(`payouts/currency-converison`, data);
+};

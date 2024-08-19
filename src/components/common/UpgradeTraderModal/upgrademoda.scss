@@ -1,13 +1,11 @@
-@import "../../../config/colors.scss";
-
 .upgrade_modal_wrapper {
-  background-color: $apy-primary-transparent-color;
+  background-color: black;
   min-height: 100vh;
-  color: $apy-white-color;
+  color: white;
 
   .continue_modal {
     background: #dadada;
-    color: $apy-primary-color;
+    @apply text-purple-100;
   }
   .secure_icon svg {
     width: 4.5rem;
@@ -15,11 +13,7 @@
   }
 
   .upgrade_modal {
-    background: linear-gradient(
-      44.71deg,
-      $apy-primary-color 0%,
-      $apy-secondary-color 100%
-    );
-    color: $apy-white-color;
+    @apply bg-light-purple-gradient;
+    color: white;
   }
 }

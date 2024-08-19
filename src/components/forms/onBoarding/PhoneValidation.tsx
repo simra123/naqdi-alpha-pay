@@ -12,9 +12,9 @@ import { STEPS } from "@/constants/onboarding";
 import { setStep } from "@/store/slices/onboarding.slice";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
-import { userDetailsApi } from "@/services/user";
-import { setUser } from "@/store/slices/userSlice";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
+import Loader from "@/components/common/Loader";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const PhoneValidation = () => {
   const dispatch = useDispatch();
@@ -84,23 +84,24 @@ const PhoneValidation = () => {
   };
 
   return (
-    <>
-      <h2 className="large_heading_bold">Phone Validation</h2>
-      <p>
+    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
+      <h4 className="text-black-100 text-h3.5 font-semibold">
+        Phone Validation
+      </h4>
+
+      <p className="text-button text-black-100">
         Please provide the Mobile Number you wish to register with your account.
       </p>
-      <p className="note mt-4">
+      <p className="text-black-100 mt-4">
         Note: Alphapay is committed to providing a global service to all of our
         customers. However, certain mobile networks can be unreliable for
         various reasons. In the event of difficulties validating your mobile
         number please contact Alphaspay support for an alternative verification
         method.
       </p>
-      <div className="register_form__trader mt-12">
-        <div className="register_form__trader__heading">
-          <Typography variant="h5" color="primary" className="text-base">
-            Enter Phone Number
-          </Typography>
+      <div className="mt-6">
+        <div className="mb-2">
+          <h5 className="text-input font-medium">Phone Number</h5>
         </div>
 
         <LoadingApi loading={isPhoneLoading}>
@@ -110,33 +111,22 @@ const PhoneValidation = () => {
             }
           >
             <div>
-              <div className="flex items-center tel_input_wrapper">
-                <PhoneInput
-                  buttonClass="input-field"
-                  inputClass="input-field"
-                  onChange={(value) =>
-                    handleChangePhone({
-                      target: { name: "phone", value },
-                    })
-                  }
-                  disabled={showCode}
-                  value={phoneValues.phone}
-                  onBlur={validatePhone}
-                  enableSearch
-                  specialLabel=""
-                  inputProps={{
-                    name: "phone",
-                  }}
-                />
-
-                <button
-                  className="btn-yellow w-1/5 font-semibold"
-                  type="submit"
-                  disabled={showCode}
-                >
-                  Send Sms
-                </button>
-              </div>
+              <PhoneInput
+                inputClass="!rounded-large !py-3 w-[360px] max-w-full bg-filled-input !bg-blackGrey-filled-input focus:!border-1 focus:!border-light-gray hover:!border-light-gray !border-light-gray focus:!shadow-none hover:border-"
+                onChange={(value) =>
+                  handleChangePhone({
+                    target: { name: "phone", value },
+                  })
+                }
+                disabled={showCode}
+                value={phoneValues.phone}
+                onBlur={validatePhone}
+                enableSearch
+                specialLabel=""
+                inputProps={{
+                  name: "phone",
+                }}
+              />
 
               {phoneErrors.phone && (
                 <div className="error_text">{phoneErrors.phone}</div>
@@ -144,7 +134,7 @@ const PhoneValidation = () => {
             </div>
             <ErrorApiText error={isPhoneError} />
             {showCode && (
-              <p className="success note mt-5">
+              <p className="text-black-100 mt-6">
                 An SMS was sent to the mobile phone number you entered. Please
                 enter the code received to validate your mobile number.
               </p>
@@ -171,24 +161,17 @@ const PhoneValidation = () => {
               </div>
             </div> */}
 
-            <div className="btn_wrapper text-right">
-              <button className="header_step_btn active fl" type="submit">
-                Validate & Next
-              </button>
+            <div className="mt-12 max-w-[360px]">
+              <LoaderButton
+                content={"Save & Continue"}
+                type="submit"
+                variant={"contained"}
+              />
             </div>
           </form>
         )}
       </div>
-      <p className="note mt-6">
-        This phone number is linked with your account and has been already
-        registered. If you want to change your approved phone number, You can do
-        so by sending an email to compliance email address
-        <a href="#" className="underline underline-offset-2">
-          {" "}
-          compliance@alphaspay.com{" "}
-        </a>
-      </p>
-    </>
+    </div>
   );
 };
 

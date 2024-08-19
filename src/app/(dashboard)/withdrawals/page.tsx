@@ -1,33 +1,46 @@
 "use client";
-import { DataGrid } from "@mui/x-data-grid";
+
 import React, { useEffect, useState } from "react";
-import { withdrawalsList_table_columns } from "./columns";
-import { Button } from "@mui/material";
-import { Sync } from "@mui/icons-material";
+
 import { useRouter } from "next/navigation";
 import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
-import Link from "next/link";
+
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
-import { callApiHook } from "@/utils/apifuncs";
-import { getWithdrawalsListApi } from "@/services/withdrawal";
+import { callApiHook, downloadCSV } from "@/utils/apifuncs";
+import {
+  getAdminWithdrawalsListApi,
+  getUserWithdrawalsListApi,
+} from "@/services/withdrawal";
 import { formatWithdrawals } from "@/utils/dataFormatters";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import LoaderButton from "@/components/common/LoaderButton";
+import { generateCSVApi } from "@/services/common";
+import CustomTable from "@/components/common/CustomTable";
+import Chip from "@/components/common/Chip";
 
-const rows = [
+const withdrawalsList_table_columns = [
+  { field: "id", headerName: "ID", sortable: true },
+  { field: "created_at", headerName: "Created At", sortable: true },
+  { field: "updated_at", headerName: "Updated At", sortable: true },
+  { field: "requested_amount", headerName: "Requested Amount", sortable: true },
+  { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
+  { field: "network", headerName: "Network", sortable: true },
+  { field: "transaction_hash", headerName: "Transaction Hash", sortable: true },
   {
-    id: 1,
-    createdAt: "2024-04-18",
-    sourceAmount: "500 USD",
-    netAmount: "450 USD",
-    status: "Pending",
-    walletAddress: "0x1234567890abcdef",
-    profile: "Customer",
+    field: "recipient_address",
+    headerName: "Recipient Address",
+    sortable: true,
   },
-  // Add more rows here if needed
+  {
+    field: "status",
+    headerName: "Status",
+    dataValidator: (value) => {
+      return <Chip status={value} />;
+    },
+  },
 ];
 
 const Withdrawals = () => {
@@ -35,6 +48,7 @@ const Withdrawals = () => {
   const user = useLocalStorage("user");
 
   const [withdrawalsList, setwithdrawalsList] = useState([]);
+  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
   const [
     isWithdrawalsListLoading,
     isWithdrawalsListError,
@@ -43,10 +57,23 @@ const Withdrawals = () => {
 
   const getAllWithdrawals = async () => {
     await callApiHook({
-      apiCall: callWithdrawalsListApi(getWithdrawalsListApi()),
+      apiCall: callWithdrawalsListApi(
+        user?.role == Role.USER
+          ? getUserWithdrawalsListApi()
+          : getAdminWithdrawalsListApi()
+      ),
       successCallBack: (response: any) => {
         const tableData = formatWithdrawals(response);
         setwithdrawalsList(tableData);
+      },
+    });
+  };
+
+  const ExportCSVHandler = async () => {
+    await callApiHook({
+      apiCall: callCSVApi(generateCSVApi(withdrawalsList)),
+      successCallBack: (response: any) => {
+        downloadCSV(response, "withdrawals.csv");
       },
     });
   };
@@ -57,56 +84,28 @@ const Withdrawals = () => {
 
   return (
     <>
-      <div className="data-grid-container">
-        <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Withdrawals</h2>
-          <div className="actions flex gap-3">
-            <LoaderButton
-              content={<Sync />}
-              loading={isWithdrawalsListLoading}
-              onClick={getAllWithdrawals}
-            />
-            <Button variant="outlined" color="primary">
-              Export CSV
-            </Button>
-            {user?.role == Role.USER && (
-              <Button
-                variant="text"
-                color="primary"
-                LinkComponent={Link}
-                className="font-semibold"
-                href="/withdrawals/create"
-              >
-                New Withdrawal
-              </Button>
-            )}
-          </div>
-        </div>
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+        Withdrawals
+      </h3>
 
-        <LoadingApi loading={isWithdrawalsListLoading}>
-          <DataGrid
-            rows={withdrawalsList}
-            columns={withdrawalsList_table_columns}
-            className="border-t-0 primary-color"
-            sx={{
-              ".MuiDataGrid-overlayWrapper": {
-                padding: "25px",
-              },
-              ".MuiDataGrid-overlayWrapperInner": {
-                height: "10px !important",
-              },
-            }}
-            onRowClick={(params) => {
-              router.push(`/withdrawals/details/${params?.row?.id}`);
-            }}
-            sortingOrder={["asc", "desc"]}
-            pagination
-            autoHeight
-          />
-        </LoadingApi>
+      <LoadingApi loading={isWithdrawalsListLoading}>
+        <CustomTable
+          columns={withdrawalsList_table_columns}
+          // Filters={Filters}
+          rows={withdrawalsList}
+          csv={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+            error: isCSVError,
+          }}
+          initialPageSize={10}
+          rowClickHandler={(row: any) =>
+            router.push(`/withdrawals/details/${row?.id}`)
+          }
+        />
 
         <ErrorApiText error={isWithdrawalsListError} />
-      </div>
+      </LoadingApi>
     </>
   );
 };

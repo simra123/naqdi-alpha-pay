@@ -2,7 +2,10 @@ import moment from "moment";
 import { roundToPrecision } from "./math";
 
 export const capitalize = (value) => {
-  return value ? value.charAt(0).toUpperCase() + value.slice(1) : "";
+  if (typeof value == "number") {
+    return value;
+  }
+  return value ? value?.charAt(0).toUpperCase() + value.slice(1) : "";
 };
 
 // export const formatBalanceForAdmin = (
@@ -62,11 +65,24 @@ export const capitalize = (value) => {
 
 export const formatBalanceForUser = (balance: []) => {
   const tableData = balance.map(
-    (item: { unit: string; totalAmount: string | number }, index) => {
+    (
+      item: {
+        unit: string;
+        totalAmount: number;
+        transactionTotal: number;
+        paymentTransactionTotal: number;
+      },
+      index
+    ) => {
       return {
         id: index,
         currency: item?.unit,
-        totalAmount: item?.totalAmount,
+        totalAmount: roundToPrecision(+item?.totalAmount, 8),
+        transactionTotal: roundToPrecision(+item?.transactionTotal, 8),
+        paymentTransactionTotal: roundToPrecision(
+          +item?.paymentTransactionTotal,
+          8
+        ),
       };
     }
   );
@@ -126,7 +142,10 @@ export const formatTransactions = (response: []) => {
     id: item?.id,
     dateReceived: moment(item?.createdAt).format("DD-MM-YYYY"),
     transactionHash: item?.transaction_hash,
-    amount: item?.unit != null ? `${item?.amount} ${item?.unit}` : item?.amount,
+    amount:
+      item?.unit != null
+        ? `${item?.transaction_amount} ${item?.unit}`
+        : item?.transaction_amount,
     receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
     transactionType: capitalize(item?.payment?.id ? "Payment" : "Self Deposit"),
     network: capitalize(item?.wallet?.network),
@@ -143,7 +162,10 @@ export const formatTransactionsByAdmin = (response: []) => {
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
     transactionHash: item?.transaction_hash,
-    amount: item?.unit != null ? `${item?.amount} ${item?.unit}` : item?.amount,
+    amount:
+      item?.unit != null
+        ? `${item?.transaction_amount} ${item?.unit}`
+        : item?.transaction_amount,
     receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
     transactionType: capitalize(item?.transaction_type),
     network: capitalize(item?.wallet?.network),
@@ -174,13 +196,29 @@ export const formatUsers = (response: []) => {
 export const formatWithdrawals = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
-    created_at: moment(item?.created_at).format("DD-MM-YYYY"),
+    created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+    updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
     requested_amount: item?.requested_amount,
-    unit: item?.unit,
+    network: `${item?.unit}${item?.standard && `(${item?.standard})`}`,
+    withdrawal_type: capitalize(item?.transaction_type),
     transaction_hash: item?.transaction_hash || "_",
-    standard: item?.standard || "_",
     recipient_address: item?.recipient_address,
-    status: item?.status,
+    status: capitalize(item?.status),
+  }));
+  return tableData;
+};
+
+export const formatPayouts = (response: []) => {
+  const tableData = response?.map((item: any) => ({
+    id: item?.id,
+    created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+    updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
+    requested_amount: item?.requested_amount,
+    account_title: item?.account_title,
+    account_name: item?.account_name,
+    from_currency: item?.from_currency,
+    to_currency: item?.to_currency,
+    status: capitalize(item?.status),
   }));
   return tableData;
 };

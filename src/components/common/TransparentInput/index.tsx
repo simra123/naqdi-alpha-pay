@@ -6,7 +6,7 @@ interface TransparentInputProps {
   label?: string;
   textarea?: boolean;
   inputClass?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  onChange?: any;
   name?: string;
   type?: string;
 }
@@ -29,6 +29,7 @@ const TransparentInput: FC<TransparentInputProps> = ({
           className="transparent font-semibold text-[14px]"
           name={name}
           value={value}
+          onChange={onChange}
         />
       ) : (
         <>

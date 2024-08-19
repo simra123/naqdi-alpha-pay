@@ -13,6 +13,7 @@ import { setStep } from "@/store/slices/onboarding.slice";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
+import LoaderButton from "@/components/common/LoaderButton";
 
 const KYCApproval = () => {
   const dispatch = useDispatch();
@@ -34,21 +35,25 @@ const KYCApproval = () => {
   };
 
   return (
-    <>
-      <h2 className="large_heading_bold">KYC Approval</h2>
-
-      <p className="text-base font-semibold mt-2">Welcome back to Alphaspay</p>
+    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
+      <h4 className="text-black-100 text-h3.5 font-semibold">KYC Approval</h4>
+      <p className="text-button text-black-100">Welcome back to Alphaspay</p>
 
       <LoadingApi loading={!user || isUserDetailsLoading}>
         {user?.userDetails.kyc_status == "pending" && (
           <div className="status my-8">
             <div className="flex flex-col justify-center items-center gap-1">
-              <PauseCircleOutline className="text-9xl text-orange-500" />
-              <span className="font-bold text-xl text-orange-500">Pending</span>
+              <img
+                src="/kyc-pending.png"
+                className="max-w-full w-[450px]"
+                alt="KYC PENDING"
+              />
             </div>
-            <p className="text-base font-semibold mt-6">
+            <p className="text-black-100 mt-8">
               Please wait patiently while we are verifying your documents. The
-              process may take 1-3 days to complete.
+              process may take 1-3 days to complete. Once your documents have
+              been approved, you will be notified and you will be able to move
+              to next step.
             </p>
           </div>
         )}
@@ -56,13 +61,15 @@ const KYCApproval = () => {
         {user?.userDetails.kyc_status == "approved" && (
           <div className="status my-8">
             <div className="flex flex-col justify-center items-center gap-1">
-              <CheckCircleOutline className="text-9xl text-green-500" />
-              <span className="font-bold text-xl text-green-500">Verified</span>
+              <img
+                src="/kyc-approved.png"
+                className="max-w-full w-[450px]"
+                alt="KYC Approved"
+              />
             </div>
-            <p className="text-base font-semibold mt-6">
-              <span className="font-bold text-lg">Congratulations ,</span> Your
-              documents have been verified. Please click the next button to set
-              your fee schedule.
+            <p className="text-black-100 mt-8">
+              Congratulations, Your documents have been verified. Please click
+              the next button to set your fee schedule.
             </p>
           </div>
         )}
@@ -70,10 +77,13 @@ const KYCApproval = () => {
         {user?.userDetails.kyc_status == "rejected" && (
           <div className="status my-8">
             <div className="flex flex-col justify-center items-center gap-1">
-              <CancelOutlined className="text-9xl text-red-500" />
-              <span className="font-bold text-xl text-red-500">Rejected</span>
+              <img
+                src="/kyc-rejected.png"
+                className="max-w-full w-[450px]"
+                alt="KYC Approved"
+              />
             </div>
-            <p className="text-base font-semibold mt-6">
+            <p className="text-black-100 mt-8">
               We have not been able to verify your documents. Please check the
               remarks and try again.
             </p>
@@ -90,22 +100,18 @@ const KYCApproval = () => {
           </div>
         )}
 
-        {user?.userDetails.kyc_status !== "approved" && (
-          <p className="note mt-6">
-            Once your documents have been approved, you will be notified and you
-            will be able to move to next step.
-          </p>
-        )}
         {user?.userDetails?.kyc_approved && (
-          <div className="btn_wrapper text-right">
-            <button className="header_step_btn active fl" onClick={onSubmit}>
-              Next
-            </button>
+          <div className="mt-8 max-w-[360px]">
+            <LoaderButton
+              content={"Continue"}
+              onClick={onSubmit}
+              variant={"contained"}
+            />
           </div>
         )}
       </LoadingApi>
       <ErrorApiText error={isUserDetailsError} />
-    </>
+    </div>
   );
 };
 

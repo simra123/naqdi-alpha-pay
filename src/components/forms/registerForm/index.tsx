@@ -21,14 +21,18 @@ import { callApiHook } from "@/utils/apifuncs";
 import { registerApi } from "@/services/auth";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
+import IconField from "@/components/common/IconField";
+import { Business, Lock, Mail, Person } from "@mui/icons-material";
+import LoaderButton from "@/components/common/LoaderButton";
+import IconSelectBox from "@/components/common/IconSelectBox";
 
 const options = [
   {
-    value: "private-company-non-regulated",
+    value: "Private Company (Non-regulated)",
     label: "Private Company (Non-regulated)",
   },
   {
-    value: "listed-company-non-regulated",
+    value: "Listed Company (Non-regulated)",
     label: "Listed Company (Non-regulated)",
   },
 ];
@@ -108,246 +112,191 @@ const IndividualForm = ({ activeForm }) => {
   }, [activeForm]);
 
   return (
-    <div className="register_form">
-      <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
+    <div className="register_form mt-10">
+      <form
+        onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
+        className="flex flex-col gap-3"
+      >
         {activeForm == forms.LegalEntity && (
-          <div className="register_form__legalEnitiy">
-            <div className="register_form__trader__heading">
-              <Typography
-                variant="h5"
-                color="primary"
-                className="form-label-bold"
-              >
-                Legal Entity Details
-              </Typography>
-            </div>
-            <div className="flex input_gap flex-col">
-              <div>
-                <TextField
-                  placeholder="Legal Name*"
-                  className="input-field"
-                  name="legalName"
-                  value={values.legalName}
-                  onChange={handleChange}
-                  onBlur={validateField}
-                  fullWidth
-                />
-                {errors.legalName && (
-                  <div className="error_text">{errors.legalName}</div>
-                )}
-              </div>
-              <div>
-                <SelectBox
-                  onChange={handleChange}
-                  options={options}
-                  name={"entityType"}
-                  onBlur={validateField}
-                  value={values.entityType}
-                  placeholder={"Select Entity Type*"}
-                />
-                {errors.entityType && (
-                  <div className="error_text">{errors.entityType}</div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-        <div className="register_form__trader">
-          <div className="register_form__trader__heading">
-            {activeForm == forms.LegalEntity ? (
-              <div className="mb-1">
-                <Typography
-                  variant="h5"
-                  color="primary"
-                  className="form-label-bold"
-                >
-                  Authorised Representative
-                </Typography>
-                <Typography variant="body1" color="primary">
-                  Please tell us the details of the User who will be the
-                  authorised representative on Alphaspay.
-                </Typography>
-              </div>
-            ) : (
-              <Typography
-                variant="h5"
-                color="primary"
-                className="form-label-bold"
-              >
-                Trader
-              </Typography>
-            )}
-          </div>
-          <div className="flex input_gap flex-col">
-            <div className="flex input_gap">
-              <div>
-                <TextField
-                  placeholder="First Name*"
-                  className="input-field"
-                  fullWidth
-                  onBlur={validateField}
-                  value={values.firstName}
-                  onChange={handleChange}
-                  name="firstName"
-                />
-                {errors.firstName && (
-                  <div className="error_text">{errors.firstName}</div>
-                )}
-              </div>
-              <div>
-                <TextField
-                  placeholder="Middle Name"
-                  className="input-field"
-                  fullWidth
-                  onBlur={validateField}
-                  value={values.middleName}
-                  onChange={handleChange}
-                  name="middleName"
-                />
-              </div>
-              <div>
-                <TextField
-                  placeholder="Last Name*"
-                  className="input-field"
-                  fullWidth
-                  onBlur={validateField}
-                  value={values.lastName}
-                  onChange={handleChange}
-                  name="lastName"
-                />
-                {errors.lastName && (
-                  <div className="error_text">{errors.lastName}</div>
-                )}
-              </div>
-            </div>
-            <div>
-              <TextField
-                placeholder="Email*"
-                className="input-field"
-                fullWidth
-                onBlur={validateField}
-                type="email"
-                value={values.email}
-                onChange={handleChange}
-                name="email"
-              />
-              {errors.email && <div className="error_text">{errors.email}</div>}
-            </div>
-            <div>
-              <TextField
-                placeholder="Username*"
-                className="input-field"
-                fullWidth
-                onBlur={validateField}
-                value={values.userName}
-                onChange={handleChange}
-                name="userName"
-              />
-              {errors.userName && (
-                <div className="error_text">{errors.userName}</div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="register_form__password">
-          <div className="register_form__password__heading">
-            <Typography
-              variant="h5"
-              color="primary"
-              className="form-label-bold"
-            >
-              Password
-            </Typography>
-          </div>
-          <div className="flex input_gap flex-col">
-            <div className="item">
-              <div>
-                <PasswordToggleInput
-                  placeholder="Password*"
-                  onBlur={validateField}
-                  value={values.password}
-                  onChange={handleChange}
-                  name="password"
-                />
-
-                {errors.password && (
-                  <div className="error_text">{errors.password}</div>
-                )}
-              </div>
-              <Typography variant="body1" color="primary">
-                <span>Security policies</span>: Use 8 or more characters with a
-                mix of letters, numbers, special & uppercase characters.
-              </Typography>
-            </div>
-            <div>
-              <PasswordToggleInput
-                placeholder="Create Password*"
-                // onBlur={validateField}
-                value={values.confirmPassword}
-                onChange={handleChange}
-                name="confirmPassword"
-                key={12}
-              />
-              {values.password != values.confirmPassword && (
-                <div className="error_text">{errors.confirmPassword}</div>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <ReCaptcha
-              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-              className="mt-1"
-              key={activeForm}
-              onChange={(token) =>
-                handleChange({ target: { name: "captcha", value: token } })
-              }
+          <>
+            <IconField
+              placeholder="Enter You Name"
+              onBlur={validateField}
+              type="text"
+              value={values.legalName}
+              onChange={handleChange}
+              name="legalName"
+              error={errors.legalName}
+              label="Legal Name"
+              icon={Person}
             />
-            {errors.captcha && (
-              <div className="error_text">{errors.captcha}</div>
-            )}
-          </div>
+            {/* <IconField
+              placeholder="Enter Entity Type"
+              onBlur={validateField}
+              type="text"
+              value={values.entityType}
+              onChange={handleChange}
+              name="entityType"
+              error={errors.entityType}
+              label="Select Entity Type"
+              icon={Person}
+            /> */}
+            <IconSelectBox
+              label="Select Entity Type"
+              placeholder="Enter Entity Type"
+              icon={Business}
+              name="entityType"
+              onChange={handleChange}
+              value={values?.entityType}
+              options={options}
+              error={errors?.entityType}
+            />
+          </>
+        )}
+        <IconField
+          placeholder="Enter You First Name"
+          onBlur={validateField}
+          type="text"
+          value={values.firstName}
+          onChange={handleChange}
+          name="firstName"
+          error={errors.firstName}
+          label="First Name"
+          icon={Person}
+        />
+        <IconField
+          placeholder="Enter You Middle Name"
+          onBlur={validateField}
+          type="text"
+          value={values.middleName}
+          onChange={handleChange}
+          name="middleName"
+          error={errors.middleName}
+          label="Middle Name"
+          icon={Person}
+        />
+        <IconField
+          placeholder="Enter You Last Name"
+          onBlur={validateField}
+          type="text"
+          value={values.lastName}
+          onChange={handleChange}
+          name="lastName"
+          error={errors.lastName}
+          label="Last Name"
+          icon={Person}
+        />
+        <IconField
+          placeholder="Enter You Username"
+          onBlur={validateField}
+          type="text"
+          value={values.userName}
+          onChange={handleChange}
+          name="userName"
+          error={errors.userName}
+          label="Username"
+          icon={Person}
+        />
+        <IconField
+          placeholder="Enter You Email"
+          onBlur={validateField}
+          type="email"
+          value={values.email}
+          onChange={handleChange}
+          name="email"
+          error={errors.email}
+          label="Email"
+          icon={Mail}
+        />
+        <IconField
+          placeholder="Enter You Password"
+          onBlur={validateField}
+          type="password"
+          info="Use 8 or more characters with a mix of letters, numbers,
+                special & uppercase characters."
+          value={values.password}
+          onChange={handleChange}
+          name="password"
+          error={errors.password}
+          label="Password"
+          icon={Lock}
+        />
+        <IconField
+          placeholder="Enter You Password"
+          onBlur={validateField}
+          type="password"
+          value={values.confirmPassword}
+          onChange={handleChange}
+          name="confirmPassword"
+          error={errors.confirmPassword}
+          label="Confirm Password"
+          icon={Lock}
+        />
 
-          <div className="register_form__privacy mt-1">
-            <Typography variant="body1" className="note">
-              The following documents create a legally binding contract between
-              You and Alphaspay. Please read these legal documents carefully. To
-              confirm your understanding and acceptance of the{" "}
-              <Link href="/privacy-policy" target="_blank">
-                {" "}
-                Privacy Policy
-              </Link>
-              ,
-              <Link href="/terms&conditions" target="_blank">
-                Terms and Conditions
-              </Link>
-              ,
-              <Link href="/user-agreement" target="_blank">
-                {" "}
-                User Agreement{" "}
-              </Link>
-              and
-              <Link href="/custody-agreement" target="_blank">
-                {" "}
-                Custody Agreement
-              </Link>
-              , click "Register Account".
-            </Typography>
-          </div>
-
-          <div className="footer mt-1">
-            <ErrorApiText error={isRegisterError} />
-            <LoadingApi loading={isRegisterLoading}>
-              <button className="btn gradient-btn" type="submit">
-                Register Account
-              </button>
-            </LoadingApi>
-
-            <p className="mt-1">
-              I already have an account? <Link href="/login">Login!</Link>
-            </p>
-          </div>
+        <div>
+          <ReCaptcha
+            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+            className="mt-1"
+            key={activeForm}
+            onChange={(token) =>
+              handleChange({ target: { name: "captcha", value: token } })
+            }
+          />
+          {errors.captcha && <div className="error_text">{errors.captcha}</div>}
         </div>
+
+        <div className="mt-3">
+          <p className="text-blackGrey-100">
+            The following documents create a legally binding contract between
+            You and Alphaspay. Please read these legal documents carefully. To
+            confirm your understanding and acceptance of the{" "}
+            <Link
+              className="text-purple-100 underline font-medium"
+              href={"/privacy-policy"}
+            >
+              Privacy Policy
+            </Link>
+            ,
+            <Link
+              className="text-purple-100 underline font-medium"
+              href={"/terms&conditions"}
+            >
+              Terms and Conditions
+            </Link>
+            ,{" "}
+            <Link
+              className="text-purple-100 underline font-medium"
+              href={"/user-agreement"}
+            >
+              User Agreement
+            </Link>{" "}
+            and{" "}
+            <Link
+              className="text-purple-100 underline font-medium"
+              href={"/custody-agreement"}
+            >
+              Custody Agreement
+            </Link>
+            , click "Register".
+          </p>
+        </div>
+
+        <div className="footer mt-10">
+          <ErrorApiText error={isRegisterError} />
+
+          <LoaderButton
+            variant={"contained"}
+            content={"Register"}
+            loading={isRegisterLoading}
+            type="submit"
+          />
+        </div>
+        <p className="mt-6 text-center text-button">
+          Got an account? Proceed to{" "}
+          <Link href="/login" className="text-purple-100 font-medium">
+            login
+          </Link>{" "}
+        </p>
       </form>
     </div>
   );

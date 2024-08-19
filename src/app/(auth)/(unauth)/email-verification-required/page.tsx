@@ -10,6 +10,9 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import useFormValidation from "@/hooks/useFormValidation";
 import { ForgotSchema } from "@/models/Forgot";
+import LoaderButton from "@/components/common/LoaderButton";
+import IconField from "@/components/common/IconField";
+import { Mail } from "@mui/icons-material";
 
 const page = () => {
   const email = decodeURIComponent(useSearchParams().get("email") || "");
@@ -41,85 +44,86 @@ const page = () => {
 
   return (
     <div className="mx-auto max-w-screen-md">
-      <Typography variant="h2" color="primary" className="text-center">
-        Email Verification Required
-      </Typography>
-
       {email ? (
-        <>
-          <div className="flex flex-col gap-5 mt-12 max-w-xl">
-            <p className="color-primary">
-              A verification email was sent to
-              <span className="font-bold"> {email}</span>
-            </p>
-            <p className="color-primary">
-              Please click on the link to
-              <span className="font-bold"> verify you Alphaspay account.</span>
-            </p>
-            <p className="color-primary">
-              If you have not recieved the email, please check your `Spam`
-              Folder, mark the email as `Not Spam` and click on the verification
-              link.
-            </p>
-            <p className="color-primary">
-              If you still have not recieved the email or your link has expired,
-              please click on the button below to get a new verification link
-            </p>
-          </div>
+        <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
+          <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+            Email Verification !
+          </h2>
 
-          <div className="text-center mt-14 pb-10">
+          <p className="text-p120 text-blackGrey-100 leading-7 mt-5">
+            Your security is our priority. We sent an email to {email} to ensure
+            a seamless and protected sign-up process, we require email
+            verification. Please check your inbox, then follow the instructions
+            to finish setting up your Alphaspay account.
+          </p>
+
+          <div className="mt-16 pb-10">
             <ErrorApiText error={isResendError} />
-            <LoadingApi loading={isResendLoading}>
-              <button
-                className="btn secondary-btn max-w-fit px-6 py-1"
-                onClick={handleResendEmail}
-              >
-                resend verification email
-              </button>
-            </LoadingApi>
+            <LoaderButton
+              content={"Resend Email"}
+              loading={isResendLoading}
+              onClick={handleResendEmail}
+              variant={"contained"}
+            />
+
+            <p className="text-p120 text-blackGrey-100 text-center mt-5">
+              Go To Email
+            </p>
           </div>
-        </>
+        </div>
       ) : (
-        <div className="flex flex-col gap-5 mt-12 max-w-xl">
-          <Typography
-            variant="body1"
-            color="primary"
-            className="heading_caption"
-          >
+        <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
+          <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+            Resend Verification Email !
+          </h2>
+
+          <p className="text-p120 text-blackGrey-100 leading-7 mt-2">
             Enter the email address registered with your Alphaspay account and
-            we will email you that will help you get verified.
-          </Typography>
+            we will send you verification email again.
+          </p>
 
           <form
             id="login-form"
             onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
+            className="mt-12"
           >
-            <div>
-              <TextField
-                label={null}
-                className="input-field"
-                placeholder="Email*"
-                fullWidth
-                type="email"
-                onBlur={validateField}
-                name="email"
-                onChange={handleChange}
-                value={values.email}
-              />
-              {errors.email && <div className="error_text">{errors.email}</div>}
-            </div>
+            <IconField
+              type="email"
+              onBlur={validateField}
+              name="email"
+              onChange={handleChange}
+              value={values.email}
+              error={errors.email}
+              icon={Mail}
+              label="Email"
+              placeholder="Enter Your Email"
+            />
             <ErrorApiText error={isResendError} />
-            <LoadingApi loading={isResendLoading}>
-              <Button
-                variant="contained"
-                color="primary"
-                className="btn gradient-btn"
+            <div className="mt-8">
+              <LoaderButton
+                content={"Send Instructions"}
+                loading={isResendLoading}
                 type="submit"
-              >
-                Send Verification Email
-              </Button>
-            </LoadingApi>
+                variant={"contained"}
+              />
+            </div>
           </form>
+
+          <p className="text-blackGrey-100 mt-6">
+            NOTE: It is extremely important to ensure that email registered for
+            your account is valid and up-to-date. If you lose your password or
+            otherwise lose access to your account, the only way to regain access
+            is by resetting the password, which requires access to the email
+            address registered. If you do not have access to the email address,
+            you may not be able to recover your account. In this case, please
+            contact us at{" "}
+            <a
+              href={`mailto:info@alphaspay.com`}
+              className="text-purple-100 underline"
+            >
+              info@alphaspay.com
+            </a>
+          </p>
         </div>
       )}
     </div>

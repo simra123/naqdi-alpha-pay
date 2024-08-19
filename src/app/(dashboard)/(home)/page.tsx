@@ -30,7 +30,8 @@ import LoaderButton from "@/components/common/LoaderButton";
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
-  // { field: "network", headerName: "Network", flex: 1 },
+  { field: "transactionTotal", headerName: "Deposits", flex: 1 },
+  { field: "paymentTransactionTotal", headerName: "Payments", flex: 1 },
   { field: "totalAmount", headerName: "Available Balance", flex: 1 },
 ];
 
@@ -126,9 +127,9 @@ const Home = () => {
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-        console.log("ADMIN BALANCE", response);
-        const tableData = formatBalanceForAdmin(response);
-        console.log("ADMIN Formatted BALANCE", tableData);
+      
+        const tableData = formatBalanceForUser(response?.result);
+       
         setBalance(tableData);
       },
     });
@@ -156,7 +157,11 @@ const Home = () => {
           <div className="walletHeading flex justify-between items-center mb-[8px]">
             <h3 className="text-[18px]">Crypto Wallets</h3>
             <div className="flex gap-1">
-              <LoaderButton content={ <Sync />} loading={isBalanceLoading} onClick={getBalances}/>
+              <LoaderButton
+                content={<Sync />}
+                loading={isBalanceLoading}
+                onClick={getBalances}
+              />
               <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
                 <Button
                   className="transparent !w-auto"

@@ -2,31 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "../config/colors.scss";
-
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
   font-optical-sizing: auto;
-}
-
-html,
-body {
-  color: $apy-primary-color;
-}
-
-.Link {
-  text-decoration: underline;
-}
-a {
-  color: $apy-primary-color;
-}
-
-input {
-  &::placeholder {
-    color: $apy-placeholder-gray-color !important;
-  }
 }
 
 ::-webkit-scrollbar {
@@ -39,239 +19,16 @@ input {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $apy-primary-color; /* Color of the scrollbar handle */
+  background: black; /* Color of the scrollbar handle */
   border-radius: 5px; /* Rounded corners */
 }
 
-.layout-wrapper {
-  height: calc(100vh - 120px);
-}
-.page-min-height {
-  min-height: 100%;
-  overflow: auto;
+.res-4-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 items-center;
 }
 
-.placeholder_gray {
-  color: #b7b7b7 !important;
-}
-
-.tel_input_wrapper {
-  .form-control {
-    background-color: #ebebeb !important;
-    transition: all 0.3s !important;
-    width: 100% !important;
-    border: 0 !important;
-    padding: 17px 68px !important;
-    border-radius: 0 !important;
-    font-size: 15px !important;
-    &:hover,
-    &:focus-within,
-    &:focus {
-      background-color: #e8e6ee !important;
-      outline: 0 !important;
-      border: 0 !important;
-      box-shadow: none !important;
-    }
-  }
-  .arrow {
-    left: 36px !important;
-  }
-  .search {
-    input {
-      width: 90%;
-      padding: 10px;
-    }
-  }
-  .country-list {
-    border-radius: 0 !important;
-  }
-  .flag-dropdown {
-    min-width: 4rem;
-    > div {
-      width: 100%;
-    }
-  }
-  .btn-yellow {
-    padding: 16.5px 16px !important;
-    border-radius: 0 !important;
-    height: 100%;
-    min-width: fit-content;
-  }
-}
-
-.error_text {
-  font-size: 12px;
-  color: $apy-error-color;
-}
-
-.btn {
-  border-radius: 0;
-  width: 100%;
-}
-.capsule_btn {
-  border: 1px solid $apy-primary-color;
-  &.active {
-    color: $apy-white-color;
-    background: linear-gradient(
-      90deg,
-      $apy-primary-color,
-      $apy-secondary-color
-    );
-  }
-}
-
-.primary-color {
-  color: $apy-primary-color;
-  fill: $apy-primary-color;
-}
-.secondary-color {
-  color: $apy-secondary-color;
-  fill: $apy-secondary-color;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.flex {
-  display: flex;
-}
-.flex-col {
-  flex-direction: column;
-}
-
-.btn {
-  text-transform: uppercase;
-  line-height: 3em;
-  text-align: center;
-  border-color: transparent;
-  border-inline: 0;
-  transition: all 0.2s ease-out;
-  font-weight: 800;
-  text-decoration: none;
-  color: $apy-white-color;
-  &.gradient-btn {
-    margin-top: 2em;
-    background: linear-gradient(
-      90deg,
-      $apy-primary-color,
-      $apy-secondary-color
-    );
-  }
-  &.secondary-btn {
-    background-color: $apy-secondary-color;
-  }
-}
-
-.gradient_bg {
-  background: linear-gradient(90deg, $apy-primary-color, $apy-secondary-color);
-}
-
-.btn-secondary {
-  background-color: $apy-secondary-color;
-  padding: 0.8rem 1.5rem !important;
-  color: $apy-white-color;
-  &:not(.no-radius) {
-    border-radius: 6px;
-  }
-  // text-transform: none;
-  &:hover {
-    background-color: $apy-secondary1-color;
-  }
-}
-.btn-yellow {
-  background-color: $apy-yellow-color !important;
-  padding: 0.4rem 1.2rem !important;
-  color: $apy-primary-color !important;
-  &:not(.no-radius) {
-    border-radius: 6px;
-  }
-  text-transform: uppercase;
-  &:hover {
-    background-color: $apy-yellow1-color !important;
-  }
-}
-
-.btn-primary {
-  background-color: $apy-primary-color;
-  padding: 0.8rem 1.5rem !important;
-  color: $apy-white-color;
-  border-radius: 6px;
-  // text-transform: none;
-  &:hover {
-    background-color: $apy-primary1-color;
-  }
-}
-
-.input-field {
-  background-color: #ebebeb;
-  transition: all 0.3s;
-
-  &:hover,
-  &:focus-within {
-    background-color: #e8e6ee !important;
-  }
-
-  input:invalid {
-    border: 1px solid $apy-error-color;
-  }
-
-  fieldset {
-    border: none;
-  }
-}
-
-.form-label-bold {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-.note {
-  font-size: 12.6px;
-  color: $apy-note-gray-color;
-  line-height: 1.5;
-  &.success {
-    color: #71cc71;
-  }
-}
-
-.mt-1 {
-  margin-top: 1rem;
-}
-.mb-1 {
-  margin-bottom: 1rem;
-}
-
-.primary_section {
-  background-color: $apy-primary-color;
-  color: $apy-white-color;
-}
-.secondary_section {
-  background-color: $apy-secondary-color;
-}
-
-.large_container {
-  max-width: 1200px;
-  margin: auto;
-}
-
-.xl_heading_bold {
-  font-size: 36px;
-  font-weight: 700;
-}
-.large_heading_bold {
-  font-size: 32.6px;
-  font-weight: 700;
-}
-.medium_heading_light {
-  font-size: 22.5px;
-  font-weight: 500;
-}
-.medium_heading_bold {
-  font-size: 24px;
-  font-weight: 700;
+.res-3-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-2 items-center;
 }
 
 .rotate-infinite {
@@ -282,24 +39,27 @@ input {
 .loader {
   width: 50px;
   aspect-ratio: 1;
-  display: grid;
-  border: 4px solid #0000;
-  border-radius: 50%;
-  border-right-color: $apy-primary-color;
-  animation: l15 1s infinite linear;
+  --c: no-repeat radial-gradient(farthest-side, #fff 92%, #0000);
+  background: var(--c) 50% 0, var(--c) 50% 100%, var(--c) 100% 50%,
+    var(--c) 0 50%;
+  background-size: 10px 10px;
+  animation: l18 1s infinite;
+  position: relative;
 }
-.loader::before,
-.loader::after {
+.loader::before {
   content: "";
-  grid-area: 1/1;
-  margin: 2px;
-  border: inherit;
+  position: absolute;
+  inset: 0;
+  margin: 3px;
+  background: repeating-conic-gradient(#0000 0 35deg, #fff 0 90deg);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 3px), #000 0);
   border-radius: 50%;
-  animation: l15 2s infinite;
 }
-.loader::after {
-  margin: 8px;
-  animation-duration: 3s;
+
+@keyframes l18 {
+  100% {
+    transform: rotate(0.5turn);
+  }
 }
 
 .grid-template-details {
@@ -310,19 +70,12 @@ input {
   gap: 10px;
 }
 
-.transparent {
-  outline: 0;
-  border: 1px solid lightgray;
-  padding: 8px 12px;
-  width: 100%;
-  background: none;
+.polygon-clip {
+  clip-path: polygon(50% 0%, 100% 0, 50% 100%, 0 0);
 }
 
-button:not(.MuiButton-text):disabled {
-  background-color: rgb(195, 192, 192) !important;
-}
-button {
-  font-weight: 700 !important;
+.pink-gradient-button {
+  @apply bg-pink-gradient text-white text-button rounded-[10px] py-[14px];
 }
 
 @keyframes l15 {
@@ -331,26 +84,61 @@ button {
   }
 }
 
-@screen sm {
-  .container-custom {
-    max-width: 640px; /* Your custom width for small screens */
-  }
+.custom-checkbox {
+  position: relative;
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
 }
 
-@screen md {
-  .container-custom {
-    max-width: 768px; /* Your custom width for medium screens */
-  }
+.custom-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
 
-@screen lg {
-  .container-custom {
-    max-width: 1024px; /* Your custom width for large screens */
-  }
+/* Custom checkmark */
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: 4px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border: 1px solid gray;
+  border-radius: 4px;
 }
 
-@screen xl {
-  .container-custom {
-    max-width: 1140px; /* Your custom width for extra large screens */
-  }
+/* On mouse-over, add a grey background color */
+.custom-checkbox:hover input[type="checkbox"] ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked */
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
+  @apply bg-purple-100;
+  border: none;
+}
+
+/* Create the checkmark/indicator */
+.custom-checkbox .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.custom-checkbox .checkmark:after {
+  left: 7.5px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
