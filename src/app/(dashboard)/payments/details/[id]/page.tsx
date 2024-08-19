@@ -143,57 +143,6 @@ const PaymentDetails = ({ params }) => {
 
 export default PaymentDetails;
 
-//     {/* <DetailsWrapper title={"Gross Requested Amount"}>
-//   <TransparentInput value={`1 USD`} />
-// </DetailsWrapper> */}
-//     {/* <DetailsWrapper title={"Payment Fee Amount"}>
-//   <TransparentInput value={`0.01 USD`} />
-// </DetailsWrapper> */}
-//     <DetailsWrapper title={"Payment"}>
-//       <TransparentInput
-//         value={`${payment?.requested_amount} ${payment?.requested_currency}`}
-//         label={"Payment Amount"}
-//       />
-//       <TransparentInput
-//         value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
-//         label={"Payment Amount Received"}
-//       />
-//     </DetailsWrapper>
-//     {/* <DetailsWrapper title={"Requested Amount Remaining"}>
-//   <TransparentInput value={`0.01 USD`} />
-// </DetailsWrapper> */}
-//     {/* <DetailsWrapper title={"Unprocessed Crypto Amount"}>
-//   <TransparentInput value={`0.01 USD`} />
-// </DetailsWrapper>
-// <DetailsWrapper title={"Net Amount Credited"}>
-//   <TransparentInput value={`0 USD`} />
-// </DetailsWrapper> */}
-//     <DetailsWrapper title={"Status"}>
-//       <TransparentInput
-//         value={
-//           unpaidStatuses.some((status) => status == payment?.status)
-//             ? "Unpaid"
-//             : "Paid"
-//         }
-//         label={"Paid Status"}
-//       />
-//       <TransparentInput
-//         value={payment?.status}
-//         label={"Payment Status"}
-//       />
-//     </DetailsWrapper>
-//     {/* <DetailsWrapper title={"Configuration"}>
-//   <TransparentInput value={`Alphaspay`} label={"Profile"} />
-//   <TransparentInput value={`service-alpha`} label={"User"} />
-// </DetailsWrapper> */}
-
-//     <DetailsWrapper title={"Notes"}>
-//       <TransparentInput value={payment?.notes} textarea />
-//     </DetailsWrapper>
-//     {/* <DetailsWrapper title={"Pass Through"}>
-//   <TransparentInput value={`_`} textarea />
-// </DetailsWrapper> */}
-
 //     {payment?.paymentTransaction && (
 //       <div className="data-grid-container">
 //         <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">

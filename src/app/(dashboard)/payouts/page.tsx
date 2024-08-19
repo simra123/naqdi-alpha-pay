@@ -1,21 +1,34 @@
 "use client";
-import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import { payoutsList_table_columns } from "./columns";
-import { Button } from "@mui/material";
-import { Sync } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { Role } from "@/constants/roles";
 import { listAdminPayoutsApi, listUserPayoutsApi } from "@/services/payout";
 import { generateCSVApi } from "@/services/common";
-import LoaderButton from "@/components/common/LoaderButton";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { formatPayouts } from "@/utils/dataFormatters";
+import Chip from "@/components/common/Chip";
+import CustomTable from "@/components/common/CustomTable";
+
+const payoutsList_table_columns = [
+  { field: "id", headerName: "ID", sortable: true },
+  { field: "created_at", headerName: "Date", sortable: true },
+  { field: "from_currency", headerName: "From Currency", sortable: true },
+  { field: "to_currency", headerName: "To Currency", sortable: true },
+  { field: "requested_amount", headerName: "Requested Amount", sortable: true },
+  { field: "account_title", headerName: "Account Title", sortable: true },
+  {
+    field: "status",
+    headerName: "Status",
+    sortable: true,
+    dataValidator: (value) => {
+      return <Chip status={value} />;
+    },
+  },
+];
 
 const Payouts = () => {
   const router = useRouter();
@@ -52,57 +65,26 @@ const Payouts = () => {
   }, []);
   return (
     <>
-      <div className="data-grid-container">
-        <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Payouts</h2>
-          <div className="actions flex gap-3">
-            <LoaderButton
-              content={<Sync />}
-              loading={isPayoutsListLoading}
-              onClick={getAllPayouts}
-            />
-            <LoaderButton
-              content={"Export CSV"}
-              onClick={ExportCSVHandler}
-              loading={isCSVLoading}
-            />
-            {user?.role == Role.USER && (
-              <Button
-                variant="text"
-                color="primary"
-                LinkComponent={Link}
-                className="font-semibold"
-                href="/payouts/create"
-              >
-                New Payout
-              </Button>
-            )}
-          </div>
-        </div>
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">Payouts</h3>
 
-        <LoadingApi loading={isPayoutsListLoading}>
-          <DataGrid
-            rows={payoutsList}
-            autoHeight
-            columns={payoutsList_table_columns}
-            className="border-t-0 primary-color"
-            sx={{
-              ".MuiDataGrid-overlayWrapper": {
-                padding: "25px",
-              },
-              ".MuiDataGrid-overlayWrapperInner": {
-                height: "10px !important",
-              },
-            }}
-            onRowClick={(params) => {
-              router.push(`/payouts/details/${params?.row?.id}`);
-            }}
-            sortingOrder={["asc", "desc"]}
-            pagination
-          />
-        </LoadingApi>
+      <LoadingApi loading={isPayoutsListLoading}>
+        <CustomTable
+          columns={payoutsList_table_columns}
+          // Filters={Filters}
+          rows={payoutsList}
+          csv={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+            error: isCSVError,
+          }}
+          initialPageSize={10}
+          rowClickHandler={(row: any) =>
+            router.push(`/payouts/details/${row?.id}`)
+          }
+        />
+
         <ErrorApiText error={isPayoutsListError} />
-      </div>
+      </LoadingApi>
     </>
   );
 };

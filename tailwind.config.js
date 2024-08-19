@@ -159,6 +159,12 @@ module.exports = {
           "error-dark": "#B00020",
           chip: "#AC0606",
         },
+        yellow: {
+          "light": "#AC8B06",
+          "dull": "#8E7200",
+          "chip-dull": "#f8f7f0",
+          "chip-light": "#FFFCF1",
+        },
         green: {
           chip: "#29824C",
         },

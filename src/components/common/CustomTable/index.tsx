@@ -171,8 +171,12 @@ const CustomTable = ({
                 <Tune />
               </button>
 
-              {Filters && filtersOpen && (
-                <Filters data={rows} setData={setCurrentRows} />
+              {Filters && (
+                <Filters
+                  data={rows}
+                  setData={setCurrentRows}
+                  isOpen={filtersOpen}
+                />
               )}
             </div>
           </div>

@@ -25,6 +25,8 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { Button } from "@mui/material";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
 import { Role } from "@/constants/roles";
+import Details from "@/components/common/Details";
+import { CalendarMonth, Mail, Payment, Person } from "@mui/icons-material";
 
 const PayoutDetails = ({ params }) => {
   const payout_id = +params?.id;
@@ -91,7 +93,10 @@ const PayoutDetails = ({ params }) => {
   }, []);
 
   return (
-    <DashboardPageWrapper>
+    <div className="rounded-medium flex flex-col  bg-white p-6">
+      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+        Payout Details
+      </h3>
       <ConfirmationModal
         handleClose={toggleConfirmModal}
         handleConfirm={handleApprove}
@@ -100,128 +105,110 @@ const PayoutDetails = ({ params }) => {
         title="Payout Confirmation"
       />
 
-      <div className="data-grid-container">
-        <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Payout Details</h2>
+      <LoadingApi loading={isPayoutDetailsLoading}>
+        <div className="res-4-grid py-6 mt-4">
+          <Details Icon={Mail} label="ID" value={payout?.id} />
+          <Details
+            Icon={Mail}
+            label="Account Title"
+            value={payout?.account_title}
+          />
+          <Details Icon={Mail} label="Account No." value={payout?.account_no} />
         </div>
-        <ErrorApiText error={isPayoutDetailsError} />
-        <LoadingApi loading={isPayoutDetailsLoading}>
-          <div className="detailspage mt-6">
-            <div className="flex flex-col gap-4">
-              <DetailsWrapper title={"Date"} align>
-                <TransparentInput
-                  label={`Created At`}
-                  value={moment(payout?.created_at).format(
-                    "DD-MM-YYYY hh:mm A"
-                  )}
-                />
 
-                <TransparentInput
-                  label={`Updated At`}
-                  value={moment(payout?.updated_at).format(
-                    "DD-MM-YYYY hh:mm A"
-                  )}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"ID"}>
-                <TransparentInput value={payout?.id} />
-              </DetailsWrapper>
+        <h4 className="text-button font-semibold mt-2">Dates</h4>
 
-              <DetailsWrapper title={"Requested Amount"}>
-                <TransparentInput
-                  value={`${payout?.requested_amount} ${payout?.from_currency}`}
-                />
-              </DetailsWrapper>
-              <DetailsWrapper title={"Fee"}>
-                <TransparentInput
-                  value={`${payout?.alphaspay_fees} ${payout?.from_currency}`}
-                />
-              </DetailsWrapper>
+        <div className="res-4-grid py-6 border-b border-light-gray">
+          <Details
+            Icon={CalendarMonth}
+            label="Created Date"
+            value={moment(payout?.created_at).format("DD-MM-YYYY hh:mm A")}
+          />
+          <Details
+            Icon={CalendarMonth}
+            label="Updated Date"
+            value={moment(payout?.updated_at).format("DD-MM-YYYY hh:mm A")}
+          />
+        </div>
 
-              <DetailsWrapper title={"Net Amount"}>
-                <TransparentInput
-                  value={`${payout?.amount} ${payout?.from_currency}`}
-                />
-              </DetailsWrapper>
+        <h4 className="text-button font-semibold mt-6">Payments</h4>
 
-              <DetailsWrapper title={"From Currency"}>
-                <TransparentInput value={payout?.from_currency} />
-              </DetailsWrapper>
+        <div className="res-4-grid py-6 border-b border-light-gray">
+          <Details
+            Icon={Mail}
+            label="Requested Amount"
+            value={`${payout?.requested_amount} ${payout?.to_currency}`}
+          />
+          <Details
+            Icon={Payment}
+            label="Fee Amount"
+            value={`${payout?.alphaspay_fees} ${payout?.to_currency}`}
+          />
+          <Details
+            Icon={Payment}
+            label="Net Amount"
+            value={`${payout?.amount} ${payout?.to_currency}`}
+          />
+          <Details
+            Icon={Payment}
+            label="From Currency"
+            value={payout?.from_currency}
+          />
+          <Details
+            Icon={Payment}
+            label="To Currency"
+            value={payout?.to_currency}
+          />
+        </div>
+        <h4 className="text-button font-semibold mt-6">Status</h4>
 
-              <DetailsWrapper title={"To Currency"}>
-                <TransparentInput value={payout?.to_currency} />
-              </DetailsWrapper>
+        <div className="res-4-grid py-6">
+          <Details
+            Icon={CalendarMonth}
+            label="Payment Status"
+            value={payout?.status}
+          />
+        </div>
 
-              <DetailsWrapper title={"Account Title"}>
-                <TransparentInput value={payout?.account_title} />
-              </DetailsWrapper>
+        <h4 className="text-button font-semibold mb-5">Notes</h4>
 
-              <DetailsWrapper title={"To Bank Account"}>
-                <TransparentInput value={payout?.account_no} />
-              </DetailsWrapper>
+        <div className="border-b border-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-small bg-light-gray">
+          {payout?.notes}
+        </div>
 
-              <DetailsWrapper title={"Status"}>
-                <TransparentInput value={capitalize(payout?.status)} />
-              </DetailsWrapper>
-
-              {payout?.notes && (
-                <DetailsWrapper title={"Notes"}>
-                  <TransparentInput value={payout?.notes} textarea />
-                </DetailsWrapper>
-              )}
-
-              {/* TABLES BELOW
-
-              <div className="data-grid-container">
-                <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Webhooks</h2>
-                </div>
-
-                <DataGrid
-                  rows={[]}
-                  columns={webhooks_table_columns}
-                  className="font-semibold primary-color  border-t-0"
-                  hideFooter
-                  autoHeight
-                />
-              </div> */}
-            </div>
-          </div>
-
-          {user?.role == Role.ADMIN && (
-            <>
-              <DetailsWrapper title={"Reason*"}>
-                <TransparentInput
-                  value={reason}
-                  textarea
-                  disabled={false}
-                  onChange={(e) => setReason(e.target.value)}
-                />
-              </DetailsWrapper>
-
-              <ErrorApiText
-                error={isApprovePayoutError || isRejectPayoutError}
+        {user?.role == Role.ADMIN && (
+          <>
+            <DetailsWrapper title={"Reason*"}>
+              <TransparentInput
+                value={reason}
+                textarea
+                disabled={false}
+                onChange={(e) => setReason(e.target.value)}
               />
-              <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
-                <Button
-                  variant="outlined"
-                  className="py-2 px-8"
-                  onClick={toggleConfirmModal}
-                >
-                  Approve
-                </Button>
-                <LoaderButton
-                  loading={isRejectPayoutLoading}
-                  content={"Reject"}
-                  variant={"outlined"}
-                  onClick={handleReject}
-                />
-              </div>
-            </>
-          )}
-        </LoadingApi>
-      </div>
-    </DashboardPageWrapper>
+            </DetailsWrapper>
+
+            <ErrorApiText error={isApprovePayoutError || isRejectPayoutError} />
+            <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
+              <Button
+                variant="outlined"
+                className="py-2 px-8"
+                onClick={toggleConfirmModal}
+              >
+                Approve
+              </Button>
+              <LoaderButton
+                loading={isRejectPayoutLoading}
+                content={"Reject"}
+                variant={"outlined"}
+                onClick={handleReject}
+              />
+            </div>
+          </>
+        )}
+
+        <ErrorApiText error={isPayoutDetailsError} />
+      </LoadingApi>
+    </div>
   );
 };
 
