@@ -56,7 +56,7 @@ hooks:
 # Step 3: Install node modules #default 300
 
     - location: scripts_code_deploy/build.sh
-      timeout: 900
+      timeout: 800
       runas: root
 
 
