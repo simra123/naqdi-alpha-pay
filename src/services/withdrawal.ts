@@ -9,6 +9,7 @@ export const createWithdrawalApi = (data: {
   recipient_address: string;
   notes?: string;
   standard?: string;
+  token: string;
 }) => {
   return () => api.post(`wallet/withdrawal`, data);
 };

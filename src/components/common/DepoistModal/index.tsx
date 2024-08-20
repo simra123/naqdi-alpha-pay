@@ -11,9 +11,13 @@ import { createDepoistAddressApi } from "@/services/wallet";
 import Image from "next/image";
 import LoadingApi from "../LoadindApi";
 import ErrorApiText from "../ErrorApiText";
-import { blockchains, networks } from "@/constants/blockchains";
-
-
+import {
+  blockchains,
+  networks,
+  networks_available,
+} from "@/constants/blockchains";
+import IconSelectBox from "../IconSelectBox";
+import LoaderButton from "../LoaderButton";
 
 const DepositModal = ({ isOpen, setIsOpen }) => {
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
@@ -48,11 +52,6 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   };
 
   useEffect(() => {
-    if (seletedOption?.blockchain && seletedOption?.network) {
-      createDepoistAddress();
-    }
-  }, [seletedOption]);
-  useEffect(() => {
     if (isDepositError) {
       setDepositAddress(null);
     }
@@ -82,7 +81,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
       setDepositAddress(null);
     } else if (name === "network") {
       const standard = filteredNetworks(seletedOption.blockchain, value);
-    
+
       setSelectedOption((prev) => ({
         ...prev,
         [name]: value,
@@ -105,76 +104,69 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="min-h-full p-8 flex place-items-center place-content-center">
-        <div className="flex gap-3">
-          <div className="request_box shadow-md-border px-8 py-6 bg-white gap-4">
-            <div className="flex flex-col gap-3">
-              <h3 className="font-bold text-lg">Create Depoist Address</h3>
-              <div className="flex gap-2">
-                <SelectBox
-                  className="transparent !border-0 min-w-44 !p-0"
-                  options={blockchains}
-                  name="blockchain"
-                  value={seletedOption.blockchain}
-                  placeholder="Select a Blockchain"
-                  onChange={handleChange}
-                  sx={{
-                    ".MuiSelect-outlined": {
-                      padding: "8px 12px !important",
-                    },
+      <div className="modal_content_wrapper bg-white p-8 rounded-md shadow-lg w-[547px] max-w-full">
+        <h2 className="text-xl font-bold mb-4">Add Withdrawal</h2>
 
-                    borderRadius: "0 !important",
-                  }}
-                />
-                <SelectBox
-                  className="transparent !border-0 min-w-44 !p-0"
-                  options={filteredNets}
-                  name="network"
-                  disabled={!seletedOption?.blockchain}
-                  value={seletedOption.network}
-                  placeholder="Select a Network"
-                  onChange={handleChange}
-                  sx={{
-                    ".MuiSelect-outlined": {
-                      padding: "8px 12px !important",
-                    },
+        <IconSelectBox
+          label="Select a Blockchain"
+          options={blockchains}
+          name="blockchain"
+          value={seletedOption.blockchain}
+          placeholder="Select a Blockchain"
+          onChange={handleChange}
+        />
 
-                    borderRadius: "0 !important",
-                  }}
+        {networks_available[seletedOption.blockchain] && (
+          <IconSelectBox
+            options={filteredNets}
+            name="network"
+            value={seletedOption.network}
+            placeholder="Select a Network"
+            label="Select a Network"
+            onChange={handleChange}
+          />
+        )}
+
+        <ErrorApiText error={isDepositError} />
+
+        <LoadingApi loading={isDepoistLoading}>
+          {depositAddress && (
+            <>
+              <div className="flex flex-col items-center">
+                <Image
+                  src={depositAddress?.qrCode}
+                  height={250}
+                  width={250}
+                  alt="Depoist"
                 />
+                <p className="font-semibold text-black-100 text-p120">{depositAddress?.wallet_Address}</p>
               </div>
-              <ErrorApiText error={isDepositError} />
-              <LoadingApi loading={isDepoistLoading}>
-                {depositAddress && (
-                  <>
-                    <div className="flex flex-col items-center">
-                      <Image
-                        src={depositAddress?.qrCode}
-                        height={250}
-                        width={250}
-                        alt="Depoist"
-                      />
-                      <p>{depositAddress?.wallet_Address}</p>
-                    </div>
 
-                    <p className="note">
-                      <span className="font-bold">Note :</span> This Address is
-                      generated for Depositing {depositAddress?.blockchain} on
-                      the {depositAddress?.network} network.
-                    </p>
-                  </>
-                )}
-              </LoadingApi>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <button
-              className="outline-none p-1 rounded-sm border-none text-white bg-red-500"
-              onClick={closeModal}
-            >
-              <Close />
-            </button>
-          </div>
+              <p className="text-custom-caption-gray text-button mt-6">
+                 This Address is
+                generated for Depositing {depositAddress?.blockchain} on the{" "}
+                {depositAddress?.network} network.
+              </p>
+            </>
+          )}
+        </LoadingApi>
+
+        <div className="flex flex-col justify-end mt-2">
+          <LoaderButton
+            type="submit"
+            className="mt-6"
+            content={`Create Deposit Address`}
+            variant="contained"
+            onClick={createDepoistAddress}
+          />
+
+          <button
+            type="button"
+            className="text-black-100 px-4 py-2 mt-2"
+            onClick={closeModal}
+          >
+            Cancel
+          </button>
         </div>
       </div>
     </Modal>

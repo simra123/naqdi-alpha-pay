@@ -95,6 +95,7 @@ const Withdrawals = () => {
       <CreateWithdrawalModal
         isOpen={isCreateOpen}
         toggleHandler={toggleCreateModal}
+        refreshHandler={getAllWithdrawals}
       />
 
       <div className="flex items-center justify-between mb-8">
