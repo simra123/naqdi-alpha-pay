@@ -20,6 +20,8 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
+import Loader from "@/components/common/Loader";
+import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
 
 const withdrawalsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -46,6 +48,8 @@ const withdrawalsList_table_columns = [
 const Withdrawals = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
+
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const [withdrawalsList, setwithdrawalsList] = useState([]);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
@@ -78,15 +82,33 @@ const Withdrawals = () => {
     });
   };
 
+  const toggleCreateModal = () => {
+    setIsCreateOpen(!isCreateOpen);
+  };
+
   useEffect(() => {
     getAllWithdrawals();
   }, []);
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
-        Withdrawals
-      </h3>
+      <CreateWithdrawalModal
+        isOpen={isCreateOpen}
+        toggleHandler={toggleCreateModal}
+      />
+
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-h3 font-semibold text-blackGrey-100">
+          Withdrawals
+        </h3>
+
+        <LoaderButton
+          content={"New Withdrawal"}
+          className="px-16"
+          variant="contained"
+          onClick={toggleCreateModal}
+        />
+      </div>
 
       <LoadingApi loading={isWithdrawalsListLoading}>
         <CustomTable

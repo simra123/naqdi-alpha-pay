@@ -274,53 +274,6 @@ const CreateWithdrawal = () => {
               )}
             </DetailsWrapper>
 
-            {/* <DetailsWrapper title={"Destination Currency & Network"}>
-              <SelectBox
-                className="transparent !border-0 min-w-44 !p-0"
-                options={blockchains}
-                name="blockchain"
-                value={destinationOptions.blockchain}
-                placeholder="Select a Blockchain"
-                onChange={handleDestinationChange}
-                sx={{
-                  ".MuiSelect-outlined": {
-                    padding: "8px 12px !important",
-                  },
-
-                  borderRadius: "0 !important",
-                }}
-              />
-              <SelectBox
-                className="transparent !border-0 min-w-44 !p-0"
-                options={destinationOptions.filteredNets}
-                name="network"
-                disabled={!destinationOptions.blockchain}
-                value={destinationOptions.network}
-                placeholder="Select a Network"
-                onChange={handleDestinationChange}
-                sx={{
-                  ".MuiSelect-outlined": {
-                    padding: "8px 12px !important",
-                  },
-
-                  borderRadius: "0 !important",
-                }}
-              />
-            </DetailsWrapper> */}
-
-            <DetailsWrapper title={"Source Amount & Destination Amount"} align>
-              <TransparentInput
-                value={data?.sourceAmount}
-                label="Source Amount"
-                disabled={false}
-                onChange={(e) => handleInputChange(e, "sourceAmount")}
-              />
-              <TransparentInput
-                value={destinationAmount}
-                label="Destination Amount"
-              />
-            </DetailsWrapper>
-
             <DetailsWrapper title={"Recipient Wallet Address"} col>
               <TransparentInput
                 value={data?.walletAddress}

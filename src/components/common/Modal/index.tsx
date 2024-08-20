@@ -1,6 +1,5 @@
 import { FC } from "react";
-import "./modal.scss";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -15,10 +14,12 @@ const Modal: FC<Props> = ({ isOpen, children }) => {
           (!isOpen
             ? "-translate-y-full opacity-0"
             : "translate-y-0 opacity-100") +
-          " modal_main_wrapper fixed w-full min-h-full z-index-100 transition-all top-0 bottom-0 left-0 overflow-auto duration-500"
+          " modal_main_wrapper fixed w-full min-h-full z-[100] bg-[rgba(0,0,0,0.6)] transition-all top-0 bottom-0 left-0 overflow-auto duration-500"
         }
       >
-        {children}
+        <div className="flex min-h-full min-w-full items-center justify-center">
+          {children}
+        </div>
       </div>
     </>
   );
