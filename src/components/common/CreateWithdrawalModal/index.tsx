@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../Modal"; // Make sure to adjust the import path if necessary
 import IconSelectBox from "../IconSelectBox";
-import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import {
@@ -18,20 +17,27 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import { clamp } from "@/utils/math";
 import IconField from "../IconField";
 import LoaderButton from "../LoaderButton";
+import LoadingApi from "../LoadindApi";
+import ErrorApiText from "../ErrorApiText";
+import OtpInput from "react-otp-input";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
+  refreshHandler: () => void;
 }
 
-const CreateWithdrawalModal = ({ isOpen, toggleHandler }: Props) => {
-  const router = useRouter();
+const CreateWithdrawalModal = ({
+  isOpen,
+  toggleHandler,
+  refreshHandler,
+}: Props) => {
   const dispatch = useDispatch();
   const [balance, setBalance] = useState([]);
   const [destinationAmount, setDestinationAmount] = useState("0");
+  const [otp, setOtp] = useState("");
   const [withdrawalFee, setWithdrawalFee] = useState(0);
   const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
-  const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
   const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
 
@@ -40,6 +46,7 @@ const CreateWithdrawalModal = ({ isOpen, toggleHandler }: Props) => {
     blockchain: "",
     network: "",
     standard: "",
+    token: "",
   });
 
   // const [destinationOptions, setDestinationOptions] = useState({
@@ -117,24 +124,27 @@ const CreateWithdrawalModal = ({ isOpen, toggleHandler }: Props) => {
           standard: networks_available[sourceOptions.blockchain]
             ? sourceOptions.standard
             : "",
+          token: otp,
         })
       ),
-      successCallBack: (response: any) => {
+      successCallBack: () => {
         dispatch(
           setNotification({
             message: "Withdrawal Request Created Successfully",
             status: "success",
           })
         );
-        toggleWithdrawModal();
-        router.push("/withdrawals");
+        toggleHandler();
+        refreshHandler();
       },
     });
   };
 
   useEffect(() => {
-    _getUserBalance();
-  }, []);
+    if (isOpen) {
+      _getUserBalance();
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     getAlphasPayFee();
@@ -164,80 +174,125 @@ const CreateWithdrawalModal = ({ isOpen, toggleHandler }: Props) => {
     return balance.find((item) => item.value == value)?.amount;
   };
 
-  const toggleWithdrawModal = () => {
-    setWithdrawOpen(!withdrawOpen);
-  };
-
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-8 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-xl font-bold mb-4">Add Withdrawal</h2>
-        <form>
-          <IconSelectBox
-            label="Source Currency & Network"
-            options={balance}
-            name="blockchain"
-            value={sourceOptions.blockchain}
-            placeholder="Select a Blockchain"
-            onChange={handleSourceChange}
-          />
+      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
+        <h2 className="text-h3.5 font-semibold mb-4">Add Withdrawal</h2>
 
-          {sourceOptions.blockchain && (
-            <p className="note">
-              <span className="font-bold">Available Balance : </span>
-              {getCurrentAssetAmount(sourceOptions.blockchain)}
-            </p>
-          )}
-
-          {networks_available[sourceOptions.blockchain] && (
+        <LoadingApi loading={isBalanceLoading}>
+          <form className="mt-8 flex flex-col gap-2">
             <IconSelectBox
-              options={sourceOptions.filteredNets}
-              name="network"
-              value={sourceOptions.network}
-              placeholder="Select a Network"
+              wrapperClassName="!mb-2"
+              label="Source Currency & Network"
+              options={balance}
+              name="blockchain"
+              value={sourceOptions.blockchain}
+              placeholder="Select a Blockchain"
               onChange={handleSourceChange}
             />
-          )}
 
-          <IconField
-            value={data?.sourceAmount}
-            label="Source Amount"
-            onChange={(e) => handleInputChange(e, "sourceAmount")}
-          />
+            {sourceOptions.blockchain && (
+              <div className="mb-1">
+                <p className="text-black-100 font-medium">
+                  {getCurrentAssetAmount(sourceOptions.blockchain)}
+                </p>
+                <p className="font-medium text-[13px] text-custom-title-gray">
+                  Available Balance
+                </p>
+              </div>
+            )}
 
-          <IconField
-            value={data?.walletAddress}
-            label="Wallet Address"
-            onChange={(e) => handleInputChange(e, "walletAddress")}
-          />
+            {networks_available[sourceOptions.blockchain] && (
+              <IconSelectBox
+                options={sourceOptions.filteredNets}
+                name="network"
+                value={sourceOptions.network}
+                placeholder="Select a Network"
+                onChange={handleSourceChange}
+                label="Select a Network"
+              />
+            )}
 
-          <div className="flex flex-col gap-2">
-            <label className="block mb-2 font-medium">Notes</label>
-
-            <textarea
-              value={data?.notes}
-              onChange={(e) => handleInputChange(e, "notes")}
-              className={`border-b border-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 bg-light-gray outline-none`}
-            />
-          </div>
-
-          <div className="flex flex-col justify-end">
-            <LoaderButton
-              type="submit"
-              className="mt-6"
-              content={`Create Withdrawal`}
-              variant="contained"
+            <IconField
+              value={data?.sourceAmount}
+              label="Source Amount & Destination Amount"
+              onChange={(e) => handleInputChange(e, "sourceAmount")}
             />
 
-            <button
-              type="button"
-              className="text-black-100 px-4 py-2 mt-2"
-              onClick={toggleHandler}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
+            <LoadingApi loading={isFeeLoading}>
+              {destinationAmount && (
+                <div className="mb-1">
+                  <p className="text-black-100 font-medium">
+                    {destinationAmount}
+                  </p>
+                  <p className="font-medium text-[13px] text-custom-title-gray">
+                    Destination Amount
+                  </p>
+                </div>
+              )}
+            </LoadingApi>
+            <ErrorApiText error={isFeeError} />
+
+            <IconField
+              value={data?.walletAddress}
+              label="Recipient Wallet Address"
+              placeholder="Wallet Address"
+              onChange={(e) => handleInputChange(e, "walletAddress")}
+            />
+
+            <div className="mt-2">
+              <label className="font-medium text-[15px] text-black-100">
+                Enter Code{" "}
+              </label>
+              <OtpInput
+                numInputs={6}
+                containerStyle={{
+                  display: "flex",
+                  gap: "1rem",
+                  marginTop: "6px",
+                }}
+                renderInput={(props) => (
+                  <input
+                    {...props}
+                    className="!w-10 md:!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                  />
+                )}
+                onChange={(value) => setOtp(value)}
+                value={otp}
+              />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="block mb-1 font-medium">Notes</label>
+
+              <textarea
+                value={data?.notes}
+                placeholder="Your Message Here"
+                onChange={(e) => handleInputChange(e, "notes")}
+                className={`border-b border-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 bg-light-gray outline-none`}
+              />
+            </div>
+
+            <div className="flex flex-col justify-end mt-4">
+              <LoaderButton
+                type="submit"
+                content={`Create Withdrawal`}
+                variant="contained"
+                onClick={handleWithdrawal}
+                loading={isWithdrawalLoading}
+              />
+
+              <button
+                type="button"
+                className="text-black-100 px-4 py-2 mt-2"
+                onClick={toggleHandler}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </LoadingApi>
+        <ErrorApiText error={isBalanceError || isWithdrawalError} />
       </div>
     </Modal>
   );
