@@ -13,7 +13,13 @@ import {
 import { Role, Withdrawal_Type } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Button, Chip } from "@mui/material";
-import { Check } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  Check,
+  Mail,
+  Payment,
+  Person,
+} from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/common/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
@@ -30,6 +36,7 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
 import moment from "moment";
 import { capitalize } from "@/utils/dataFormatters";
+import Details from "@/components/common/Details";
 
 const dummyRows = [
   {
@@ -106,25 +113,24 @@ const WithdrawalDetails = ({ params }) => {
   ] = useApi();
 
   const handleApprove = async () => {
-
     const manualData = {
       txhash: withdrawalData.txhash,
       withdraw_id: withdraw_id,
       withdrawal_mode: withdrawalType,
-    }
+    };
 
     const AutomaticData = {
       withdraw_id: withdraw_id,
       withdrawal_mode: withdrawalType,
-      sender_address: wallets.find(wallet => wallet.id == selectionModel[0])?.wallet_address,
-    }
+      sender_address: wallets.find((wallet) => wallet.id == selectionModel[0])
+        ?.wallet_address,
+    };
 
-    const requestData = withdrawalType == Withdrawal_Type.AUTOMATIC ? AutomaticData : manualData
+    const requestData =
+      withdrawalType == Withdrawal_Type.AUTOMATIC ? AutomaticData : manualData;
 
     await callApiHook({
-      apiCall: callApproveWithdrawalApi(
-        withdrawalApproveAdminApi(requestData)
-      ),
+      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(requestData)),
       successCallBack: (response: any) => {
         dispatch(
           setNotification({
@@ -162,7 +168,7 @@ const WithdrawalDetails = ({ params }) => {
       successCallBack: (response: any) => {
         setwithdrawalDetails(response);
 
-        const formattedTransactions = response.payment_transaction.map(
+        const formattedTransactions = response?.paymentTransactions?.map(
           (transaction) => ({
             id: transaction.id,
             wallet_address: transaction?.wallet?.address,
@@ -172,7 +178,7 @@ const WithdrawalDetails = ({ params }) => {
           })
         );
 
-        const formattedWallets = response.wallets.map((wallet) => ({
+        const formattedWallets = response?.walletsWithUnit?.map((wallet) => ({
           id: wallet.id,
           wallet_address: wallet.wallet_address,
           wallet_network: capitalize(wallet.blockchain),
@@ -180,7 +186,13 @@ const WithdrawalDetails = ({ params }) => {
           total_amount: wallet.amount, // Assuming total amount here refers to the same amount for wallets
         }));
 
-        setWallets([...formattedTransactions, ...formattedWallets]);
+        console.log(formattedTransactions, formattedWallets);
+
+        setWallets(
+          formattedTransactions
+            ? [...formattedTransactions, ...formattedWallets]
+            : [...formattedWallets]
+        );
       },
     });
   };
@@ -213,9 +225,12 @@ const WithdrawalDetails = ({ params }) => {
     setConfirmModal(!confirmModal);
   };
 
-
   return (
-    <DashboardPageWrapper>
+    <div className="rounded-medium flex flex-col  bg-white p-6">
+      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+        Withdrawal Details
+      </h3>
+
       <ConfirmationModal
         handleClose={toggleConfirmModal}
         handleConfirm={handleConfirm}
@@ -223,351 +238,227 @@ const WithdrawalDetails = ({ params }) => {
         confirmLoading={isApproveWithdrawalLoading}
         title="Withdrawal Confirmation"
       />
-      <div className="data-grid-container">
-        <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Withdrawal Details</h2>
-        </div>
 
-        <ErrorApiText error={isWithdrawalDetailsError} />
+      <LoadingApi loading={isWithdrawalDetailsLoading}>
+        <>
+          <div className="res-4-grid py-6 mt-4">
+            <Details
+              Icon={Person}
+              label="Blockchain"
+              value={`${
+                withdrawalDetails?.withdrawal?.standard
+                  ? withdrawalDetails?.withdrawal?.standard
+                  : withdrawalDetails?.withdrawal?.unit
+              }`}
+            />
 
-        <LoadingApi loading={isWithdrawalDetailsLoading}>
-          {user?.role == Role.USER && (
-            <div className="detailspage mt-6">
-              <div className="flex flex-col gap-4">
-                <DetailsWrapper title={"Date"} align>
+            <Details
+              Icon={Mail}
+              label="ID"
+              value={withdrawalDetails?.withdrawal?.id}
+            />
+            <Details
+              Icon={Mail}
+              label={`${withdrawalDetails?.withdrawal?.unit} ${
+                withdrawalDetails?.withdrawal?.standard &&
+                `(${withdrawalDetails?.withdrawal?.standard})`
+              } Wallet Address`}
+              value={withdrawalDetails?.withdrawal?.recipient_address}
+            />
+            <Details
+              Icon={Mail}
+              label={"Transaction Hash"}
+              value={withdrawalDetails?.withdrawal?.transaction_hash || "_"}
+            />
+          </div>
+
+          <h4 className="text-button font-semibold mt-2">Dates</h4>
+
+          <div className="res-4-grid py-6 border-b border-light-gray">
+            <Details
+              Icon={CalendarMonth}
+              label="Created Date"
+              value={moment(withdrawalDetails?.withdrawal?.created_at).format(
+                "DD-MM-YYYY : hh:mm A"
+              )}
+            />
+            <Details
+              Icon={CalendarMonth}
+              label="Updated Date"
+              value={moment(withdrawalDetails?.withdrawal?.updated_at).format(
+                "DD-MM-YYYY : hh:mm A"
+              )}
+            />
+          </div>
+
+          <h4 className="text-button font-semibold mt-6">Withdrawals</h4>
+
+          <div className="res-4-grid py-6 border-b border-light-gray">
+            <Details
+              Icon={Payment}
+              label="Source Amount"
+              value={`${withdrawalDetails?.withdrawal?.requested_amount} ${withdrawalDetails?.withdrawal?.unit}`}
+            />
+            <Details
+              Icon={Payment}
+              label="Withdrawal Fee"
+              value={`${withdrawalDetails?.withdrawal?.withdraw_fees} ${withdrawalDetails?.withdrawal?.unit}`}
+            />
+            <Details
+              Icon={Payment}
+              label="Net Amount"
+              value={`${withdrawalDetails?.withdrawal?.net_amount} ${withdrawalDetails?.withdrawal?.unit}`}
+            />
+          </div>
+          <h4 className="text-button font-semibold mt-6">Status</h4>
+
+          <div className="res-4-grid py-6">
+            <Details
+              Icon={CalendarMonth}
+              label="Withdrawal Status"
+              value={withdrawalDetails?.withdrawal?.status}
+            />
+          </div>
+
+          <h4 className="text-button font-semibold mb-5">Notes</h4>
+
+          <div className="border-b border-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-small bg-light-gray">
+            {withdrawalDetails?.withdrawal?.notes}
+          </div>
+        </>
+
+        {user?.role == Role.ADMIN && (
+          <div className="detailspage mt-6">
+            <div className="flex flex-col gap-4">
+              <div className="my-4 flex flex-col gap-4">
+                <div className=" flex items-center justify-between mb-3">
+                  <h2 className="text-lg font-semibold">User Details</h2>
+                </div>
+
+                <DetailsWrapper title={"Name"} align>
                   <TransparentInput
-                    label={`Created At`}
-                    value={moment(
-                      withdrawalDetails?.withdrawal?.created_at
-                    ).format("DD-MM-YYYY : hh:mm A")}
+                    label={`First Name`}
+                    value={withdrawalDetails?.withdrawal?.user?.first_name}
                   />
 
                   <TransparentInput
-                    label={`Updated At`}
-                    value={moment(
-                      withdrawalDetails?.withdrawal?.updated_at
-                    ).format("DD-MM-YYYY : hh:mm A")}
-                  />
-                </DetailsWrapper>
-                <DetailsWrapper title={"ID"}>
-                  <TransparentInput value={withdrawalDetails?.withdrawal?.id} />
-                </DetailsWrapper>
-                <DetailsWrapper title={"Source Amount"}>
-                  <TransparentInput
-                    value={`${withdrawalDetails?.withdrawal?.requested_amount} ${withdrawalDetails?.withdrawal?.unit}`}
+                    label={`Last Name`}
+                    value={withdrawalDetails?.withdrawal?.user?.last_name}
                   />
                 </DetailsWrapper>
 
-                {/* <DetailsWrapper title={"Gross Amount"}>
-                  <TransparentInput value={`1 USD`} />
-                </DetailsWrapper> */}
-                <DetailsWrapper title={"Withdrawal Fee"}>
+                <DetailsWrapper title={"Contact"} align>
                   <TransparentInput
-                    value={`${withdrawalDetails?.withdrawal?.withdraw_fees} ${withdrawalDetails?.withdrawal?.unit}`}
+                    label={`Email`}
+                    value={withdrawalDetails?.withdrawal?.user?.email}
                   />
-                </DetailsWrapper>
-                {/* <DetailsWrapper title={"Payment"}>
-                  <TransparentInput
-                    value={`1.0001 USD`}
-                    label={"Payment Amount"}
-                  />
-                  <TransparentInput
-                    value={`0 USDT`}
-                    label={"Payment Amount Received"}
-                  />
-                </DetailsWrapper> */}
 
-                <DetailsWrapper title={"Net Amount "}>
                   <TransparentInput
-                    value={`${withdrawalDetails?.withdrawal?.net_amount} ${withdrawalDetails?.withdrawal?.unit}`}
+                    label={`Phone`}
+                    value={
+                      withdrawalDetails?.withdrawal?.user?.userDetails
+                        ?.phone_number
+                    }
                   />
                 </DetailsWrapper>
-                <DetailsWrapper title={"Status"}>
-                  <TransparentInput
-                    value={withdrawalDetails?.withdrawal?.status}
-                  />
-                </DetailsWrapper>
-                <DetailsWrapper title={"Wallet Address"}>
-                  <TransparentInput
-                    value={withdrawalDetails?.withdrawal?.recipient_address}
-                    label={`${withdrawalDetails?.withdrawal?.unit} ${
-                      withdrawalDetails?.withdrawal?.standard &&
-                      `(${withdrawalDetails?.withdrawal?.standard})`
-                    } Wallet Address`}
-                  />
-                  <TransparentInput
-                    value={`${
-                      withdrawalDetails?.withdrawal?.standard
-                        ? withdrawalDetails?.withdrawal?.standard
-                        : withdrawalDetails?.withdrawal?.unit
-                    }`}
-                    label={"Network"}
-                  />
-                </DetailsWrapper>
+              </div>
 
+              <DetailsWrapper title={"Withdrawal Mode"}>
+                <Chip
+                  label="Manual"
+                  color="primary"
+                  onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
+                  icon={
+                    withdrawalType == Withdrawal_Type.MANUAL && (
+                      <Check className="text-sm" />
+                    )
+                  }
+                  variant={
+                    withdrawalType == Withdrawal_Type.MANUAL
+                      ? "filled"
+                      : "outlined"
+                  }
+                  clickable
+                />
+                <Chip
+                  label="Automatic"
+                  onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                  color="primary"
+                  icon={
+                    withdrawalType == Withdrawal_Type.AUTOMATIC && (
+                      <Check className="text-sm" />
+                    )
+                  }
+                  variant={
+                    withdrawalType == Withdrawal_Type.AUTOMATIC
+                      ? "filled"
+                      : "outlined"
+                  }
+                  clickable
+                />
+              </DetailsWrapper>
+
+              {withdrawalType == Withdrawal_Type.MANUAL && (
                 <DetailsWrapper title={"Transaction Hash"}>
                   <TransparentInput
-                    value={
-                      withdrawalDetails?.withdrawal?.transaction_hash || "_"
-                    }
+                    value={withdrawalData?.txhash}
+                    name="txhash"
+                    disabled={false}
+                    onChange={handleChange}
                   />
                 </DetailsWrapper>
-                {/* <DetailsWrapper title={"Profile"}>
-                  <TransparentInput value={`Alphaspay`} />
-                </DetailsWrapper> */}
+              )}
 
-                <DetailsWrapper title={"Notes"}>
-                  <TransparentInput
-                    value={withdrawalDetails?.withdrawal?.notes}
-                    textarea
-                  />
-                </DetailsWrapper>
-                {/* <DetailsWrapper title={"Pass Through"}>
-                  <TransparentInput value={`_`} textarea />
-                </DetailsWrapper> */}
-
-                {/* TABLES BELOW */}
-
-                {/* <div className="data-grid-container">
-                  <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Conversions</h2>
-                  </div>
-
-                  <DataGrid
-                    rows={[]}
-                    columns={converstion_table_columns}
-                    className="font-semibold primary-color border-t-0"
-                    hideFooter
-                    autoHeight
-                  />
+              <div className="data-grid-container">
+                <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Wallets Available</h2>
                 </div>
 
-                <div className="data-grid-container">
-                  <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Webhooks</h2>
-                  </div>
-
-                  <DataGrid
-                    rows={[]}
-                    columns={webhooks_table_columns}
-                    className="font-semibold primary-color  border-t-0"
-                    hideFooter
-                    autoHeight
-                  />
-                </div> */}
-              </div>
-            </div>
-          )}
-
-          {user?.role == Role.ADMIN && (
-            <div className="detailspage mt-6">
-              <div className="flex flex-col gap-4">
-                <DetailsWrapper title={"Date"} align>
-                  <TransparentInput
-                    label={`Created At`}
-                    value={moment(
-                      withdrawalDetails?.withdrawal?.created_at
-                    ).format("DD-MM-YYYY : hh:mm A")}
-                  />
-
-                  <TransparentInput
-                    label={`Updated At`}
-                    value={moment(
-                      withdrawalDetails?.withdrawal?.updated_at
-                    ).format("DD-MM-YYYY : hh:mm A")}
-                  />
-                </DetailsWrapper>
-                <DetailsWrapper title={"ID"}>
-                  <TransparentInput value={withdrawalDetails?.withdrawal?.id} />
-                </DetailsWrapper>
-                <DetailsWrapper title={"Source Amount"}>
-                  <TransparentInput
-                    value={`${withdrawalDetails?.withdrawal?.requested_amount} ${withdrawalDetails?.withdrawal?.unit}`}
-                  />
-                </DetailsWrapper>
-
-                {/* <DetailsWrapper title={"Gross Amount"}>
-                  <TransparentInput value={`1 USD`} />
-                </DetailsWrapper> */}
-                <DetailsWrapper title={"Withdrawal Fee"}>
-                  <TransparentInput
-                    value={`${withdrawalDetails?.withdrawal?.withdraw_fees} ${withdrawalDetails?.withdrawal?.unit}`}
-                  />
-                </DetailsWrapper>
-                {/* <DetailsWrapper title={"Payment"}>
-                  <TransparentInput
-                    value={`1.0001 USD`}
-                    label={"Payment Amount"}
-                  />
-                  <TransparentInput
-                    value={`0 USDT`}
-                    label={"Payment Amount Received"}
-                  />
-                </DetailsWrapper> */}
-
-                <DetailsWrapper title={"Net Amount "}>
-                  <TransparentInput
-                    value={`${withdrawalDetails?.withdrawal?.net_amount} ${withdrawalDetails?.withdrawal?.unit}`}
-                  />
-                </DetailsWrapper>
-                <DetailsWrapper title={"Status"}>
-                  <TransparentInput
-                    value={withdrawalDetails?.withdrawal?.status}
-                  />
-                </DetailsWrapper>
-                <DetailsWrapper title={"Wallet Address"}>
-                  <TransparentInput
-                    value={withdrawalDetails?.withdrawal?.recipient_address}
-                    label={`${withdrawalDetails?.withdrawal?.unit} ${
-                      withdrawalDetails?.withdrawal?.standard &&
-                      `(${withdrawalDetails?.withdrawal?.standard})`
-                    } Wallet Address`}
-                  />
-                  <TransparentInput
-                    value={`${
-                      withdrawalDetails?.withdrawal?.standard
-                        ? withdrawalDetails?.withdrawal?.standard
-                        : withdrawalDetails?.withdrawal?.unit
-                    }`}
-                    label={"Network"}
-                  />
-                </DetailsWrapper>
-                <DetailsWrapper title={"Notes"}>
-                  <TransparentInput
-                    value={withdrawalDetails?.withdrawal?.notes}
-                    textarea
-                  />
-                </DetailsWrapper>
-
-                <div className="my-4 flex flex-col gap-4">
-                  <div className=" flex items-center justify-between mb-3">
-                    <h2 className="text-lg font-semibold">User Details</h2>
-                  </div>
-
-                  <DetailsWrapper title={"Name"} align>
-                    <TransparentInput
-                      label={`First Name`}
-                      value={withdrawalDetails?.withdrawal?.user?.first_name}
-                    />
-
-                    <TransparentInput
-                      label={`Last Name`}
-                      value={withdrawalDetails?.withdrawal?.user?.last_name}
-                    />
-                  </DetailsWrapper>
-
-                  <DetailsWrapper title={"Contact"} align>
-                    <TransparentInput
-                      label={`Email`}
-                      value={withdrawalDetails?.withdrawal?.user?.email}
-                    />
-
-                    <TransparentInput
-                      label={`Phone`}
-                      value={
-                        withdrawalDetails?.withdrawal?.user?.userDetails
-                          ?.phone_number
-                      }
-                    />
-                  </DetailsWrapper>
-                </div>
-
-                <DetailsWrapper title={"Withdrawal Mode"}>
-                  <Chip
-                    label="Manual"
-                    color="primary"
-                    onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
-                    icon={
-                      withdrawalType == Withdrawal_Type.MANUAL && (
-                        <Check className="text-sm" />
-                      )
-                    }
-                    variant={
-                      withdrawalType == Withdrawal_Type.MANUAL
-                        ? "filled"
-                        : "outlined"
-                    }
-                    clickable
-                  />
-                  <Chip
-                    label="Automatic"
-                    onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
-                    color="primary"
-                    icon={
-                      withdrawalType == Withdrawal_Type.AUTOMATIC && (
-                        <Check className="text-sm" />
-                      )
-                    }
-                    variant={
-                      withdrawalType == Withdrawal_Type.AUTOMATIC
-                        ? "filled"
-                        : "outlined"
-                    }
-                    clickable
-                  />
-                </DetailsWrapper>
-
-                {withdrawalType == Withdrawal_Type.MANUAL && (
-                  <DetailsWrapper title={"Transaction Hash"}>
-                    <TransparentInput
-                      value={withdrawalData?.txhash}
-                      name="txhash"
-                      disabled={false}
-                      onChange={handleChange}
-                    />
-                  </DetailsWrapper>
-                )}
-
-                <div className="data-grid-container">
-                  <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold">Wallets Available</h2>
-                  </div>
-
-                  <DataGrid
-                    rows={wallets}
-                    columns={availableWallets_table_columns}
-                    className="font-semibold primary-color  border-t-0"
-                    checkboxSelection={
-                      withdrawalType == Withdrawal_Type.AUTOMATIC
-                    }
-                    disableMultipleRowSelection
-                    hideFooter
-                    autoHeight
-                    rowSelectionModel={selectionModel}
-                    onRowSelectionModelChange={handleSelectionChange}
-                  />
-                </div>
-              </div>
-
-              <ErrorApiText
-                error={isApproveWithdrawalError || isRejectWithdrawalError}
-              />
-              <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
-                <LoaderButton
-                  loading={isRejectWithdrawalLoading}
-                  content={"Reject"}
-                  variant={"outlined"}
-                  onClick={handleReject}
-                />
-
-                <Button
-                  variant="outlined"
-                  className="py-2 px-8"
-                  onClick={toggleConfirmModal}
-                  disabled={
-                    withdrawalData?.txhash || selectionModel?.length
-                      ? false
-                      : true
+                <DataGrid
+                  rows={wallets}
+                  columns={availableWallets_table_columns}
+                  className="font-semibold primary-color  border-t-0"
+                  checkboxSelection={
+                    withdrawalType == Withdrawal_Type.AUTOMATIC
                   }
-                >
-                  Approve
-                </Button>
+                  disableMultipleRowSelection
+                  hideFooter
+                  autoHeight
+                  rowSelectionModel={selectionModel}
+                  onRowSelectionModelChange={handleSelectionChange}
+                />
               </div>
             </div>
-          )}
-        </LoadingApi>
-      </div>
-    </DashboardPageWrapper>
+
+            <ErrorApiText
+              error={isApproveWithdrawalError || isRejectWithdrawalError}
+            />
+            <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
+              <LoaderButton
+                loading={isRejectWithdrawalLoading}
+                content={"Reject"}
+                variant={"outlined"}
+                onClick={handleReject}
+              />
+
+              <Button
+                variant="outlined"
+                className="py-2 px-8"
+                onClick={toggleConfirmModal}
+                disabled={
+                  withdrawalData?.txhash || selectionModel?.length
+                    ? false
+                    : true
+                }
+              >
+                Approve
+              </Button>
+            </div>
+          </div>
+        )}
+        <ErrorApiText error={isWithdrawalDetailsError} />
+      </LoadingApi>
+    </div>
   );
 };
 

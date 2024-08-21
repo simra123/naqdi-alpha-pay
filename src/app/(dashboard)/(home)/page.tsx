@@ -27,6 +27,7 @@ import {
   formatBalanceForUser,
 } from "@/utils/dataFormatters";
 import LoaderButton from "@/components/common/LoaderButton";
+import CustomTable from "@/components/common/CustomTable";
 
 const columns = [
   { field: "currency", headerName: "Currency", flex: 1 },
@@ -127,9 +128,8 @@ const Home = () => {
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-      
         const tableData = formatBalanceForUser(response?.result);
-       
+
         setBalance(tableData);
       },
     });
@@ -140,75 +140,79 @@ const Home = () => {
   }, []);
 
   return (
-    <DashboardPageWrapper>
+    <>
       <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} />
-      <div className="flex items-center justify-between mb-5 dark">
-        <h2 className="text-xl font-semibold">Dashboard</h2>
-        <div className="actions flex gap-3">
-          <button className="send" onClick={onSendTransaction}>
-            Send
-          </button>
-          <w3m-button />
-          <w3m-network-button />
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-10">
-        <div className="walletsList">
-          <div className="walletHeading flex justify-between items-center mb-[8px]">
-            <h3 className="text-[18px]">Crypto Wallets</h3>
-            <div className="flex gap-1">
-              <LoaderButton
-                content={<Sync />}
-                loading={isBalanceLoading}
-                onClick={getBalances}
-              />
-              <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-                <Button
-                  className="transparent !w-auto"
-                  endIcon={<Add />}
-                  onClick={handleDepoist}
-                >
-                  Depoist Crypto
-                </Button>
-              </RenderRoleBased>
-            </div>
-          </div>
-          <ErrorApiText error={isBalanceError} />
 
-          <LoadingApi loading={isBalanceLoading}>
-            <DataGrid
-              rows={balance}
-              columns={columns}
-              hideFooter
-              className="primary-color"
-              autoHeight
-            />
-          </LoadingApi>
-        </div>
-        <div className="walletsList">
-          <div className="walletHeading flex justify-between items-center mb-[8px]">
-            <h3 className="text-[18px]">Fiat Wallets</h3>
-            <div className="flex gap-1">
-              <Button className="transparent !w-auto">
-                <Sync />
-              </Button>
-              <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-                <Button className="transparent !w-auto" endIcon={<Add />}>
-                  Depoist Fiat
-                </Button>
-              </RenderRoleBased>
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+        Alphaspay Dashboard
+      </h3>
+
+      <div>
+        {/* <LoadingApi loading={isBalanceLoading}> */}
+        <CustomTable
+          columns={columns}
+          rows={balance}
+          initialPageSize={10}
+          actions={
+            <div className="flex justify-between items-center mb-4">
+              <h4 className="text-p122 text-black-100 font-semibold">
+                Crypto Wallets
+              </h4>
+
+              <div className="flex items-center gap-2">
+                <LoaderButton
+                  content={"Reload"}
+                  className="px-4"
+                  loading={isBalanceLoading}
+                  onClick={getBalances}
+                  variant="outlined"
+                />
+                <LoaderButton
+                  content={"Deposit Crypto"}
+                  className="px-4"
+                  variant="outlined"
+                  onClick={handleDepoist}
+                />
+              </div>
             </div>
-          </div>
-          <DataGrid
-            rows={fiat}
-            columns={fiatCols}
-            className="primary-color"
-            hideFooter
-            autoHeight
-          />
-        </div>
+          }
+        />
+        {/* </LoadingApi> */}
+        <ErrorApiText error={isBalanceError} />
       </div>
-    </DashboardPageWrapper>
+
+      {/* <div>
+        
+          <CustomTable
+            columns={fiatCols}
+            rows={fiat}
+            actions={
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="text-p122 text-black-100 font-semibold">
+                  Crypto Wallets
+                </h4>
+
+                <div className="flex items-center gap-2">
+                  <LoaderButton
+                    content={"Reload"}
+                    className="px-4"
+                    loading={isBalanceLoading}
+                    onClick={getBalances}
+                    variant="outlined"
+                  />
+                  <LoaderButton
+                    content={"Deposit Crypto"}
+                    className="px-4"
+                    variant="outlined"
+                  />
+                </div>
+              </div>
+            }
+          />
+        
+         <ErrorApiText error={isBalanceError} /> 
+      </div> */}
+    </>
   );
 };
 

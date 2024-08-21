@@ -63,6 +63,7 @@ module.exports = {
         h4: ["26px", "1.2"],
         h5: ["24px", "1.2"],
         p120: ["20px", "1.5"],
+        p122: ["22px", "1.5"],
         p16: ["16px", "1.5"],
         caption: ["14px", "1.5"],
         subtitle: ["12px", "1.2"],
@@ -158,6 +159,12 @@ module.exports = {
         red: {
           "error-dark": "#B00020",
           chip: "#AC0606",
+        },
+        yellow: {
+          "light": "#AC8B06",
+          "dull": "#8E7200",
+          "chip-dull": "#f8f7f0",
+          "chip-light": "#FFFCF1",
         },
         green: {
           chip: "#29824C",

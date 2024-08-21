@@ -23,6 +23,8 @@ interface TableProps {
   csv?: { loading: boolean; error?: string | boolean; handler: () => void };
   pdf?: { loading: boolean; error?: string | boolean; handler: () => void };
   Filters?: any;
+  actions?: any;
+  pagination?: boolean;
 }
 
 const CustomTable = ({
@@ -34,6 +36,8 @@ const CustomTable = ({
   csv,
   pdf,
   Filters,
+  actions,
+  pagination,
 }: TableProps) => {
   const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -130,53 +134,63 @@ const CustomTable = ({
 
   return (
     <div
-      className="rounded-medium flex flex-col justify-between bg-white p-6 min-h-[calc(100vh-240px)]"
+      className={`rounded-medium flex flex-col justify-between bg-white p-6 ${
+        pagination ? "min-h-[calc(100vh-240px)]" : 'pb-12'
+      } `}
       ref={tableRef}
     >
       <div>
         {/* Table Actions defined here */}
 
-        <div className="flex items-center justify-between mb-6">
-          <div className="left-actions flex items-center gap-3">
-            {pdf?.handler && (
-              <LoaderButton
-                content={"Export PDF"}
-                variant={"outlined"}
-                onClick={pdf.handler}
-                loading={pdf.loading}
-              />
-            )}
-            {csv?.handler && (
-              <LoaderButton
-                content={"Export CSV"}
-                variant={"outlined"}
-                onClick={csv.handler}
-                loading={csv.loading}
-              />
-            )}
-          </div>
-          <div className="right-actions flex items-center gap-3">
-            <IconField
-              onChange={(event) => setSearchQuery(event.target.value)}
-              value={searchQuery}
-              icon={Search}
-              wrapperClassName="!mb-0 !w-[250px] max-w-full"
-              inputClassName="py-3"
-            />
-            <div className="relative">
-              <button
-                onClick={() => setFiltersOpen(!filtersOpen)}
-                className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
-              >
-                <Tune />
-              </button>
-
-              {Filters && filtersOpen && (
-                <Filters data={rows} setData={setCurrentRows} />
+        {!actions ? (
+          <div className="flex items-center justify-between mb-6">
+            <div className="left-actions flex items-center gap-3">
+              {pdf?.handler && (
+                <LoaderButton
+                  content={"Export PDF"}
+                  variant={"outlined"}
+                  onClick={pdf.handler}
+                  loading={pdf.loading}
+                />
+              )}
+              {csv?.handler && (
+                <LoaderButton
+                  content={"Export CSV"}
+                  variant={"outlined"}
+                  onClick={csv.handler}
+                  loading={csv.loading}
+                />
               )}
             </div>
+            <div className="right-actions flex items-center gap-3">
+              <IconField
+                onChange={(event) => setSearchQuery(event.target.value)}
+                value={searchQuery}
+                icon={Search}
+                wrapperClassName="!mb-0 !w-[250px] max-w-full"
+                inputClassName="py-3"
+              />
+              <div className="relative">
+                <button
+                  onClick={() => setFiltersOpen(!filtersOpen)}
+                  className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
+                >
+                  <Tune />
+                </button>
+
+                {Filters && (
+                  <Filters
+                    data={rows}
+                    setData={setCurrentRows}
+                    isOpen={filtersOpen}
+                  />
+                )}
+              </div>
+            </div>
           </div>
-        </div>
+        ) : (
+          actions
+        )}
 
         <div>
           {/* Table Headers Below */}
@@ -244,13 +258,15 @@ const CustomTable = ({
           </div>
         </div>
       </div>
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onChangePage={handleChangePage}
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-      />
+      {pagination && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onChangePage={handleChangePage}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+        />
+      )}
     </div>
   );
 };

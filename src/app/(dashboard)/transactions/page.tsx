@@ -18,6 +18,7 @@ import {
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
+import Chip from "@/components/common/Chip";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -40,7 +41,7 @@ const transactionsList_table_columns = [
     headerName: "Status",
     sortable: true,
     dataValidator: (value) => {
-      return <TransactionStatusChip status={value} />;
+      return <Chip status={value} />;
     },
   },
 ];
@@ -60,7 +61,7 @@ const transactionsList_Admin_table_columns = [
     headerName: "Status",
     sortable: true,
     dataValidator: (value) => {
-      return <TransactionStatusChip status={value} />;
+      return <Chip status={value} />;
     },
   },
 ];
@@ -145,24 +146,3 @@ const Transactions = () => {
 };
 
 export default Transactions;
-
-const TransactionStatusChip = ({ status }) => {
-  let statusColor: string, statusBg: string;
-
-  if (capitalize(status) == "Withdrawn") {
-    statusColor = "text-red-chip";
-    statusBg = "bg-chip-red";
-  }
-  if (capitalize(status) == "Complete") {
-    statusColor = "text-green-chip";
-    statusBg = "bg-chip-green";
-  }
-
-  return (
-    <p
-      className={`${statusColor} ${statusBg}  p-2 min-w-20 max-w-24 text-center text-[14px] font-semibold px-3 rounded-medium`}
-    >
-      {capitalize(status)}
-    </p>
-  );
-};

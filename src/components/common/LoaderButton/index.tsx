@@ -9,6 +9,7 @@ interface Props {
   content: any;
   disabled?: boolean;
   type?: "reset" | "submit";
+  className?: string;
 }
 
 const LoaderButton = ({
@@ -18,11 +19,12 @@ const LoaderButton = ({
   content,
   disabled,
   type,
+  className,
 }: Props) => {
   return (
     <div className="flex justify-center">
       <button
-        className={`transition-[width]  ease-in-out ${
+        className={`transition-[width]  ease-in-out ${className} ${
           disabled ? "!bg-disabled !bg-none !text-purple-100 font-medium" : ""
         } ${
           loading

@@ -9,7 +9,7 @@ type Props = {
 
 const Details = ({ Icon, label, value }: Props) => {
   return (
-    <div className="gap-3 flex items-center p-2 overflow-hidden text-nowrap">
+    <div className="gap-3 flex items-center p-2 overflow-hidden text-nowrap max-w-[80%]">
       <div className="text-purple-100 bg-detail-circle w-[42px] h-[42px] flex items-center justify-center rounded-full p-2">
         <Icon />
       </div>
