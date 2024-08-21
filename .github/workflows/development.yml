@@ -14,15 +14,6 @@ jobs:
           - development
 
     steps:
-      - name: Send start notification to Slack
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          REPO_NAME: naqdi/naqdi-crm
-        run: |
-          hashcommit=$(echo "$GITHUB_SHA" | cut -c1-8)
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"The GitHub Actions pipeline has started! Repository: ${REPO_NAME}, Branch: ${BRANCH_NAME}, Commit: <https://github.com/naqdi/naqdi-crm/commit/${GITHUB_SHA}|${hashcommit}>\"}" $SLACK_WEBHOOK_URL
       - name: Start CodeBuild
         run: |
           error_exit()
@@ -74,12 +65,3 @@ jobs:
           kubectl apply -f deployment.yaml
           echo "deployed"
           sleep 20
-      - name: Send start notification to Slack
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-          REPO_NAME: naqdi/naqdi-crm
-        run: |
-          hashcommit=$(echo "$GITHUB_SHA" | cut -c1-8)
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          echo "BRANCH_NAME=${BRANCH_NAME}" >> $GITHUB_ENV
-          curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"The GitHub Actions pipeline completed! Repository: ${REPO_NAME}, Branch: ${BRANCH_NAME}, Commit: <https://github.com/naqdi/naqdi-crm/commit/${GITHUB_SHA}|${hashcommit}>\"}" $SLACK_WEBHOOK_URL
