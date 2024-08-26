@@ -1,6 +1,6 @@
 import FileHiddenButton from "@/components/common/FileHiddenButton";
 import FormSection from "@/components/common/FormSection";
-import RadioButton from "@/components/common/RadioButton";
+import RadioButton from "@/components/common/RadioButton/LabelRadioButton";
 import SelectBox from "@/components/common/SelectBox";
 import { TextField } from "@mui/material";
 import React from "react";

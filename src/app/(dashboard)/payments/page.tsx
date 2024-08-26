@@ -140,6 +140,7 @@ const Payments = () => {
             rowClickHandler={(row: any) =>
               router.push(`payments/details/${row?.id}`)
             }
+            pagination
           />
         </LoadingApi>
         <ErrorApiText error={isPaymentError} />

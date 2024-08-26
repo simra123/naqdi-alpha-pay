@@ -4,7 +4,7 @@ import { TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import SelectBox from "@/components/common/SelectBox";
 import FormSection from "@/components/common/FormSection";
-import RadioButton from "@/components/common/RadioButton";
+import RadioButton from "@/components/common/RadioButton/LabelRadioButton";
 
 const Step1 = ({ values, handleChange, validateField, errors, countries }) => {
   const addressProofRef = useRef();

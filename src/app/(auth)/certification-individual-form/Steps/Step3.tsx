@@ -1,5 +1,5 @@
 import FormSection from "@/components/common/FormSection";
-import RadioButton from "@/components/common/RadioButton";
+import RadioButton from "@/components/common/RadioButton/LabelRadioButton";
 import React from "react";
 
 const Step3 = ({ values, errors, validateField, handleChange }) => {

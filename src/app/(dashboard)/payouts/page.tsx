@@ -12,6 +12,8 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { formatPayouts } from "@/utils/dataFormatters";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
+import LoaderButton from "@/components/common/LoaderButton";
+import CreatePayoutModal from "@/components/common/CreatePayoutModal";
 
 const payoutsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -33,6 +35,8 @@ const payoutsList_table_columns = [
 const Payouts = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
+
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const [payoutsList, setpayoutsList] = useState([]);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
@@ -60,12 +64,32 @@ const Payouts = () => {
     });
   };
 
+  const toggleCreateModal = () => {
+    setIsCreateOpen(!isCreateOpen);
+  };
+
   useEffect(() => {
     getAllPayouts();
   }, []);
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">Payouts</h3>
+          <CreatePayoutModal
+        isOpen={isCreateOpen}
+        toggleHandler={toggleCreateModal}
+        refreshHandler={getAllPayouts}
+      />
+          <div className="flex items-center justify-between mb-8">
+        <h3 className="text-h3 font-semibold text-blackGrey-100">
+          Payouts
+        </h3>
+
+        <LoaderButton
+          content={"New Payout"}
+          className="px-16"
+          variant="contained"
+          onClick={toggleCreateModal}
+        />
+      </div>
 
       <LoadingApi loading={isPayoutsListLoading}>
         <CustomTable
@@ -81,6 +105,7 @@ const Payouts = () => {
           rowClickHandler={(row: any) =>
             router.push(`/payouts/details/${row?.id}`)
           }
+          pagination
         />
 
         <ErrorApiText error={isPayoutsListError} />

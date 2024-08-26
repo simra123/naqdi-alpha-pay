@@ -137,6 +137,7 @@ const Transactions = () => {
           rowClickHandler={(row: any) =>
             router.push(`/transactions/details/${row?.id}`)
           }
+          pagination
         />
 
         <ErrorApiText error={isTransactionsError} />

@@ -5,7 +5,6 @@ const _register = {
     .required("First name is Required")
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
-
   lastName: Yup.string()
     .required("Last name is required")
     .min(2, "Minimum 2 letters required")
@@ -29,9 +28,7 @@ const _register = {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&./]{8,}$/,
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ),
-  confirmPassword: Yup.string()
-    .required("Please retype your password.")
-    .oneOf([Yup.ref("password")], "Your passwords do not match."),
+
   captcha: Yup.string().required("Please verify by checking the captcha"),
 };
 
