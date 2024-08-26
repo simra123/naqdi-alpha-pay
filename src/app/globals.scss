@@ -135,10 +135,53 @@
 /* Style the checkmark/indicator */
 .custom-checkbox .checkmark:after {
   left: 7.5px;
-  top: 3px;
+  top: 3.5px;
   width: 5px;
   height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+.custom-radio {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.custom-radio input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid;
+  @apply border-purple-100;
+  border-radius: 50%;
+  outline: none;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.custom-radio input[type="radio"]::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  @apply bg-purple-100;
+  border-radius: 50%;
+  display: none;
+  position: absolute;
+}
+
+.custom-radio input[type="radio"]:checked::before {
+  display: block;
+}
+
+.radio-label {
+  font-size: 16px;
+  @apply font-medium;
+  @apply text-black-100;
 }

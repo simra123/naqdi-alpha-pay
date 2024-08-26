@@ -1,10 +1,14 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@mui/material";
-import { Sync } from "@mui/icons-material";
-import { DataGrid } from "@mui/x-data-grid";
+
 import { profilesList_table_columns } from "./columns";
+import LoadingApi from "@/components/common/LoadindApi";
+import CustomTable from "@/components/common/CustomTable";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import { callApiHook, downloadCSV } from "@/utils/apifuncs";
+import { generateCSVApi } from "@/services/common";
+import { useApi } from "@/hooks/useApi";
 
 const rows = [
   {
@@ -14,46 +18,54 @@ const rows = [
     webhookUrl: "https://example.com/webhook",
     currencyConfiguration: "USD",
   },
+  {
+    id: 2,
+    createdAt: "2024-04-18",
+    profileName: "Profile A",
+    webhookUrl: "https://example.com/webhook",
+    currencyConfiguration: "USD",
+  },
 ];
 
 const Profiles = () => {
   const router = useRouter();
+
+  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+
+  const ExportCSVHandler = async () => {
+    await callApiHook({
+      apiCall: callCSVApi(generateCSVApi(rows)),
+      successCallBack: (response: any) => {
+        downloadCSV(response, "profiles.csv");
+      },
+    });
+  };
+
   return (
     <>
-      <div className="data-grid-container">
-        <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Profiles</h2>
-          <div className="actions flex gap-3">
-            <Button variant="outlined" color="primary">
-              <Sync />
-            </Button>
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+        Profiles
+      </h3>
 
-            <Button variant="text" color="primary" disabled>
-              New Profile
-            </Button>
-          </div>
-        </div>
-
-        <DataGrid
-          rows={rows}
+      <LoadingApi loading={false}>
+        <CustomTable
           columns={profilesList_table_columns}
-          className="border-t-0 primary-color font-semibold"
-          sx={{
-            ".MuiDataGrid-overlayWrapper": {
-              padding: "25px",
-            },
-            ".MuiDataGrid-overlayWrapperInner": {
-              height: "10px !important",
-            },
+          // Filters={Filters}
+          rows={rows}
+          csv={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+            error: isCSVError,
           }}
-          onRowClick={(params) => {
-            
-            router.push(`/profiles/details/${params?.row?.id}`);
-          }}
-          sortingOrder={["asc", "desc"]}
+          initialPageSize={10}
+          rowClickHandler={(row: any) =>
+            router.push(`/profiles/details/${row?.id}`)
+          }
           pagination
         />
-      </div>
+
+        <ErrorApiText error={false} />
+      </LoadingApi>
     </>
   );
 };
