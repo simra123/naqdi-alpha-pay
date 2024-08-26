@@ -125,6 +125,7 @@ const Withdrawals = () => {
           rowClickHandler={(row: any) =>
             router.push(`/withdrawals/details/${row?.id}`)
           }
+          pagination
         />
 
         <ErrorApiText error={isWithdrawalsListError} />

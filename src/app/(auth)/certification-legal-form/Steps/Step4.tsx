@@ -1,7 +1,7 @@
 import React from "react";
 
 import FormSection from "@/components/common/FormSection";
-import RadioButton from "@/components/common/RadioButton";
+import RadioButton from "@/components/common/RadioButton/LabelRadioButton";
 import FormRadioTable from "@/components/common/FormRadioTable";
 import { TextField } from "@mui/material";
 

@@ -2,7 +2,7 @@ import React from "react";
 
 import { TextField } from "@mui/material";
 import FormSection from "@/components/common/FormSection";
-import RadioButton from "@/components/common/RadioButton";
+import RadioButton from "@/components/common/RadioButton/LabelRadioButton";
 import FileHiddenButton from "@/components/common/FileHiddenButton";
 
 const Step2 = ({ values, errors, handleChange, validateField }) => {

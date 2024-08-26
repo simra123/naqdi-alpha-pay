@@ -135,7 +135,7 @@ const CustomTable = ({
   return (
     <div
       className={`rounded-medium flex flex-col justify-between bg-white p-6 ${
-        pagination ? "min-h-[calc(100vh-240px)]" : 'pb-12'
+        pagination ? "min-h-[calc(100vh-240px)]" : "pb-12"
       } `}
       ref={tableRef}
     >
@@ -249,7 +249,7 @@ const CustomTable = ({
                     style={{ width: columnWidths[colIndex] }}
                   >
                     {column.dataValidator
-                      ? column.dataValidator(row[column.field])
+                      ? column.dataValidator(row[column.field], row)
                       : row[column.field]}
                   </div>
                 ))}
