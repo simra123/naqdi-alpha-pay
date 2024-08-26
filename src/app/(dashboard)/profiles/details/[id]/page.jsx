@@ -1,95 +1,117 @@
 "use client";
-import React from "react";
-import { Button } from "@mui/material";
-import TransparentInput from "@/components/common/TransparentInput";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
-import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import RadioButton from "@/components/common/RadioButton";
-import CheckboxWithInput from "@/components/common/CheckBoxWithInput";
+import React, { useState } from "react";
+
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import Details from "@/components/common/Details";
+import { Mail } from "@mui/icons-material";
+import { LabelRadioButton } from "@/components/common/RadioButton";
+import Checkbox from "@/components/common/CheckBox";
 
 const ProfileDetails = ({ params }) => {
   const profileId = params?.id;
+  const [emailNotifications, setEmailNotifications] = useState("yes");
+
+  const handleEmailNotificationChange = (value) => {
+    setEmailNotifications(value);
+  };
+
+  const [checkedState, setCheckedState] = useState([true, true, true, true]);
+
+  const handleCheckboxChange = (index) => {
+    const updatedCheckedState = checkedState.map((item, i) =>
+      i === index ? !item : item
+    );
+    setCheckedState(updatedCheckedState);
+  };
+
+  const payout = {
+    id: 1,
+    profileName: "Alphaspay",
+    webhookURL: " www.webhook.com",
+    email: " aw708596@gmail.com",
+  };
 
   return (
-    <DashboardPageWrapper>
-      <div className="data-grid-container">
-        <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Profile Details</h2>
+    <div className="rounded-medium flex flex-col  bg-white p-6 shadow-sm">
+      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+        Profile Details
+      </h3>
+
+      <LoadingApi loading={false}>
+        <div className="res-4-grid py-6 mt-4 border-b border-light-gray">
+          <Details Icon={Mail} label="Profile ID" value={payout?.id} />
+          <Details
+            Icon={Mail}
+            label="Profile Name"
+            value={payout?.profileName}
+          />
+          <Details Icon={Mail} label="Webhook URL" value={payout?.webhookURL} />
+          <Details Icon={Mail} label="Webhook URL" value={payout?.email} />
         </div>
 
-        <div className="detailspage mt-6">
-          <div className="flex flex-col gap-4">
-            <DetailsWrapper title={"Profile ID"}>
-              <TransparentInput value={profileId} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Profile Name"} align>
-              <TransparentInput
-                label={`For internal use. Name profile for your own recognition.`}
-                value={`Alphaspay`}
-              />
-            </DetailsWrapper>
+        <h4 className="text-button font-semibold my-8">Profile Settings</h4>
 
-            <DetailsWrapper title={"Webhook URL"} align>
-              <TransparentInput
-                value={`www.webhook.com`}
-                label={"Optional. URL for payment notifications."}
-              />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Send Email Notifications"}>
-              <div className="flex gap-12">
-                <RadioButton
-                  value={"true"}
-                  name="notification"
-                  onChange={() => {}}
-                  label={`Yes`}
-                  selctedValue={"false"}
-                />
-                <RadioButton
-                  value={"false"}
-                  name="notification"
-                  onChange={() => {}}
-                  label={`No`}
-                  selctedValue={"false"}
-                />
-              </div>
-            </DetailsWrapper>
+        <div className="flex gap-x-24 gap-y-8 flex-wrap">
+          <LabelRadioButton
+            label={"Send Email Notifications"}
+            options={[
+              { value: "yes", label: "Yes" },
+              { value: "no", label: "No" },
+            ]}
+            selectedOption={emailNotifications}
+            handleChange={handleEmailNotificationChange}
+          />
 
-            <DetailsWrapper title={"Notification Emails"}>
-              <TransparentInput
-                value={`aw7086@gmail.com, ahmed@alphaspay.com, ahmed@example.com`}
-                label={
-                  "Email addresses for notifications. Specify multiple emails separated by a comma."
-                }
-              />
-            </DetailsWrapper>
-
-            <DetailsWrapper title={"Currency Confiuration"} col>
-              <div className="flex">
-                <span className="text-[12px] font-semibold min-w-24  text-gray-500">
-                  Currency
-                </span>
-                <span className="text-[12px] font-semibold  text-gray-500">
-                  Markup Profit %
-                </span>
-              </div>
-              <CheckboxWithInput label={"BTC"} />
-              <CheckboxWithInput label={"ETH"} />
-              <CheckboxWithInput label={"USDT"} />
-              <CheckboxWithInput label={"USDC"} />
-            </DetailsWrapper>
-
-            <div className="flex gap-2 justify-center max-w-[75%] mt-6">
-              <Button variant="text" className="py-2 px-8" disabled>
-                Edit
-              </Button>
-              <Button variant="outlined" className="py-2 px-8">
-                Delete
-              </Button>
-            </div>
+          <div className="flex flex-wrap gap-x-12 gap-y-3">
+            <span className="text-button text-black-100">
+              Currency Configuration
+            </span>
+            <table>
+              <thead>
+                <tr>
+                  <th className="pr-8 text-gray-600 font-medium">Currency</th>
+                  <th className="px-8  text-gray-600 font-medium">
+                    Markup Profit %
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {checkedState.map((checked, index) => (
+                  <tr key={index}>
+                    <td className="">
+                      <div className="flex items-center relative">
+                        <label className="custom-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => handleCheckboxChange(index)}
+                          />
+                          <span className="checkmark"></span>
+                          <span className="ml-8 text-[18px]">BTC</span>
+                        </label>
+                      </div>
+                    </td>
+                    <td className="py-2 text-gray-700 text-center">1</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </DashboardPageWrapper>
+
+        <div className="flex gap-4 items-center mt-20 flex-wrap">
+          <button className="border-0 py-3 text-center text-white bg-red-button rounded-medium w-56 ">
+            Delete
+          </button>
+          <button className="border-0 py-3 text-center text-white bg-green-button rounded-medium w-56 ">
+            Edit
+          </button>
+        </div>
+
+        <ErrorApiText error={false} />
+      </LoadingApi>
+    </div>
   );
 };
 

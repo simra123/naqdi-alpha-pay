@@ -3,7 +3,7 @@ import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
 
 interface Props {
-  label?: string;
+  label?: string | any;
   placeholder?: string;
   icon?: any;
   wrapperClassName?: string;

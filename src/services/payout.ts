@@ -7,7 +7,7 @@ export const createPayoutRequestApi = (data: {
   account_title: string;
   amount: string;
   standard?: string;
-  token: number | string;
+  token?: string;
 }) => {
   return () => api.post(`payouts/create`, data);
 };

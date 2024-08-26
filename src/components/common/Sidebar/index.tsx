@@ -200,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         <div className="border-t-[1px] flex gap-3 flex-col border-placeholder-gray pt-7 pb-5 px-2">
           <div
             className={`flex gap-2 navLink items-center`}
-            onClick={() => console.log("hello")}
+            onClick={() => router.push("/support")}
           >
             <div>
               <Help />
