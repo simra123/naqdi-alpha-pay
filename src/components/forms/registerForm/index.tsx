@@ -84,7 +84,7 @@ const IndividualForm = ({ activeForm }) => {
       password: values?.password,
       confirm_password: values?.confirmPassword,
       user_type: activeForm,
-      role: "USER",
+      // role: "USER",
     };
 
     const legalEntityData = {

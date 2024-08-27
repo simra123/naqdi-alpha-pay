@@ -70,12 +70,7 @@ const nav_items = [
     path: "/payouts",
     roles: [Role.ADMIN, Role.USER],
   },
-  {
-    name: "Profiles",
-    icon: <People />,
-    path: "/profiles",
-    roles: [Role.USER],
-  },
+
   {
     name: "Settings",
     icon: <Settings />,
