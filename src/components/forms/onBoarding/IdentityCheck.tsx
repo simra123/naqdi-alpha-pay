@@ -67,8 +67,8 @@ const IdentityCheck = () => {
     setValues({
       documentFormat: user?.userDetails?.file_type,
       document: {
-        front: await urlToFile(user?.userDetails?.front_image),
-        back: await urlToFile(user?.userDetails?.back_image),
+        front: user?.userDetails?.front_image,
+        back: user?.userDetails?.back_image,
       },
       country: user?.userDetails?.country,
     });
@@ -103,6 +103,16 @@ const IdentityCheck = () => {
   };
   const onSubmitError = () => {
     window.scrollTo(0, 500);
+  };
+
+  const clearImagesHandler = () => {
+    setValues((pre) => ({
+      ...pre,
+      document: {
+        front: null,
+        back: null,
+      },
+    }));
   };
 
   const handleFormatChange = (format) => () => {
@@ -250,6 +260,15 @@ const IdentityCheck = () => {
                   )}
                 </div>
               </div>
+              {(values?.document?.front || values?.document?.back) && (
+                <div className="mt-4 max-w-[220px]">
+                  <LoaderButton
+                    content={"Clear Images"}
+                    variant={"outlined"}
+                    onClick={clearImagesHandler}
+                  />
+                </div>
+              )}
 
               {errors.document && (
                 <div className="error_text">{errors?.document}</div>

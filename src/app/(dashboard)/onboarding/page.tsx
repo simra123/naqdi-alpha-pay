@@ -16,6 +16,7 @@ import "./onboarding.scss";
 
 const Onboarding = () => {
   const dipatch = useDispatch();
+  const user = useSelector((state: any) => state.user.data?.userDetails);
   const currentStep = useSelector(
     (state: any) => state.onboarding.current_step
   );
@@ -34,7 +35,7 @@ const Onboarding = () => {
     return currentStep === stepName && <FormComponent />;
   };
 
-  console.log(currentStep);
+  console.log(user);
 
   return (
     <>
@@ -47,6 +48,7 @@ const Onboarding = () => {
           className={
             "px-4 py-3 header_step_btn flex-1" + returnActiveStep(STEPS.PROFILE)
           }
+          disabled={user}
           onClick={handleStepChange(STEPS.PROFILE)}
         >
           <div
@@ -62,7 +64,7 @@ const Onboarding = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.PHONEVALIDATION)
           }
-          disabled={disabledSteps[STEPS.PHONEVALIDATION]}
+          disabled={disabledSteps[STEPS.PHONEVALIDATION] || user?.phone_number}
           onClick={handleStepChange(STEPS.PHONEVALIDATION)}
         >
           <div
@@ -78,7 +80,7 @@ const Onboarding = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.MFASETUP)
           }
-          disabled={disabledSteps[STEPS.MFASETUP]}
+          disabled={disabledSteps[STEPS.MFASETUP] || user?.mfa}
           onClick={handleStepChange(STEPS.MFASETUP)}
         >
           <div
@@ -95,7 +97,11 @@ const Onboarding = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.FEESETUP)
           }
-          disabled={disabledSteps[STEPS.FEESETUP]}
+          disabled={
+            disabledSteps[STEPS.FEESETUP] ||
+            user?.client_fees ||
+            user?.merchant_fees
+          }
           onClick={handleStepChange(STEPS.FEESETUP)}
         >
           <div
@@ -112,7 +118,7 @@ const Onboarding = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.IDENTITYCHECK)
           }
-          disabled={disabledSteps[STEPS.IDENTITYCHECK]}
+          disabled={disabledSteps[STEPS.IDENTITYCHECK] || user?.kyc_approved}
           onClick={handleStepChange(STEPS.IDENTITYCHECK)}
         >
           <div
@@ -128,7 +134,7 @@ const Onboarding = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.KYCAPPROVAL)
           }
-          disabled={disabledSteps[STEPS.KYCAPPROVAL]}
+          disabled={disabledSteps[STEPS.KYCAPPROVAL] || user?.kyc_approved}
           onClick={handleStepChange(STEPS.KYCAPPROVAL)}
         >
           <div
@@ -144,7 +150,7 @@ const Onboarding = () => {
             "px-4 py-3 header_step_btn  flex-1" +
             returnActiveStep(STEPS.FEESCHEDULE)
           }
-          disabled={disabledSteps[STEPS.FEESCHEDULE]}
+          disabled={disabledSteps[STEPS.FEESCHEDULE] || user?.fees}
           onClick={handleStepChange(STEPS.FEESCHEDULE)}
         >
           <div

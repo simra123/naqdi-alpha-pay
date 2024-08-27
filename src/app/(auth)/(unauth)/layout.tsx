@@ -12,7 +12,7 @@ const layout = ({ children }) => {
     return <LoadingScreen/>
   }
   if (isAuthenticated) {
-    return router.push("/main/home");
+    return router.push("/");
   }
   return children;
 };

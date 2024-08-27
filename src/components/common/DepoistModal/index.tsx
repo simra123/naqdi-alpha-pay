@@ -105,7 +105,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   return (
     <Modal isOpen={isOpen}>
       <div className="modal_content_wrapper bg-white p-8 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-xl font-bold mb-4">Add Withdrawal</h2>
+        <h2 className="text-xl font-bold mb-4">Desposit</h2>
 
         <IconSelectBox
           label="Select a Blockchain"
