@@ -133,6 +133,17 @@ const PhoneValidation = () => {
               )}
             </div>
             <ErrorApiText error={isPhoneError} />
+
+            {!showCode && (
+              <div className="mt-12 max-w-[360px]">
+                <LoaderButton
+                  content={"Send Code"}
+                  type="submit"
+                  variant={"contained"}
+                />
+              </div>
+            )}
+
             {showCode && (
               <p className="text-black-100 mt-6">
                 An SMS was sent to the mobile phone number you entered. Please

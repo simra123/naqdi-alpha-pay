@@ -5,12 +5,9 @@ import Details from "@/components/common/Details";
 import { Mail } from "@mui/icons-material";
 
 const permissionsList = [
-  "Api Keys",
+  "Integrations",
   "Payments",
   "Payouts",
-  "Profiles",
-  "Settings",
-  "Transactions",
   "Users",
   "Withdrawals",
 ];
@@ -18,12 +15,9 @@ const permissionsList = [
 const UserDetails = ({ params }) => {
   const userID = params?.id;
   const [permissions, setPermissions] = useState({
-    apiKeys: "none",
+    integrations: "none",
     payments: "none",
     payouts: "none",
-    profiles: "none",
-    settings: "none",
-    transactions: "none",
     users: "none",
     withdrawals: "none",
   });

@@ -45,17 +45,15 @@ const CustomTable = ({
   const [currentRows, setCurrentRows] = useState(rows);
   const [sortConfig, setSortConfig] = useState(null);
   const [pageSize, setPageSize] = useState(initialPageSize);
-  const [columnWidths, setColumnWidths] = useState([]);
+  const [columnWidths, setColumnWidths]: any = useState();
   const tableRef = useRef(null);
   const totalPages = Math.ceil(rows.length / pageSize);
 
   useEffect(() => {
     if (equalColumns) {
-      const tableWidth = tableRef.current?.offsetWidth - 50 || 0;
-      setColumnWidths(columns.map(() => tableWidth / columns.length));
-      // setColumnWidths(columns.map(() => `${100 / columns.length}%`));
+      setColumnWidths(`${100 / columns.length}%`);
     } else {
-      setColumnWidths(columns.map(() => "auto"));
+      setColumnWidths("auto");
     }
   }, [columns, equalColumns]);
 
@@ -109,27 +107,6 @@ const CustomTable = ({
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
-  };
-
-  const handleMouseDown = (index, e) => {
-    e.preventDefault();
-    const startX = e.clientX;
-    const startWidth = columnWidths[index];
-
-    const handleMouseMove = (e) => {
-      const newWidth = Math.max(startWidth + (e.clientX - startX), 50); // Minimum width
-      setColumnWidths((prev) =>
-        prev.map((width, i) => (i === index ? newWidth : width))
-      );
-    };
-
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
   };
 
   return (
@@ -191,73 +168,65 @@ const CustomTable = ({
         ) : (
           actions
         )}
-
-        <div>
-          {/* Table Headers Below */}
-
-          <div className="text-gray-700 font-medium  bg-table-header flex w-full">
-            {columns.map((column, index) => (
-              <div
-                key={column.field}
-                className="flex items-center"
-                style={{ width: columnWidths[index] }}
-              >
-                <div
-                  className="flex-1 py-3 px-6 flex  items-center cursor-pointer text-nowrap text-ellipsis overflow-hidden"
-                  onClick={() => handleSort(column)}
-                >
-                  <span className="text-nowrap text-ellipsis overflow-hidden">
-                    {column.headerName}
-                  </span>
-
-                  {sortConfig?.key === column.field && (
-                    <span className="flex items-center ml-2">
-                      {sortConfig.direction === "ascending" ? (
-                        <ArrowUpward />
-                      ) : (
-                        <ArrowDownward />
-                      )}
-                    </span>
-                  )}
-                </div>
-
-                <div
-                  className="resize-handle cursor-col-resize"
-                  onMouseDown={(e) => handleMouseDown(index, e)}
-                  style={{ height: "100%", width: "5px", cursor: "col-resize" }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Rows Mapped Below */}
-          <div>
-            {currentRows.map((row, index) => (
-              // Row Div
-              <div
-                key={index}
-                onClick={() => rowClickHandler(row)}
-                className="bg-white border-b hover:bg-gray-50 flex cursor-pointer"
-              >
-                {/* Mapping Columns inside rows */}
-                {columns.map((column, colIndex) => (
-                  <div
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            {/* Table Headers Below */}
+            <thead className="text-gray-700 font-medium bg-table-header">
+              <tr>
+                {columns.map((column) => (
+                  <th
                     key={column.field}
-                    className={`${
-                      column.dataValidator ? "py-4" : "py-6"
-                    } px-6 font-semibold text-nowrap text-ellipsis overflow-hidden`}
-                    style={{ width: columnWidths[colIndex] }}
+                    style={{ width: columnWidths }}
+                    className="py-3 px-6 cursor-pointer text-left text-nowrap"
+                    onClick={() => handleSort(column)}
                   >
-                    {column.dataValidator
-                      ? column.dataValidator(row[column.field], row)
-                      : row[column.field]}
-                  </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-nowrap text-ellipsis overflow-hidden">
+                        {column.headerName}
+                      </span>
+
+                      {sortConfig?.key === column.field && (
+                        <span className="ml-2">
+                          {sortConfig.direction === "ascending" ? (
+                            <ArrowUpward />
+                          ) : (
+                            <ArrowDownward />
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </th>
                 ))}
-              </div>
-            ))}
-          </div>
+              </tr>
+            </thead>
+
+            {/* Rows Mapped Below */}
+            <tbody>
+              {currentRows.map((row, index) => (
+                <tr
+                  key={index}
+                  onClick={() => rowClickHandler(row)}
+                  className="bg-white border-b hover:bg-gray-50 cursor-pointer"
+                >
+                  {columns.map((column) => (
+                    <td
+                      key={column.field}
+                      className={`${
+                        column.dataValidator ? "py-4" : "py-6"
+                      } px-6 font-semibold text-nowrap text-ellipsis overflow-hidden`}
+                    >
+                      {column.dataValidator
+                        ? column.dataValidator(row[column.field], row)
+                        : row[column.field]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
+
       {pagination && (
         <Pagination
           currentPage={currentPage}

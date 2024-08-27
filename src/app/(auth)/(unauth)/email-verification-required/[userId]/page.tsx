@@ -35,10 +35,10 @@ const page = ({ params }) => {
   }, []);
 
   return (
-    <div className="mx-auto max-w-screen-md">
-      <Typography variant="h2" color="primary" className="text-center">
-        Email Verification
-      </Typography>
+    <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
+      <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-14">
+        Email Verification !
+      </h2>
 
       <div className="flex flex-col gap-5 mt-12 max-w-xl">
         {<ErrorApiText error={isVerificationError} />}
@@ -49,7 +49,7 @@ const page = ({ params }) => {
 
         <LoadingApi loading={isVerificationLoading || !rendered}>
           {!isVerificationError && (
-            <p className="color-primary">
+            <p className="text-green-chip">
               Congratulations, Your Email has been verified. Redirecting you to
               login shortly
             </p>
@@ -60,7 +60,7 @@ const page = ({ params }) => {
         <div className="text-center mt-14 pb-10">
           <button
             className="btn secondary-btn max-w-fit px-6 py-1"
-            onClick={() => router.push("/main")}
+            onClick={() => router.push("/email-verification-required")}
           >
             resend verification email
           </button>

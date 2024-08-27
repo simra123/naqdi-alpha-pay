@@ -53,11 +53,9 @@ const Support = () => {
       </div>
 
       <div className="flex gap-4 items-center mt-20 flex-wrap mb-8">
-        <LoaderButton
-          content="Contact Support"
-          variant="contained"
-          className="w-[310px] max-w-full"
-        />
+        <div className="max-w-full w-[310px]">
+          <LoaderButton content="Contact Support" variant="contained" />
+        </div>
       </div>
     </div>
   );
