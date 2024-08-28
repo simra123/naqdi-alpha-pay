@@ -22,6 +22,7 @@ import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import Loader from "@/components/common/Loader";
 import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
 
 const withdrawalsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -103,12 +104,14 @@ const Withdrawals = () => {
           Withdrawals
         </h3>
 
-        <LoaderButton
-          content={"New Withdrawal"}
-          className="px-16"
-          variant="contained"
-          onClick={toggleCreateModal}
-        />
+        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+          <LoaderButton
+            content={"New Withdrawal"}
+            className="px-16"
+            variant="contained"
+            onClick={toggleCreateModal}
+          />
+        </RenderRoleBased>
       </div>
 
       <LoadingApi loading={isWithdrawalsListLoading}>
