@@ -42,7 +42,7 @@ const CreatePayoutModal = ({
   const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
     useApi();
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
-  const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
+  const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [sourceOptions, setSourceOptions] = useState({
     filteredNets: [],
@@ -167,8 +167,10 @@ const CreatePayoutModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    getAlphasPayFee();
-  }, [data.amount]);
+    if (isOpen && data?.amount) {
+      getAlphasPayFee();
+    }
+  }, [data.amount, isOpen]);
 
   const handleInputChange = (event, name) => {
     const { value } = event.target;
@@ -311,7 +313,7 @@ const CreatePayoutModal = ({
             <div className="flex flex-col justify-end mt-4">
               <LoaderButton
                 type="submit"
-                content={`Create Withdrawal`}
+                content={`Create Payout`}
                 variant="contained"
                 onClick={handleCreatePayout}
                 loading={isCreatePayoutLoading}

@@ -37,44 +37,7 @@ import { useRouter } from "next/navigation";
 import moment from "moment";
 import { capitalize } from "@/utils/dataFormatters";
 import Details from "@/components/common/Details";
-
-const dummyRows = [
-  {
-    id: 1,
-    wallet_address: "0x4e1a5dfcB8D4e2c8eC7d14d3F3A6D4E5A1aB3C2b",
-    wallet_network: "Ethereum",
-    user_amount: 1.5,
-    total_amount: 100.0,
-  },
-  {
-    id: 2,
-    wallet_address: "0x3C6dA2dF1E5E4aD7d9F8B5c6bA7cE9f6B2dA8eF3",
-    wallet_network: "Binance Smart Chain",
-    user_amount: 2.0,
-    total_amount: 200.0,
-  },
-  {
-    id: 3,
-    wallet_address: "0x9D8fA7dD2cA5dB3dA1f6eE7bF2E3fC8bE7fB4a2E",
-    wallet_network: "Polygon",
-    user_amount: 3.2,
-    total_amount: 150.0,
-  },
-  {
-    id: 4,
-    wallet_address: "0x6bA3c5D1e7D9A1c2B3fE4fE7dE6dB4b9F3C4a9dA",
-    wallet_network: "Solana",
-    user_amount: 0.8,
-    total_amount: 250.0,
-  },
-  {
-    id: 5,
-    wallet_address: "0x7cC4eD2b9B5cF8aD4eE6aE7bE5A4D9f5F2eB6bC8",
-    wallet_network: "Avalanche",
-    user_amount: 1.1,
-    total_amount: 175.0,
-  },
-];
+import RenderRoleBased from "@/components/common/RenderRoleBased";
 
 const WithdrawalDetails = ({ params }) => {
   const user = useLocalStorage("user");
@@ -173,17 +136,21 @@ const WithdrawalDetails = ({ params }) => {
             id: transaction.id,
             wallet_address: transaction?.wallet?.address,
             wallet_network: capitalize(transaction?.wallet?.blockchain),
-            user_amount: transaction?.amount,
-            total_amount: transaction?.wallet?.amount,
+            user_amount: `${transaction?.amount} ${
+              transaction?.unit ? transaction?.unit : ""
+            }`,
+            total_amount: `${transaction?.wallet?.amount} ${
+              transaction?.unit ? transaction?.unit : ""
+            }`,
           })
         );
 
         const formattedWallets = response?.walletsWithUnit?.map((wallet) => ({
-          id: wallet.id,
+          id: wallet.id + wallet?.wallet_address,
           wallet_address: wallet.wallet_address,
           wallet_network: capitalize(wallet.blockchain),
-          user_amount: wallet.amount,
-          total_amount: wallet.amount, // Assuming total amount here refers to the same amount for wallets
+          user_amount: `${wallet.amount}  ${wallet?.unit ? wallet?.unit : ""}`,
+          total_amount: `${wallet.amount}  ${wallet?.unit ? wallet?.unit : ""}`, // Assuming total amount here refers to the same amount for wallets
         }));
 
         console.log(formattedTransactions, formattedWallets);
@@ -327,7 +294,7 @@ const WithdrawalDetails = ({ params }) => {
           </div>
         </>
 
-        {user?.role == Role.ADMIN && (
+        <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
           <div className="detailspage mt-6">
             <div className="flex flex-col gap-4">
               <div className="my-4 flex flex-col gap-4">
@@ -455,7 +422,8 @@ const WithdrawalDetails = ({ params }) => {
               </Button>
             </div>
           </div>
-        )}
+        </RenderRoleBased>
+
         <ErrorApiText error={isWithdrawalDetailsError} />
       </LoadingApi>
     </div>

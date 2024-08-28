@@ -39,7 +39,7 @@ const CreateWithdrawalModal = ({
   const [withdrawalFee, setWithdrawalFee] = useState(0);
   const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
-  const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
+  const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [sourceOptions, setSourceOptions] = useState({
     filteredNets: [],
@@ -159,8 +159,10 @@ const CreateWithdrawalModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    getAlphasPayFee();
-  }, [data.sourceAmount]);
+    if (data?.sourceAmount && isOpen) {
+      getAlphasPayFee();
+    }
+  }, [data.sourceAmount, isOpen]);
 
   const handleInputChange = (event, name) => {
     const { value } = event.target;
