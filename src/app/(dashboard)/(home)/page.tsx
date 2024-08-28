@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
+
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
 import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
 import { ConstantsUtil } from "@/constants/ConstantsUtil";
 import { EthersConstants } from "@/constants/EthersConstants";
-import { Button } from "@mui/material";
 import { Add, Sync } from "@mui/icons-material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
