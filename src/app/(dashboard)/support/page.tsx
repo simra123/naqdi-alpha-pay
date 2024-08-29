@@ -1,10 +1,8 @@
 "use client";
 
-import Details from "@/components/common/Details";
+import React, { useState } from "react";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import LoaderButton from "@/components/common/LoaderButton";
-import { Mail } from "@mui/icons-material";
-import React, { useState } from "react";
 
 const supportOptions = [
   { label: "Deposit Issue", value: "Deposit Issue" },

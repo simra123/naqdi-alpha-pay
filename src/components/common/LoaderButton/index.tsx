@@ -23,10 +23,7 @@ const LoaderButton = ({
   type,
   className,
 }: Props) => {
-
-
   const getVariantClasses = (variant: buttonVariants, loading: boolean) => {
-
     const disabledClasses = disabled
       ? "!bg-disabled !bg-none !text-purple-100 font-medium"
       : "";
@@ -38,13 +35,11 @@ const LoaderButton = ({
       : "";
 
     const variantClasses = {
-      contained: loading
-        ? ""
-        : "pink-gradient-button w-full",
+      contained: loading ? "" : "pink-gradient-button w-full",
       outlined: loading
         ? ""
-        : "bg-transparent border-purple-100 border hover:bg-purple-10 transition-all text-purple-100 p-3 px-8 rounded-medium text-input w-full",
-      text: loading ? "" : "bg-transparent text-purple-100 p-2",
+        : "bg-transparent border-purple-100 border hover:bg-purple-10 transition-all text-purple-100 sm:p-3 py-[6px] px-[6px] sm:px-8 rounded-small sm:rounded-medium text-[13px] sm:text-input w-full",
+      text: loading ? "!border-0" : "bg-transparent text-purple-100 p-2",
     };
 
     return `${disabledClasses} ${loadingClasses} ${variantClasses[variant]}`;
@@ -53,7 +48,10 @@ const LoaderButton = ({
   return (
     <div className="flex justify-center">
       <button
-        className={`transition-[width] ease-in-out ${getVariantClasses(variant, loading)} ${className}`}
+        className={`transition-[width] whitespace-nowrap ease-in-out ${getVariantClasses(
+          variant,
+          loading
+        )} ${className}`}
         onClick={onClick}
         disabled={disabled || loading}
         type={type}

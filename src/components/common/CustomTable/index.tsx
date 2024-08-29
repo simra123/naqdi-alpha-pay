@@ -111,8 +111,8 @@ const CustomTable = ({
 
   return (
     <div
-      className={`rounded-medium flex flex-col justify-between bg-white p-6 ${
-        pagination ? "min-h-[calc(100vh-240px)]" : "pb-12"
+      className={`rounded-medium flex flex-col justify-between shadow-sm bg-white py-6 px-4 sm:p-6 ${
+        pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
       } `}
       ref={tableRef}
     >
@@ -169,7 +169,7 @@ const CustomTable = ({
           actions
         )}
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-caption sm:text-p16">
             {/* Table Headers Below */}
             <thead className="text-gray-700 font-medium bg-table-header">
               <tr>
