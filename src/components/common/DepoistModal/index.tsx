@@ -104,8 +104,8 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white px-4 p-8 sm:px-8 rounded-md shadow-lg w-[547px] max-w-[90%]">
-        <h2 className="text-xl font-bold mb-4">Desposit</h2>
+      <div className="modal_content_wrapper bg-white px-6 p-8 sm:px-8 rounded-md shadow-lg w-[547px] max-w-[90%]">
+        <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
 
         <IconSelectBox
           label="Select a Blockchain"

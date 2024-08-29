@@ -66,7 +66,7 @@ const DashboardLayout = ({ children }) => {
           <div className=" md:pr-5">
             <Header navHandler={toggleSidebar} />
           </div>
-          <div className="max-h-[calc(100vh-170px)] md:pr-5">
+          <div className="md:max-h-[calc(100vh-170px)] md:overflow-y-auto md:pr-5">
             {children}
           </div>
         </div>

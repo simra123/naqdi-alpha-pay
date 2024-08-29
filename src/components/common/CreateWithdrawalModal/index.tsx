@@ -190,7 +190,7 @@ const CreateWithdrawalModal = ({
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
+      <div className="modal_content_wrapper bg-white p-6 md:p-10 rounded-md shadow-lg w-[547px] max-w-[90%] my-4">
         <h2 className="text-h3.5 font-semibold mb-4">Add Withdrawal</h2>
 
         <LoadingApi loading={isBalanceLoading}>
@@ -264,11 +264,12 @@ const CreateWithdrawalModal = ({
                   display: "flex",
                   gap: "1rem",
                   marginTop: "6px",
+                  flexWrap: "wrap",
                 }}
                 renderInput={(props) => (
                   <input
                     {...props}
-                    className="!w-10 md:!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                    className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
                   />
                 )}
                 onChange={(value) => setOtp(value)}

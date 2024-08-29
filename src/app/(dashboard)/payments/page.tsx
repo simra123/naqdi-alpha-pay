@@ -119,7 +119,7 @@ const Payments = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Payments
       </h3>
 

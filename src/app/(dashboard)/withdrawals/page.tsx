@@ -23,6 +23,7 @@ import Chip from "@/components/common/Chip";
 import Loader from "@/components/common/Loader";
 import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { Add } from "@mui/icons-material";
 
 const withdrawalsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -99,7 +100,7 @@ const Withdrawals = () => {
         refreshHandler={getAllWithdrawals}
       />
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">
           Withdrawals
         </h3>
@@ -113,6 +114,15 @@ const Withdrawals = () => {
           />
         </RenderRoleBased>
       </div>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <LoaderButton
+          content={<Add className="!text-h2"/>}
+          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
+          variant="contained"
+          onClick={toggleCreateModal}
+        />
+      </RenderRoleBased>
 
       <LoadingApi loading={isWithdrawalsListLoading}>
         <CustomTable

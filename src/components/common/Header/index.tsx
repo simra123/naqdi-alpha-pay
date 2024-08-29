@@ -33,7 +33,7 @@ const Header = ({ navHandler }) => {
   getHeaderName();
 
   return (
-    <div className="md:bg-white py-2 md:px-7 rounded-small mb-10">
+    <div className="md:bg-white py-2 md:px-7 rounded-small mb-4 md:mb-10">
       <div className="flex items-center gap-6 justify-between md:justify-end">
         <div className="items-center gap-3 flex md:hidden">
           <button

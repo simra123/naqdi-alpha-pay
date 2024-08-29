@@ -14,6 +14,8 @@ import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import LoaderButton from "@/components/common/LoaderButton";
 import CreatePayoutModal from "@/components/common/CreatePayoutModal";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { Add } from "@mui/icons-material";
 
 const payoutsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -73,15 +75,13 @@ const Payouts = () => {
   }, []);
   return (
     <>
-          <CreatePayoutModal
+      <CreatePayoutModal
         isOpen={isCreateOpen}
         toggleHandler={toggleCreateModal}
         refreshHandler={getAllPayouts}
       />
-          <div className="flex items-center justify-between mb-8">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">
-          Payouts
-        </h3>
+      <div className="items-center justify-between mb-8  hidden md:flex">
+        <h3 className="text-h3 font-semibold text-blackGrey-100">Payouts</h3>
 
         <LoaderButton
           content={"New Payout"}
@@ -90,6 +90,15 @@ const Payouts = () => {
           onClick={toggleCreateModal}
         />
       </div>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <LoaderButton
+          content={<Add className="!text-h2" />}
+          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
+          variant="contained"
+          onClick={toggleCreateModal}
+        />
+      </RenderRoleBased>
 
       <LoadingApi loading={isPayoutsListLoading}>
         <CustomTable
