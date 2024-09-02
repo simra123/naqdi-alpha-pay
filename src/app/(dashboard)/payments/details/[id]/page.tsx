@@ -63,7 +63,7 @@ const PaymentDetails = ({ params }) => {
 
       <ErrorApiText error={isPaymentError}>
         <LoadingApi loading={isPaymentLoading}>
-          <div className="res-4-grid py-6 mt-4">
+          <div className="res-2-grid py-6  mt-4">
             <Details
               Icon={Person}
               label="Blockchain"
@@ -79,6 +79,11 @@ const PaymentDetails = ({ params }) => {
               Icon={Mail}
               label="Wallet Address"
               value={payment?.wallet?.address}
+            />
+            <Details
+              Icon={Mail}
+              label="Sender Wallet Address"
+              value={payment?.paymentTransaction?.sender_address || "_"}
             />
           </div>
 
