@@ -10,6 +10,10 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { generateCSVApi } from "@/services/common";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { Role } from "@/constants/roles";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Add } from "@mui/icons-material";
 
 const rows = [
   {
@@ -24,6 +28,7 @@ const rows = [
 const Users = () => {
   const router = useRouter();
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+  const user = useLocalStorage('user')
 
   const ExportCSVHandler = async () => {
     await callApiHook({
@@ -35,7 +40,7 @@ const Users = () => {
   };
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
+      <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
 
         <LoaderButton
@@ -44,6 +49,15 @@ const Users = () => {
           variant="contained"
         />
       </div>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <LoaderButton
+          content={<Add className="!text-h2"/>}
+          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
+          variant="contained"
+          onClick={()=> console.log("In Development")}
+        />
+      </RenderRoleBased>
 
       <LoadingApi loading={false}>
         <CustomTable

@@ -12,6 +12,7 @@ const Authlayout = ({ children }) => {
   if (!loaded) {
     return <LoadingScreen />;
   }
+  
   if (isAuthenticated) {
     return router.push("/");
   }
