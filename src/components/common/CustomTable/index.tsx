@@ -25,19 +25,21 @@ interface TableProps {
   Filters?: any;
   actions?: any;
   pagination?: boolean;
+  columnClassName?: string;
 }
 
 const CustomTable = ({
   columns,
   rows,
   initialPageSize = 10,
-  equalColumns = true,
+  equalColumns,
   rowClickHandler,
   csv,
   pdf,
   Filters,
   actions,
   pagination,
+  columnClassName,
 }: TableProps) => {
   const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -182,8 +184,8 @@ const CustomTable = ({
                 {columns.map((column) => (
                   <th
                     key={column.field}
-                    style={{ width: columnWidths }}
-                    className="py-3 px-6 cursor-pointer text-left text-nowrap"
+                    style={{ width: equalColumns ? columnWidths : "auto" }}
+                    className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     onClick={() => handleSort(column)}
                   >
                     <div className="flex items-center justify-between">
@@ -219,7 +221,7 @@ const CustomTable = ({
                       key={column.field}
                       className={`${
                         column.dataValidator ? "py-4" : "py-6"
-                      } px-6 font-semibold text-nowrap text-ellipsis overflow-hidden`}
+                      } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     >
                       {column.dataValidator
                         ? column.dataValidator(row[column.field], row)

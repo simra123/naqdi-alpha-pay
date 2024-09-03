@@ -149,6 +149,7 @@ const Home = () => {
         {/* <LoadingApi loading={isBalanceLoading}> */}
         <CustomTable
           columns={columns}
+          equalColumns
           rows={balance}
           initialPageSize={10}
           actions={

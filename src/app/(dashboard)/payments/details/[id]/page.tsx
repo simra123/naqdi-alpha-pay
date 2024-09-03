@@ -13,6 +13,12 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
 import { CalendarMonth, Mail, Payment, Person } from "@mui/icons-material";
+import {
+  CalenderIcon,
+  FolderIcon,
+  PaymentIcon,
+  StatusIcon,
+} from "@/assets/Svgs";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -63,7 +69,11 @@ const PaymentDetails = ({ params }) => {
 
       <ErrorApiText error={isPaymentError}>
         <LoadingApi loading={isPaymentLoading}>
-          <div className="res-2-grid py-6  mt-4">
+          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+            <FolderIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          </div>
+          <div className="res-2-grid py-6">
             <Details
               Icon={Person}
               label="Blockchain"
@@ -87,9 +97,12 @@ const PaymentDetails = ({ params }) => {
             />
           </div>
 
-          <h4 className="text-button font-semibold mt-2">Dates</h4>
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <CalenderIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+          </div>
 
-          <div className="res-4-grid py-6 border-b border-light-gray">
+          <div className="res-2-grid py-6">
             <Details
               Icon={CalendarMonth}
               label="Created Date"
@@ -102,9 +115,12 @@ const PaymentDetails = ({ params }) => {
             />
           </div>
 
-          <h4 className="text-button font-semibold mt-6">Payments</h4>
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <PaymentIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">Payments</h5>
+          </div>
 
-          <div className="res-4-grid py-6 border-b border-light-gray">
+          <div className="res-2-grid py-6">
             <Details
               Icon={Payment}
               label="Payment Amount"
@@ -116,9 +132,13 @@ const PaymentDetails = ({ params }) => {
               value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
             />
           </div>
-          <h4 className="text-button font-semibold mt-6">Status</h4>
 
-          <div className="res-4-grid py-6">
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <StatusIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          </div>
+
+          <div className="res-2-grid py-6">
             <Details
               Icon={CalendarMonth}
               label="Paid Stauts"
@@ -137,7 +157,7 @@ const PaymentDetails = ({ params }) => {
 
           <h4 className="text-button font-semibold mb-5">Notes</h4>
 
-          <div className="border-b border-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-small bg-light-gray">
+          <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
             {payment?.notes}
           </div>
         </LoadingApi>

@@ -138,6 +138,7 @@ const Transactions = () => {
             router.push(`/transactions/details/${row?.id}`)
           }
           pagination
+          columnClassName="max-w-[200px]"
         />
 
         <ErrorApiText error={isTransactionsError} />

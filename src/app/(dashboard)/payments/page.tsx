@@ -153,6 +153,7 @@ const Payments = () => {
               router.push(`payments/details/${row?.id}`)
             }
             pagination
+            columnClassName="max-w-[250px]"
           />
         </LoadingApi>
         <ErrorApiText error={isPaymentError} />

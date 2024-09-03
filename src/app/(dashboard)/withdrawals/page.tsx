@@ -139,6 +139,7 @@ const Withdrawals = () => {
             router.push(`/withdrawals/details/${row?.id}`)
           }
           pagination
+          columnClassName="max-w-[200px]"
         />
 
         <ErrorApiText error={isWithdrawalsListError} />

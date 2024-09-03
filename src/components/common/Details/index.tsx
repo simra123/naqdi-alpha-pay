@@ -2,7 +2,7 @@ import { capitalize } from "@/utils/dataFormatters";
 import React from "react";
 
 type Props = {
-  Icon: any;
+  Icon?: any;
   value: string;
   label: string;
 };
@@ -26,8 +26,8 @@ const Details = ({ Icon, label, value }: Props) => {
 
     <div className="flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden">
       <span className="text-custom-caption-gray font-medium">{label}:</span>
-      <span className=" text-black-100 font-semibold text-ellipsis overflow-hidden">
-        {capitalize(value)}
+      <span className=" text-black-100 font-semibold text-ellipsis overflow-hidden capitalize">
+        {value}
       </span>
     </div>
   );

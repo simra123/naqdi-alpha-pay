@@ -1,7 +1,7 @@
 export const roundToPrecision = (number: number, precision: number) => {
-  console.log({ number, precision });
+  let numb = +number;
 
-  return parseFloat(number.toFixed(precision));
+  return parseFloat(numb.toFixed(precision));
 };
 
 export const clamp = (value: number, max: number, min: number = 0): string => {

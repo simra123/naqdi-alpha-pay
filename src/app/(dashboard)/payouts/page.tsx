@@ -24,6 +24,7 @@ const payoutsList_table_columns = [
   { field: "to_currency", headerName: "To Currency", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "account_title", headerName: "Account Title", sortable: true },
+  { field: "account_number", headerName: "Account Number", sortable: true },
   {
     field: "status",
     headerName: "Status",

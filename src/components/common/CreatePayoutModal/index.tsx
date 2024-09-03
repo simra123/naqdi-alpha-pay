@@ -22,6 +22,7 @@ import ErrorApiText from "../ErrorApiText";
 import OtpInput from "react-otp-input";
 import { createPayoutRequestApi } from "@/services/payout";
 import { fiatOptions } from "@/constants/fiat";
+import { Info } from "@mui/icons-material";
 
 interface Props {
   isOpen: boolean;
@@ -278,9 +279,22 @@ const CreatePayoutModal = ({
             />
 
             <div className="mt-2">
-              <label className="font-medium text-[15px] text-black-100">
-                Enter Code{" "}
-              </label>
+              <div className="flex gap-2 items-center">
+                <label className="block mb-2 font-medium">Enter Code</label>
+
+                <div className="relative flex items-center group">
+                  <Info className="text-blue-info mb-1 text-[18px]" />
+
+                  <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                    <div className="relative p-2">
+                      <p className="w-full text-center">
+                        Use your Google Autheticator code here
+                      </p>
+                      <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <OtpInput
                 numInputs={6}
                 containerStyle={{
