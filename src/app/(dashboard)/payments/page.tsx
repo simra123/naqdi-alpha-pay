@@ -33,14 +33,24 @@ const paymentsList_table_columns = [
   {
     field: "updatedAt",
     headerName: "Updated At",
-
+    filterable: false,
+    sortable: true,
+  },
+  // {
+  //   field: "senderAddress",
+  //   headerName: "Sender Wallet Address",
+  //   filterable: false,
+  //   sortable: true,
+  // },
+  {
+    field: "recieverAddress",
+    headerName: "Reciever Wallet Address",
     filterable: false,
     sortable: true,
   },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
-
     sortable: true,
   },
   {
@@ -90,6 +100,8 @@ const Payments = () => {
               updatedAt: moment(item?.updated_at).format(
                 "DD-MM-YYYY : hh:mm A"
               ),
+              senderAddress: item?.paymentTransaction?.sender_address,
+              recieverAddress: item?.wallet?.address,
               requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
               amountPaid: `${item?.payment_currency_amount} ${item?.payment_currency}`,
               paid: unpaidStatuses.some((status) => status == item?.status)
@@ -119,7 +131,7 @@ const Payments = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Payments
       </h3>
 
@@ -141,6 +153,7 @@ const Payments = () => {
               router.push(`payments/details/${row?.id}`)
             }
             pagination
+            columnClassName="max-w-[250px]"
           />
         </LoadingApi>
         <ErrorApiText error={isPaymentError} />

@@ -1,12 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
+
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
 import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
 import { ConstantsUtil } from "@/constants/ConstantsUtil";
 import { EthersConstants } from "@/constants/EthersConstants";
-import { Button } from "@mui/material";
 import { Add, Sync } from "@mui/icons-material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -143,7 +141,7 @@ const Home = () => {
     <>
       <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} />
 
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Alphaspay Dashboard
       </h3>
 
@@ -151,21 +149,30 @@ const Home = () => {
         {/* <LoadingApi loading={isBalanceLoading}> */}
         <CustomTable
           columns={columns}
+          equalColumns
           rows={balance}
+          loading={isBalanceLoading}
           initialPageSize={10}
           actions={
             <div className="flex justify-between items-center mb-4">
-              <h4 className="text-p122 text-black-100 font-semibold">
+              <h4 className="text-base sm:text-p122 text-black-100 font-semibold">
                 Crypto Wallets
               </h4>
 
               <div className="flex items-center gap-2">
                 <LoaderButton
                   content={"Reload"}
-                  className="px-4"
+                  className="px-4 hidden lg:flex"
                   loading={isBalanceLoading}
                   onClick={getBalances}
                   variant="outlined"
+                />
+                <LoaderButton
+                  content={<Sync className="text-button" />}
+                  className="px-4 flex lg:hidden"
+                  loading={isBalanceLoading}
+                  onClick={getBalances}
+                  variant="text"
                 />
                 <LoaderButton
                   content={"Deposit Crypto"}

@@ -104,8 +104,8 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-8 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-xl font-bold mb-4">Desposit</h2>
+      <div className="modal_content_wrapper bg-white px-6 p-8 sm:px-8 rounded-md shadow-lg w-[547px] max-w-[90%]">
+        <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
 
         <IconSelectBox
           label="Select a Blockchain"
@@ -132,20 +132,22 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
         <LoadingApi loading={isDepoistLoading}>
           {depositAddress && (
             <>
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center overflow-hidden">
                 <Image
                   src={depositAddress?.qrCode}
                   height={250}
                   width={250}
                   alt="Depoist"
                 />
-                <p className="font-semibold text-black-100 text-p120">{depositAddress?.wallet_Address}</p>
+                <p className="font-semibold text-black-100 text-p120 w-full text-ellipsis overflow-hidden">
+                  {depositAddress?.wallet_Address}
+                </p>
               </div>
 
               <p className="text-custom-caption-gray text-button mt-6">
-                 This Address is
-                generated for Depositing {depositAddress?.blockchain} on the{" "}
-                {depositAddress?.network} network.
+                This Address is generated for Depositing{" "}
+                {depositAddress?.blockchain} on the {depositAddress?.network}{" "}
+                network.
               </p>
             </>
           )}

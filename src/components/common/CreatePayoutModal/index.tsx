@@ -22,6 +22,7 @@ import ErrorApiText from "../ErrorApiText";
 import OtpInput from "react-otp-input";
 import { createPayoutRequestApi } from "@/services/payout";
 import { fiatOptions } from "@/constants/fiat";
+import { Info } from "@mui/icons-material";
 
 interface Props {
   isOpen: boolean;
@@ -42,7 +43,7 @@ const CreatePayoutModal = ({
   const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
     useApi();
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
-  const [isFeeLoading, isFeeError, callFeeApi] = useApi(true);
+  const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [sourceOptions, setSourceOptions] = useState({
     filteredNets: [],
@@ -167,8 +168,10 @@ const CreatePayoutModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    getAlphasPayFee();
-  }, [data.amount]);
+    if (isOpen && data?.amount) {
+      getAlphasPayFee();
+    }
+  }, [data.amount, isOpen]);
 
   const handleInputChange = (event, name) => {
     const { value } = event.target;
@@ -196,7 +199,7 @@ const CreatePayoutModal = ({
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
+      <div className="modal_content_wrapper bg-white p-6 md:p-10 rounded-md shadow-lg w-[547px] max-w-[90%] my-4">
         <h2 className="text-h3.5 font-semibold mb-4">Add Payout</h2>
 
         <LoadingApi loading={isBalanceLoading}>
@@ -276,20 +279,34 @@ const CreatePayoutModal = ({
             />
 
             <div className="mt-2">
-              <label className="font-medium text-[15px] text-black-100">
-                Enter Code{" "}
-              </label>
+              <div className="flex gap-2 items-center">
+                <label className="block mb-2 font-medium">Enter Code</label>
+
+                <div className="relative flex items-center group">
+                  <Info className="text-blue-info mb-1 text-[18px]" />
+
+                  <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                    <div className="relative p-2">
+                      <p className="w-full text-center">
+                        Use your Google Autheticator code here
+                      </p>
+                      <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <OtpInput
                 numInputs={6}
                 containerStyle={{
                   display: "flex",
                   gap: "1rem",
                   marginTop: "6px",
+                  flexWrap: "wrap",
                 }}
                 renderInput={(props) => (
                   <input
                     {...props}
-                    className="!w-10 md:!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                    className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
                   />
                 )}
                 onChange={(value) => setOtp(value)}
@@ -311,7 +328,7 @@ const CreatePayoutModal = ({
             <div className="flex flex-col justify-end mt-4">
               <LoaderButton
                 type="submit"
-                content={`Create Withdrawal`}
+                content={`Create Payout`}
                 variant="contained"
                 onClick={handleCreatePayout}
                 loading={isCreatePayoutLoading}

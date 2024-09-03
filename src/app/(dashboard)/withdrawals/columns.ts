@@ -43,10 +43,10 @@ export const availableWallets_table_columns = [
     field: "wallet_address",
     headerName: "Wallet Address",
     flex: 1,
-  },
+  },  
   {
     field: "wallet_network",
-    headerName: "Network",
+    headerName: "Blockchain",
     flex: 1,
   },
   {
