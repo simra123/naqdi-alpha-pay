@@ -1,6 +1,22 @@
+'use client'
+
 import React from "react";
+import LoadingScreen from "@/components/common/LoadingScreen";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const Authlayout = ({ children }) => {
+  const { isAuthenticated, loaded } = useAuth();
+  const router = useRouter();
+
+  if (!loaded) {
+    return <LoadingScreen />;
+  }
+  
+  if (isAuthenticated) {
+    return router.push("/");
+  }
+
   return (
     <div className="min-h-screen flex">
       <div className="flex w-full shadow-lg">

@@ -14,6 +14,12 @@ import { Role } from "@/constants/roles";
 import { getTransactionDetailsByAdminApi } from "@/services/admin/transaction";
 import { Mail, Person } from "@mui/icons-material";
 import Details from "@/components/common/Details";
+import {
+  CalenderIcon,
+  FolderIcon,
+  PaymentIcon,
+  StatusIcon,
+} from "@/assets/Svgs";
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
@@ -61,50 +67,71 @@ const TransactionDetails = ({ params }) => {
 
       <ErrorApiText error={isTransactionDetailsError} />
       <LoadingApi loading={isTransactionDetailsLoading}>
-        <div className="res-3-grid py-6 mt-4">
-          <Details
-            Icon={Person}
-            label="Date Recieved"
-            value={moment(transactionDetails?.createdAt).format("DD-MM-YYYY")}
-          />
-          <Details Icon={Mail} label="Related Payment" value={"test"} />
-          <Details
-            Icon={Mail}
-            label="Transaction Type"
-            value={transactionDetails?.transaction_type}
-          />
+        <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+          <FolderIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
         </div>
-        <div className="res-3-grid py-6 mt-4">
+        <div className="res-2-grid py-6">
+          <Details label="ID" value={transactionDetails?.id} />
           <Details
-            Icon={Person}
-            label="Transaction Hash"
-            value={transactionDetails?.transaction_hash}
-          />
-          <Details
-            Icon={Mail}
-            label="Source Wallet Address"
-            value={transactionDetails?.wallet?.wallet_address}
-          />
-          <Details
-            Icon={Mail}
-            label="Amount"
-            value={`${roundToPrecision(+transactionDetails?.amount, 10)} ${
-              transactionDetails?.unit
-            }`}
-          />
-        </div>
-        <div className="res-3-grid py-6 mt-4">
-          <Details Icon={Person} label="Payment Address" value={"test"} />
-          <Details
-            Icon={Mail}
-            label="Network"
+            label="Blockchain"
             value={transactionDetails?.wallet?.blockchain}
           />
           <Details
-            Icon={Mail}
-            label="Status"
-            value={transactionDetails?.status}
+            label="Transaction Type"
+            value={transactionDetails?.transaction_type}
           />
+          <Details
+            label="Amount"
+            value={`${roundToPrecision(
+              +transactionDetails?.transaction_amount,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+          <Details
+            label="Transaction Hash"
+            value={transactionDetails?.transaction_hash}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <PaymentIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">Wallets</h5>
+        </div>
+        <div className="res-2-grid py-6">
+          <Details
+            label="Reciever Wallet Address"
+            value={transactionDetails?.wallet?.wallet_address}
+          />
+          <Details
+            label="Sender Wallet Address"
+            value={transactionDetails?.sender_address}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <CalenderIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+        </div>
+
+        <div className="res-2-grid py-6">
+          <Details
+            label="Created Date"
+            value={moment(transactionDetails?.createdAt).format("DD-MM-YYYY")}
+          />
+          <Details
+            label="Updated Date"
+            value={moment(transactionDetails?.updatedAt).format("DD-MM-YYYY")}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <StatusIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+        </div>
+
+        <div className="res-2-grid py-6">
+          <Details label="Status" value={transactionDetails?.status} />
         </div>
       </LoadingApi>
     </div>

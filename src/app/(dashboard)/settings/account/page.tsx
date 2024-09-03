@@ -1,7 +1,17 @@
 "use client";
 
+import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 import Details from "@/components/common/Details";
-import { CalendarMonth, Mail, Payment } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  ContactMail,
+  ContactMailOutlined,
+  Contacts,
+  ContactSupport,
+  LocationOnOutlined,
+  Mail,
+  Payment,
+} from "@mui/icons-material";
 import React from "react";
 import { useSelector } from "react-redux";
 
@@ -11,57 +21,53 @@ const Account = () => {
   console.log(user);
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6 shadow-sm">
+    <div className="rounded-medium flex flex-col  bg-white p-10 shadow-sm">
       <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
         Account Details
       </h3>
 
-      <h4 className="text-button font-semibold mt-12">User</h4>
-
-      <div className="res-4-grid py-6 border-b border-light-gray">
-        <Details Icon={Mail} label="ID" value={user?.user?.id} />
-        <Details
-          Icon={Payment}
-          label="First Name"
-          value={user?.user?.first_name}
-        />
-        <Details
-          Icon={Payment}
-          label="Last Name"
-          value={user?.user?.last_name}
-        />
-        <Details Icon={Payment} label="Username" value={user?.user?.username} />
-        <Details
-          Icon={Payment}
-          label="User Type"
-          value={user?.user?.user_type}
-        />
+      <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+        <FolderIcon />
+        <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+      </div>
+      <div className="res-2-grid py-6">
+        <Details label="ID" value={user?.user?.id} />
+        <Details label="First Name" value={user?.user?.first_name} />
+        <Details label="Last Name" value={user?.user?.last_name} />
+        <Details label="Username" value={user?.user?.username} />
+        <Details label="User Type" value={user?.user?.user_type} />
       </div>
 
-      <h4 className="text-button font-semibold mt-6">Contact</h4>
-
-      <div className="res-4-grid py-6 border-b border-light-gray">
-        <Details Icon={CalendarMonth} label="Email" value={user?.user?.email} />
-        <Details
-          Icon={CalendarMonth}
-          label="Phone"
-          value={user?.phone_number}
-        />
+      <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <ContactMailOutlined className="text-purple-100" />
+        <h5 className="text-purple-100 text-h5 font-semibold">Contacts</h5>
+      </div>
+      <div className="res-2-grid py-6">
+        <Details label="Email" value={user?.user?.email} />
+        <Details label="Phone" value={user?.phone_number} />
       </div>
 
-      <h4 className="text-button font-semibold mt-6">Address</h4>
-
-      <div className="res-4-grid py-6 border-light-gray">
-        <Details Icon={CalendarMonth} label="Country" value={user?.country} />
-        <Details Icon={CalendarMonth} label="State" value={user?.state} />
-        <Details Icon={CalendarMonth} label="City" value={user?.city} />
+      <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <LocationOnOutlined className="text-purple-100" />
+        <h5 className="text-purple-100 text-h5 font-semibold">Addressess</h5>
+      </div>
+      <div className="res-2-grid py-6">
+        <Details label="Address" value={user?.address_line_1} />
+        <Details label="Country" value={user?.country} />
+        <Details label="State" value={user?.state} />
+        <Details label="City" value={user?.city} />
+        <Details label="Postal Code" value={user?.postal_code} />
       </div>
 
-      {/* <div className="flex gap-4 items-center mt-20 flex-wrap">
-        <button className="border-0 py-3 text-center text-white bg-green-button rounded-medium w-56 ">
-          Edit Details
-        </button>
-      </div> */}
+      <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <StatusIcon />
+        <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+      </div>
+      <div className="res-2-grid py-6">
+        <Details label="KYC" value={user?.kyc_status} />
+        <Details label="MFA" value={user?.mfa ? "Enabled" : "Disabled"} />
+        <Details label="Fees" value={user?.fees + "%"} />
+      </div>
     </div>
   );
 };

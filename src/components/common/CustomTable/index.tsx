@@ -25,19 +25,23 @@ interface TableProps {
   Filters?: any;
   actions?: any;
   pagination?: boolean;
+  columnClassName?: string;
+  loading?: boolean;
 }
 
 const CustomTable = ({
   columns,
   rows,
   initialPageSize = 10,
-  equalColumns = true,
+  equalColumns,
   rowClickHandler,
   csv,
   pdf,
   Filters,
   actions,
   pagination,
+  columnClassName,
+  loading,
 }: TableProps) => {
   const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -111,8 +115,8 @@ const CustomTable = ({
 
   return (
     <div
-      className={`rounded-medium flex flex-col justify-between bg-white p-6 ${
-        pagination ? "min-h-[calc(100vh-240px)]" : "pb-12"
+      className={`rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white p-6 md:p-10 ${
+        pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
       } `}
       ref={tableRef}
     >
@@ -144,9 +148,15 @@ const CustomTable = ({
                 onChange={(event) => setSearchQuery(event.target.value)}
                 value={searchQuery}
                 icon={Search}
-                wrapperClassName="!mb-0 !w-[250px] max-w-full"
+                wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
                 inputClassName="py-3"
               />
+              <button
+                onClick={() => console.log("searching")}
+                className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
+              >
+                <Search />
+              </button>
               <div className="relative">
                 <button
                   onClick={() => setFiltersOpen(!filtersOpen)}
@@ -168,16 +178,16 @@ const CustomTable = ({
         ) : (
           actions
         )}
-        <div className="overflow-x-auto">
-          <table className="w-full">
+        <div className="overflow-x-auto bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none">
+          <table className="w-full text-caption sm:text-p16">
             {/* Table Headers Below */}
             <thead className="text-gray-700 font-medium bg-table-header">
               <tr>
                 {columns.map((column) => (
                   <th
                     key={column.field}
-                    style={{ width: columnWidths }}
-                    className="py-3 px-6 cursor-pointer text-left text-nowrap"
+                    style={{ width: equalColumns ? columnWidths : "auto" }}
+                    className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     onClick={() => handleSort(column)}
                   >
                     <div className="flex items-center justify-between">
@@ -213,7 +223,7 @@ const CustomTable = ({
                       key={column.field}
                       className={`${
                         column.dataValidator ? "py-4" : "py-6"
-                      } px-6 font-semibold text-nowrap text-ellipsis overflow-hidden`}
+                      } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     >
                       {column.dataValidator
                         ? column.dataValidator(row[column.field], row)
@@ -224,6 +234,11 @@ const CustomTable = ({
               ))}
             </tbody>
           </table>
+          {!loading && currentRows?.length < 1 && (
+            <div className="bg-white border-b p-4 text-custom-title-gray  font-semibold text-p120 text-center ">
+              No Data!!
+            </div>
+          )}
         </div>
       </div>
 
@@ -248,12 +263,12 @@ const Pagination = ({
   setPageSize,
 }) => {
   return (
-    <div className="flex justify-between items-center mt-4">
-      <span className="text-sm text-blackGrey-50 min-w-20 font-medium">{`${
+    <div className="flex justify-center sm:justify-between items-center mt-4">
+      <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${
         (currentPage - 1) * pageSize + 1
       } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
 
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 bg-white p-2 rounded-sm shadow-sm sm:shadow-none sm:p-0">
         <IconButton
           className={
             currentPage === 1
@@ -311,7 +326,7 @@ const Pagination = ({
         </IconButton>
       </div>
 
-      <div>
+      <div className="hidden sm:block">
         <label htmlFor="page-size" className="text-sm mr-2 text-blackGrey-50">
           Page Size
         </label>

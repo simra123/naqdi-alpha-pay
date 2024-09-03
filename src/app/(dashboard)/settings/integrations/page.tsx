@@ -125,16 +125,16 @@ const Integrations = () => {
         refreshHandler={callListApi}
         toggleHandler={toggleCreateModal}
       />
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100">
+      <h3 className="text-h3.5 font-semibold text-blackGrey-100 md:block hidden">
         Integrations
       </h3>
 
       <div className="rounded-medium bg-white p-8 mt-8">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
-            <h4 className="text-p122 font-semibold">Webhook URL</h4>
+            <h4 className="text-button sm:text-p122 font-semibold">Webhook URL</h4>
             {/* <LoadingApi loading={isUserDetailsLoading}> */}
-            <span className="font-medium">{webhookURL}</span>
+            <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">{webhookURL}</span>
             {/* </LoadingApi> */}
             <ErrorApiText error={isUserDetailsError} />
           </div>
@@ -151,7 +151,7 @@ const Integrations = () => {
           <CustomTable
             actions={
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-p122 font-semibold text-black-100">
+                <h2 className="text-button sm:text-p122 font-semibold text-black-100">
                   API Keys
                 </h2>
 
