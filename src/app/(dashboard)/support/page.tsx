@@ -8,7 +8,7 @@ import { Add } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-export const supportList_columns = [
+const supportList_columns = [
   {
     field: "id",
     headerName: "ID",
