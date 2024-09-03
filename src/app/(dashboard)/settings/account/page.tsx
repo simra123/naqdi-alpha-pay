@@ -65,7 +65,7 @@ const Account = () => {
       </div>
       <div className="res-2-grid py-6">
         <Details label="KYC" value={user?.kyc_status} />
-        <Details label="MFA" value={user?.mfa ? "Verified" : "Unverified"} />
+        <Details label="MFA" value={user?.mfa ? "Enabled" : "Disabled"} />
         <Details label="Fees" value={user?.fees + "%"} />
       </div>
     </div>

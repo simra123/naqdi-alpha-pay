@@ -26,6 +26,7 @@ interface TableProps {
   actions?: any;
   pagination?: boolean;
   columnClassName?: string;
+  loading?: boolean;
 }
 
 const CustomTable = ({
@@ -40,6 +41,7 @@ const CustomTable = ({
   actions,
   pagination,
   columnClassName,
+  loading,
 }: TableProps) => {
   const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -113,7 +115,7 @@ const CustomTable = ({
 
   return (
     <div
-      className={`rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white sm:p-6 ${
+      className={`rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white p-6 md:p-10 ${
         pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
       } `}
       ref={tableRef}
@@ -232,6 +234,11 @@ const CustomTable = ({
               ))}
             </tbody>
           </table>
+          {!loading && currentRows?.length < 1 && (
+            <div className="bg-white border-b p-4 text-custom-title-gray  font-semibold text-p120 text-center ">
+              No Data!!
+            </div>
+          )}
         </div>
       </div>
 

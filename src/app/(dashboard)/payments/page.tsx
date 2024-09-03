@@ -36,12 +36,12 @@ const paymentsList_table_columns = [
     filterable: false,
     sortable: true,
   },
-  {
-    field: "senderAddress",
-    headerName: "Sender Wallet Address",
-    filterable: false,
-    sortable: true,
-  },
+  // {
+  //   field: "senderAddress",
+  //   headerName: "Sender Wallet Address",
+  //   filterable: false,
+  //   sortable: true,
+  // },
   {
     field: "recieverAddress",
     headerName: "Reciever Wallet Address",

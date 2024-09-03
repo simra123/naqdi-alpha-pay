@@ -151,6 +151,7 @@ const Home = () => {
           columns={columns}
           equalColumns
           rows={balance}
+          loading={isBalanceLoading}
           initialPageSize={10}
           actions={
             <div className="flex justify-between items-center mb-4">
@@ -167,7 +168,7 @@ const Home = () => {
                   variant="outlined"
                 />
                 <LoaderButton
-                  content={<Sync className="text-button"/>}
+                  content={<Sync className="text-button" />}
                   className="px-4 flex lg:hidden"
                   loading={isBalanceLoading}
                   onClick={getBalances}
