@@ -11,7 +11,14 @@ import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import { CalendarMonth, Mail, Payment, Person } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  Info,
+  InfoOutlined,
+  Mail,
+  Payment,
+  Person,
+} from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
@@ -53,6 +60,7 @@ const PaymentDetails = ({ params }) => {
 
   const [payment, setPayment] = useState(null);
   const [transaction, setTransacion] = useState([]);
+  const [orderInfo, setOrderInfo]: any = useState(null);
   const [receivedAmount, setRecievedAmount] = useState("0");
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
 
@@ -87,6 +95,15 @@ const PaymentDetails = ({ params }) => {
           setRecievedAmount(
             roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
           );
+
+          console.log(response.passthrough);
+
+          try {
+            const parsedData = JSON.parse(response.passthrough);
+            setOrderInfo(parsedData);
+          } catch (error) {
+            console.error("Failed to parse JSON:", error);
+          }
           setPayment(response);
         },
       });
@@ -193,6 +210,24 @@ const PaymentDetails = ({ params }) => {
                 value={payment?.status}
               />
             </div>
+
+            {orderInfo && (
+              <>
+                <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+                  <InfoOutlined className="text-purple-100" />
+                  <h5 className="text-purple-100 text-h5 font-semibold">
+                    Order Information
+                  </h5>
+                </div>
+
+                <div className="res-2-grid py-6">
+                  {orderInfo &&
+                    Object.entries(orderInfo).map(([key, value]: any) => (
+                      <Details label={key} value={value} />
+                    ))}
+                </div>
+              </>
+            )}
 
             <h4 className="text-button font-semibold mb-5">Notes</h4>
 
