@@ -9,3 +9,7 @@ export const getAllTransactionsApi = (status: string) => {
 export const getTransactionDetailsByUserApi = (data: { id: number }) => {
   return () => api.post(`auth/get-transaction-by-user`, data);
 };
+
+export const getPaymentTransactionDetailsByUserApi = (data: { id: number }) => {
+  return () => api.get(`v1/client/payment_transaction/${data?.id}`);
+};
