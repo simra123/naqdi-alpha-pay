@@ -247,7 +247,7 @@ const PaymentDetails = ({ params }) => {
               </h3>
             }
             rowClickHandler={(row: any) =>
-              router.push(`transactions/details/${row?.id}`)
+              router.push(`/transactions/details/${row?.id}`)
             }
             columnClassName="max-w-[200px]"
           />
