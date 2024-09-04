@@ -68,6 +68,7 @@ const transactionsList_Admin_table_columns = [
 
 const Transactions = () => {
   const router = useRouter();
+
   const user = useLocalStorage("user");
   const [transactions, setTransactions] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -134,9 +135,12 @@ const Transactions = () => {
             error: isCSVError,
           }}
           initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/transactions/details/${row?.id}`)
-          }
+          rowClickHandler={(row: any) => {
+            console.log(row);
+            router.push(
+              `/transactions/details/${row?.id}?type=${row?.transactionType}`
+            );
+          }}
           pagination
           columnClassName="max-w-[200px]"
         />

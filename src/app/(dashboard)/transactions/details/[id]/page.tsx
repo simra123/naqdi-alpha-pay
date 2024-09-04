@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
-import { getTransactionDetailsByUserApi } from "@/services/transaction";
+import {
+  getPaymentTransactionDetailsByUserApi,
+  getTransactionDetailsByUserApi,
+} from "@/services/transaction";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
@@ -20,9 +23,19 @@ import {
   PaymentIcon,
   StatusIcon,
 } from "@/assets/Svgs";
+import { notFound, useSearchParams } from "next/navigation";
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
+  const URLParams = useSearchParams();
+  const transactionType = URLParams.get("type");
+
+  if (!transactionType) {
+    return notFound();
+  }
+
+  console.log(transactionType);
+
   const user = useLocalStorage("user");
   const [transactionDetails, setTransactionDetails]: any = useState({});
   const [
@@ -32,11 +45,20 @@ const TransactionDetails = ({ params }) => {
   ] = useApi(true);
 
   const getTransactionDetails = async () => {
+    console.log(transactionType, transactionType == "Self Deposit");
+
+    const _getTransactionByType = () => {
+      if (transactionType == "Self Deposit") {
+        return getTransactionDetailsByUserApi({ id: tranascionId });
+      }
+      if (transactionType == "Payment") {
+        return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
+      }
+    };
+
     if (user.role == Role.USER) {
       await callApiHook({
-        apiCall: callTransactionDetailsApi(
-          getTransactionDetailsByUserApi({ id: tranascionId })
-        ),
+        apiCall: callTransactionDetailsApi(_getTransactionByType()),
         successCallBack: (response: any) => {
           setTransactionDetails(response);
         },
@@ -101,7 +123,10 @@ const TransactionDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Reciever Wallet Address"
-            value={transactionDetails?.wallet?.wallet_address}
+            value={
+              transactionDetails?.wallet?.wallet_address ||
+              transactionDetails?.wallet?.address
+            }
           />
           <Details
             label="Sender Wallet Address"
