@@ -41,15 +41,15 @@ export const useApi = (initailLoading = false) => {
             })
           );
         } else {
-          // window?.localStorage?.removeItem("token");
-          // window?.localStorage?.removeItem("user");
-          // router.replace("/login");
-          // dispatch(
-          //   setNotification({
-          //     status: "error",
-          //     message: "Your Session has expired.",
-          //   })
-          // );
+          window?.localStorage?.removeItem("token");
+          window?.localStorage?.removeItem("user");
+          router.replace("/login");
+          dispatch(
+            setNotification({
+              status: "error",
+              message: "Your Session has been expired.",
+            })
+          );
         }
       }
       const errorMessage =

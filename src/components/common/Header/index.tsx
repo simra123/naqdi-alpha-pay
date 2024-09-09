@@ -38,7 +38,7 @@ const Header = ({ navHandler }) => {
         <div className="items-center gap-3 flex md:hidden">
           <button
             onClick={navHandler}
-            className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
+            className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-8 h-9 hover:bg-white hover:shadow-md p-1"
           >
             <Menu />
           </button>
@@ -73,11 +73,11 @@ const Header = ({ navHandler }) => {
           </div>
 
           <div className="avatar flex md:hidden cursor-pointer gap-2 items-center  rounded-full ">
-            <div>
+            <div className="w-12 h-12">
               <img
                 src="/avatar.jpg"
                 alt="Avatar"
-                className="rounded-full h-14 border border-white"
+                className="rounded-full w-full border border-white"
               />
             </div>
           </div>

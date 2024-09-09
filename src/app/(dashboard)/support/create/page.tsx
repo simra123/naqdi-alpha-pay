@@ -6,6 +6,14 @@ import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
 import { Add, Mail } from "@mui/icons-material";
 import { getUrlOrObjectUrl } from "@/utils/getImageSrcType";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { createPrivateTicketApi } from "@/services/support";
+import { useRouter } from "next/navigation";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import { useDispatch } from "react-redux";
+import { setNotification } from "@/store/slices/modal.Slice";
 
 const supportOptions = [
   { label: "Incident", value: "Incident" },
@@ -18,6 +26,10 @@ const supportOptions = [
 
 const Support = () => {
   const front = useRef(null);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const user = useLocalStorage("user");
+  const [isTicketLoading, isTicketError, callCreateTicketApi] = useApi();
   const [supportData, setSupportData] = useState({
     subject: "",
     concern: "",
@@ -40,6 +52,33 @@ const Support = () => {
     }
   };
 
+  const createTicketHandler = async () => {
+    const formdata = new FormData();
+
+    formdata.append("email", user?.email);
+    formdata.append("name", `${user?.first_name} ${user?.last_name}`);
+    formdata.append("message", supportData?.message);
+    formdata.append("subject", supportData?.subject);
+    formdata.append("type", supportData?.concern);
+
+    supportData?.attachments?.forEach((file: File) =>
+      formdata.append("files", file)
+    );
+
+    await callApiHook({
+      apiCall: callCreateTicketApi(createPrivateTicketApi(formdata)),
+      successCallBack: (response: any) => {
+        dispatch(
+          setNotification({
+            message: "Ticket Created Successfully",
+            status: "success",
+          })
+        );
+        router.push("/support");
+      },
+    });
+  };
+
   console.log(supportData?.attachments, "attachments");
 
   return (
@@ -51,16 +90,18 @@ const Support = () => {
 
         <div className="grid grid-cols-2 gap-x-10 flex-wrap mb-2">
           <IconField
-            value={""}
+            value={`${user?.first_name} ${user?.last_name}`}
             label="Name"
+            disabled
             icon={Mail}
             onChange={handleChange}
             name="name"
           />
           <IconField
-            value={""}
+            value={user?.email}
             icon={Mail}
             label="Email"
+            disabled
             onChange={handleChange}
             name="email"
           />
@@ -162,10 +203,13 @@ const Support = () => {
         )}
       </div>
 
+      <ErrorApiText error={isTicketError} />
+
       <div className="mt-16 max-w-[360px] pb-8">
         <LoaderButton
-          loading={false}
+          loading={isTicketLoading}
           content={"Submit"}
+          onClick={createTicketHandler}
           type="submit"
           variant={"contained"}
         />

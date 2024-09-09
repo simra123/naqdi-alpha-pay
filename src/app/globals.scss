@@ -31,7 +31,7 @@
   @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-2 items-center;
 }
 .res-2-grid {
-  @apply grid grid-cols-1 md:grid-cols-2  gap-4 items-center;
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4 items-center xl:w-[calc(100%-200px)] xl:ml-auto;
 }
 
 .rotate-infinite {

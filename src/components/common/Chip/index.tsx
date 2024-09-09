@@ -26,17 +26,17 @@ const Chip = ({ status }: Props) => {
     statusColor = "text-red-chip";
     statusBg = "bg-chip-red";
   }
-  if (capStatus == "Complete" || capStatus == "Confirm") {
+  if (capStatus == "Complete" || capStatus == "Confirm" || capStatus == "Closed") {
     statusColor = "text-green-chip";
     statusBg = "bg-chip-green";
   }
 
-  if (capStatus == "Overpay") {
+  if (capStatus == "Overpay" || capStatus == "Resolved") {
     statusColor = "text-blue-chip";
     statusBg = "bg-chip-blue";
   }
 
-  if (capStatus == "Incomplete") {
+  if (capStatus == "Incomplete" || capStatus == "Open") {
     statusColor = "text-yellow-dull";
     statusBg = "bg-yellow-chip-dull";
   }

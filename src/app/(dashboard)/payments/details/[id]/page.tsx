@@ -128,19 +128,13 @@ const PaymentDetails = ({ params }) => {
               <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
             </div>
             <div className="res-2-grid py-6">
+              <Details label="Blockchain" value={payment?.wallet?.blockchain} />
               <Details
-                Icon={Person}
-                label="Blockchain"
-                value={payment?.wallet?.blockchain}
-              />
-              <Details
-                Icon={Mail}
                 label="Requested Amount"
                 value={`${payment?.requested_amount} ${payment?.requested_currency}`}
               />
-              <Details Icon={Mail} label="ID" value={payment?.id} />
+              <Details label="ID" value={payment?.id} />
               <Details
-                Icon={Mail}
                 label="Wallet Address"
                 value={payment?.wallet?.address}
               />
@@ -153,12 +147,10 @@ const PaymentDetails = ({ params }) => {
 
             <div className="res-2-grid py-6">
               <Details
-                Icon={CalendarMonth}
                 label="Created Date"
                 value={moment(payment?.created_at).format("DD-MM-YYYY")}
               />
               <Details
-                Icon={CalendarMonth}
                 label="Updated Date"
                 value={moment(payment?.updated_at).format("DD-MM-YYYY")}
               />
@@ -173,20 +165,14 @@ const PaymentDetails = ({ params }) => {
 
             <div className="res-2-grid py-6">
               <Details
-                Icon={Payment}
                 label="Payment Amount "
                 value={`${payment?.requested_amount} ${payment?.requested_currency}`}
               />
               <Details
-                Icon={Payment}
                 label="Payment Currency Amount "
                 value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
               />
-              <Details
-                Icon={Payment}
-                label="Payment Amount Recieved"
-                value={receivedAmount}
-              />
+              <Details label="Payment Amount Recieved" value={receivedAmount} />
             </div>
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
@@ -196,7 +182,6 @@ const PaymentDetails = ({ params }) => {
 
             <div className="res-2-grid py-6">
               <Details
-                Icon={CalendarMonth}
                 label="Paid Stauts"
                 value={
                   unpaidStatuses.some((status) => status == payment?.status)
@@ -204,11 +189,7 @@ const PaymentDetails = ({ params }) => {
                     : "Paid"
                 }
               />
-              <Details
-                Icon={CalendarMonth}
-                label="Payment Status"
-                value={payment?.status}
-              />
+              <Details label="Payment Status" value={payment?.status} />
             </div>
 
             {orderInfo && (
