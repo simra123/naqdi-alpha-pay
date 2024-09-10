@@ -20,7 +20,12 @@ export const ModalSlice = createSlice({
     setRequestEdit(state, action) {
       state.requestEdit = action.payload;
     },
-    setNotification(state, action) {
+    setNotification(
+      state,
+      action: {
+        payload: { status: "success" | "error" | "warning"; message: string };
+      }
+    ) {
       state.notification = action.payload;
     },
   },

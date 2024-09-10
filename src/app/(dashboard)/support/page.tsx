@@ -1,12 +1,17 @@
 "use client";
 
+import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoaderButton from "@/components/common/LoaderButton";
 import LoadingApi from "@/components/common/LoadindApi";
+import { useApi } from "@/hooks/useApi";
+import { TicketsListApi } from "@/services/support";
+import { callApiHook } from "@/utils/apifuncs";
 import { Add } from "@mui/icons-material";
+import moment from "moment";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const supportList_columns = [
   {
@@ -38,17 +43,56 @@ const supportList_columns = [
     field: "status",
     headerName: "Status",
     sortable: true,
+    dataValidator: (value) => {
+      return <Chip status={value} />;
+    },
   },
 ];
 
+const getStatusfromNumber = (statusNo: number) => {
+  const status = {
+    2: "Open",
+    3: "Pending",
+    4: "Resolved",
+    5: "Closed",
+  };
+  return status[statusNo];
+};
+
 const Support = () => {
   const router = useRouter();
+  const [ticketsList, setTicketsList] = useState([]);
+
+  const [isListLoading, isListError, callListApi] = useApi(true);
+
+  const getListHandler = async () => {
+    await callApiHook({
+      apiCall: callListApi(TicketsListApi()),
+      successCallBack: (response: any) => {
+        const tableData = response.map((item) => {
+          return {
+            id: item?.id,
+            date: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+            updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
+            subject: item?.subject,
+            serviceType: item?.type,
+            requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
+            status: getStatusfromNumber(item?.status),
+          };
+        });
+        setTicketsList(tableData);
+      },
+    });
+  };
+
+  useEffect(() => {
+    getListHandler();
+  }, []);
+
   return (
     <>
       <div className="items-center justify-between mb-8  hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">
-          Support
-        </h3>
+        <h3 className="text-h3 font-semibold text-blackGrey-100">Support</h3>
         <LoaderButton
           content={"New Ticket"}
           className="px-16"
@@ -66,16 +110,16 @@ const Support = () => {
 
       {/* Table Actions Below */}
       <div>
-        <LoadingApi loading={false}>
+        <LoadingApi loading={isListLoading}>
           <CustomTable
             columns={supportList_columns}
-            rows={[]}
+            rows={ticketsList}
             initialPageSize={10}
             rowClickHandler={(row: any) => console.log(row)}
             pagination
           />
         </LoadingApi>
-        <ErrorApiText error={false} />
+        <ErrorApiText error={isListError} />
       </div>
     </>
   );
