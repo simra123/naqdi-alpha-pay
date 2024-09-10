@@ -115,7 +115,7 @@ const CustomTable = ({
 
   return (
     <div
-      className={`rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white p-6 md:p-10 ${
+      className={`rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white sm:p-6 md:p-10 ${
         pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
       } `}
       ref={tableRef}
@@ -215,7 +215,7 @@ const CustomTable = ({
               {currentRows.map((row, index) => (
                 <tr
                   key={index}
-                  onClick={() => rowClickHandler(row)}
+                  onClick={() => rowClickHandler && rowClickHandler(row)}
                   className="bg-white border-b hover:bg-gray-50 cursor-pointer"
                 >
                   {columns.map((column) => (

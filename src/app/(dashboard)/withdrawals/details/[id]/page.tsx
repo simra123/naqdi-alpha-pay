@@ -45,6 +45,8 @@ import {
   StatusIcon,
 } from "@/assets/Svgs";
 import { roundToPrecision } from "@/utils/math";
+import CustomTable from "@/components/common/CustomTable";
+import { transactionsList_table_columns } from "@/app/(dashboard)/users/columns";
 
 const WithdrawalDetails = ({ params }) => {
   const user = useLocalStorage("user");
@@ -200,20 +202,20 @@ const WithdrawalDetails = ({ params }) => {
   };
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-        Withdrawal Details
-      </h3>
+    <LoadingApi loading={isWithdrawalDetailsLoading}>
+      <div className="rounded-medium flex flex-col  bg-white p-6">
+        <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+          Withdrawal Details
+        </h3>
 
-      <ConfirmationModal
-        handleClose={toggleConfirmModal}
-        handleConfirm={handleConfirm}
-        isOpen={confirmModal}
-        confirmLoading={isApproveWithdrawalLoading}
-        title="Withdrawal Confirmation"
-      />
+        <ConfirmationModal
+          handleClose={toggleConfirmModal}
+          handleConfirm={handleConfirm}
+          isOpen={confirmModal}
+          confirmLoading={isApproveWithdrawalLoading}
+          title="Withdrawal Confirmation"
+        />
 
-      <LoadingApi loading={isWithdrawalDetailsLoading}>
         <>
           <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
             <FolderIcon />
@@ -434,8 +436,24 @@ const WithdrawalDetails = ({ params }) => {
         </RenderRoleBased>
 
         <ErrorApiText error={isWithdrawalDetailsError} />
-      </LoadingApi>
-    </div>
+      </div>
+
+      <div className="mt-8">
+        <CustomTable
+          columns={transactionsList_table_columns}
+          rows={[]}
+          actions={
+            <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+              Related Transactions
+            </h3>
+          }
+          rowClickHandler={(row: any) =>
+            router.push(`/transactions/details/${row?.id}?type=Self Depoist`)
+          }
+          columnClassName="max-w-[200px]"
+        />
+      </div>
+    </LoadingApi>
   );
 };
 

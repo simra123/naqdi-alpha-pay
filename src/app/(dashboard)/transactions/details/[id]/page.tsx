@@ -104,15 +104,15 @@ const TransactionDetails = ({ params }) => {
             value={transactionDetails?.transaction_type}
           />
           <Details
+            label="Transaction Hash"
+            value={transactionDetails?.transaction_hash}
+          />
+          <Details
             label="Amount"
             value={`${roundToPrecision(
               +transactionDetails?.transaction_amount,
               10
             )} ${transactionDetails?.unit}`}
-          />
-          <Details
-            label="Transaction Hash"
-            value={transactionDetails?.transaction_hash}
           />
         </div>
 
@@ -120,7 +120,7 @@ const TransactionDetails = ({ params }) => {
           <PaymentIcon />
           <h5 className="text-purple-100 text-h5 font-semibold">Wallets</h5>
         </div>
-        <div className="res-2-grid py-6">
+        <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
           <Details
             label="Reciever Wallet Address"
             value={
