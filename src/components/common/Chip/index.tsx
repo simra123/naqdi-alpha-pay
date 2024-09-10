@@ -9,7 +9,7 @@ const Chip = ({ status }: Props) => {
 
   const capStatus = capitalize(status);
 
-  if (capStatus == "New") {
+  if (capStatus == "New" || capStatus == "Open") {
     statusColor = "text-purple-100";
     statusBg = "bg-purple-10";
   }
@@ -26,17 +26,21 @@ const Chip = ({ status }: Props) => {
     statusColor = "text-red-chip";
     statusBg = "bg-chip-red";
   }
-  if (capStatus == "Complete" || capStatus == "Confirm" || capStatus == "Closed") {
+  if (
+    capStatus == "Complete" ||
+    capStatus == "Confirm" ||
+    capStatus == "Resolved"
+  ) {
     statusColor = "text-green-chip";
     statusBg = "bg-chip-green";
   }
 
-  if (capStatus == "Overpay" || capStatus == "Resolved") {
+  if (capStatus == "Overpay" || capStatus == "Closed") {
     statusColor = "text-blue-chip";
     statusBg = "bg-chip-blue";
   }
 
-  if (capStatus == "Incomplete" || capStatus == "Open") {
+  if (capStatus == "Incomplete") {
     statusColor = "text-yellow-dull";
     statusBg = "bg-yellow-chip-dull";
   }
