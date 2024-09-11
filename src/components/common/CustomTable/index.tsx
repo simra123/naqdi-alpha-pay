@@ -157,8 +157,9 @@ const CustomTable = ({
               >
                 <Search />
               </button>
-              <div className="relative">
+              <div className="relative filterBtn">
                 <button
+                  
                   onClick={() => setFiltersOpen(!filtersOpen)}
                   className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
                 >
@@ -170,6 +171,7 @@ const CustomTable = ({
                     data={rows}
                     setData={setCurrentRows}
                     isOpen={filtersOpen}
+                    setIsOpen={setFiltersOpen}
                   />
                 )}
               </div>

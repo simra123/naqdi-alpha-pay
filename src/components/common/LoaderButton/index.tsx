@@ -6,7 +6,7 @@ type buttonVariants = "contained" | "outlined" | "text";
 
 interface Props {
   loading?: boolean;
-  onClick?: () => void;
+  onClick?: (event?:any) => void;
   variant?: buttonVariants;
   content: any;
   disabled?: boolean;

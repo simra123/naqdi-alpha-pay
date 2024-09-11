@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
@@ -14,6 +14,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { capitalize } from "@/utils/dataFormatters";
 import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
+import DateField from "@/components/common/DateField";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -164,7 +165,9 @@ const Payments = () => {
 
 export default Payments;
 
-const Filters = ({ data, setData, isOpen }) => {
+const Filters = ({ data, setData, isOpen, setIsOpen }) => {
+  const filtersRef = useRef(null);
+
   const [openFilters, setOpenFilters]: any = useState({
     date: false,
     status: false,
@@ -183,7 +186,34 @@ const Filters = ({ data, setData, isOpen }) => {
     amount: false,
   });
 
-  const applyFilters = (e?: any, updatedValues?: any) => {
+  // Close filters when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      console.log();
+      if (
+        filtersRef.current &&
+        !filtersRef.current.contains(event.target) &&
+        !event.target?.classList.contains("filterBtn") &&
+        !event.target?.closest(".filterBtn")
+      ) {
+        // Close all filters
+        setOpenFilters({
+          date: false,
+          status: false,
+          amount: false,
+        });
+        setIsOpen(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const applyFilters = (e?: any, updatedValues?: any, name?: string) => {
     e?.stopPropagation();
     let results = data;
 
@@ -198,7 +228,8 @@ const Filters = ({ data, setData, isOpen }) => {
     }
 
     if (updatedValues.status) {
-      console.log("Setting up Status FIlters");
+      console.log("Setting up Status Filters");
+
       setFilters({ ...filters, status: true });
       results = results.filter(
         (item) => capitalize(item.status) === updatedValues.status
@@ -215,7 +246,6 @@ const Filters = ({ data, setData, isOpen }) => {
 
     setData(results);
   };
-  console.log(filters?.status);
 
   const toggleFiltersDisplay = (e, name) => {
     e.stopPropagation();
@@ -226,16 +256,27 @@ const Filters = ({ data, setData, isOpen }) => {
     const { name, checked } = event.target;
 
     if (!checked) {
+      // Uncheck the filter and reset its value
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [name]: false,
+      }));
+
       setFilterValues((prevValues) => {
-        const updatedValues = { ...prevValues, [name]: false };
-
-        applyFilters(event, updatedValues);
-
+        const updatedValues = {
+          ...prevValues,
+          [name]: name === "date" ? { start: "", end: "" } : false, // Reset filter value
+        };
+        applyFilters(event, updatedValues); // Apply filters with updated values
         return updatedValues;
       });
+    } else {
+      // Check the filter without modifying the values yet
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [name]: true,
+      }));
     }
-
-    setFilters({ ...filters, [name]: checked });
   };
 
   const handleFilterValueChange = (e) => {
@@ -270,132 +311,228 @@ const Filters = ({ data, setData, isOpen }) => {
 
   return (
     <div
+      ref={filtersRef}
       className={`p-2 bg-white rounded-medium shadow absolute right-2 top-14 min-w-60 ${
         !isOpen && "hidden"
       }`}
     >
-      <div
-        onClick={(e) => toggleFiltersDisplay(e, "date")}
-        className="flex gap-1 relative items-center justify-between custom-checkbox p-3 hover:bg-light-blue rounded-t-small border-b border-slate-200"
-      >
-        <div className="flex items-center relative">
-          <label className="custom-checkbox">
-            <input
-              type="checkbox"
-              checked={filters.date}
-              name="date"
-              onChange={handleFiltersChecked}
-            />
-            <span className="checkmark"></span>
-            <span className="ml-8 text-[18px]">Date</span>
-          </label>
-        </div>
-        <KeyboardArrowRight />
-        {openFilters.date && (
-          <div
-            className="bg-white absolute p-2 rounded-medium -left-full flex flex-col min-w-52 "
-            onClick={(event) => event.stopPropagation()}
-          >
-            <input
-              type="date"
-              name="date.start"
-              value={filterValues.date.start}
-              onChange={handleFilterValueChange}
-            />
-            <input
-              type="date"
-              name="date.end"
-              value={filterValues.date.end}
-              onChange={handleFilterValueChange}
-            />
-            <button
-              className="px-4 py-2 text-white bg-purple-500 rounded"
-              onClick={(event) => applyFilters(event, filterValues)}
-            >
-              Apply
-            </button>
-          </div>
-        )}
-      </div>
-      <div
-        onClick={(e) => toggleFiltersDisplay(e, "status")}
-        className="flex gap-1 items-center justify-between custom-checkbox p-3 hover:bg-light-blue border-b border-slate-200"
-      >
-        <div className="flex items-center relative">
-          <label className="custom-checkbox">
-            <input
-              type="checkbox"
-              checked={filters.status}
-              name="status"
-              onChange={handleFiltersChecked}
-            />
-            <span className="checkmark"></span>
-            <span className="ml-8 text-[18px]">Status</span>
-          </label>
-        </div>
-        <KeyboardArrowRight />
-        {openFilters.status && (
-          <div
-            className="bg-white absolute p-2 rounded-medium -left-full flex flex-col min-w-52 "
-            onClick={(event) => event.stopPropagation()}
-          >
-            <select
-              value={filterValues.status}
-              name="status"
-              onChange={handleFilterValueChange}
-            >
-              <option value="">Select Status</option>
-              <option value="Cancel">Cancel</option>
-              <option value="Complete">Complete</option>
-              <option value="Overpay">Overpay</option>
-            </select>
-            <button
-              className="px-4 py-2 mt-2 text-white bg-purple-500 rounded"
-              onClick={(event) => applyFilters(event, filterValues)}
-            >
-              Apply
-            </button>
-          </div>
-        )}
-      </div>
-      <div
-        onClick={(e) => toggleFiltersDisplay(e, "amount")}
-        className="flex gap-1 items-center justify-between custom-checkbox p-3 hover:bg-light-blue rounded-b-small"
-      >
-        <div className="flex items-center relative">
-          <label className="custom-checkbox">
-            <input
-              type="checkbox"
-              checked={filters.amount}
-              name="amount"
-              onChange={handleFiltersChecked}
-            />
-            <span className="checkmark"></span>
-            <span className="ml-8 text-[18px]">Amount</span>
-          </label>
-        </div>
-        <KeyboardArrowRight />{" "}
-        {openFilters.amount && (
-          <div
-            className="bg-white absolute p-2 rounded-medium -left-full flex flex-col min-w-52 "
-            onClick={(event) => event.stopPropagation()}
-          >
-            <input
-              type="number"
-              name="amount"
-              value={filterValues.amount}
-              onChange={handleFilterValueChange}
-              placeholder="Enter Amount"
-            />
-            <button
-              className="px-4 py-2 text-white bg-purple-500 rounded"
-              onClick={(event) => applyFilters(event, filterValues)}
-            >
-              Apply
-            </button>
-          </div>
-        )}
-      </div>
+      <DateFilter
+        isOpen={openFilters.date}
+        filterChecked={filters.date}
+        filterValues={filterValues}
+        toggleFiltersDisplay={toggleFiltersDisplay}
+        handleFiltersChecked={handleFiltersChecked}
+        handleFilterValueChange={handleFilterValueChange}
+        applyFilters={applyFilters}
+      />
+
+      <StatusFilter
+        isOpen={openFilters.status}
+        filterChecked={filters.status}
+        filterValues={filterValues}
+        toggleFiltersDisplay={toggleFiltersDisplay}
+        handleFiltersChecked={handleFiltersChecked}
+        handleFilterValueChange={handleFilterValueChange}
+        applyFilters={applyFilters}
+        statusList={[
+          { label: "Complete", value: "Complete" },
+          { label: "Incomplete", value: "Incomplete" },
+          { label: "Overpay", value: "Overpay" },
+          { label: "Cancel", value: "Cancel" },
+        ]}
+      />
+
+      <AmountFilter
+        isOpen={openFilters.amount}
+        filterChecked={filters.amount}
+        filterValues={filterValues}
+        toggleFiltersDisplay={toggleFiltersDisplay}
+        handleFiltersChecked={handleFiltersChecked}
+        handleFilterValueChange={handleFilterValueChange}
+        applyFilters={applyFilters}
+      />
     </div>
   );
 };
+
+const AmountFilter = ({
+  isOpen,
+  filterChecked,
+  filterValues,
+  toggleFiltersDisplay,
+  handleFiltersChecked,
+  handleFilterValueChange,
+  applyFilters,
+}) => (
+  <div
+    onClick={(e) => toggleFiltersDisplay(e, "amount")}
+    className="flex gap-1 items-center justify-between custom-checkbox p-3 hover:bg-light-blue rounded-b-small"
+  >
+    <div className="flex items-center relative">
+      <label className="custom-checkbox">
+        <input
+          type="checkbox"
+          checked={filterChecked}
+          name="amount"
+          onChange={handleFiltersChecked}
+        />
+        <span className="checkmark"></span>
+        <span className="ml-8 text-[18px]">Amount</span>
+      </label>
+    </div>
+    <KeyboardArrowRight />
+    {isOpen && (
+      <div
+        className="bg-white shadow-md absolute px-6 py-4 rounded-medium  -left-[108%] flex gap-2 flex-col min-w-52"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <input
+          type="number"
+          name="amount"
+          value={filterValues.amount}
+          onChange={handleFilterValueChange}
+          placeholder="Enter Amount"
+        />
+        <button
+          className={`px-4 py-2 text-white bg-purple-100 rounded-medium mt-3`}
+          onClick={(event) => applyFilters(event, filterValues)}
+        >
+          Apply
+        </button>
+      </div>
+    )}
+  </div>
+);
+
+interface FitlerProps {
+  isOpen: boolean;
+  filterChecked: boolean;
+  filterValues: any;
+  toggleFiltersDisplay: any;
+  handleFiltersChecked: any;
+  handleFilterValueChange: any;
+  applyFilters: any;
+  statusList: { label: string; value: string }[];
+}
+
+const StatusFilter = ({
+  isOpen,
+  filterChecked,
+  filterValues,
+  toggleFiltersDisplay,
+  handleFiltersChecked,
+  handleFilterValueChange,
+  applyFilters,
+  statusList,
+}: FitlerProps) => (
+  <div
+    onClick={(e) => toggleFiltersDisplay(e, "status")}
+    className="flex gap-1 items-center justify-between custom-checkbox p-3 hover:bg-light-blue border-b border-slate-200"
+  >
+    <div className="flex items-center relative">
+      <label className="custom-checkbox">
+        <input
+          type="checkbox"
+          checked={filterChecked}
+          name="status"
+          onChange={handleFiltersChecked}
+        />
+        <span className="checkmark"></span>
+        <span className="ml-8 text-[18px]">Status</span>
+      </label>
+    </div>
+    <KeyboardArrowRight />
+    {isOpen && (
+      <div
+        className="bg-white shadow-md absolute p-1 rounded-medium -left-full flex flex-col min-w-52"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {statusList?.map((option, index) => (
+          <div
+            key={option.value}
+            onClick={(event) => {
+              handleFilterValueChange({
+                target: { value: option.value, name: "status" },
+              });
+              applyFilters(event, { ...filterValues, status: option.value });
+            }}
+            className={`p-3 cursor-pointer border-b ${
+              index == 0
+                ? "rounded-t-md"
+                : index == statusList?.length - 1 && "rounded-b-md !border-b-0"
+            } ${
+              filterValues?.status === option.value
+                ? "bg-light-purple text-purple-100 font-medium"
+                : "hover:bg-light-purple hover:text-black-100"
+            }`}
+          >
+            {option?.label}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+const DateFilter = ({
+  isOpen,
+  filterChecked,
+  filterValues,
+  toggleFiltersDisplay,
+  handleFiltersChecked,
+  handleFilterValueChange,
+  applyFilters,
+}) => (
+  <div
+    onClick={(e) => toggleFiltersDisplay(e, "date")}
+    className="flex gap-1 relative items-center justify-between custom-checkbox p-3 hover:bg-light-blue rounded-t-small border-b border-slate-200"
+  >
+    <div className="flex items-center relative">
+      <label className="custom-checkbox">
+        <input
+          type="checkbox"
+          checked={filterChecked}
+          name="date"
+          onChange={handleFiltersChecked}
+        />
+        <span className="checkmark"></span>
+        <span className="ml-8 text-[18px]">Date</span>
+      </label>
+    </div>
+    <KeyboardArrowRight />
+    {isOpen && (
+      <div
+        className="bg-white shadow-md absolute px-6 py-4 rounded-medium  -left-[113%] flex gap-2 flex-col min-w-52"
+        onClick={(event) => event.stopPropagation()}
+      >
+        {/* Replace the input fields with the DateField component */}
+        <DateField
+          name="date.start"
+          value={filterValues.date.start}
+          date={filterValues.date.start}
+          handleChange={(date) =>
+            handleFilterValueChange({
+              target: { name: "date.start", value: date },
+            })
+          }
+        />
+        <DateField
+          name="date.end"
+          value={filterValues.date.end}
+          date={filterValues.date.end}
+          handleChange={(date) =>
+            handleFilterValueChange({
+              target: { name: "date.end", value: date },
+            })
+          }
+        />
+        <button
+          className={`px-4 py-2 text-white bg-purple-100 rounded-medium mt-3`}
+          onClick={(event) => applyFilters(event, filterValues)}
+        >
+          Apply
+        </button>
+      </div>
+    )}
+  </div>
+);
