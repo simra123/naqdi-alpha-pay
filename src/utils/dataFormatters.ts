@@ -68,10 +68,19 @@ export const formatTransactions = (response: []) => {
     transactionHash: item?.transaction_hash,
     amount:
       item?.unit != null
-        ? `${item?.transaction_amount} ${item?.unit}`
-        : item?.transaction_amount,
-    receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
-    transactionType: capitalize(item?.payment?.id ? "Payment" : "Self Deposit"),
+        ? `${item?.transaction_amount || item?.amount} ${item?.unit}`
+        : item?.transaction_amount || item?.amount,
+    receiveAddress:
+      item?.withdrawal?.recipient_address ||
+      item?.wallet?.wallet_address ||
+      item?.wallet?.address,
+    transactionType: capitalize(
+      item?.payment?.id
+        ? "Payment"
+        : item?.withdrawal?.id
+        ? "Withdrawal"
+        : "Self Deposit"
+    ),
     network: capitalize(item?.wallet?.network),
     blockchain: capitalize(item?.wallet?.blockchain),
     status: capitalize(item?.status),
@@ -88,10 +97,19 @@ export const formatTransactionsByAdmin = (response: []) => {
     transactionHash: item?.transaction_hash,
     amount:
       item?.unit != null
-        ? `${item?.transaction_amount} ${item?.unit}`
-        : item?.transaction_amount,
-    receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
-    transactionType: capitalize(item?.transaction_type),
+        ? `${item?.transaction_amount || item?.amount} ${item?.unit}`
+        : item?.transaction_amount || item?.amount,
+    receiveAddress:
+      item?.withdrawal?.recipient_address ||
+      item?.wallet?.wallet_address ||
+      item?.wallet?.address,
+    transactionType: capitalize(
+      item?.payment?.id
+        ? "Payment"
+        : item?.withdrawal?.id
+        ? "Withdrawal"
+        : "Self Deposit"
+    ),
     network: capitalize(item?.wallet?.network),
     blockchain: capitalize(item?.wallet?.blockchain),
     status: capitalize(item?.status),
