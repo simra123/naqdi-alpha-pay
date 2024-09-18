@@ -15,6 +15,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 const Login = () => {
   const router = useRouter();
   const [isLoginLoading, isLoginError, callLoginApi] = useApi();
+
   const initialValues = {
     email: "",
     password: "",
@@ -31,10 +32,11 @@ const Login = () => {
           password: values?.password,
         })
       ),
-      successCallBack: (response) => {
+      successCallBack: async (response) => {
         const { token, user } = response?.data;
         window?.localStorage?.setItem("token", token);
         window?.localStorage?.setItem("user", JSON.stringify(user));
+
         if (user?.role == Role.USER) {
           router.push("/onboarding");
         }

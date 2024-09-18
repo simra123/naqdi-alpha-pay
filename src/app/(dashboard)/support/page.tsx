@@ -1,17 +1,21 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoaderButton from "@/components/common/LoaderButton";
 import LoadingApi from "@/components/common/LoadindApi";
+
 import { useApi } from "@/hooks/useApi";
 import { TicketsListApi } from "@/services/support";
 import { callApiHook } from "@/utils/apifuncs";
 import { Add } from "@mui/icons-material";
 import moment from "moment";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { withAuth } from "@/middleware/RoleBaseAuth";
+import { Role } from "@/constants/roles";
 
 const supportList_columns = [
   {
@@ -125,4 +129,4 @@ const Support = () => {
   );
 };
 
-export default Support;
+export default withAuth(Support,[Role.USER]);

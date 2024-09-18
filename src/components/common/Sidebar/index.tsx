@@ -193,16 +193,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </div>
 
         <div className="border-t-[1px] flex gap-3 flex-col border-placeholder-gray pt-7 pb-5 px-2">
-          <div
-            className={`flex gap-2 navLink items-center`}
-            onClick={() => router.push("/support")}
-          >
-            <div>
-              <Help />
-            </div>
+          {user?.role == Role.USER && (
+            <div
+              className={`flex gap-2 navLink items-center`}
+              onClick={() => router.push("/support")}
+            >
+              <div>
+                <Help />
+              </div>
 
-            <span className="cursor-pointer">Need Help?</span>
-          </div>
+              <span className="cursor-pointer">Need Help?</span>
+            </div>
+          )}
           <div
             className={`flex gap-2 navLink items-center`}
             onClick={logoutHandler}
