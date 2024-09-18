@@ -34,7 +34,7 @@ import ReasonModal from "@/components/common/ReasonModal";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
 
-export const transactionsList_table_columns: TableColumns = [
+const transactionsList_table_columns: TableColumns = [
   { field: "id", headerName: "ID" },
   {
     field: "createdAt",
