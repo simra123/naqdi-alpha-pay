@@ -34,7 +34,6 @@ const paymentsList_table_columns = [
   {
     field: "updatedAt",
     headerName: "Updated At",
-    filterable: false,
     sortable: true,
   },
   // {
@@ -46,7 +45,6 @@ const paymentsList_table_columns = [
   {
     field: "recieverAddress",
     headerName: "Reciever Wallet Address",
-    filterable: false,
     sortable: true,
   },
   {
@@ -58,7 +56,6 @@ const paymentsList_table_columns = [
     field: "amountPaid",
     headerName: "Amount Paid",
 
-    filterable: false,
     sortable: true,
   },
   {
@@ -165,28 +162,34 @@ const Payments = () => {
 
 export default Payments;
 
+interface FilterProps {
+  date?: boolean;
+  status?: boolean;
+  amount?: boolean;
+}
+
 const Filters = ({ data, setData, isOpen, setIsOpen }) => {
   const filtersRef = useRef(null);
 
-  const [openFilters, setOpenFilters]: any = useState({
+  const [openFilters, setOpenFilters] = useState<FilterProps>({
     date: false,
     status: false,
     amount: false,
   });
 
-  const [filters, setFilters] = useState({
+  const [filtersChecked, setFiltersChecked] = useState<FilterProps>({
     date: false,
     status: false,
     amount: false,
   });
 
-  const [filterValues, setFilterValues]: any = useState({
+  const [values, setValues] = useState({
     date: { start: "", end: "" },
-    status: false,
-    amount: false,
+    status: "",
+    amount: "",
   });
 
-  // Close filters when clicking outside
+  // Close filtersChecked when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       console.log();
@@ -196,7 +199,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
         !event.target?.classList.contains("filterBtn") &&
         !event.target?.closest(".filterBtn")
       ) {
-        // Close all filters
+        // Close all filtersChecked
         setOpenFilters({
           date: false,
           status: false,
@@ -213,31 +216,42 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     };
   }, []);
 
-  const applyFilters = (e?: any, updatedValues?: any, name?: string) => {
+  const applyFilters = (
+    e?: any,
+    updatedValues?: any,
+    updateCheckedState: boolean = true
+  ) => {
     e?.stopPropagation();
     let results = data;
 
-    if (updatedValues.date.start && updatedValues.date.end) {
-      setFilters({ ...filters, date: true });
-      const start = new Date(updatedValues.date.start);
-      const end = new Date(updatedValues.date.end);
-      results = results.filter((item) => {
-        const itemDate = new Date(item.created_at);
-        return itemDate >= start && itemDate <= end;
-      });
+    console.log(updatedValues, "Updated VAlues in ApplyFilters");
+
+    if (updatedValues?.date?.start && updatedValues?.date?.end) {
+      console.log("SETTING DATES FITLES APPLY");
+      updateCheckedState &&
+        !filtersChecked?.date &&
+        setFiltersChecked({ ...filtersChecked, date: true });
+      // const start = new Date(updatedValues.date.start);
+      // const end = new Date(updatedValues.date.end);
+      // results = results.filter((item) => {
+      //   const itemDate = new Date(item.created_at);
+      //   return itemDate >= start && itemDate <= end;
+      // });
     }
 
-    if (updatedValues.status) {
-      console.log("Setting up Status Filters");
-
-      setFilters({ ...filters, status: true });
+    if (updatedValues?.status) {
+      updateCheckedState &&
+        !filtersChecked?.status &&
+        setFiltersChecked({ ...filtersChecked, status: true });
       results = results.filter(
         (item) => capitalize(item.status) === updatedValues.status
       );
     }
 
-    if (updatedValues.amount) {
-      setFilters({ ...filters, amount: true });
+    if (updatedValues?.amount) {
+      updateCheckedState &&
+        !filtersChecked?.amount &&
+        setFiltersChecked({ ...filtersChecked, amount: true });
       results = results.filter(
         (item) =>
           parseFloat(item.requested_amount) === parseFloat(updatedValues.amount)
@@ -255,27 +269,20 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
   const handleFiltersChecked = (event) => {
     const { name, checked } = event.target;
 
-    if (!checked) {
-      // Uncheck the filter and reset its value
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        [name]: false,
-      }));
+    setFiltersChecked({ ...filtersChecked, [name]: checked });
 
-      setFilterValues((prevValues) => {
-        const updatedValues = {
-          ...prevValues,
-          [name]: name === "date" ? { start: "", end: "" } : false, // Reset filter value
-        };
-        applyFilters(event, updatedValues); // Apply filters with updated values
+    if (!checked) {
+      console.log(name, checked, "IN FALSE STATUS");
+      setValues((prevValues) => {
+        let updatedValues: any;
+        if (name == "date") {
+          updatedValues = { ...prevValues, [name]: { start: "", end: "" } };
+        } else {
+          updatedValues = { ...prevValues, [name]: "" };
+        }
+        applyFilters(event, updatedValues, false);
         return updatedValues;
       });
-    } else {
-      // Check the filter without modifying the values yet
-      setFilters((prevFilters) => ({
-        ...prevFilters,
-        [name]: true,
-      }));
     }
   };
 
@@ -285,13 +292,13 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     const splitted = name.split(".");
 
     if (splitted.length <= 1) {
-      return setFilterValues((prevValues) => ({
+      return setValues((prevValues) => ({
         ...prevValues,
         [name]: value,
       }));
     }
 
-    setFilterValues((prevValues) => {
+    setValues((prevValues) => {
       const updatedValues = { ...prevValues };
       let currentLevel = updatedValues;
 
@@ -309,6 +316,8 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     });
   };
 
+  console.log(values);
+
   return (
     <div
       ref={filtersRef}
@@ -318,8 +327,8 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     >
       <DateFilter
         isOpen={openFilters.date}
-        filterChecked={filters.date}
-        filterValues={filterValues}
+        filterChecked={filtersChecked.date}
+        values={values}
         toggleFiltersDisplay={toggleFiltersDisplay}
         handleFiltersChecked={handleFiltersChecked}
         handleFilterValueChange={handleFilterValueChange}
@@ -328,8 +337,8 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
 
       <StatusFilter
         isOpen={openFilters.status}
-        filterChecked={filters.status}
-        filterValues={filterValues}
+        filterChecked={filtersChecked.status}
+        values={values}
         toggleFiltersDisplay={toggleFiltersDisplay}
         handleFiltersChecked={handleFiltersChecked}
         handleFilterValueChange={handleFilterValueChange}
@@ -344,8 +353,8 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
 
       <AmountFilter
         isOpen={openFilters.amount}
-        filterChecked={filters.amount}
-        filterValues={filterValues}
+        filterChecked={filtersChecked.amount}
+        values={values}
         toggleFiltersDisplay={toggleFiltersDisplay}
         handleFiltersChecked={handleFiltersChecked}
         handleFilterValueChange={handleFilterValueChange}
@@ -358,7 +367,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
 const AmountFilter = ({
   isOpen,
   filterChecked,
-  filterValues,
+  values,
   toggleFiltersDisplay,
   handleFiltersChecked,
   handleFilterValueChange,
@@ -389,13 +398,14 @@ const AmountFilter = ({
         <input
           type="number"
           name="amount"
-          value={filterValues.amount}
+          className="outline-none border border-light-gray rounded-medium focus:border-purple-100 p-2"
+          value={values.amount}
           onChange={handleFilterValueChange}
           placeholder="Enter Amount"
         />
         <button
           className={`px-4 py-2 text-white bg-purple-100 rounded-medium mt-3`}
-          onClick={(event) => applyFilters(event, filterValues)}
+          onClick={(event) => applyFilters(event, values)}
         >
           Apply
         </button>
@@ -407,7 +417,7 @@ const AmountFilter = ({
 interface FitlerProps {
   isOpen: boolean;
   filterChecked: boolean;
-  filterValues: any;
+  values: any;
   toggleFiltersDisplay: any;
   handleFiltersChecked: any;
   handleFilterValueChange: any;
@@ -418,7 +428,7 @@ interface FitlerProps {
 const StatusFilter = ({
   isOpen,
   filterChecked,
-  filterValues,
+  values,
   toggleFiltersDisplay,
   handleFiltersChecked,
   handleFilterValueChange,
@@ -454,14 +464,14 @@ const StatusFilter = ({
               handleFilterValueChange({
                 target: { value: option.value, name: "status" },
               });
-              applyFilters(event, { ...filterValues, status: option.value });
+              applyFilters(event, { ...values, status: option.value });
             }}
             className={`p-3 cursor-pointer border-b ${
               index == 0
                 ? "rounded-t-md"
                 : index == statusList?.length - 1 && "rounded-b-md !border-b-0"
             } ${
-              filterValues?.status === option.value
+              values?.status === option.value
                 ? "bg-light-purple text-purple-100 font-medium"
                 : "hover:bg-light-purple hover:text-black-100"
             }`}
@@ -477,7 +487,7 @@ const StatusFilter = ({
 const DateFilter = ({
   isOpen,
   filterChecked,
-  filterValues,
+  values,
   toggleFiltersDisplay,
   handleFiltersChecked,
   handleFilterValueChange,
@@ -508,8 +518,8 @@ const DateFilter = ({
         {/* Replace the input fields with the DateField component */}
         <DateField
           name="date.start"
-          value={filterValues.date.start}
-          date={filterValues.date.start}
+          value={values.date.start}
+          date={values.date.start}
           handleChange={(date) =>
             handleFilterValueChange({
               target: { name: "date.start", value: date },
@@ -518,8 +528,8 @@ const DateFilter = ({
         />
         <DateField
           name="date.end"
-          value={filterValues.date.end}
-          date={filterValues.date.end}
+          value={values.date.end}
+          date={values.date.end}
           handleChange={(date) =>
             handleFilterValueChange({
               target: { name: "date.end", value: date },
@@ -528,7 +538,7 @@ const DateFilter = ({
         />
         <button
           className={`px-4 py-2 text-white bg-purple-100 rounded-medium mt-3`}
-          onClick={(event) => applyFilters(event, filterValues)}
+          onClick={(event) => applyFilters(event, values)}
         >
           Apply
         </button>

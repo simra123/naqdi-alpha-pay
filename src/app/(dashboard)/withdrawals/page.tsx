@@ -20,19 +20,19 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
-import Loader from "@/components/common/Loader";
 import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
+import { TableColumns } from "@/constants/types";
 
-const withdrawalsList_table_columns = [
+const withdrawalsList_table_columns: TableColumns = [
   { field: "id", headerName: "ID", sortable: true },
   { field: "created_at", headerName: "Created At", sortable: true },
   { field: "updated_at", headerName: "Updated At", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
   { field: "network", headerName: "Network", sortable: true },
-  { field: "transaction_hash", headerName: "Transaction Hash", sortable: true },
+
   {
     field: "recipient_address",
     headerName: "Recipient Address",
@@ -117,7 +117,7 @@ const Withdrawals = () => {
 
       <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
         <LoaderButton
-          content={<Add className="!text-h2"/>}
+          content={<Add className="!text-h2" />}
           className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
           variant="contained"
           onClick={toggleCreateModal}

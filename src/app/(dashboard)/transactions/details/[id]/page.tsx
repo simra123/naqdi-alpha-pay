@@ -6,6 +6,7 @@ import { useApi } from "@/hooks/useApi";
 import {
   getPaymentTransactionDetailsByUserApi,
   getTransactionDetailsByUserApi,
+  getWithdrawalTransactionDetailsByUserApi,
 } from "@/services/transaction";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -53,6 +54,11 @@ const TransactionDetails = ({ params }) => {
       }
       if (transactionType == "Payment") {
         return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
+      }
+      if (transactionType == "Withdrawal") {
+        return getWithdrawalTransactionDetailsByUserApi({
+          transaction_id: +tranascionId,
+        });
       }
     };
 
@@ -110,7 +116,8 @@ const TransactionDetails = ({ params }) => {
           <Details
             label="Amount"
             value={`${roundToPrecision(
-              +transactionDetails?.transaction_amount,
+              +transactionDetails?.transaction_amount ||
+                +transactionDetails?.amount,
               10
             )} ${transactionDetails?.unit}`}
           />
@@ -124,8 +131,10 @@ const TransactionDetails = ({ params }) => {
           <Details
             label="Reciever Wallet Address"
             value={
-              transactionDetails?.wallet?.wallet_address ||
-              transactionDetails?.wallet?.address
+              transactionType == "Withdrawal"
+                ? transactionDetails?.withdrawal?.recipient_address
+                : transactionDetails?.wallet?.wallet_address ||
+                  transactionDetails?.wallet?.address
             }
           />
           <Details

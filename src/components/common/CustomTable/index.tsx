@@ -27,6 +27,10 @@ interface TableProps {
   pagination?: boolean;
   columnClassName?: string;
   loading?: boolean;
+  tableWrapper?: boolean;
+  selectable?: boolean; // Default to false
+  selectedRows?: any[] | null;
+  setSelectedRows?: any;
 }
 
 const CustomTable = ({
@@ -42,6 +46,10 @@ const CustomTable = ({
   pagination,
   columnClassName,
   loading,
+  tableWrapper = true,
+  selectable,
+  selectedRows,
+  setSelectedRows,
 }: TableProps) => {
   const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,8 +58,44 @@ const CustomTable = ({
   const [sortConfig, setSortConfig] = useState(null);
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [columnWidths, setColumnWidths]: any = useState();
+  const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
   const totalPages = Math.ceil(rows.length / pageSize);
+
+  useEffect(() => {
+    if(selectable){
+
+      setSelectAll(
+        currentRows.length > 0 &&
+        currentRows.every((row) => selectedRows.includes(row))
+      );
+    }
+  }, [currentRows, selectedRows, selectable]);
+
+  const handleRowSelection = (row: any) => {
+    if(selectable){
+
+      if (selectedRows.includes(row)) {
+        setSelectedRows(selectedRows.filter((r) => r !== row));
+      } else {
+        setSelectedRows([...selectedRows, row]);
+      }
+    }
+  };
+
+  console.log(selectedRows)
+
+  const handleSelectAll = () => {
+    if(selectable){
+
+      if (selectAll) {
+        setSelectedRows([]);
+      } else {
+        setSelectedRows(currentRows);
+      }
+      setSelectAll(!selectAll);
+    }
+  };
 
   useEffect(() => {
     if (equalColumns) {
@@ -115,9 +159,12 @@ const CustomTable = ({
 
   return (
     <div
-      className={`rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white sm:p-6 md:p-10 ${
-        pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
-      } `}
+      className={
+        tableWrapper &&
+        `rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white sm:p-6 md:p-10 ${
+          pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
+        } `
+      }
       ref={tableRef}
     >
       <div>
@@ -159,7 +206,6 @@ const CustomTable = ({
               </button>
               <div className="relative filterBtn">
                 <button
-                  
                   onClick={() => setFiltersOpen(!filtersOpen)}
                   className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
                 >
@@ -185,6 +231,18 @@ const CustomTable = ({
             {/* Table Headers Below */}
             <thead className="text-gray-700 font-medium bg-table-header">
               <tr>
+                {selectable && (
+                  <th className="py-3 px-6 text-left">
+                    <label className="custom-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectAll}
+                        onChange={handleSelectAll}
+                      />
+                      <span className="checkmark !static block"></span>
+                    </label>
+                  </th>
+                )}
                 {columns.map((column) => (
                   <th
                     key={column.field}
@@ -213,13 +271,25 @@ const CustomTable = ({
             </thead>
 
             {/* Rows Mapped Below */}
-            <tbody>
+            <tbody className="capitalize">
               {currentRows.map((row, index) => (
                 <tr
                   key={index}
                   onClick={() => rowClickHandler && rowClickHandler(row)}
                   className="bg-white border-b hover:bg-gray-50 cursor-pointer"
                 >
+                  {selectable && (
+                    <td className="py-4 px-6">
+                      <label className="custom-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectedRows.includes(row)}
+                          onChange={() => handleRowSelection(row)}
+                        />
+                        <span className="checkmark !static block"></span>
+                      </label>
+                    </td>
+                  )}
                   {columns.map((column) => (
                     <td
                       key={column.field}
