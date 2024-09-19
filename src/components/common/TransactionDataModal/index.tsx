@@ -7,7 +7,6 @@ import { Button } from "@mui/material";
 
 import ErrorApiText from "../ErrorApiText";
 
-
 type Props = {
   isOpen: boolean;
   handleClose: () => void;
@@ -27,6 +26,8 @@ type Props = {
   buttonLoading: boolean;
   handleTransaction: () => void;
   transactionError: string | boolean;
+  otp: string;
+  setOtp: Function;
 };
 
 const TransactionDataModal = ({
@@ -48,6 +49,8 @@ const TransactionDataModal = ({
   buttonLoading,
   handleTransaction,
   transactionError,
+  otp,
+  setOtp,
 }: Props) => {
   return (
     <Modal isOpen={isOpen}>
@@ -147,7 +150,6 @@ const TransactionDataModal = ({
                     placeholder="XXXXXX"
                     containerStyle={{
                       display: "flex",
-
                       gap: "1.5rem",
                     }}
                     renderInput={(props) => (
@@ -157,8 +159,8 @@ const TransactionDataModal = ({
                         className="input-field min-w-14 p-4 outline-none"
                       />
                     )}
-                    onChange={(value) => console.log(value)}
-                    // value={}
+                    onChange={(value) => setOtp(value)}
+                    value={otp}
                   />
                   <p className="note">
                     Enter your MFA code in order to proceed.
