@@ -9,7 +9,6 @@ import { getKYCUsersListApi } from "@/services/admin/users";
 import LoadingApi from "@/components/common/LoadindApi";
 import moment from "moment";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import SelectBox from "@/components/common/SelectBox";
 import { withAuth } from "../../../middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 import { Button, Chip } from "@mui/material";
@@ -103,20 +102,6 @@ const KYCUsersPage = () => {
           <Button variant="outlined" color="primary">
             Export CSV
           </Button>
-          <SelectBox
-            className="transparent !border-0 min-w-32 !p-0"
-            options={statusList}
-            value={selectedStatus}
-            placeholder="Status"
-            onChange={handleStatusChange}
-            sx={{
-              ".MuiSelect-outlined": {
-                padding: "8px 12px !important",
-              },
-
-              borderRadius: "0 !important",
-            }}
-          />
         </div>
       </div>
 

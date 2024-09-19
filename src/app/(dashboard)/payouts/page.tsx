@@ -101,25 +101,24 @@ const Payouts = () => {
         />
       </RenderRoleBased>
 
-      <LoadingApi loading={isPayoutsListLoading}>
-        <CustomTable
-          columns={payoutsList_table_columns}
-          // Filters={Filters}
-          rows={payoutsList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/payouts/details/${row?.id}`)
-          }
-          pagination
-        />
+      <CustomTable
+        loading={isPayoutsListLoading}
+        columns={payoutsList_table_columns}
+        // Filters={Filters}
+        rows={payoutsList}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) =>
+          router.push(`/payouts/details/${row?.id}`)
+        }
+        pagination
+      />
 
-        <ErrorApiText error={isPayoutsListError} />
-      </LoadingApi>
+      <ErrorApiText error={isPayoutsListError} />
     </>
   );
 };

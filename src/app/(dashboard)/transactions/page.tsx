@@ -121,32 +121,31 @@ const Transactions = () => {
         Transactions
       </h3>
 
-      <LoadingApi loading={isTransactionsLoading}>
-        <CustomTable
-          columns={
-            user?.role == Role.ADMIN
-              ? transactionsList_Admin_table_columns
-              : transactionsList_table_columns
-          }
-          rows={transactions}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) => {
-            console.log(row);
-            router.push(
-              `/transactions/details/${row?.id}?type=${row?.transactionType}`
-            );
-          }}
-          pagination
-          columnClassName="max-w-[200px]"
-        />
+      <CustomTable
+        loading={isTransactionsLoading}
+        columns={
+          user?.role == Role.ADMIN
+            ? transactionsList_Admin_table_columns
+            : transactionsList_table_columns
+        }
+        rows={transactions}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) => {
+          console.log(row);
+          router.push(
+            `/transactions/details/${row?.id}?type=${row?.transactionType}`
+          );
+        }}
+        pagination
+        columnClassName="max-w-[200px]"
+      />
 
-        <ErrorApiText error={isTransactionsError} />
-      </LoadingApi>
+      <ErrorApiText error={isTransactionsError} />
     </>
   );
 };

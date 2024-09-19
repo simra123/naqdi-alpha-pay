@@ -114,19 +114,19 @@ const Support = () => {
 
       {/* Table Actions Below */}
       <div>
-        <LoadingApi loading={isListLoading}>
-          <CustomTable
-            columns={supportList_columns}
-            rows={ticketsList}
-            initialPageSize={10}
-            rowClickHandler={(row: any) => console.log(row)}
-            pagination
-          />
-        </LoadingApi>
+        <CustomTable
+          loading={isListLoading}
+          columns={supportList_columns}
+          rows={ticketsList}
+          initialPageSize={10}
+          rowClickHandler={(row: any) => console.log(row)}
+          pagination
+        />
+
         <ErrorApiText error={isListError} />
       </div>
     </>
   );
 };
 
-export default withAuth(Support,[Role.USER]);
+export default withAuth(Support, [Role.USER]);

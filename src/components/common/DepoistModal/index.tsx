@@ -2,9 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Modal from "../Modal";
-
-import { Close } from "@mui/icons-material";
-import SelectBox from "../SelectBox";
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import { createDepoistAddressApi } from "@/services/wallet";
