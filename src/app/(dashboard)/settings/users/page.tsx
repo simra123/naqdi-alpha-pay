@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 
 import { userSettings_table_columns } from "./columns";
 import LoaderButton from "@/components/common/LoaderButton";
-import LoadingApi from "@/components/common/LoadindApi";
 import CustomTable from "@/components/common/CustomTable";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
@@ -28,7 +27,7 @@ const rows = [
 const Users = () => {
   const router = useRouter();
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
-  const user = useLocalStorage('user')
+  const user = useLocalStorage("user");
 
   const ExportCSVHandler = async () => {
     await callApiHook({
@@ -52,32 +51,30 @@ const Users = () => {
 
       <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
         <LoaderButton
-          content={<Add className="!text-h2"/>}
+          content={<Add className="!text-h2" />}
           className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
           variant="contained"
-          onClick={()=> console.log("In Development")}
+          onClick={() => console.log("In Development")}
         />
       </RenderRoleBased>
 
-      <LoadingApi loading={false}>
-        <CustomTable
-          columns={userSettings_table_columns}
-          // Filters={Filters}
-          rows={rows}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/settings/users/details/${row?.id}`)
-          }
-          pagination
-        />
+      <CustomTable
+        columns={userSettings_table_columns}
+        // Filters={Filters}
+        rows={rows}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) =>
+          router.push(`/settings/users/details/${row?.id}`)
+        }
+        pagination
+      />
 
-        <ErrorApiText error={false} />
-      </LoadingApi>
+      <ErrorApiText error={false} />
     </>
   );
 };
