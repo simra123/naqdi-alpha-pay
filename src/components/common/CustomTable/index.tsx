@@ -13,6 +13,8 @@ import {
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
 import IconButton from "../IconButton";
+import LoadingApi from "../LoadindApi";
+import Loader from "../Loader";
 
 interface TableProps {
   columns: any[];
@@ -63,18 +65,16 @@ const CustomTable = ({
   const totalPages = Math.ceil(rows.length / pageSize);
 
   useEffect(() => {
-    if(selectable){
-
+    if (selectable) {
       setSelectAll(
         currentRows.length > 0 &&
-        currentRows.every((row) => selectedRows.includes(row))
+          currentRows.every((row) => selectedRows.includes(row))
       );
     }
   }, [currentRows, selectedRows, selectable]);
 
   const handleRowSelection = (row: any) => {
-    if(selectable){
-
+    if (selectable) {
       if (selectedRows.includes(row)) {
         setSelectedRows(selectedRows.filter((r) => r !== row));
       } else {
@@ -83,11 +83,10 @@ const CustomTable = ({
     }
   };
 
-  console.log(selectedRows)
+  console.log(selectedRows);
 
   const handleSelectAll = () => {
-    if(selectable){
-
+    if (selectable) {
       if (selectAll) {
         setSelectedRows([]);
       } else {
@@ -181,7 +180,7 @@ const CustomTable = ({
                   loading={pdf.loading}
                 />
               )}
-              {csv?.handler && (
+              {csv?.handler && rows?.length > 0 && (
                 <LoaderButton
                   content={"Export CSV"}
                   variant={"outlined"}
@@ -271,6 +270,7 @@ const CustomTable = ({
             </thead>
 
             {/* Rows Mapped Below */}
+
             <tbody className="capitalize">
               {currentRows.map((row, index) => (
                 <tr
@@ -306,6 +306,9 @@ const CustomTable = ({
               ))}
             </tbody>
           </table>
+          {loading && (
+            <Loader bg wrapperClassName="w-full flex justify-center my-8" />
+          )}
           {!loading && currentRows?.length < 1 && (
             <div className="bg-white border-b p-4 text-custom-title-gray  font-semibold text-p120 text-center ">
               No Data!!

@@ -136,24 +136,24 @@ const Payments = () => {
       {/* Table Actions Below */}
 
       <div>
-        <LoadingApi loading={isPaymentLoading}>
-          <CustomTable
-            columns={paymentsList_table_columns}
-            Filters={Filters}
-            rows={paymentsList}
-            csv={{
-              handler: ExportCSVHandler,
-              loading: isCSVLoading,
-              error: isCSVError,
-            }}
-            initialPageSize={10}
-            rowClickHandler={(row: any) =>
-              router.push(`payments/details/${row?.id}`)
-            }
-            pagination
-            columnClassName="max-w-[250px]"
-          />
-        </LoadingApi>
+        <CustomTable
+          columns={paymentsList_table_columns}
+          Filters={Filters}
+          rows={paymentsList}
+          csv={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+            error: isCSVError,
+          }}
+          initialPageSize={10}
+          rowClickHandler={(row: any) =>
+            router.push(`payments/details/${row?.id}`)
+          }
+          pagination
+          columnClassName="max-w-[250px]"
+          loading={isPaymentLoading}
+        />
+
         <ErrorApiText error={isPaymentError} />
       </div>
     </>

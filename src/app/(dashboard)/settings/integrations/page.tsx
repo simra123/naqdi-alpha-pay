@@ -1,15 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { Button } from "@mui/material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
-import {
-  addWebhookURLAPI,
-  generateApiKeyApi,
-  listApiKeysApi,
-  revokeKeyApi,
-} from "@/services/Integration";
+import { listApiKeysApi, revokeKeyApi } from "@/services/Integration";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
@@ -37,6 +31,14 @@ const Integrations = () => {
     { field: "createdAt", headerName: "Created At" },
     { field: "name", headerName: "Name" },
     { field: "apiKey", headerName: "API Key" },
+    {
+      field: "revoked",
+      headerName: "Status",
+
+      dataValidator: (id, row) => {
+        return row.revoked ? "InActive" : "Active";
+      },
+    },
     {
       field: "revoked",
       headerName: "Actions",
@@ -132,9 +134,13 @@ const Integrations = () => {
       <div className="rounded-medium bg-white p-8 mt-8">
         <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
-            <h4 className="text-button sm:text-p122 font-semibold">Webhook URL</h4>
+            <h4 className="text-button sm:text-p122 font-semibold">
+              Webhook URL
+            </h4>
             {/* <LoadingApi loading={isUserDetailsLoading}> */}
-            <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">{webhookURL}</span>
+            <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+              {webhookURL}
+            </span>
             {/* </LoadingApi> */}
             <ErrorApiText error={isUserDetailsError} />
           </div>
@@ -147,29 +153,29 @@ const Integrations = () => {
       </div>
 
       <div className="rounded-medium bg-white p-4 mt-8">
-        <LoadingApi loading={isKeyListLoading}>
-          <CustomTable
-            actions={
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-button sm:text-p122 font-semibold text-black-100">
-                  API Keys
-                </h2>
+        <CustomTable
+          loading={isKeyListLoading}
+          actions={
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-button sm:text-p122 font-semibold text-black-100">
+                API Keys
+              </h2>
 
-                <LoaderButton
-                  variant="outlined"
-                  content={"New API Key"}
-                  className="w-48"
-                  onClick={toggleCreateModal}
-                />
-              </div>
-            }
-            columns={columns}
-            // Filters={Filters}
-            rowClickHandler={(row) => console.log(row)}
-            rows={keysList}
-            initialPageSize={10}
-          />
-        </LoadingApi>
+              <LoaderButton
+                variant="outlined"
+                content={"New API Key"}
+                className="w-48"
+                onClick={toggleCreateModal}
+              />
+            </div>
+          }
+          columns={columns}
+          // Filters={Filters}
+          rowClickHandler={(row) => console.log(row)}
+          rows={keysList}
+          initialPageSize={10}
+        />
+
         <ErrorApiText error={isKeyListError || isRevokeError} />
       </div>
     </>

@@ -124,26 +124,25 @@ const Withdrawals = () => {
         />
       </RenderRoleBased>
 
-      <LoadingApi loading={isWithdrawalsListLoading}>
-        <CustomTable
-          columns={withdrawalsList_table_columns}
-          // Filters={Filters}
-          rows={withdrawalsList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/withdrawals/details/${row?.id}`)
-          }
-          pagination
-          columnClassName="max-w-[200px]"
-        />
+      <CustomTable
+        loading={isWithdrawalsListLoading}
+        columns={withdrawalsList_table_columns}
+        // Filters={Filters}
+        rows={withdrawalsList}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) =>
+          router.push(`/withdrawals/details/${row?.id}`)
+        }
+        pagination
+        columnClassName="max-w-[200px]"
+      />
 
-        <ErrorApiText error={isWithdrawalsListError} />
-      </LoadingApi>
+      <ErrorApiText error={isWithdrawalsListError} />
     </>
   );
 };
