@@ -30,7 +30,7 @@ import {
   StatusIcon,
 } from "@/assets/Svgs";
 import CustomTable from "@/components/common/CustomTable";
-import ReasonModal from "@/components/common/ReasonModal";
+import ReasonModal from "@/components/common/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
 

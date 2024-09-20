@@ -30,6 +30,7 @@ const Chip = ({ status }: Props) => {
     capStatus == "Complete" ||
     capStatus == "Verified" ||
     capStatus == "Confirm" ||
+    capStatus == "Approved" ||
     capStatus == "Resolved"
   ) {
     statusColor = "text-green-chip";
@@ -41,7 +42,7 @@ const Chip = ({ status }: Props) => {
     statusBg = "bg-chip-blue";
   }
 
-  if (capStatus == "Incomplete" || capStatus == "Unverified") {
+  if (capStatus == "Incomplete" || capStatus == "Unverified" || capStatus == "Unapproved") {
     statusColor = "text-yellow-dull";
     statusBg = "bg-yellow-chip-dull";
   }
