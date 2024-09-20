@@ -5,7 +5,7 @@ import api from "@/config/api";
 export const getAllUsersByAdminApi = () => {
   return () => api.get(`auth/get-all-users`);
 };
-export const getKYCUsersListApi = (status) => {
+export const getKYCUsersListApi = (data: { status?: string }) => {
   return () => api.get(`auth/userDetails/list`, { params: { status } });
 };
 
