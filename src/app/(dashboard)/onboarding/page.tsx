@@ -48,7 +48,7 @@ const Onboarding = () => {
           className={
             "px-4 py-3 header_step_btn flex-1" + returnActiveStep(STEPS.PROFILE)
           }
-          disabled={user}
+          // disabled={user}
           onClick={handleStepChange(STEPS.PROFILE)}
         >
           <div
