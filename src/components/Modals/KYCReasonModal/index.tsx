@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
 import Modal from "../Modal";
 
-import IconField from "../IconField";
-import LoaderButton from "../LoaderButton";
-import ErrorApiText from "../ErrorApiText";
+import IconField from "../../common/IconField";
+import LoaderButton from "../../common/LoaderButton";
+import ErrorApiText from "../../common/ErrorApiText";
 
 interface Props {
   isOpen: boolean;

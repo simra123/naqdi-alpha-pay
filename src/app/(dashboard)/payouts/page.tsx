@@ -13,7 +13,7 @@ import { formatPayouts } from "@/utils/dataFormatters";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import LoaderButton from "@/components/common/LoaderButton";
-import CreatePayoutModal from "@/components/common/CreatePayoutModal";
+import CreatePayoutModal from "@/components/Modals/CreatePayoutModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { FolderIcon, StatusIcon } from "@/assets/Svgs";
-import ChangePasswordModal from "@/components/common/ChangePasswordModal";
+import ChangePasswordModal from "@/components/Modals/ChangePasswordModal";
 import Details from "@/components/common/Details";
 import LoaderButton from "@/components/common/LoaderButton";
 import RenderRoleBased from "@/components/common/RenderRoleBased";

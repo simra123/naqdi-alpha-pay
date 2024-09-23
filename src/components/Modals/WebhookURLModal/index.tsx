@@ -6,40 +6,34 @@ import { callApiHook } from "@/utils/apifuncs";
 
 import { setNotification } from "@/store/slices/modal.Slice";
 
-import IconField from "../IconField";
-import LoaderButton from "../LoaderButton";
-import ErrorApiText from "../ErrorApiText";
-import { withdrawalRejectAdminApi } from "@/services/withdrawal";
-import { useRouter } from "next/navigation";
+import IconField from "../../common/IconField";
+import LoaderButton from "../../common/LoaderButton";
+import ErrorApiText from "../../common/ErrorApiText";
+import { addWebhookURLAPI, generateApiKeyApi } from "@/services/Integration";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
-  withdrawId: number;
+  refreshHandler: () => void;
 }
 
-const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
+const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
   const dispatch = useDispatch();
-  const router = useRouter();
-  const [data, setData] = useState({ reason: "" });
-  const [isRejectLoading, isRejectError, callRejectApi] = useApi();
+  const [data, setData] = useState({ url: "" });
+  const [isURLLoading, isURLError, callURLApi] = useApi();
 
-  const handleWithdrawalReject = async () => {
+  const handleWebhook = async () => {
     await callApiHook({
-      apiCall: callRejectApi(
-        withdrawalRejectAdminApi({
-          withdraw_id: withdrawId,
-          reason: data.reason,
-        })
-      ),
-      successCallBack: (response: any) => {
+      apiCall: callURLApi(addWebhookURLAPI({ url: data.url })),
+      successCallBack: () => {
         dispatch(
           setNotification({
-            message: "Withdrawal Request Rejected Successfully",
+            message: "Webhook URL Updated Successfully",
             status: "success",
           })
         );
-        router.push("/withdrawals");
+        toggleHandler();
+        refreshHandler();
       },
     });
   };
@@ -50,30 +44,30 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      setData({ reason: "" });
+      setData({ url: "" });
     }
   }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen}>
       <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
+        <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
 
         <form className="mt-8 flex flex-col gap-2">
           <IconField
-            value={data.reason}
-            name="reason"
-            label="Reason"
+            value={data.url}
+            name="url"
+            label="Webhook URL"
             onChange={handleInputChange}
           />
 
           <div className="flex flex-col justify-end mt-4">
             <LoaderButton
               type="submit"
-              content={`Reject`}
+              content={`Update`}
               variant="contained"
-              onClick={handleWithdrawalReject}
-              loading={isRejectLoading}
+              onClick={handleWebhook}
+              loading={isURLLoading}
             />
 
             <button
@@ -86,10 +80,10 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
           </div>
         </form>
 
-        <ErrorApiText error={isRejectError} />
+        <ErrorApiText error={isURLError} />
       </div>
     </Modal>
   );
 };
 
-export default ReasonModal;
+export default WebhookURLModal;

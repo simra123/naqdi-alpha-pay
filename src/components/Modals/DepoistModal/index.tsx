@@ -6,15 +6,15 @@ import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import { createDepoistAddressApi } from "@/services/wallet";
 import Image from "next/image";
-import LoadingApi from "../LoadindApi";
-import ErrorApiText from "../ErrorApiText";
+import LoadingApi from "../../common/LoadindApi";
+import ErrorApiText from "../../common/ErrorApiText";
 import {
   blockchains,
   networks,
   networks_available,
 } from "@/constants/blockchains";
-import IconSelectBox from "../IconSelectBox";
-import LoaderButton from "../LoaderButton";
+import IconSelectBox from "../../common/IconSelectBox";
+import LoaderButton from "../../common/LoaderButton";
 
 const DepositModal = ({ isOpen, setIsOpen }) => {
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =

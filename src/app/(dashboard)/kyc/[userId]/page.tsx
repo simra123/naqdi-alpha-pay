@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
 import Details from "@/components/common/Details";
-import KYCReasonModal from "@/components/common/KYCReasonModal";
+import KYCReasonModal from "@/components/Modals/KYCReasonModal";
 
 const statuses = {
   APPROVED: "approved",

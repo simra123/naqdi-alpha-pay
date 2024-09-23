@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../Modal"; // Make sure to adjust the import path if necessary
-import IconSelectBox from "../IconSelectBox";
+import IconSelectBox from "../../common/IconSelectBox";
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import {
@@ -15,13 +15,11 @@ import { getFeesApi } from "@/services/common";
 import { createWithdrawalApi } from "@/services/withdrawal";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { clamp } from "@/utils/math";
-import IconField from "../IconField";
-import LoaderButton from "../LoaderButton";
-import LoadingApi from "../LoadindApi";
-import ErrorApiText from "../ErrorApiText";
+import IconField from "../../common/IconField";
+import LoaderButton from "../../common/LoaderButton";
+import LoadingApi from "../../common/LoadindApi";
+import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
-import { createPayoutRequestApi } from "@/services/payout";
-import { fiatOptions } from "@/constants/fiat";
 import { Info } from "@mui/icons-material";
 
 interface Props {
@@ -30,7 +28,7 @@ interface Props {
   refreshHandler: () => void;
 }
 
-const CreatePayoutModal = ({
+const CreateWithdrawalModal = ({
   isOpen,
   toggleHandler,
   refreshHandler,
@@ -40,8 +38,7 @@ const CreatePayoutModal = ({
   const [destinationAmount, setDestinationAmount] = useState("0");
   const [otp, setOtp] = useState("");
   const [withdrawalFee, setWithdrawalFee] = useState(0);
-  const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
-    useApi();
+  const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
   const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
   const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
@@ -61,10 +58,8 @@ const CreatePayoutModal = ({
   // });
 
   const [data, setData] = useState({
-    requested_currency: "",
-    bank_account: "",
-    account_title: "",
-    amount: "",
+    sourceAmount: "",
+    walletAddress: "",
     notes: "",
   });
 
@@ -114,7 +109,7 @@ const CreatePayoutModal = ({
 
   const getAlphasPayFee = async () => {
     await callApiHook({
-      apiCall: callFeeApi(getFeesApi(data?.amount)),
+      apiCall: callFeeApi(getFeesApi(data?.sourceAmount)),
       successCallBack: (response: any) => {
         setWithdrawalFee(response?.alphaspayFees);
         setDestinationAmount(response?.netAmount);
@@ -122,17 +117,16 @@ const CreatePayoutModal = ({
     });
   };
 
-  const handleCreatePayout = async () => {
+  const handleWithdrawal = async () => {
     await callApiHook({
-      apiCall: callCreatePayoutApi(
-        createPayoutRequestApi({
-          account_title: data.account_title,
-          amount: data.amount,
-          bank_account: data.bank_account,
-          requested_currency: data.requested_currency,
-          unit: sourceOptions.blockchain,
+      apiCall: callWithdrawalApi(
+        createWithdrawalApi({
+          amount: data?.sourceAmount,
+          recipient_address: data.walletAddress,
+          blockchain: sourceOptions.blockchain,
+          notes: data.notes,
           standard: networks_available[sourceOptions.blockchain]
-            ? filteredNetworks(sourceOptions.network, sourceOptions.blockchain)
+            ? sourceOptions.standard
             : "",
           token: otp,
         })
@@ -140,7 +134,7 @@ const CreatePayoutModal = ({
       successCallBack: () => {
         dispatch(
           setNotification({
-            message: "Payout Request Created Successfully",
+            message: "Withdrawal Request Created Successfully",
             status: "success",
           })
         );
@@ -154,11 +148,9 @@ const CreatePayoutModal = ({
     if (isOpen) {
       _getUserBalance();
       setData({
-        account_title: "",
-        amount: "",
-        bank_account: "",
         notes: "",
-        requested_currency: "",
+        sourceAmount: "",
+        walletAddress: "",
       });
       setSourceOptions({
         blockchain: "",
@@ -171,15 +163,15 @@ const CreatePayoutModal = ({
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && data?.amount) {
+    if (data?.sourceAmount && isOpen) {
       getAlphasPayFee();
     }
-  }, [data.amount, isOpen]);
+  }, [data.sourceAmount, isOpen]);
 
   const handleInputChange = (event, name) => {
     const { value } = event.target;
 
-    if (name == "amount") {
+    if (name == "sourceAmount") {
       const maxVal = clamp(
         value,
         getCurrentAssetAmount(sourceOptions.blockchain)
@@ -203,7 +195,7 @@ const CreatePayoutModal = ({
   return (
     <Modal isOpen={isOpen}>
       <div className="modal_content_wrapper bg-white p-6 md:p-10 rounded-md shadow-lg w-[547px] max-w-[90%] my-4">
-        <h2 className="text-h3.5 font-semibold mb-4">Add Payout</h2>
+        <h2 className="text-h3.5 font-semibold mb-4">Add Withdrawal</h2>
 
         <LoadingApi loading={isBalanceLoading}>
           <form className="mt-8 flex flex-col gap-2">
@@ -240,9 +232,9 @@ const CreatePayoutModal = ({
             )}
 
             <IconField
-              value={data?.amount}
+              value={data?.sourceAmount}
               label="Source Amount & Destination Amount"
-              onChange={(e) => handleInputChange(e, "amount")}
+              onChange={(e) => handleInputChange(e, "sourceAmount")}
             />
 
             <LoadingApi loading={isFeeLoading}>
@@ -259,26 +251,11 @@ const CreatePayoutModal = ({
             </LoadingApi>
             <ErrorApiText error={isFeeError} />
 
-            <IconSelectBox
-              wrapperClassName="!mb-2"
-              label="Requested Currency"
-              options={fiatOptions}
-              value={data.requested_currency}
-              placeholder="Select a Currency"
-              onChange={(e) => handleInputChange(e, "requested_currency")}
-            />
-
             <IconField
-              value={data?.bank_account}
-              label="To Bank Account (IBAN)"
-              placeholder="Account Title"
-              onChange={(e) => handleInputChange(e, "bank_account")}
-            />
-            <IconField
-              value={data?.account_title}
-              label="Account Title"
-              placeholder="Account title"
-              onChange={(e) => handleInputChange(e, "account_title")}
+              value={data?.walletAddress}
+              label="Recipient Wallet Address"
+              placeholder="Wallet Address"
+              onChange={(e) => handleInputChange(e, "walletAddress")}
             />
 
             <div className="mt-2">
@@ -331,10 +308,10 @@ const CreatePayoutModal = ({
             <div className="flex flex-col justify-end mt-4">
               <LoaderButton
                 type="submit"
-                content={`Create Payout`}
+                content={`Create Withdrawal`}
                 variant="contained"
-                onClick={handleCreatePayout}
-                loading={isCreatePayoutLoading}
+                onClick={handleWithdrawal}
+                loading={isWithdrawalLoading}
               />
 
               <button
@@ -347,10 +324,10 @@ const CreatePayoutModal = ({
             </div>
           </form>
         </LoadingApi>
-        <ErrorApiText error={isBalanceError || isCreatePayoutError} />
+        <ErrorApiText error={isBalanceError || isWithdrawalError} />
       </div>
     </Modal>
   );
 };
 
-export default CreatePayoutModal;
+export default CreateWithdrawalModal;

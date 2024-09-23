@@ -2,10 +2,10 @@
 import React from "react";
 import Modal from "../Modal";
 import OTPInput from "react-otp-input";
-import LoaderButton from "../LoaderButton";
+import LoaderButton from "../../common/LoaderButton";
 import { Button } from "@mui/material";
 
-import ErrorApiText from "../ErrorApiText";
+import ErrorApiText from "../../common/ErrorApiText";
 
 type Props = {
   isOpen: boolean;

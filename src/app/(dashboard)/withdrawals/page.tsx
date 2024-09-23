@@ -20,7 +20,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
-import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
+import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
 import { TableColumns } from "@/constants/types";

@@ -9,7 +9,7 @@ import { Sync } from "@mui/icons-material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import DepositModal from "@/components/common/DepoistModal";
+import DepositModal from "@/components/Modals/DepoistModal";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
