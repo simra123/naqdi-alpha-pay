@@ -1,7 +1,7 @@
 import React from "react";
 import Modal from "../Modal";
-import LoaderButton from "../LoaderButton";
-import ErrorApiText from "../ErrorApiText";
+import LoaderButton from "../../common/LoaderButton";
+import ErrorApiText from "../../common/ErrorApiText";
 
 type Props = {
   isOpen: boolean;

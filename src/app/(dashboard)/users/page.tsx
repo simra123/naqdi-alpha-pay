@@ -18,11 +18,7 @@ import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 
-const statusList = [
-  { label: "All", value: "all" },
-  { label: "Verified", value: "verified" },
-  { label: "Unverified", value: "unverified" },
-];
+
 
 const usersList_table_columns: TableColumns = [
   { field: "id", headerName: "ID" },

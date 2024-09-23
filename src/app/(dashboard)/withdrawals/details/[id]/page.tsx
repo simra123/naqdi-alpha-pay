@@ -6,7 +6,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { Button } from "@mui/material";
 import { ContactMailOutlined } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
-import ConfirmationModal from "@/components/common/ConfirmationModal";
+import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import {
@@ -30,7 +30,7 @@ import {
   StatusIcon,
 } from "@/assets/Svgs";
 import CustomTable from "@/components/common/CustomTable";
-import ReasonModal from "@/components/common/WithdrawReasonModal";
+import ReasonModal from "@/components/Modals/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
 

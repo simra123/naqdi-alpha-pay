@@ -20,7 +20,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
-import CreateWithdrawalModal from "@/components/common/CreateWithdrawalModal";
+import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
 import { TableColumns } from "@/constants/types";
@@ -115,19 +115,11 @@ const Withdrawals = () => {
         </RenderRoleBased>
       </div>
 
-      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-        <LoaderButton
-          content={<Add className="!text-h2" />}
-          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
-          variant="contained"
-          onClick={toggleCreateModal}
-        />
-      </RenderRoleBased>
-
       <CustomTable
         loading={isWithdrawalsListLoading}
         columns={withdrawalsList_table_columns}
         // Filters={Filters}
+        createHandler={toggleCreateModal}
         rows={withdrawalsList}
         csv={{
           handler: ExportCSVHandler,

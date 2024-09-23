@@ -6,9 +6,9 @@ import { useApi } from "@/hooks/useApi";
 
 import { callApiHook } from "@/utils/apifuncs";
 import { setNotification } from "@/store/slices/modal.Slice";
-import IconField from "../IconField";
-import LoaderButton from "../LoaderButton";
-import ErrorApiText from "../ErrorApiText";
+import IconField from "../../common/IconField";
+import LoaderButton from "../../common/LoaderButton";
+import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
 import { Info, Lock } from "@mui/icons-material";
 import { ChangePasswordSchema } from "@/models/ProfilePage";

@@ -13,7 +13,7 @@ import { formatPayouts } from "@/utils/dataFormatters";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import LoaderButton from "@/components/common/LoaderButton";
-import CreatePayoutModal from "@/components/common/CreatePayoutModal";
+import CreatePayoutModal from "@/components/Modals/CreatePayoutModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
 
@@ -92,19 +92,11 @@ const Payouts = () => {
         />
       </div>
 
-      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-        <LoaderButton
-          content={<Add className="!text-h2" />}
-          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
-          variant="contained"
-          onClick={toggleCreateModal}
-        />
-      </RenderRoleBased>
-
       <CustomTable
         loading={isPayoutsListLoading}
         columns={payoutsList_table_columns}
         // Filters={Filters}
+        createHandler={toggleCreateModal}
         rows={payoutsList}
         csv={{
           handler: ExportCSVHandler,

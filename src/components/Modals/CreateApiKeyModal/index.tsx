@@ -6,10 +6,10 @@ import { callApiHook } from "@/utils/apifuncs";
 
 import { setNotification } from "@/store/slices/modal.Slice";
 
-import IconField from "../IconField";
-import LoaderButton from "../LoaderButton";
-import ErrorApiText from "../ErrorApiText";
-import { addWebhookURLAPI, generateApiKeyApi } from "@/services/Integration";
+import IconField from "../../common/IconField";
+import LoaderButton from "../../common/LoaderButton";
+import ErrorApiText from "../../common/ErrorApiText";
+import { generateApiKeyApi } from "@/services/Integration";
 
 interface Props {
   isOpen: boolean;
@@ -17,18 +17,22 @@ interface Props {
   refreshHandler: () => void;
 }
 
-const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
+const CreateApiKeyModal = ({
+  isOpen,
+  toggleHandler,
+  refreshHandler,
+}: Props) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState({ url: "" });
-  const [isURLLoading, isURLError, callURLApi] = useApi();
+  const [data, setData] = useState({ keyName: "" });
+  const [isKeyLoading, isKeyError, callNewKeyApi] = useApi();
 
-  const handleWebhook = async () => {
+  const handleApiKeyGeneration = async () => {
     await callApiHook({
-      apiCall: callURLApi(addWebhookURLAPI({ url: data.url })),
+      apiCall: callNewKeyApi(generateApiKeyApi({ name: data.keyName })),
       successCallBack: () => {
         dispatch(
           setNotification({
-            message: "Webhook URL Updated Successfully",
+            message: "API Key Created Successfully",
             status: "success",
           })
         );
@@ -44,30 +48,30 @@ const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      setData({ url: "" });
+      setData({ keyName: "" });
     }
   }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen}>
       <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
+        <h2 className="text-h3.5 font-semibold mb-4">Add API KEY</h2>
 
         <form className="mt-8 flex flex-col gap-2">
           <IconField
-            value={data.url}
-            name="url"
-            label="Webhook URL"
+            value={data.keyName}
+            name="keyName"
+            label="Key Name"
             onChange={handleInputChange}
           />
 
           <div className="flex flex-col justify-end mt-4">
             <LoaderButton
               type="submit"
-              content={`Update`}
+              content={`Create API Key`}
               variant="contained"
-              onClick={handleWebhook}
-              loading={isURLLoading}
+              onClick={handleApiKeyGeneration}
+              loading={isKeyLoading}
             />
 
             <button
@@ -80,10 +84,10 @@ const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
           </div>
         </form>
 
-        <ErrorApiText error={isURLError} />
+        <ErrorApiText error={isKeyError} />
       </div>
     </Modal>
   );
 };
 
-export default WebhookURLModal;
+export default CreateApiKeyModal;

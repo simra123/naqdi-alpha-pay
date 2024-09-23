@@ -105,12 +105,7 @@ const Support = () => {
         />
       </div>
 
-      <LoaderButton
-        content={<Add className="!text-h2" />}
-        className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
-        variant="contained"
-        onClick={() => router.push("/support/create")}
-      />
+  
 
       {/* Table Actions Below */}
       <div>
@@ -118,6 +113,7 @@ const Support = () => {
           loading={isListLoading}
           columns={supportList_columns}
           rows={ticketsList}
+          createHandler={() => router.push("/support/create")}
           initialPageSize={10}
           rowClickHandler={(row: any) => console.log(row)}
           pagination

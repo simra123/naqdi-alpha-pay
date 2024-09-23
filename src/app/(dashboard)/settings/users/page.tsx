@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { userSettings_table_columns } from "./columns";
@@ -9,10 +9,9 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { generateCSVApi } from "@/services/common";
-import RenderRoleBased from "@/components/common/RenderRoleBased";
-import { Role } from "@/constants/roles";
+
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { Add } from "@mui/icons-material";
+import CreateUserModal from "@/components/Modals/CreateUserModal";
 
 const rows = [
   {
@@ -26,6 +25,7 @@ const rows = [
 
 const Users = () => {
   const router = useRouter();
+  const [isCreateOpen, setCreateOpen] = useState(false);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
   const user = useLocalStorage("user");
 
@@ -37,8 +37,18 @@ const Users = () => {
       },
     });
   };
+
+  const createToggleHandler = () => {
+    setCreateOpen(!isCreateOpen);
+  };
+
   return (
     <>
+      <CreateUserModal
+        isOpen={isCreateOpen}
+        toggleHandler={createToggleHandler}
+      />
+
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
 
@@ -46,17 +56,9 @@ const Users = () => {
           content={"New User"}
           className="px-16"
           variant="contained"
+          onClick={createToggleHandler}
         />
       </div>
-
-      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-        <LoaderButton
-          content={<Add className="!text-h2" />}
-          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
-          variant="contained"
-          onClick={() => console.log("In Development")}
-        />
-      </RenderRoleBased>
 
       <CustomTable
         columns={userSettings_table_columns}
