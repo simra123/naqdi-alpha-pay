@@ -132,7 +132,7 @@ const IconSelectBox = ({
           // If not searchable, display the value as a non-editable div
           <div
             onClick={toggleOpen}
-            className={`w-full p-4 cursor-pointer ${
+            className={`w-full p-4 cursor-pointer capitalize ${
               Icon ? "pl-12" : "pl-4"
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error

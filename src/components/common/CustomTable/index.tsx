@@ -9,12 +9,16 @@ import {
   LastPage,
   NavigateBefore,
   FirstPage,
+  Add,
 } from "@mui/icons-material"; // Import MUI icons
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
 import IconButton from "../IconButton";
 import LoadingApi from "../LoadindApi";
 import Loader from "../Loader";
+import RenderRoleBased from "../RenderRoleBased";
+import { Role } from "@/constants/roles";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface TableProps {
   columns: any[];
@@ -33,6 +37,7 @@ interface TableProps {
   selectable?: boolean; // Default to false
   selectedRows?: any[] | null;
   setSelectedRows?: any;
+  createHandler?: any;
 }
 
 const CustomTable = ({
@@ -52,6 +57,7 @@ const CustomTable = ({
   selectable,
   selectedRows,
   setSelectedRows,
+  createHandler,
 }: TableProps) => {
   const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -161,7 +167,9 @@ const CustomTable = ({
       className={
         tableWrapper &&
         `rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white sm:p-6 md:p-10 ${
-          pagination ? "min-h-[calc(100vh-240px)]" : "pb-8 sm:pb-12"
+          pagination
+            ? "min-h-[calc(100vh-120px)] sm:min-h-[calc(100vh-240px)]"
+            : "pb-8 sm:pb-12"
         } `
       }
       ref={tableRef}
@@ -225,7 +233,11 @@ const CustomTable = ({
         ) : (
           actions
         )}
-        <div className="overflow-x-auto bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none">
+        <div
+          className={`overflow-x-auto ${
+            pagination && "min-h-[calc(100vh-350px)]"
+          } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
+        >
           <table className="w-full text-caption sm:text-p16">
             {/* Table Headers Below */}
             <thead className="text-gray-700 font-medium bg-table-header">
@@ -316,13 +328,13 @@ const CustomTable = ({
           )}
         </div>
       </div>
-
       {pagination && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
           onChangePage={handleChangePage}
           pageSize={pageSize}
+          createHandler={createHandler}
           setPageSize={setPageSize}
         />
       )}
@@ -336,70 +348,87 @@ const Pagination = ({
   onChangePage,
   pageSize,
   setPageSize,
+  createHandler,
 }) => {
+  const user = useLocalStorage("user");
   return (
-    <div className="flex justify-center sm:justify-between items-center mt-4">
+    <div className="flex justify-center sm:justify-between items-center mt-4 relative">
+      {/* Pages Indicator */}
       <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${
         (currentPage - 1) * pageSize + 1
       } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
 
-      <div className="flex space-x-2 bg-white p-2 rounded-sm shadow-sm sm:shadow-none sm:p-0">
-        <IconButton
-          className={
-            currentPage === 1
-              ? "text-gray-400 cursor-not-allowed"
-              : "hover:bg-blue-500 hover:text-white"
-          }
-          onClick={() => onChangePage(1)}
-          disabled={currentPage === 1}
-        >
-          <FirstPage />
-        </IconButton>
-        <IconButton
-          className={
-            currentPage === 1
-              ? "text-gray-400 cursor-not-allowed"
-              : "hover:bg-blue-500 hover:text-white"
-          }
-          onClick={() => onChangePage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          <NavigateBefore />
-        </IconButton>
-        {Array.from({ length: totalPages }, (_, i) => (
+      {/* Pages Navigation */}
+      <div className="relative w-full">
+        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm shadow-sm sm:shadow-none sm:p-0">
           <IconButton
-            key={i + 1}
             className={
-              currentPage === i + 1 && "text-black-100 font-bold bg-light-gray"
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
             }
-            onClick={() => onChangePage(i + 1)}
+            onClick={() => onChangePage(1)}
+            disabled={currentPage === 1}
           >
-            {i + 1}
+            <FirstPage />
           </IconButton>
-        ))}
-        <IconButton
-          className={
-            currentPage === totalPages
-              ? "text-gray-400 cursor-not-allowed"
-              : "hover:bg-blue-500 hover:text-white"
-          }
-          onClick={() => onChangePage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          <NavigateNext />
-        </IconButton>
-        <IconButton
-          className={
-            currentPage === totalPages
-              ? "text-gray-400 cursor-not-allowed"
-              : "hover:bg-blue-500 hover:text-white"
-          }
-          onClick={() => onChangePage(totalPages)}
-          disabled={currentPage === totalPages}
-        >
-          <LastPage />
-        </IconButton>
+          <IconButton
+            className={
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <NavigateBefore />
+          </IconButton>
+          {Array.from({ length: totalPages }, (_, i) => (
+            <IconButton
+              key={i + 1}
+              className={
+                currentPage === i + 1 &&
+                "text-black-100 font-bold bg-light-gray"
+              }
+              onClick={() => onChangePage(i + 1)}
+            >
+              {i + 1}
+            </IconButton>
+          ))}
+          <IconButton
+            className={
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <NavigateNext />
+          </IconButton>
+          <IconButton
+            className={
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(totalPages)}
+            disabled={currentPage === totalPages}
+          >
+            <LastPage />
+          </IconButton>
+        </div>
+        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+          <LoaderButton
+            content={<Add className="!text-h2" />}
+            className="!p-1 !rounded-full !w-fit absolute -top-8 right-4  sm:hidden"
+            variant="contained"
+            onClick={createHandler}
+          />
+        </RenderRoleBased>
       </div>
+
+      {/* Page Change Dropdown below */}
 
       <div className="hidden sm:block">
         <label htmlFor="page-size" className="text-sm mr-2 text-blackGrey-50">
@@ -418,6 +447,15 @@ const Pagination = ({
           ))}
         </select>
       </div>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+          <LoaderButton
+            content={<Add className="!text-h2" />}
+            className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
+            variant="contained"
+            onClick={createHandler}
+          />
+        </RenderRoleBased>
     </div>
   );
 };

@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
-import TransparentInput from "@/components/common/TransparentInput";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
+
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import { webhooks_table_columns } from "../../columns";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -17,22 +14,21 @@ import {
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
-import { capitalize } from "@/utils/dataFormatters";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
 import LoaderButton from "@/components/common/LoaderButton";
 import { Button } from "@mui/material";
-import ConfirmationModal from "@/components/common/ConfirmationModal";
+import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { Role } from "@/constants/roles";
 import Details from "@/components/common/Details";
-import { CalendarMonth, Mail, Payment, Person } from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
   PaymentIcon,
   StatusIcon,
 } from "@/assets/Svgs";
+import IconField from "@/components/common/IconField";
 
 const PayoutDetails = ({ params }) => {
   const payout_id = +params?.id;
@@ -178,9 +174,8 @@ const PayoutDetails = ({ params }) => {
         {user?.role == Role.ADMIN && (
           <>
             <DetailsWrapper title={"Reason*"}>
-              <TransparentInput
+              <IconField
                 value={reason}
-                textarea
                 disabled={false}
                 onChange={(e) => setReason(e.target.value)}
               />

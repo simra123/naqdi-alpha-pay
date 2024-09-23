@@ -11,8 +11,8 @@ import moment from "moment";
 import { userDetailsApi } from "@/services/user";
 import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
-import CreateApiKeyModal from "@/components/common/CreateApiKeyModal";
-import WebhookURLModal from "@/components/common/WebhookURLModal";
+import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
+import WebhookURLModal from "@/components/Modals/WebhookURLModal";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);

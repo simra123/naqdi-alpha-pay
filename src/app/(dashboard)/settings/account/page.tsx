@@ -1,7 +1,7 @@
 "use client";
 
 import { FolderIcon, StatusIcon } from "@/assets/Svgs";
-import ChangePasswordModal from "@/components/common/ChangePasswordModal";
+import ChangePasswordModal from "@/components/Modals/ChangePasswordModal";
 import Details from "@/components/common/Details";
 import LoaderButton from "@/components/common/LoaderButton";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
@@ -33,9 +33,7 @@ const Account = () => {
         toggleHandler={changePasswordModalToggler}
       />
       <div className="items-center justify-between mb-8 hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">
-          Withdrawals
-        </h3>
+        <h3 className="text-h3 font-semibold text-blackGrey-100">Account</h3>
 
         <LoaderButton
           content={"Change Password"}
@@ -44,8 +42,8 @@ const Account = () => {
           variant="contained"
         />
       </div>
-      <div className="rounded-medium flex flex-col  bg-white p-10 shadow-sm">
-        <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+      <div className="rounded-medium flex flex-col bg-white p-6 sm:p-10 shadow-sm">
+        <div className="flex items-center gap-2 border-b border-light-gray pb-4">
           <FolderIcon />
           <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
         </div>
@@ -87,6 +85,14 @@ const Account = () => {
           <Details label="MFA" value={user?.mfa ? "Enabled" : "Disabled"} />
           <Details label="Fees" value={user?.fees + "%"} />
         </div>
+      </div>
+
+      <div className="mt-16 max-w-[360px] pb-8 md:hidden">
+        <LoaderButton
+          content={"Change Password"}
+          onClick={changePasswordModalToggler}
+          variant={"contained"}
+        />
       </div>
     </>
   );

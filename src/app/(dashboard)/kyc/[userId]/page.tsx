@@ -1,7 +1,7 @@
 "use client";
 
 import ErrorApiText from "@/components/common/ErrorApiText";
-import ImageModal from "@/components/common/ImageModal";
+import ImageModal from "@/components/Modals/ImageModal";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useApi } from "@/hooks/useApi";
 import {
@@ -16,7 +16,7 @@ import React, { useEffect, useState } from "react";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
 import Details from "@/components/common/Details";
-import KYCReasonModal from "@/components/common/KYCReasonModal";
+import KYCReasonModal from "@/components/Modals/KYCReasonModal";
 
 const statuses = {
   APPROVED: "approved",
@@ -101,7 +101,7 @@ const KYCUserID = ({ params }) => {
           <div className="rounded-medium flex flex-col  bg-white p-6 sm:p-10 shadow-sm">
             <div>
               <p className="font-semibold text-button">Set a Fee ( % )</p>
-              <div className="flex flex-col items-start xl:flex-row gap-6 xl:gap-0 justify-between xl:items-center mt-4">
+              <div className="flex items-start gap-6 xl:gap-0 justify-between xl:items-center mt-4 flex-wrap">
                 <IconField
                   inputContainerClassName="!bg-blackGrey-filled-input w-full"
                   wrapperClassName="!mb-0 max-w-full w-[460px]"

@@ -6,38 +6,40 @@ import { callApiHook } from "@/utils/apifuncs";
 
 import { setNotification } from "@/store/slices/modal.Slice";
 
-import IconField from "../IconField";
-import LoaderButton from "../LoaderButton";
-import ErrorApiText from "../ErrorApiText";
-import { generateApiKeyApi } from "@/services/Integration";
+import IconField from "../../common/IconField";
+import LoaderButton from "../../common/LoaderButton";
+import ErrorApiText from "../../common/ErrorApiText";
+import { withdrawalRejectAdminApi } from "@/services/withdrawal";
+import { useRouter } from "next/navigation";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
-  refreshHandler: () => void;
+  withdrawId: number;
 }
 
-const CreateApiKeyModal = ({
-  isOpen,
-  toggleHandler,
-  refreshHandler,
-}: Props) => {
+const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState({ keyName: "" });
-  const [isKeyLoading, isKeyError, callNewKeyApi] = useApi();
+  const router = useRouter();
+  const [data, setData] = useState({ reason: "" });
+  const [isRejectLoading, isRejectError, callRejectApi] = useApi();
 
-  const handleApiKeyGeneration = async () => {
+  const handleWithdrawalReject = async () => {
     await callApiHook({
-      apiCall: callNewKeyApi(generateApiKeyApi({ name: data.keyName })),
-      successCallBack: () => {
+      apiCall: callRejectApi(
+        withdrawalRejectAdminApi({
+          withdraw_id: withdrawId,
+          reason: data.reason,
+        })
+      ),
+      successCallBack: (response: any) => {
         dispatch(
           setNotification({
-            message: "API Key Created Successfully",
+            message: "Withdrawal Request Rejected Successfully",
             status: "success",
           })
         );
-        toggleHandler();
-        refreshHandler();
+        router.push("/withdrawals");
       },
     });
   };
@@ -48,30 +50,30 @@ const CreateApiKeyModal = ({
 
   useEffect(() => {
     if (isOpen) {
-      setData({ keyName: "" });
+      setData({ reason: "" });
     }
   }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen}>
       <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-h3.5 font-semibold mb-4">Add API KEY</h2>
+        <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
 
         <form className="mt-8 flex flex-col gap-2">
           <IconField
-            value={data.keyName}
-            name="keyName"
-            label="Key Name"
+            value={data.reason}
+            name="reason"
+            label="Reason"
             onChange={handleInputChange}
           />
 
           <div className="flex flex-col justify-end mt-4">
             <LoaderButton
               type="submit"
-              content={`Create API Key`}
+              content={`Reject`}
               variant="contained"
-              onClick={handleApiKeyGeneration}
-              loading={isKeyLoading}
+              onClick={handleWithdrawalReject}
+              loading={isRejectLoading}
             />
 
             <button
@@ -84,10 +86,10 @@ const CreateApiKeyModal = ({
           </div>
         </form>
 
-        <ErrorApiText error={isKeyError} />
+        <ErrorApiText error={isRejectError} />
       </div>
     </Modal>
   );
 };
 
-export default CreateApiKeyModal;
+export default ReasonModal;
