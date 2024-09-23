@@ -167,7 +167,7 @@ const Support = () => {
             <div className="flex flex-col gap-3 items-start justify-center mb-2">
               <button
                 type="button"
-                className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
+                className="border w-[470px] max-w-full justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
                 onClick={() => front?.current?.click()}
               >
                 <Add className="text-purple-100" />

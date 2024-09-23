@@ -96,12 +96,15 @@ const CreatePayoutModal = ({
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletBalancesApi()),
       successCallBack: (response: any) => {
-        const tableData = formatBalanceForUser(response?.result);
-        const withdraw_currency_options = tableData.map((item) => {
+        const withdraw_currency_options = response.map((item) => {
           return {
-            label: item?.currency,
-            value: item.currency,
-            amount: item?.totalAmount,
+            label: `${item?.unit}${
+              item?.standard ? `(${item?.standard})` : ""
+            }`,
+            value: `${item?.unit}${
+              item?.standard ? `(${item?.standard})` : ""
+            }`,
+            amount: item?.amount,
           };
         });
         setBalance(withdraw_currency_options);

@@ -115,19 +115,11 @@ const Withdrawals = () => {
         </RenderRoleBased>
       </div>
 
-      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-        <LoaderButton
-          content={<Add className="!text-h2" />}
-          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
-          variant="contained"
-          onClick={toggleCreateModal}
-        />
-      </RenderRoleBased>
-
       <CustomTable
         loading={isWithdrawalsListLoading}
         columns={withdrawalsList_table_columns}
         // Filters={Filters}
+        createHandler={toggleCreateModal}
         rows={withdrawalsList}
         csv={{
           handler: ExportCSVHandler,

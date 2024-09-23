@@ -49,15 +49,6 @@ const Users = () => {
         />
       </div>
 
-      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-        <LoaderButton
-          content={<Add className="!text-h2" />}
-          className="!p-1 !rounded-full !w-fit absolute right-4 bottom-12 md:hidden"
-          variant="contained"
-          onClick={() => console.log("In Development")}
-        />
-      </RenderRoleBased>
-
       <CustomTable
         columns={userSettings_table_columns}
         // Filters={Filters}
