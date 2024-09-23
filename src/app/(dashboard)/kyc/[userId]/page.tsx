@@ -1,7 +1,7 @@
 "use client";
 
 import ErrorApiText from "@/components/common/ErrorApiText";
-import ImageModal from "@/components/common/ImageModal";
+import ImageModal from "@/components/Modals/ImageModal";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useApi } from "@/hooks/useApi";
 import {

@@ -42,3 +42,20 @@ const _legal = {
 
 export const LegalSchema = Yup.object().shape({ ..._legal, ..._register });
 export const RegisterSchema = Yup.object().shape(_register);
+
+export const UserSchema = Yup.object().shape({
+  firstName: Yup.string()
+    .required("First name is Required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
+  lastName: Yup.string()
+    .required("Last name is required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
+  email: Yup.string()
+    .required("Email is required")
+    .email("Invalid Email Format")
+    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+      message: "Email format is not valid",
+    }),
+});
