@@ -5,15 +5,15 @@ import { Close } from "@mui/icons-material";
 const ImageModal = ({ isOpen, setIsOpen }) => {
   return (
     <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+
+      <div className="flex items-center justify-center h-full relative">
       <button
-        className="btn-status error !min-w-8 !px-3 absolute right-4 top-4"
+        className="p-1 absolute rounded right-4 top-4 bg-red-button flex"
         onClick={() => setIsOpen(null)}
       >
-        <Close color="error a" />
+        <Close className="text-white text-[18px]" />
       </button>
-
-      <div className="grid grid-cols-1 h-full place-items-center">
-        <img src={isOpen} alt="image-zoom" className="w-2/3" />
+        <img src={isOpen} alt="image-zoom" className="w-full" />
       </div>
     </Modal>
   );
