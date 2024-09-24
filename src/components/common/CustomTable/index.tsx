@@ -449,13 +449,13 @@ const Pagination = ({
       </div>
 
       <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-          <LoaderButton
-            content={<Add className="!text-h2" />}
-            className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
-            variant="contained"
-            onClick={createHandler}
-          />
-        </RenderRoleBased>
+        <LoaderButton
+          content={<Add className="!text-h2" />}
+          className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
+          variant="contained"
+          onClick={createHandler}
+        />
+      </RenderRoleBased>
     </div>
   );
 };

@@ -36,8 +36,8 @@ const ProfileForm = () => {
   const userDetails = useSelector((state: any) => state.user.data);
   const { getUserDetails } = useGetUserDetaiils();
   const [isProfileLoading, isProfileError, callProfileApi] = useApi();
-  const [states, setStates] = useState(null);
-  const [cities, setCities] = useState(null);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
 
   const {
     errors,
@@ -83,8 +83,8 @@ const ProfileForm = () => {
 
     if (name == "country") {
       setValues({ ...values, country: value, state: null, city: null });
-      setCities(null);
-      setStates(null);
+      setCities([]);
+      setStates([]);
 
       setStates(
         countriesJson.find((country) => country?.value == value).states
@@ -94,7 +94,7 @@ const ProfileForm = () => {
     }
     if (name == "state") {
       setValues({ ...values, state: value, city: null });
-      setCities(null);
+      setCities([]);
 
       const currentCities = countriesJson
         .find((country) => country?.value == values?.country)
@@ -209,6 +209,7 @@ const ProfileForm = () => {
             inputContainerClassName="!bg-blackGrey-filled-input"
             onChange={handleChangeMiddleware}
             searchable
+            disabled={!values?.country}
             error={errors.state}
             icon={LocationOn}
             label="State/Province"
@@ -222,6 +223,7 @@ const ProfileForm = () => {
             inputContainerClassName="!bg-blackGrey-filled-input"
             onChange={handleChange}
             searchable
+            disabled={!values?.state}
             error={errors.city}
             icon={LocationOn}
             label="City"

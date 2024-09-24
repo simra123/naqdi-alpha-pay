@@ -13,7 +13,8 @@ interface Props {
   info?: string;
   inputContainerClassName?: string;
   options: { value: string; label: string }[] | any[];
-  searchable?: boolean; // New prop to enable search functionality
+  searchable?: boolean;
+  disabled?: boolean;
 }
 
 interface OptionType {
@@ -35,9 +36,11 @@ const IconSelectBox = ({
   options,
   searchable = false, // Default to false if not provided
   inputContainerClassName,
+  disabled,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(value);
+  const [selectedValue, setSelectedValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   console.log({ value, searchQuery, name });
@@ -47,10 +50,12 @@ const IconSelectBox = ({
       const currentOption = options?.find((item) => item?.value === value);
       if (currentOption) {
         setSearchQuery(currentOption?.label || "");
+        setSelectedValue(currentOption?.label || "");
       }
     }
     if (!value && searchable) {
       setSearchQuery("");
+      setSelectedValue("");
     }
   }, [value]);
 
@@ -61,6 +66,7 @@ const IconSelectBox = ({
 
   const handleSelect = (optionValue: OptionType) => {
     searchable && setSearchQuery(optionValue.label || optionValue.value);
+    searchable && setSelectedValue(optionValue.label || optionValue.value);
     onChange({ target: { value: optionValue.value, name: name } });
     setOpen(false);
   };
@@ -76,6 +82,7 @@ const IconSelectBox = ({
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        searchable && setSearchQuery(selectedValue);
         setOpen(false);
       }
     };
@@ -116,8 +123,9 @@ const IconSelectBox = ({
         {searchable ? (
           <input
             type="text"
-            value={searchQuery}
+            value={open ? searchQuery : selectedValue}
             onClick={toggleOpen}
+            disabled={disabled}
             onChange={handleInputChange}
             className={`w-full p-4 cursor-pointer ${
               Icon ? "pl-12" : "pl-4"
