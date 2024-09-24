@@ -100,7 +100,7 @@ const CreateUserModal = ({ isOpen, toggleHandler }: Props) => {
     <Modal isOpen={isOpen}>
       <div className="modal_content_wrapper bg-white p-6 md:p-10 rounded-md shadow-lg w-[547px] max-w-[90%] my-4">
         <h2 className="text-h3.5 font-semibold mb-4">
-          {step == 1 ? "Add User" : "Permissions"}{" "}
+          {step == 1 ? "Add User" : "Permissions"}
         </h2>
         {step == 1 ? (
           <form

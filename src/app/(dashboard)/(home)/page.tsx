@@ -101,7 +101,7 @@ const Home = () => {
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-        setBalance(response);
+        setBalance(response?.result);
       },
     });
   };
