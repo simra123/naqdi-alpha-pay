@@ -3,8 +3,8 @@
 import api from "@/config/api";
 
 export const createDepoistAddressApi = (data: {
-  network: string;
   blockchain: string;
+  standard?: string;
 }) => {
   return () => api.post(`wallet/deposit/address`, data);
 };

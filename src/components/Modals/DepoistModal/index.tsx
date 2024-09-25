@@ -10,15 +10,24 @@ import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
 import {
   blockchains,
-  networks,
+  production_networks,
+  testnet_networks,
   networks_available,
 } from "@/constants/blockchains";
 import IconSelectBox from "../../common/IconSelectBox";
 import LoaderButton from "../../common/LoaderButton";
 
+interface Network {
+  label: string;
+  value: string;
+  standard?: string;
+}
+
 const DepositModal = ({ isOpen, setIsOpen }) => {
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
     useApi();
+  const [networks, setNeworks] = useState<Record<string, Network[]>>({});
+
   const [filteredNets, setFilteredNets] = useState([]);
   const [depositAddress, setDepositAddress] = useState(null);
   const [seletedOption, setSelectedOption] = useState({
@@ -30,11 +39,9 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   const createDepoistAddress = async () => {
     const CoinData = {
       blockchain: seletedOption?.blockchain,
-      network: getValidValue(seletedOption?.network),
     };
     const TokenData = {
       blockchain: seletedOption?.blockchain,
-      network: getValidValue(seletedOption?.network),
       standard: seletedOption?.standard,
     };
     await callApiHook({
@@ -47,6 +54,14 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
       },
     });
   };
+
+  useEffect(() => {
+    setNeworks(
+      process.env.NEXT_PUBLIC_ENVIRONMENT == "dev"
+        ? testnet_networks
+        : production_networks
+    );
+  }, []);
 
   useEffect(() => {
     if (isDepositError) {

@@ -16,4 +16,20 @@
       }
     }
   }
+  .sidebar-scrollbar {
+    &::-webkit-scrollbar {
+      width: 4px; /* Width of the scrollbar */
+      height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      @apply bg-purple-light; 
+      border-radius: 5px; 
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.295); /* Color of the scrollbar handle */
+      border-radius: 5px; 
+    }
+  }
 }

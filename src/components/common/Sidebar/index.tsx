@@ -3,95 +3,106 @@ import "./sidebar.scss";
 import Link from "next/link";
 import {
   AccountBalance,
-  AppRegistration,
   Assignment,
   Help,
-  Home,
   Key,
   Logout,
-  Paid,
-  Payments,
-  People,
   PersonRounded,
-  Receipt,
-  Settings,
-  ShoppingBasket,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import {
+  DashboardIcon,
+  LogoutIcon,
+  NeedHelpIcon,
+  onBoardingIcon,
+  PaymentsIcon,
+  PayoutsIcon,
+  SettingsIcon,
+  TransactionsIcon,
+  WithdrawalIcon,
+} from "@/assets/Svgs";
 
-const nav_items = [
+interface NavItem {
+  name: string;
+  icon: any;
+  path: string;
+  roles: any[];
+  sub_nav?: NavItem[];
+}
+
+const nav_items: NavItem[] = [
   {
     name: "Onboarding",
-    icon: <AppRegistration />,
+    icon: onBoardingIcon,
     path: "/onboarding",
     roles: [Role.USER],
   },
   {
     name: "Dashboard",
-    icon: <Home />,
+    icon: DashboardIcon,
     path: "/",
     roles: [Role.ADMIN, Role.USER],
   },
   {
     name: "Users",
-    icon: <Assignment />,
+    icon: Assignment,
     path: "/users",
     roles: [Role.ADMIN],
   },
   {
     name: "KYC Requests",
-    icon: <Assignment />,
+    icon: Assignment,
     path: "/kyc",
     roles: [Role.ADMIN],
   },
   {
     name: "Payments",
-    icon: <Payments />,
+    icon: PaymentsIcon,
     path: "/payments",
     roles: [Role.ADMIN, Role.USER],
   },
   {
     name: "Transactions",
-    icon: <Receipt />,
+    icon: TransactionsIcon,
     path: "/transactions",
     roles: [Role.ADMIN, Role.USER],
   },
   {
     name: "Withdrawals",
-    icon: <Paid />,
+    icon: WithdrawalIcon,
     path: "/withdrawals",
     roles: [Role.ADMIN, Role.USER],
   },
   {
     name: "Payouts",
-    icon: <ShoppingBasket />,
+    icon: PayoutsIcon,
     path: "/payouts",
     roles: [Role.ADMIN, Role.USER],
   },
 
   {
     name: "Settings",
-    icon: <Settings />,
+    icon: SettingsIcon,
     path: "/settings/account",
     roles: [Role.USER],
     sub_nav: [
       {
         name: "Account",
-        icon: <AccountBalance />,
+        icon: AccountBalance,
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
       {
         name: "Users",
-        icon: <PersonRounded />,
+        icon: PersonRounded,
         path: "/settings/users",
         roles: [Role.ADMIN, Role.USER],
       },
       {
         name: "Integrations",
-        icon: <Key />,
+        icon: Key,
         path: "/settings/integrations",
         roles: [Role.ADMIN, Role.USER],
       },
@@ -139,57 +150,77 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       )}
 
       <div
-        className={`sidebar w-64 py-5 min-h-full md:min-h-[calc(100vh-40px)] bg-pink-gradient-vertical md:rounded-large flex flex-col justify-between SidebarWrapper
+        className={`sidebar w-64 py-5 min-h-full md:min-h-[calc(100vh-40px)] md:max-h-[calc(100vh-40px)] md:overflow-hidden bg-pink-gradient-vertical md:rounded-large flex flex-col justify-between SidebarWrapper
         fixed top-0 left-0 z-50 md:static md:w-64 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } transition-transform duration-300 ease-in-out md:translate-x-0`}
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the sidebar
       >
-        <div className="flex flex-col gap-3 p-2">
-          <div className="logo mt-6 mb-12">
+        <div className="flex flex-col gap-3">
+          <div className="logo mt-6 mb-12 p-2">
             <h3 className="text-center text-white text-p120 font-bold">
               ALPHASPAY
             </h3>
           </div>
-
-          {nav_items.map(
-            ({ icon, name, path, sub_nav, roles }) =>
-              roles.includes(user?.role) && (
-                <div className={`flex flex-col gap-2`} key={name}>
-                  <Link
-                    href={path}
-                    className={`flex gap-2 navLink items-center ${
-                      (pathname === path || name == openSubNav) && "active"
-                    }`}
-                    onClick={() => toggleSubNav(name, sub_nav)} // Toggle sub-navigation on click
-                  >
-                    <div>{icon}</div>
-                    {path ? (
-                      <span>{name}</span>
-                    ) : (
-                      <span className="cursor-pointer">{name}</span>
-                    )}
-                  </Link>
-                  {sub_nav &&
-                    openSubNav === name && ( // Conditionally render sub-navigation based on state
-                      <div className="flex flex-col gap-2 pl-5">
-                        {sub_nav.map(({ icon, name, path }) => (
-                          <Link
-                            href={path}
-                            className={`flex gap-2 navLink items-center ${
-                              pathname === path && "active"
-                            }`}
-                            key={name}
-                          >
-                            <div>{icon}</div>
-                            <span>{name}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                </div>
-              )
-          )}
+          <div className="max-h-[calc(100vh-350px)] overflow-y-auto sidebar-scrollbar">
+            <div className="p-2 flex flex-col gap-3">
+              {nav_items.map(
+                ({ icon: Icon, name, path, sub_nav, roles }) =>
+                  roles.includes(user?.role) && (
+                    <div
+                      className={`flex flex-col gap-2 ${
+                        (pathname === path || name == openSubNav) &&
+                        "bg-white rounded-medium "
+                      }`}
+                      key={name}
+                    >
+                      <Link
+                        href={path}
+                        className={`flex gap-2 navLink items-center ${
+                          (pathname === path || name == openSubNav) && "active"
+                        }`}
+                        onClick={() => toggleSubNav(name, sub_nav)} // Toggle sub-navigation on click
+                      >
+                        <div>
+                          {
+                            <Icon
+                              className={` ${
+                                pathname === path || name == openSubNav
+                                  ? "!fill-purple-100 w-6 h-6"
+                                  : "fill-white w-5 h-5"
+                              }`}
+                            />
+                          }
+                        </div>
+                        {path ? (
+                          <span>{name}</span>
+                        ) : (
+                          <span className="cursor-pointer">{name}</span>
+                        )}
+                      </Link>
+                      {sub_nav &&
+                        openSubNav === name && ( // Conditionally render sub-navigation based on state
+                          <div className="flex flex-col gap-3 pl-14 pb-3">
+                            {sub_nav.map(({ icon, name, path }) => (
+                              <Link
+                                href={path}
+                                className={`flex gap-2  items-center font-medium ${
+                                  pathname === path &&
+                                  "text-purple-100 font-semibold text-[17px]"
+                                }`}
+                                key={name}
+                              >
+                                {/* <div>{icon}</div> */}
+                                <span>{name}</span>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                    </div>
+                  )
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="border-t-[1px] flex gap-3 flex-col border-placeholder-gray pt-7 pb-5 px-2">
@@ -199,7 +230,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
               onClick={() => router.push("/support")}
             >
               <div>
-                <Help />
+                <NeedHelpIcon className={"fill-white w-5 h-5"}/>
               </div>
 
               <span className="cursor-pointer">Need Help?</span>
@@ -210,7 +241,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             onClick={logoutHandler}
           >
             <div>
-              <Logout />
+              <LogoutIcon className={"fill-white w-5 h-5"}/>
             </div>
 
             <span className="cursor-pointer">Logout</span>
