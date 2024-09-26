@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Modal from "../Modal"; // Make sure to adjust the import path if necessary
 import IconSelectBox from "../../common/IconSelectBox";
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import {
   blockchain_standards,
-  networks,
   networks_available,
+  production_networks,
+  testnet_networks,
 } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import { formatBalanceForUser } from "@/utils/dataFormatters";
 import { getFeesApi } from "@/services/common";
 import { createWithdrawalApi } from "@/services/withdrawal";
 import { setNotification } from "@/store/slices/modal.Slice";
@@ -28,13 +28,21 @@ interface Props {
   refreshHandler: () => void;
 }
 
+interface Network {
+  label: string;
+  value: string;
+  standard?: string;
+}
+
 const CreateWithdrawalModal = ({
   isOpen,
   toggleHandler,
   refreshHandler,
 }: Props) => {
   const dispatch = useDispatch();
+  const debounceTimeout = useRef(null);
   const [balance, setBalance] = useState([]);
+  const [networks, setNeworks] = useState<Record<string, Network[]>>({});
   const [destinationAmount, setDestinationAmount] = useState("0");
   const [otp, setOtp] = useState("");
   const [withdrawalFee, setWithdrawalFee] = useState(0);
@@ -50,12 +58,13 @@ const CreateWithdrawalModal = ({
     token: "",
   });
 
-  // const [destinationOptions, setDestinationOptions] = useState({
-  //   filteredNets: [],
-  //   blockchain: "",
-  //   network: "",
-  //   standard: "",
-  // });
+  useEffect(() => {
+    setNeworks(
+      process.env.NEXT_PUBLIC_ENVIRONMENT == "dev"
+        ? testnet_networks
+        : production_networks
+    );
+  }, []);
 
   const [data, setData] = useState({
     sourceAmount: "",
@@ -93,12 +102,8 @@ const CreateWithdrawalModal = ({
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {
           return {
-            label: `${item?.unit}${
-              item?.standard ? `(${item?.standard})` : ""
-            }`,
-            value: `${item?.unit}${
-              item?.standard ? `(${item?.standard})` : ""
-            }`,
+            label: item?.unit,
+            value: item?.unit,
             amount: item?.amount,
           };
         });
@@ -118,6 +123,8 @@ const CreateWithdrawalModal = ({
   };
 
   const handleWithdrawal = async () => {
+    console.log({ data, sourceOptions });
+
     await callApiHook({
       apiCall: callWithdrawalApi(
         createWithdrawalApi({
@@ -171,15 +178,23 @@ const CreateWithdrawalModal = ({
   const handleInputChange = (event, name) => {
     const { value } = event.target;
 
-    if (name == "sourceAmount") {
-      const maxVal = clamp(
-        value,
-        getCurrentAssetAmount(sourceOptions.blockchain)
-      );
-      return setData((pre) => ({ ...pre, [name]: maxVal }));
-    }
+    if (name === "sourceAmount") {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
 
-    setData((pre) => ({ ...pre, [name]: value }));
+      setData((prev) => ({ ...prev, [name]: value }));
+
+      debounceTimeout.current = setTimeout(() => {
+        const maxVal = clamp(
+          parseFloat(value),
+          getCurrentAssetAmount(sourceOptions.blockchain)
+        );
+        setData((prev) => ({ ...prev, [name]: maxVal }));
+      }, 500); // 500ms debounce delay
+    } else {
+      setData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const filteredNetworks = (network, blockchain) => {

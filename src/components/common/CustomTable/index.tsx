@@ -418,14 +418,16 @@ const Pagination = ({
             <LastPage />
           </IconButton>
         </div>
-        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-          <LoaderButton
-            content={<Add className="!text-h2" />}
-            className="!p-1 !rounded-full !w-fit absolute -top-8 right-4  sm:hidden"
-            variant="contained"
-            onClick={createHandler}
-          />
-        </RenderRoleBased>
+        {createHandler && (
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <LoaderButton
+              content={<Add className="!text-h2" />}
+              className="!p-1 !rounded-full !w-fit absolute -top-8 right-4  sm:hidden"
+              variant="contained"
+              onClick={createHandler}
+            />
+          </RenderRoleBased>
+        )}
       </div>
 
       {/* Page Change Dropdown below */}
@@ -447,15 +449,16 @@ const Pagination = ({
           ))}
         </select>
       </div>
-
-      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-        <LoaderButton
-          content={<Add className="!text-h2" />}
-          className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
-          variant="contained"
-          onClick={createHandler}
-        />
-      </RenderRoleBased>
+      {createHandler && (
+        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+          <LoaderButton
+            content={<Add className="!text-h2" />}
+            className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
+            variant="contained"
+            onClick={createHandler}
+          />
+        </RenderRoleBased>
+      )}
     </div>
   );
 };

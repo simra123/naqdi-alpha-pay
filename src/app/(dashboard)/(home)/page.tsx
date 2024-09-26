@@ -19,6 +19,7 @@ import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
 import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
 import { TableColumns } from "@/constants/types";
+import { unitName } from "@/constants/blockchains";
 
 const columns: TableColumns = [
   { field: "id", headerName: "ID" },
@@ -26,7 +27,9 @@ const columns: TableColumns = [
     field: "unit",
     headerName: "Currency",
     dataValidator(value, row: { standard: string | null }) {
-      return row?.standard ? `${value} (${row?.standard})` : `${value}`;
+      return row?.standard
+        ? `${value} (${row?.standard})`
+        : `${unitName[value.toLocaleLowerCase()]}`;
     },
   },
   { field: "amount", headerName: "Balance" },
