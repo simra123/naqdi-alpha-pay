@@ -112,6 +112,7 @@ const TransactionDetails = ({ params }) => {
           <Details
             label="Transaction Hash"
             value={transactionDetails?.transaction_hash}
+            copyable
           />
           <Details
             label="Amount"
@@ -130,6 +131,7 @@ const TransactionDetails = ({ params }) => {
         <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
           <Details
             label="Reciever Wallet Address"
+            copyable
             value={
               transactionType == "Withdrawal"
                 ? transactionDetails?.withdrawal?.recipient_address
@@ -139,6 +141,7 @@ const TransactionDetails = ({ params }) => {
           />
           <Details
             label="Sender Wallet Address"
+            copyable
             value={transactionDetails?.sender_address}
           />
         </div>

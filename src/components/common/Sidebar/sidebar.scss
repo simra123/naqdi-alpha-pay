@@ -1,6 +1,4 @@
 .SidebarWrapper {
-  @apply transition-transform duration-300 ease-in-out;
-
   .navLink {
     padding: 10px 22px;
     * {
@@ -23,13 +21,13 @@
     }
 
     &::-webkit-scrollbar-track {
-      @apply bg-purple-light; 
-      border-radius: 5px; 
+      @apply bg-purple-light;
+      border-radius: 5px;
     }
 
     &::-webkit-scrollbar-thumb {
       background: rgba(0, 0, 0, 0.295); /* Color of the scrollbar handle */
-      border-radius: 5px; 
+      border-radius: 5px;
     }
   }
 }
