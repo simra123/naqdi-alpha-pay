@@ -5,8 +5,9 @@ import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import {
   blockchain_standards,
-  networks,
   networks_available,
+  production_networks,
+  testnet_networks,
 } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
@@ -30,6 +31,12 @@ interface Props {
   refreshHandler: () => void;
 }
 
+interface Network {
+  label: string;
+  value: string;
+  standard?: string;
+}
+
 const CreatePayoutModal = ({
   isOpen,
   toggleHandler,
@@ -37,6 +44,7 @@ const CreatePayoutModal = ({
 }: Props) => {
   const dispatch = useDispatch();
   const [balance, setBalance] = useState([]);
+  const [networks, setNeworks] = useState<Record<string, Network[]>>({});
   const [destinationAmount, setDestinationAmount] = useState("0");
   const [otp, setOtp] = useState("");
   const [withdrawalFee, setWithdrawalFee] = useState(0);
@@ -53,12 +61,13 @@ const CreatePayoutModal = ({
     token: "",
   });
 
-  // const [destinationOptions, setDestinationOptions] = useState({
-  //   filteredNets: [],
-  //   blockchain: "",
-  //   network: "",
-  //   standard: "",
-  // });
+  useEffect(() => {
+    setNeworks(
+      process.env.NEXT_PUBLIC_ENVIRONMENT == "dev"
+        ? testnet_networks
+        : production_networks
+    );
+  }, []);
 
   const [data, setData] = useState({
     requested_currency: "",

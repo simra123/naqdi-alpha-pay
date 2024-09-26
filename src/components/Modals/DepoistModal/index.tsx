@@ -10,15 +10,25 @@ import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
 import {
   blockchains,
-  networks,
+  production_networks,
+  testnet_networks,
   networks_available,
 } from "@/constants/blockchains";
 import IconSelectBox from "../../common/IconSelectBox";
 import LoaderButton from "../../common/LoaderButton";
+import Details from "@/components/common/Details";
+
+interface Network {
+  label: string;
+  value: string;
+  standard?: string;
+}
 
 const DepositModal = ({ isOpen, setIsOpen }) => {
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
     useApi();
+  const [networks, setNeworks] = useState<Record<string, Network[]>>({});
+
   const [filteredNets, setFilteredNets] = useState([]);
   const [depositAddress, setDepositAddress] = useState(null);
   const [seletedOption, setSelectedOption] = useState({
@@ -30,11 +40,9 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   const createDepoistAddress = async () => {
     const CoinData = {
       blockchain: seletedOption?.blockchain,
-      network: getValidValue(seletedOption?.network),
     };
     const TokenData = {
       blockchain: seletedOption?.blockchain,
-      network: getValidValue(seletedOption?.network),
       standard: seletedOption?.standard,
     };
     await callApiHook({
@@ -47,6 +55,14 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
       },
     });
   };
+
+  useEffect(() => {
+    setNeworks(
+      process.env.NEXT_PUBLIC_ENVIRONMENT == "dev"
+        ? testnet_networks
+        : production_networks
+    );
+  }, []);
 
   useEffect(() => {
     if (isDepositError) {
@@ -118,8 +134,8 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
             options={filteredNets}
             name="network"
             value={seletedOption.network}
-            placeholder="Select a Network"
-            label="Select a Network"
+            placeholder="Select a Standard"
+            label="Select a Standard"
             onChange={handleChange}
           />
         )}
@@ -136,9 +152,8 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
                   width={250}
                   alt="Depoist"
                 />
-                <p className="font-semibold text-black-100 text-p120 w-full text-ellipsis overflow-hidden">
-                  {depositAddress?.wallet_Address}
-                </p>
+
+                <Details copyable value={depositAddress?.wallet_Address} />
               </div>
 
               <p className="text-custom-caption-gray text-button mt-6">
