@@ -203,15 +203,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                           onClick={() => toggleSubNav(name, sub_nav)} // Toggle sub-navigation on click
                         >
                           <div>
-                            {
-                              <Icon
-                                className={` ${
-                                  pathname === path || name == openSubNav
-                                    ? "!fill-purple-100 w-6 h-6"
-                                    : "fill-white w-5 h-5"
-                                }`}
-                              />
-                            }
+                            <Icon
+                              className={` ${
+                                pathname === path || name == openSubNav
+                                  ? "!fill-purple-100 w-6 h-6"
+                                  : "fill-white w-5 h-5"
+                              }`}
+                            />
                           </div>
                           {!isCollapsed &&
                             (path ? (
@@ -222,18 +220,32 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                         </Link>
                         {sub_nav &&
                           openSubNav === name && ( // Conditionally render sub-navigation based on state
-                            <div className="flex flex-col gap-3 pl-14 pb-3">
-                              {sub_nav.map(({ icon, name, path }) => (
+                            <div
+                              className={`flex flex-col gap-3 ${
+                                !isCollapsed && "pl-14"
+                              } pb-3`}
+                            >
+                              {sub_nav.map(({ icon: Icon, name, path }) => (
                                 <Link
                                   href={path}
-                                  className={`flex gap-2  items-center font-medium ${
+                                  className={`flex gap-2  items-center font-medium ${isCollapsed && 'justify-center'} ${
                                     pathname === path &&
                                     "text-purple-100 font-semibold text-[17px]"
                                   }`}
                                   key={name}
                                 >
-                                  {/* <div>{icon}</div> */}
-                                  <span>{name}</span>
+                                  {isCollapsed && (
+                                    <div>
+                                      <Icon
+                                        className={` ${
+                                          pathname === path
+                                            ? "!fill-purple-100 w-6 h-6"
+                                            : "fill-black-100 w-5 h-5"
+                                        }`}
+                                      />
+                                    </div>
+                                  )}
+                                  {!isCollapsed && <span>{name}</span>}
                                 </Link>
                               ))}
                             </div>
