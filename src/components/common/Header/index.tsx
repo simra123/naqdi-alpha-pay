@@ -10,7 +10,7 @@ const Header = ({ navHandler }) => {
 
   const pathname = usePathname();
 
-  console.log(pathname);
+
 
   const getHeaderName = () => {
     if (pathname == "/") {

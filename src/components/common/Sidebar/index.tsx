@@ -23,6 +23,9 @@ import {
   WithdrawalIcon,
 } from "@/assets/Svgs";
 import "./sidebar.scss";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { setUser } from "@/store/slices/userSlice";
 
 interface NavItem {
   name: string;
@@ -32,13 +35,16 @@ interface NavItem {
   sub_nav?: NavItem[];
 }
 
-const nav_items: NavItem[] = [
+const boarding_nav_items: NavItem[] = [
   {
     name: "Onboarding",
     icon: onBoardingIcon,
     path: "/onboarding",
     roles: [Role.USER],
   },
+];
+
+const nav_items: NavItem[] = [
   {
     name: "Dashboard",
     icon: DashboardIcon,
@@ -118,9 +124,23 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const dispatch = useDispatch();
+  const userCookie = useLocalStorage("user");
+  const user =
+    userCookie && userCookie?.role == Role.ADMIN
+      ? userCookie
+      : useSelector((state: any) => state.user.data);
+
+  console.log(user, "State logging into sidebar");
+
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);
+  let CurrentNav =
+    user?.role == Role.ADMIN
+      ? nav_items
+      : user?.userDetails && user?.userDetails?.fees
+      ? nav_items
+      : boarding_nav_items;
 
   // Function to toggle sub-navigation
   const toggleSubNav = (name: string, subnav: any) => {
@@ -135,8 +155,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   };
 
   const logoutHandler = () => {
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("token");
+    Cookies.remove("token");
+    Cookies.remove("user");
+    dispatch(setUser(null));
     router.replace("/login");
   };
 
@@ -182,7 +203,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
             <div className="max-h-[calc(100vh-350px)] overflow-y-auto sidebar-scrollbar">
               <div className="p-2 flex flex-col gap-3">
-                {nav_items.map(
+                {CurrentNav.map(
                   ({ icon: Icon, name, path, sub_nav, roles }) =>
                     roles.includes(user?.role) && (
                       <div
@@ -228,7 +249,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                               {sub_nav.map(({ icon: Icon, name, path }) => (
                                 <Link
                                   href={path}
-                                  className={`flex gap-2  items-center font-medium ${isCollapsed && 'justify-center'} ${
+                                  className={`flex gap-2  items-center font-medium ${
+                                    isCollapsed && "justify-center"
+                                  } ${
                                     pathname === path &&
                                     "text-purple-100 font-semibold text-[17px]"
                                   }`}

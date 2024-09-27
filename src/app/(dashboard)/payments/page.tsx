@@ -192,7 +192,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
   // Close filtersChecked when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      console.log();
+
       if (
         filtersRef.current &&
         !filtersRef.current.contains(event.target) &&
@@ -224,10 +224,10 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     e?.stopPropagation();
     let results = data;
 
-    console.log(updatedValues, "Updated VAlues in ApplyFilters");
+
 
     if (updatedValues?.date?.start && updatedValues?.date?.end) {
-      console.log("SETTING DATES FITLES APPLY");
+
       updateCheckedState &&
         !filtersChecked?.date &&
         setFiltersChecked({ ...filtersChecked, date: true });
@@ -272,7 +272,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     setFiltersChecked({ ...filtersChecked, [name]: checked });
 
     if (!checked) {
-      console.log(name, checked, "IN FALSE STATUS");
+     
       setValues((prevValues) => {
         let updatedValues: any;
         if (name == "date") {
@@ -316,7 +316,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     });
   };
 
-  console.log(values);
+
 
   return (
     <div

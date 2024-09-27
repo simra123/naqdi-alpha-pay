@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
-import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -139,4 +138,4 @@ const Withdrawals = () => {
   );
 };
 
-export default withAuth(Withdrawals, [Role.ADMIN, Role.USER]);
+export default Withdrawals;

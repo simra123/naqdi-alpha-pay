@@ -7,7 +7,6 @@ import { getAllUsersByAdminApi } from "@/services/admin/users";
 
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import { withAuth } from "@/middleware/RoleBaseAuth";
 
 import { formatUsers } from "@/utils/dataFormatters";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
@@ -99,4 +98,4 @@ const Users = () => {
   );
 };
 
-export default withAuth(Users, [Role.ADMIN]);
+export default Users;

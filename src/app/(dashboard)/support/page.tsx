@@ -14,7 +14,6 @@ import { TicketsListApi } from "@/services/support";
 import { callApiHook } from "@/utils/apifuncs";
 import { Add } from "@mui/icons-material";
 import moment from "moment";
-import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 
 const supportList_columns = [
@@ -105,8 +104,6 @@ const Support = () => {
         />
       </div>
 
-  
-
       {/* Table Actions Below */}
       <div>
         <CustomTable
@@ -115,7 +112,6 @@ const Support = () => {
           rows={ticketsList}
           createHandler={() => router.push("/support/create")}
           initialPageSize={10}
-          rowClickHandler={(row: any) => console.log(row)}
           pagination
         />
 
@@ -125,4 +121,4 @@ const Support = () => {
   );
 };
 
-export default withAuth(Support, [Role.USER]);
+export default Support;

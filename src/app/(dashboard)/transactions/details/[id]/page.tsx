@@ -35,7 +35,7 @@ const TransactionDetails = ({ params }) => {
     return notFound();
   }
 
-  console.log(transactionType);
+
 
   const user = useLocalStorage("user");
   const [transactionDetails, setTransactionDetails]: any = useState({});
@@ -46,7 +46,7 @@ const TransactionDetails = ({ params }) => {
   ] = useApi(true);
 
   const getTransactionDetails = async () => {
-    console.log(transactionType, transactionType == "Self Deposit");
+   
 
     const _getTransactionByType = () => {
       if (transactionType == "Self Deposit") {

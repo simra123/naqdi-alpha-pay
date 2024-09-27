@@ -13,12 +13,16 @@ import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
 import WebhookURLModal from "@/components/Modals/WebhookURLModal";
+import { useSelector } from "react-redux";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);
+  const user = useSelector((state: { user: any }) => state?.user?.data);
   const [webhookURL, setWebhookURL] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isWebhookOpen, setIsWebhookOpen] = useState(false);
+
+  console.log(user);
 
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi(true);
@@ -64,7 +68,7 @@ const Integrations = () => {
     await callApiHook({
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response) => {
-        setWebhookURL(response?.userDetails?.user?.webhook?.webhook_url);
+        setWebhookURL(response?.webhook?.webhook_url);
       },
     });
   };
@@ -104,7 +108,6 @@ const Integrations = () => {
         callListApi();
       },
     });
-    console.log(data);
     console.log(`Revoke action triggered for ID: ${data.id}`);
   };
 
@@ -171,7 +174,6 @@ const Integrations = () => {
           }
           columns={columns}
           // Filters={Filters}
-          rowClickHandler={(row) => console.log(row)}
           rows={keysList}
           initialPageSize={10}
         />

@@ -10,7 +10,7 @@ export const getKYCUsersListApi = (data: { status?: string }) => {
 };
 
 export const getUserDetailsApi = (data: { userId: number }) => {
-  console.log(data);
+
   return () => api.post(`auth/getUserByAdmin`, data);
 };
 
