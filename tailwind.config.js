@@ -116,6 +116,7 @@ module.exports = {
           80: "rgba(119, 53, 227, 0.8)", // 80% opacity
           90: "rgba(119, 53, 227, 0.9)", // 90% opacity
           100: "rgba(119, 53, 227, 1)", // 100% opacity (fully opaque)
+          light: "#9C5AE9",
         },
         green: {
           10: "rgba(54, 187, 145, 0.1)",
@@ -128,6 +129,8 @@ module.exports = {
           80: "rgba(54, 187, 145, 0.8)",
           90: "rgba(54, 187, 145, 0.9)",
           100: "rgba(54, 187, 145, 1)",
+          button: "#3DAE6C",
+          chip: "#29824C",
         },
         black: {
           10: "rgba(31, 36, 59, 0.1)",
@@ -159,20 +162,21 @@ module.exports = {
         red: {
           "error-dark": "#B00020",
           chip: "#AC0606",
+          button: "#FF5659",
         },
         yellow: {
-          "light": "#AC8B06",
-          "dull": "#8E7200",
+          light: "#AC8B06",
+          dull: "#8E7200",
           "chip-dull": "#f8f7f0",
           "chip-light": "#FFFCF1",
         },
-        green: {
-          chip: "#29824C",
-        },
+
         blue: {
           label: "#01579B",
           info: "#0172F5",
           chip: "#294A82",
+          "table-button-text": "#0661AC",
+          "table-button": "rgba(6, 97, 172, 0.1)",
         },
         custom: {
           "caption-gray": "#959595",

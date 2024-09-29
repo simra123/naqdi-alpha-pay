@@ -68,6 +68,7 @@ const transactionsList_Admin_table_columns = [
 
 const Transactions = () => {
   const router = useRouter();
+
   const user = useLocalStorage("user");
   const [transactions, setTransactions] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -116,31 +117,35 @@ const Transactions = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Transactions
       </h3>
 
-      <LoadingApi loading={isTransactionsLoading}>
-        <CustomTable
-          columns={
-            user?.role == Role.ADMIN
-              ? transactionsList_Admin_table_columns
-              : transactionsList_table_columns
-          }
-          rows={transactions}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/transactions/details/${row?.id}`)
-          }
-        />
+      <CustomTable
+        loading={isTransactionsLoading}
+        columns={
+          user?.role == Role.ADMIN
+            ? transactionsList_Admin_table_columns
+            : transactionsList_table_columns
+        }
+        rows={transactions}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) => {
+          console.log(row);
+          router.push(
+            `/transactions/details/${row?.id}?type=${row?.transactionType}`
+          );
+        }}
+        pagination
+        columnClassName="max-w-[200px]"
+      />
 
-        <ErrorApiText error={isTransactionsError} />
-      </LoadingApi>
+      <ErrorApiText error={isTransactionsError} />
     </>
   );
 };

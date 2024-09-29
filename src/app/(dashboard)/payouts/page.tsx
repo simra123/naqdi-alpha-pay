@@ -12,6 +12,10 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { formatPayouts } from "@/utils/dataFormatters";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
+import LoaderButton from "@/components/common/LoaderButton";
+import CreatePayoutModal from "@/components/Modals/CreatePayoutModal";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { Add } from "@mui/icons-material";
 
 const payoutsList_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -20,6 +24,7 @@ const payoutsList_table_columns = [
   { field: "to_currency", headerName: "To Currency", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "account_title", headerName: "Account Title", sortable: true },
+  { field: "account_number", headerName: "Account Number", sortable: true },
   {
     field: "status",
     headerName: "Status",
@@ -33,6 +38,8 @@ const payoutsList_table_columns = [
 const Payouts = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
+
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const [payoutsList, setpayoutsList] = useState([]);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
@@ -60,31 +67,50 @@ const Payouts = () => {
     });
   };
 
+  const toggleCreateModal = () => {
+    setIsCreateOpen(!isCreateOpen);
+  };
+
   useEffect(() => {
     getAllPayouts();
   }, []);
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">Payouts</h3>
+      <CreatePayoutModal
+        isOpen={isCreateOpen}
+        toggleHandler={toggleCreateModal}
+        refreshHandler={getAllPayouts}
+      />
+      <div className="items-center justify-between mb-8  hidden md:flex">
+        <h3 className="text-h3 font-semibold text-blackGrey-100">Payouts</h3>
 
-      <LoadingApi loading={isPayoutsListLoading}>
-        <CustomTable
-          columns={payoutsList_table_columns}
-          // Filters={Filters}
-          rows={payoutsList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/payouts/details/${row?.id}`)
-          }
+        <LoaderButton
+          content={"New Payout"}
+          className="px-16"
+          variant="contained"
+          onClick={toggleCreateModal}
         />
+      </div>
 
-        <ErrorApiText error={isPayoutsListError} />
-      </LoadingApi>
+      <CustomTable
+        loading={isPayoutsListLoading}
+        columns={payoutsList_table_columns}
+        // Filters={Filters}
+        createHandler={toggleCreateModal}
+        rows={payoutsList}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) =>
+          router.push(`/payouts/details/${row?.id}`)
+        }
+        pagination
+      />
+
+      <ErrorApiText error={isPayoutsListError} />
     </>
   );
 };

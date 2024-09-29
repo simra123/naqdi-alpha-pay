@@ -4,16 +4,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 import ReCaptcha from "react-google-recaptcha";
-import { Typography, TextField, Button } from "@mui/material";
 
 import { LegalSchema, RegisterSchema } from "@/models/Register";
 
 import { forms } from "@/constants/registerforms";
 
 import useFormValidation from "@/hooks/useFormValidation";
-
-import SelectBox from "@/components/common/SelectBox";
-import PasswordToggleInput from "@/components/common/PasswordToggleInput";
 
 import "./registerForm.scss";
 import { useApi } from "@/hooks/useApi";
@@ -39,6 +35,7 @@ const options = [
 
 const IndividualForm = ({ activeForm }) => {
   const [isRegisterLoading, isRegisterError, callRegisterApi] = useApi();
+  const [confirmPassError, setConfirmPassError]: any = useState(false);
   const router = useRouter();
 
   const initialValues = {
@@ -67,6 +64,16 @@ const IndividualForm = ({ activeForm }) => {
     setErrors,
   } = useFormValidation(initialValues, current_schema);
 
+  const validateMatchPass = (e) => {
+    const { value } = e.target;
+
+    if (value == values?.password) {
+      setConfirmPassError(false);
+    } else {
+      setConfirmPassError("Passwords Must Match.");
+    }
+  };
+
   const onSubmit = async () => {
     const individualData = {
       first_name: values?.firstName,
@@ -77,7 +84,7 @@ const IndividualForm = ({ activeForm }) => {
       password: values?.password,
       confirm_password: values?.confirmPassword,
       user_type: activeForm,
-      role: "USER",
+      // role: "USER",
     };
 
     const legalEntityData = {
@@ -130,17 +137,7 @@ const IndividualForm = ({ activeForm }) => {
               label="Legal Name"
               icon={Person}
             />
-            {/* <IconField
-              placeholder="Enter Entity Type"
-              onBlur={validateField}
-              type="text"
-              value={values.entityType}
-              onChange={handleChange}
-              name="entityType"
-              error={errors.entityType}
-              label="Select Entity Type"
-              icon={Person}
-            /> */}
+
             <IconSelectBox
               label="Select Entity Type"
               placeholder="Enter Entity Type"
@@ -166,12 +163,10 @@ const IndividualForm = ({ activeForm }) => {
         />
         <IconField
           placeholder="Enter You Middle Name"
-          onBlur={validateField}
           type="text"
           value={values.middleName}
           onChange={handleChange}
           name="middleName"
-          error={errors.middleName}
           label="Middle Name"
           icon={Person}
         />
@@ -223,12 +218,12 @@ const IndividualForm = ({ activeForm }) => {
         />
         <IconField
           placeholder="Enter You Password"
-          onBlur={validateField}
+          onBlur={validateMatchPass}
           type="password"
           value={values.confirmPassword}
           onChange={handleChange}
           name="confirmPassword"
-          error={errors.confirmPassword}
+          error={confirmPassError}
           label="Confirm Password"
           icon={Lock}
         />

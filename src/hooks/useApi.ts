@@ -47,7 +47,7 @@ export const useApi = (initailLoading = false) => {
           dispatch(
             setNotification({
               status: "error",
-              message: "Your Session has expired.",
+              message: "Your Session has been expired.",
             })
           );
         }

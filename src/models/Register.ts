@@ -5,7 +5,6 @@ const _register = {
     .required("First name is Required")
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
-
   lastName: Yup.string()
     .required("Last name is required")
     .min(2, "Minimum 2 letters required")
@@ -26,12 +25,10 @@ const _register = {
     .required("password is required")
     .min(8, "Password must be at least 8 characters")
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&./]{8,}$/,
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,24}$/,
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ),
-  confirmPassword: Yup.string()
-    .required("Please retype your password.")
-    .oneOf([Yup.ref("password")], "Your passwords do not match."),
+
   captcha: Yup.string().required("Please verify by checking the captcha"),
 };
 
@@ -45,3 +42,20 @@ const _legal = {
 
 export const LegalSchema = Yup.object().shape({ ..._legal, ..._register });
 export const RegisterSchema = Yup.object().shape(_register);
+
+export const UserSchema = Yup.object().shape({
+  firstName: Yup.string()
+    .required("First name is Required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
+  lastName: Yup.string()
+    .required("Last name is required")
+    .min(2, "Minimum 2 letters required")
+    .max(50, "Maximum 50 letters only."),
+  email: Yup.string()
+    .required("Email is required")
+    .email("Invalid Email Format")
+    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
+      message: "Email format is not valid",
+    }),
+});

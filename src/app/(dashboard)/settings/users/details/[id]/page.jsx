@@ -1,212 +1,107 @@
 "use client";
-import React from "react";
-import TransparentInput from "@/components/common/TransparentInput";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
-import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import RadioButton from "@/components/common/RadioButton";
-import { Button } from "@mui/material";
+import React, { useState } from "react";
+
+import Details from "@/components/common/Details";
+import { Mail } from "@mui/icons-material";
+
+const permissionsList = [
+  "Integrations",
+  "Payments",
+  "Payouts",
+  "Users",
+  "Withdrawals",
+];
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
+  const [permissions, setPermissions] = useState({
+    integrations: "none",
+    payments: "none",
+    payouts: "none",
+    users: "none",
+    withdrawals: "none",
+  });
+
+  const handleChange = (permission, value) => {
+    setPermissions((prev) => ({
+      ...prev,
+      [permission]: value,
+    }));
+  };
+
+  const renderRadioButton = (permission, value, label) => (
+    <label className="custom-radio">
+      <input
+        type="radio"
+        name={permission}
+        value={value}
+        checked={permissions[permission] === value}
+        onChange={() => handleChange(permission, value)}
+      />
+      <span className="md:text-base text-[12px] whitespace-nowrap">
+        {label}
+      </span>
+    </label>
+  );
 
   return (
-    <DashboardPageWrapper>
-      <div className="data-grid-container">
-        <div className=" flex items-center justify-between">
-          <h2 className="text-xl font-semibold">User Details</h2>
-        </div>
+    <div className="rounded-medium flex flex-col  bg-white shadow-sm px-4 sm:p-10">
+      <h3 className="text-h3.5 font-semibold text-blackGrey-100 hidden md:block">
+        User Details
+      </h3>
 
-        <div className="detailspage mt-6">
-          <div className="flex flex-col gap-4">
-            <DetailsWrapper title={"User ID"}>
-              <TransparentInput value={userID} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"First Name"}>
-              <TransparentInput value={`Alphaspay`} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Last Name"}>
-              <TransparentInput value={`Alphaspay`} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Email"} align>
-              <TransparentInput
-                value={`Alphaspay@alphaspay.com`}
-                label="Email address of the user you would like to invite.
-"
-              />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Status"}>
-              <TransparentInput value={`Accepted`} />
-            </DetailsWrapper>
-            <div className="mt-2"></div>
-            <DetailsWrapper title={"Permissions"} col>
-              <div className="flex flex-col gap-4 w-[560px] font-bold text-[13px]">
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Api Keys</span>
+      <div className="res-4-grid py-6 md:mt-4 border-light-gray border-b-2">
+        <Details Icon={Mail} label="Profile ID" value={"1"} />
+        <Details Icon={Mail} label="First Name" value={"Muhammad"} />
+        <Details Icon={Mail} label="Last Name" value={"Ahmed"} />
+        <Details Icon={Mail} label="Email" value={"aw708596@gmail.com"} />
+        <Details Icon={Mail} label="Status" value={"Accepted"} />
+      </div>
 
-                  <RadioButton
-                    label={"None"}
-                    name={"apikeys"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"apikeys"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"apikeys"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Payments</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"payments"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"payments"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"payments"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Payouts</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"payouts"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"payouts"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"payouts"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Profiles</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"profiles"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"profiles"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"profiles"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Settings</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"settings"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"settings"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"settings"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Transactions</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"transactions"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"transactions"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"transactions"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Users</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"users"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"users"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"users"}
-                    onChange={() => {}}
-                  />
-                </div>
-                <div className="flex gap-3 items-center justify-between border-b pb-4">
-                  <span className="w-[26%]">Withdrawals</span>
-
-                  <RadioButton
-                    label={"None"}
-                    name={"withdrawals"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Read-only"}
-                    name={"withdrawals"}
-                    onChange={() => {}}
-                  />
-                  <RadioButton
-                    label={"Full Access"}
-                    name={"withdrawals"}
-                    onChange={() => {}}
-                  />
-                </div>
-              </div>
-            </DetailsWrapper>
-
-            <div className="flex gap-2 justify-center max-w-[75%] mt-6">
-              <Button variant="text" className="py-2 px-8" disabled>
-                Edit
-              </Button>
-              <Button variant="outlined" className="py-2 px-8">
-                Delete
-              </Button>
-            </div>
-          </div>
+      <div className="grid grid-cols-4 gap-4 mt-8 mb-6">
+        <div className="font-semibold text-button text-black-100">
+          Permissions
         </div>
       </div>
-    </DashboardPageWrapper>
+      <div className="overflow-x-auto w-full">
+        {permissionsList.map((permission, index) => (
+          <div
+            className="flex justify-between w-full min-w-max sm:grid sm:grid-cols-4 md:justify-between lg:grid-cols-5  gap-4 items-center py-5 border-light-gray border-b"
+            key={index}
+          >
+            <div className="min-w-20 md:col-span-1 lg:col-span-2 text-[14px] md:text-button  text-black-100">
+              {permission}
+            </div>
+            <div className="text-center md:col-span-1">
+              {renderRadioButton(permission.toLowerCase(), "none", "None")}
+            </div>
+            <div className="text-center  md:col-span-1">
+              {renderRadioButton(
+                permission.toLowerCase(),
+                "read-only",
+                "Read-only"
+              )}
+            </div>
+            <div className="text-center md:col-span-1">
+              {renderRadioButton(
+                permission.toLowerCase(),
+                "full-access",
+                "Full Access"
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-20 flex-wrap">
+        <button className="border-0 py-3 text-center text-white bg-red-button rounded-medium sm:w-56 ">
+          Delete
+        </button>
+        <button className="border-0 py-3 text-center text-white bg-green-button rounded-medium sm:w-56 ">
+          Edit
+        </button>
+      </div>
+    </div>
   );
 };
 

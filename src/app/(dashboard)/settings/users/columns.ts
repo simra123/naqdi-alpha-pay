@@ -1,10 +1,7 @@
 export const userSettings_table_columns = [
-  { field: "email", headerName: "Email", flex: 1 },
-  { field: "firstName", headerName: "First Name", flex: 1 },
-  { field: "lastName", headerName: "Last Name", flex: 1 },
-  {
-    field: "status",
-    headerName: "Status",
-    flex: 1,
-  },
+  { field: "id", headerName: "ID" },
+  { field: "email", headerName: "Email" },
+  { field: "firstName", headerName: "First Name" },
+  { field: "lastName", headerName: "Last Name" },
+  { field: "status", headerName: "Status" },
 ];

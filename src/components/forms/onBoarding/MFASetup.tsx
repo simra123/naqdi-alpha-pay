@@ -168,12 +168,14 @@ const MFASetup = () => {
           <ErrorApiText error={isVerifyError} />
 
           {!user?.userDetails?.mfa && (
-            <LoaderButton
-              content={"Verify"}
-              loading={isVerifyLoading}
-              type="submit"
-              variant={"contained"}
-            />
+            <div className="mt-12 max-w-[360px]">
+              <LoaderButton
+                content={"Verify"}
+                loading={isVerifyLoading}
+                type="submit"
+                variant={"contained"}
+              />
+            </div>
           )}
         </div>
       </form>

@@ -8,61 +8,6 @@ export const capitalize = (value) => {
   return value ? value?.charAt(0).toUpperCase() + value.slice(1) : "";
 };
 
-// export const formatBalanceForAdmin = (
-//   coins: { network: string; blockchain: string; confirmedBalance: string }[],
-//   tokens: {
-//     symbol: string;
-//     type: string;
-//     amount: string;
-//     identifier: string;
-//     network: string;
-//   }[]
-// ) => {
-//   const tableData = [];
-//   const uniqueTokens = {};
-
-//   coins.forEach((item, index) => {
-//     const data = {
-//       id: index,
-//       network: capitalize(item?.network),
-//       // wallet_address: item?.wallet_address,
-//       currency: capitalize(item?.blockchain),
-//       totalAmount: roundToPrecision(+item?.confirmedBalance, 10),
-//     };
-//     tableData.push(data);
-//   });
-
-//   for (const token of tokens) {
-//     const key = `${token.symbol}/${token.type}`;
-//     const totalAmount = parseFloat(token.amount);
-
-//     if (uniqueTokens[key]) {
-//       uniqueTokens[key] = {
-//         ...uniqueTokens[key],
-//         totalAmount: roundToPrecision(
-//           uniqueTokens[key].totalAmount + totalAmount,
-//           10
-//         ),
-//       };
-//     } else {
-//       uniqueTokens[key] = {
-//         ...uniqueTokens[key],
-//         totalAmount: roundToPrecision(totalAmount, 10),
-//         id: token?.identifier,
-//         network: capitalize(token?.network),
-//         wallet_address: token?.identifier,
-//         currency: `${capitalize(token?.symbol)}(${token?.type})`,
-//       };
-//     }
-//   }
-
-//   for (const [key, value] of Object?.entries(uniqueTokens)) {
-//     tableData?.push(value);
-//   }
-
-//   return tableData;
-// };
-
 export const formatBalanceForUser = (balance: []) => {
   const tableData = balance.map(
     (
@@ -86,27 +31,6 @@ export const formatBalanceForUser = (balance: []) => {
       };
     }
   );
-  // balance?.forEach((item: any) => {
-  //   const data = {
-  //     id: item?.id,
-  //     network: capitalize(item?.network),
-  //     wallet_address: item?.wallet_address,
-  //     currency: capitalize(item?.blockchain),
-  //     totalAmount: roundToPrecision(+item?.amount, 10),
-  //   };
-  //   tableData.push(data);
-  //   for (let currency in item?.tokens) {
-  //     if (item?.tokens.hasOwnProperty(currency)) {
-  //       tableData.push({
-  //         id: item?.id + currency,
-  //         network: capitalize(item?.network),
-  //         wallet_address: item?.wallet_address,
-  //         currency: capitalize(currency),
-  //         totalAmount: roundToPrecision(+item?.tokens[currency], 10),
-  //       });
-  //     }
-  //   }
-  // });
 
   return tableData;
 };
@@ -140,14 +64,23 @@ export const formatBalanceForAdmin = (balance: []) => {
 export const formatTransactions = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
-    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY"),
+    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
     transactionHash: item?.transaction_hash,
     amount:
       item?.unit != null
-        ? `${item?.transaction_amount} ${item?.unit}`
-        : item?.transaction_amount,
-    receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
-    transactionType: capitalize(item?.payment?.id ? "Payment" : "Self Deposit"),
+        ? `${item?.transaction_amount || item?.amount} ${item?.unit}`
+        : item?.transaction_amount || item?.amount,
+    receiveAddress:
+      item?.withdrawal?.recipient_address ||
+      item?.wallet?.wallet_address ||
+      item?.wallet?.address,
+    transactionType: capitalize(
+      item?.payment?.id
+        ? "Payment"
+        : item?.withdrawal?.id
+        ? "Withdrawal"
+        : "Self Deposit"
+    ),
     network: capitalize(item?.wallet?.network),
     blockchain: capitalize(item?.wallet?.blockchain),
     status: capitalize(item?.status),
@@ -158,16 +91,25 @@ export const formatTransactions = (response: []) => {
 export const formatTransactionsByAdmin = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
-    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY"),
+    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
     transactionHash: item?.transaction_hash,
     amount:
       item?.unit != null
-        ? `${item?.transaction_amount} ${item?.unit}`
-        : item?.transaction_amount,
-    receiveAddress: item?.wallet?.wallet_address || item?.wallet?.address,
-    transactionType: capitalize(item?.transaction_type),
+        ? `${item?.transaction_amount || item?.amount} ${item?.unit}`
+        : item?.transaction_amount || item?.amount,
+    receiveAddress:
+      item?.withdrawal?.recipient_address ||
+      item?.wallet?.wallet_address ||
+      item?.wallet?.address,
+    transactionType: capitalize(
+      item?.payment?.id
+        ? "Payment"
+        : item?.withdrawal?.id
+        ? "Withdrawal"
+        : "Self Deposit"
+    ),
     network: capitalize(item?.wallet?.network),
     blockchain: capitalize(item?.wallet?.blockchain),
     status: capitalize(item?.status),
@@ -213,9 +155,9 @@ export const formatPayouts = (response: []) => {
     id: item?.id,
     created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
     updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
-    requested_amount: item?.requested_amount,
+    requested_amount: `${item?.requested_amount} ${item?.from_currency}`,
     account_title: item?.account_title,
-    account_name: item?.account_name,
+    account_number: item?.account_no,
     from_currency: item?.from_currency,
     to_currency: item?.to_currency,
     status: capitalize(item?.status),

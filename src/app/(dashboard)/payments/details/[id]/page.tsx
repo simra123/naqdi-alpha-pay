@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 
-import { relatedTransactions_table_columns } from "../../columns";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
@@ -12,16 +11,57 @@ import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import { CalendarMonth, Mail, Payment, Person } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  Info,
+  InfoOutlined,
+  Mail,
+  Payment,
+  Person,
+} from "@mui/icons-material";
+import {
+  CalenderIcon,
+  FolderIcon,
+  PaymentIcon,
+  StatusIcon,
+} from "@/assets/Svgs";
+import CustomTable from "@/components/common/CustomTable";
+import Chip from "@/components/common/Chip";
+import { useRouter } from "next/navigation";
+import { capitalize } from "@/utils/dataFormatters";
+import { roundToPrecision } from "@/utils/math";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
+const transactionsList_table_columns = [
+  { field: "id", headerName: "ID", sortable: true },
+  { field: "dateReceived", headerName: "Date Received", sortable: true },
+  { field: "senderAddress", headerName: "Sender Address", sortable: true },
+  { field: "receiveAddress", headerName: "Receive Address", sortable: true },
+  { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
+  { field: "recievedAmount", headerName: "Recieved Amount", sortable: true },
+  { field: "netAmount", headerName: "Net Amount", sortable: true },
+
+  { field: "blockchain", headerName: "Blockchain", sortable: true },
+  {
+    field: "status",
+    headerName: "Status",
+    sortable: true,
+    dataValidator: (value) => {
+      return <Chip status={value} />;
+    },
+  },
+];
+
 const PaymentDetails = ({ params }) => {
   const paymentId = params?.id;
-
   const user = useLocalStorage("user");
+  const router = useRouter();
+
   const [payment, setPayment] = useState(null);
   const [transaction, setTransacion] = useState([]);
+  const [orderInfo, setOrderInfo]: any = useState(null);
+  const [receivedAmount, setRecievedAmount] = useState("0");
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
 
   const getPayment = async () => {
@@ -29,22 +69,41 @@ const PaymentDetails = ({ params }) => {
       await callApiHook({
         apiCall: callPaymentApi(getPaymentDetailsApi(paymentId)),
         successCallBack: (response: any) => {
-          setTransacion([
-            {
-              id: 1,
-              date: moment(response?.paymentTransaction?.created_at).format(
-                "DD-MM-YYYY"
+          const transactionsList = response?.paymentTransaction?.map(
+            (item) => ({
+              id: item?.id,
+              dateReceived: moment(item?.created_at).format(
+                "DD-MM-YYYY : hh:mm A"
               ),
-              received: moment(response?.paymentTransaction?.updated_at).format(
-                "DD-MM-YYYY"
-              ),
-              blockchain_transaction_hash:
-                response?.paymentTransaction?.transaction_hash,
-              amount: `${response?.paymentTransaction?.amount} ${response?.paymentTransaction?.unit}`,
-              network: response?.wallet?.blockchain,
-              status: response?.paymentTransaction?.status,
+              senderAddress: item?.sender_address,
+              receiveAddress: response?.wallet?.address,
+              recievedAmount: `${item?.total_amount_received} ${item?.unit}`,
+              netAmount: `${item?.transaction_amount} ${item?.unit}`,
+              transactionHash: item?.transaction_hash,
+              blockchain: capitalize(response?.wallet?.blockchain),
+              status: item?.status,
+            })
+          );
+          setTransacion(transactionsList);
+
+          const totalAmount = response?.paymentTransaction?.reduce(
+            (acc, transaction) => {
+              return acc + parseFloat(transaction.transaction_amount);
             },
-          ]);
+            0
+          );
+          setRecievedAmount(
+            roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
+          );
+
+          console.log(response.passthrough);
+
+          try {
+            const parsedData = JSON.parse(response.passthrough);
+            setOrderInfo(parsedData);
+          } catch (error) {
+            console.error("Failed to parse JSON:", error);
+          }
           setPayment(response);
         },
       });
@@ -56,88 +115,126 @@ const PaymentDetails = ({ params }) => {
   }, []);
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-        Payment Details
-      </h3>
+    <>
+      <LoadingApi loading={isPaymentLoading}>
+        <div className="rounded-medium flex flex-col  bg-white p-10">
+          <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+            Payment Details
+          </h3>
 
-      <ErrorApiText error={isPaymentError}>
-        <LoadingApi loading={isPaymentLoading}>
-          <div className="res-4-grid py-6 mt-4">
-            <Details
-              Icon={Person}
-              label="Blockchain"
-              value={payment?.wallet?.blockchain}
-            />
-            <Details
-              Icon={Mail}
-              label="Requested Amount"
-              value={`${payment?.requested_amount} ${payment?.requested_currency}`}
-            />
-            <Details Icon={Mail} label="ID" value={payment?.id} />
-            <Details
-              Icon={Mail}
-              label="Wallet Address"
-              value={payment?.wallet?.address}
-            />
-          </div>
+          <ErrorApiText error={isPaymentError}>
+            <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+              <FolderIcon />
+              <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+            </div>
+            <div className="res-2-grid py-6">
+              <Details label="Blockchain" value={payment?.wallet?.blockchain} />
+              <Details
+                label="Requested Amount"
+                value={`${payment?.requested_amount} ${payment?.requested_currency}`}
+              />
+              <Details label="ID" value={payment?.id} />
+              <Details
+                label="Wallet Address"
+                value={payment?.wallet?.address}
+              />
+            </div>
 
-          <h4 className="text-button font-semibold mt-2">Dates</h4>
+            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+              <CalenderIcon />
+              <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+            </div>
 
-          <div className="res-4-grid py-6 border-b border-light-gray">
-            <Details
-              Icon={CalendarMonth}
-              label="Created Date"
-              value={moment(payment?.created_at).format("DD-MM-YYYY")}
-            />
-            <Details
-              Icon={CalendarMonth}
-              label="Updated Date"
-              value={moment(payment?.updated_at).format("DD-MM-YYYY")}
-            />
-          </div>
+            <div className="res-2-grid py-6">
+              <Details
+                label="Created Date"
+                value={moment(payment?.created_at).format("DD-MM-YYYY")}
+              />
+              <Details
+                label="Updated Date"
+                value={moment(payment?.updated_at).format("DD-MM-YYYY")}
+              />
+            </div>
 
-          <h4 className="text-button font-semibold mt-6">Payments</h4>
+            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+              <PaymentIcon />
+              <h5 className="text-purple-100 text-h5 font-semibold">
+                Payments
+              </h5>
+            </div>
 
-          <div className="res-4-grid py-6 border-b border-light-gray">
-            <Details
-              Icon={Payment}
-              label="Payment Amount"
-              value={`${payment?.requested_amount} ${payment?.requested_currency}`}
-            />
-            <Details
-              Icon={Payment}
-              label="Payment Amount Recieved"
-              value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
-            />
-          </div>
-          <h4 className="text-button font-semibold mt-6">Status</h4>
+            <div className="res-2-grid py-6">
+              <Details
+                label="Payment Amount "
+                value={`${payment?.requested_amount} ${payment?.requested_currency}`}
+              />
+              <Details
+                label="Payment Currency Amount "
+                value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
+              />
+              <Details label="Payment Amount Recieved" value={receivedAmount} />
+            </div>
 
-          <div className="res-4-grid py-6">
-            <Details
-              Icon={CalendarMonth}
-              label="Paid Stauts"
-              value={
-                unpaidStatuses.some((status) => status == payment?.status)
-                  ? "Unpaid"
-                  : "Paid"
-              }
-            />
-            <Details
-              Icon={CalendarMonth}
-              label="Payment Status"
-              value={payment?.status}
-            />
-          </div>
+            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+              <StatusIcon />
+              <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+            </div>
 
-          <h4 className="text-button font-semibold mb-5">Notes</h4>
+            <div className="res-2-grid py-6">
+              <Details
+                label="Paid Stauts"
+                value={
+                  unpaidStatuses.some((status) => status == payment?.status)
+                    ? "Unpaid"
+                    : "Paid"
+                }
+              />
+              <Details label="Payment Status" value={payment?.status} />
+            </div>
 
-          <div className="border-b border-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-small bg-light-gray">
-            {payment?.notes}
-          </div>
-        </LoadingApi>
-      </ErrorApiText>
-    </div>
+            {orderInfo && (
+              <>
+                <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+                  <InfoOutlined className="text-purple-100" />
+                  <h5 className="text-purple-100 text-h5 font-semibold">
+                    Order Information
+                  </h5>
+                </div>
+
+                <div className="res-2-grid py-6">
+                  {orderInfo &&
+                    Object.entries(orderInfo).map(([key, value]: any) => (
+                      <Details label={key} value={value} />
+                    ))}
+                </div>
+              </>
+            )}
+
+            <h4 className="text-button font-semibold mb-5">Notes</h4>
+
+            <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+              {payment?.notes}
+            </div>
+          </ErrorApiText>
+        </div>
+
+        <div className="mt-8">
+          <CustomTable
+            columns={transactionsList_table_columns}
+            rows={transaction}
+            actions={
+              <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+                Related Transactions
+              </h3>
+            }
+            rowClickHandler={(row: any) =>
+              router.push(`/transactions/details/${row?.id}?type=Payment`)
+            }
+            columnClassName="max-w-[200px]"
+          />
+        </div>
+      </LoadingApi>
+    </>
   );
 };
 
