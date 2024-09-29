@@ -1,27 +1,43 @@
-import { capitalize } from "@/utils/dataFormatters";
-import React from "react";
+"use client";
+
+import { ContentCopy } from "@mui/icons-material";
+import React, { useState } from "react";
 
 type Props = {
-  Icon: any;
   value: string;
-  label: string;
+  label?: string;
+  copyable?: boolean;
 };
 
-const Details = ({ Icon, label, value }: Props) => {
-  return (
-    <div className="gap-3 flex items-center p-2 overflow-hidden text-nowrap max-w-[80%]">
-      <div className="text-purple-100 bg-detail-circle w-[42px] h-[42px] flex items-center justify-center rounded-full p-2">
-        <Icon />
-      </div>
+const Details = ({ label, value, copyable }: Props) => {
+  const [isCopied, setIsCopied] = useState(false);
 
-      <div className="flex flex-col gap-1">
-        <span className=" text-custom-title-gray font-medium text-ellipsis">
-          {capitalize(value)}
-        </span>
-        <span className="text-[13px] text-custom-caption-gray font-medium">
-          {label}
-        </span>
-      </div>
+  const copyToClipboard = (text: string) => async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => setIsCopied(false), 1000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  return (
+    <div className="flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis">
+     {label &&  <span className="text-custom-caption-gray font-medium">{label}:</span>}
+      <span className=" text-black-100 font-semibold text-ellipsis overflow-hidden capitalize">
+        {isCopied ? "Copied" : value}
+      </span>
+      {copyable && (
+        <button
+          onClick={copyToClipboard(value)}
+          className="bg-transparent border-0 outline-0 text-[14px] hover:bg-purple-10 active:bg-purple-20 transition-all w-8 h-8 aspect-square rounded-full p-1"
+        >
+          <ContentCopy className="text-[12px]" />
+        </button>
+      )}
     </div>
   );
 };

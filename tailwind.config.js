@@ -116,6 +116,7 @@ module.exports = {
           80: "rgba(119, 53, 227, 0.8)", // 80% opacity
           90: "rgba(119, 53, 227, 0.9)", // 90% opacity
           100: "rgba(119, 53, 227, 1)", // 100% opacity (fully opaque)
+          light: "#9C5AE9",
         },
         green: {
           10: "rgba(54, 187, 145, 0.1)",

@@ -1,31 +1,17 @@
 "use client";
-
-import TransparentInput from "@/components/common/TransparentInput";
-import DashboardPageWrapper from "@/components/ui/Wrappers/DashboardPageWrapper";
-import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import { DataGrid } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
-import {
-  availableWallets_table_columns,
-  converstion_table_columns,
-  webhooks_table_columns,
-} from "../../columns";
+import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { Button, Chip } from "@mui/material";
-import {
-  CalendarMonth,
-  Check,
-  Mail,
-  Payment,
-  Person,
-} from "@mui/icons-material";
+import { Button } from "@mui/material";
+import { ContactMailOutlined } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
-import ConfirmationModal from "@/components/common/ConfirmationModal";
+import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import {
   getWithdrawalDetilsApi,
+  getWithdrawalWalletsApi,
   withdrawalApproveAdminApi,
   withdrawalRejectAdminApi,
 } from "@/services/withdrawal";
@@ -35,44 +21,45 @@ import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
 import moment from "moment";
-import { capitalize } from "@/utils/dataFormatters";
 import Details from "@/components/common/Details";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import {
+  CalenderIcon,
+  FolderIcon,
+  PaymentIcon,
+  StatusIcon,
+} from "@/assets/Svgs";
+import CustomTable from "@/components/common/CustomTable";
+import ReasonModal from "@/components/Modals/WithdrawReasonModal";
+import Chip from "@/components/common/Chip";
+import { TableColumns } from "@/constants/types";
 
-const dummyRows = [
+const transactionsList_table_columns: TableColumns = [
+  { field: "id", headerName: "ID" },
   {
-    id: 1,
-    wallet_address: "0x4e1a5dfcB8D4e2c8eC7d14d3F3A6D4E5A1aB3C2b",
-    wallet_network: "Ethereum",
-    user_amount: 1.5,
-    total_amount: 100.0,
+    field: "createdAt",
+    headerName: "Date",
+    dataValidator(value) {
+      return moment(value).format("DD-MM-YYYY : hh:mm A");
+    },
   },
   {
-    id: 2,
-    wallet_address: "0x3C6dA2dF1E5E4aD7d9F8B5c6bA7cE9f6B2dA8eF3",
-    wallet_network: "Binance Smart Chain",
-    user_amount: 2.0,
-    total_amount: 200.0,
+    field: "updatedAt",
+    headerName: "Updated Date",
+    dataValidator(value) {
+      return moment(value).format("DD-MM-YYYY : hh:mm A");
+    },
   },
+  { field: "unit", headerName: "Currency" },
+  { field: "amount", headerName: "Amount" },
+  { field: "sender_address", headerName: "Wallet Address" },
+  { field: "transaction_hash", headerName: "Transaction Hash" },
   {
-    id: 3,
-    wallet_address: "0x9D8fA7dD2cA5dB3dA1f6eE7bF2E3fC8bE7fB4a2E",
-    wallet_network: "Polygon",
-    user_amount: 3.2,
-    total_amount: 150.0,
-  },
-  {
-    id: 4,
-    wallet_address: "0x6bA3c5D1e7D9A1c2B3fE4fE7dE6dB4b9F3C4a9dA",
-    wallet_network: "Solana",
-    user_amount: 0.8,
-    total_amount: 250.0,
-  },
-  {
-    id: 5,
-    wallet_address: "0x7cC4eD2b9B5cF8aD4eE6aE7bE5A4D9f5F2eB6bC8",
-    wallet_network: "Avalanche",
-    user_amount: 1.1,
-    total_amount: 175.0,
+    field: "status",
+    headerName: "Status",
+    dataValidator(value) {
+      return <Chip status={value} />;
+    },
   },
 ];
 
@@ -82,17 +69,13 @@ const WithdrawalDetails = ({ params }) => {
   const router = useRouter();
   const withdraw_id = +params?.id;
 
-  const [withdrawalData, setWithdrawalData] = useState({
-    txhash: "",
-  });
-
   const [confirmModal, setConfirmModal] = useState(false);
+  const [selectedWallets, setSelectedWallets] = useState([]);
 
   const [withdrawalType, setWithdrawalType] = useState(Withdrawal_Type.MANUAL);
 
-  const [selectionModel, setSelectionModel] = useState([]);
-
   const [wallets, setWallets] = useState([]);
+  const [isRejectOpen, setRejectOpen] = useState(false);
 
   const [withdrawalDetails, setwithdrawalDetails]: any = useState({});
   const [
@@ -102,32 +85,33 @@ const WithdrawalDetails = ({ params }) => {
   ] = useApi(true);
 
   const [
+    isWithdrawalWalletsLoading,
+    isWithdrawalWalletsError,
+    callWithdrawalWalletsApi,
+  ] = useApi(true);
+
+  const [
     isApproveWithdrawalLoading,
     isApproveWithdrawalError,
     callApproveWithdrawalApi,
   ] = useApi();
-  const [
-    isRejectWithdrawalLoading,
-    isRejectWithdrawalError,
-    callRejectWithdrawalApi,
-  ] = useApi();
 
   const handleApprove = async () => {
+    const addresses = wallets?.map((item) => item?.wallet_address);
+
     const manualData = {
-      txhash: withdrawalData.txhash,
-      withdraw_id: withdraw_id,
-      withdrawal_mode: withdrawalType,
+      addresses,
     };
 
     const AutomaticData = {
       withdraw_id: withdraw_id,
       withdrawal_mode: withdrawalType,
-      sender_address: wallets.find((wallet) => wallet.id == selectionModel[0])
-        ?.wallet_address,
     };
 
     const requestData =
-      withdrawalType == Withdrawal_Type.AUTOMATIC ? AutomaticData : manualData;
+      withdrawalType == Withdrawal_Type.AUTOMATIC
+        ? AutomaticData
+        : { ...manualData, ...AutomaticData };
 
     await callApiHook({
       apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(requestData)),
@@ -143,21 +127,8 @@ const WithdrawalDetails = ({ params }) => {
     });
   };
 
-  const handleReject = async () => {
-    await callApiHook({
-      apiCall: callRejectWithdrawalApi(
-        withdrawalRejectAdminApi({ withdraw_id })
-      ),
-      successCallBack: (response: any) => {
-        dispatch(
-          setNotification({
-            message: "Withdrawal Request Rejected Successfully",
-            status: "success",
-          })
-        );
-        router.push("/withdrawals");
-      },
-    });
+  const rejectModalToggler = () => {
+    setRejectOpen(!isRejectOpen);
   };
 
   const getWithdrawalDetails = async () => {
@@ -167,52 +138,29 @@ const WithdrawalDetails = ({ params }) => {
       ),
       successCallBack: (response: any) => {
         setwithdrawalDetails(response);
+      },
+    });
+  };
 
-        const formattedTransactions = response?.paymentTransactions?.map(
-          (transaction) => ({
-            id: transaction.id,
-            wallet_address: transaction?.wallet?.address,
-            wallet_network: capitalize(transaction?.wallet?.blockchain),
-            user_amount: transaction?.amount,
-            total_amount: transaction?.wallet?.amount,
-          })
-        );
-
-        const formattedWallets = response?.walletsWithUnit?.map((wallet) => ({
-          id: wallet.id,
-          wallet_address: wallet.wallet_address,
-          wallet_network: capitalize(wallet.blockchain),
-          user_amount: wallet.amount,
-          total_amount: wallet.amount, // Assuming total amount here refers to the same amount for wallets
-        }));
-
-        console.log(formattedTransactions, formattedWallets);
-
-        setWallets(
-          formattedTransactions
-            ? [...formattedTransactions, ...formattedWallets]
-            : [...formattedWallets]
-        );
+  const getWithdrawalWallets = async () => {
+    await callApiHook({
+      apiCall: callWithdrawalWalletsApi(
+        getWithdrawalWalletsApi({ withdraw_id })
+      ),
+      successCallBack: (response: any) => {
+        setWallets(response);
       },
     });
   };
 
   useEffect(() => {
     getWithdrawalDetails();
+    if (user?.role == Role.ADMIN) {
+      getWithdrawalWallets();
+    }
   }, []);
 
-  const handleSelectionChange = (newSelection) => {
-    setSelectionModel(newSelection);
-  };
-
-  const handleChange = (e) => {
-    const { value, name } = e.target;
-    setWithdrawalData((pre) => ({ ...pre, [name]: value }));
-  };
-
   const handleWithdrawalType = (type: Withdrawal_Type) => () => {
-    setWithdrawalData((pre) => ({ ...pre, txhash: "" }));
-    setSelectionModel([]);
     setWithdrawalType(type);
   };
 
@@ -225,240 +173,228 @@ const WithdrawalDetails = ({ params }) => {
     setConfirmModal(!confirmModal);
   };
 
+  console.log(selectedWallets, "Selected Walelts");
+
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-        Withdrawal Details
-      </h3>
-
-      <ConfirmationModal
-        handleClose={toggleConfirmModal}
-        handleConfirm={handleConfirm}
-        isOpen={confirmModal}
-        confirmLoading={isApproveWithdrawalLoading}
-        title="Withdrawal Confirmation"
+    <LoadingApi loading={isWithdrawalDetailsLoading}>
+      <ReasonModal
+        isOpen={isRejectOpen}
+        toggleHandler={rejectModalToggler}
+        withdrawId={withdraw_id}
       />
+      <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
+        <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+          Withdrawal Details
+        </h3>
 
-      <LoadingApi loading={isWithdrawalDetailsLoading}>
-        <>
-          <div className="res-4-grid py-6 mt-4">
-            <Details
-              Icon={Person}
-              label="Blockchain"
-              value={`${
-                withdrawalDetails?.withdrawal?.standard
-                  ? withdrawalDetails?.withdrawal?.standard
-                  : withdrawalDetails?.withdrawal?.unit
-              }`}
-            />
+        <ConfirmationModal
+          handleClose={toggleConfirmModal}
+          handleConfirm={handleConfirm}
+          isOpen={confirmModal}
+          confirmLoading={isApproveWithdrawalLoading}
+          error={isApproveWithdrawalError}
+          title="Withdrawal Confirmation"
+        />
 
-            <Details
-              Icon={Mail}
-              label="ID"
-              value={withdrawalDetails?.withdrawal?.id}
-            />
-            <Details
-              Icon={Mail}
-              label={`${withdrawalDetails?.withdrawal?.unit} ${
-                withdrawalDetails?.withdrawal?.standard &&
-                `(${withdrawalDetails?.withdrawal?.standard})`
-              } Wallet Address`}
-              value={withdrawalDetails?.withdrawal?.recipient_address}
-            />
-            <Details
-              Icon={Mail}
-              label={"Transaction Hash"}
-              value={withdrawalDetails?.withdrawal?.transaction_hash || "_"}
-            />
-          </div>
+        <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+          <FolderIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+        </div>
+        <div className="res-2-grid py-6">
+          <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
 
-          <h4 className="text-button font-semibold mt-2">Dates</h4>
+          <Details label="ID" value={withdrawalDetails?.id} />
+          <Details
+            label={`${withdrawalDetails?.unit} ${
+              withdrawalDetails?.standard && `(${withdrawalDetails?.standard})`
+            } Wallet Address`}
+            value={withdrawalDetails?.recipient_address}
+          />
+        </div>
 
-          <div className="res-4-grid py-6 border-b border-light-gray">
-            <Details
-              Icon={CalendarMonth}
-              label="Created Date"
-              value={moment(withdrawalDetails?.withdrawal?.created_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              )}
-            />
-            <Details
-              Icon={CalendarMonth}
-              label="Updated Date"
-              value={moment(withdrawalDetails?.withdrawal?.updated_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              )}
-            />
-          </div>
+        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <CalenderIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+        </div>
 
-          <h4 className="text-button font-semibold mt-6">Withdrawals</h4>
+        <div className="res-2-grid py-6">
+          <Details
+            label="Created Date"
+            value={moment(withdrawalDetails?.created_at).format(
+              "DD-MM-YYYY : hh:mm A"
+            )}
+          />
+          <Details
+            label="Updated Date"
+            value={moment(withdrawalDetails?.updated_at).format(
+              "DD-MM-YYYY : hh:mm A"
+            )}
+          />
+        </div>
+        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <PaymentIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">Withdrawals</h5>
+        </div>
 
-          <div className="res-4-grid py-6 border-b border-light-gray">
-            <Details
-              Icon={Payment}
-              label="Source Amount"
-              value={`${withdrawalDetails?.withdrawal?.requested_amount} ${withdrawalDetails?.withdrawal?.unit}`}
-            />
-            <Details
-              Icon={Payment}
-              label="Withdrawal Fee"
-              value={`${withdrawalDetails?.withdrawal?.withdraw_fees} ${withdrawalDetails?.withdrawal?.unit}`}
-            />
-            <Details
-              Icon={Payment}
-              label="Net Amount"
-              value={`${withdrawalDetails?.withdrawal?.net_amount} ${withdrawalDetails?.withdrawal?.unit}`}
-            />
-          </div>
-          <h4 className="text-button font-semibold mt-6">Status</h4>
+        <div className="res-2-grid py-6">
+          <Details
+            label="Requested Amount"
+            value={`${withdrawalDetails?.requested_amount} ${withdrawalDetails?.unit}`}
+          />
+          <Details
+            label="Fee"
+            value={`${withdrawalDetails?.withdraw_fees} ${withdrawalDetails?.unit}`}
+          />
+          <Details
+            label="Net Amount"
+            value={`${withdrawalDetails?.net_amount} ${withdrawalDetails?.unit}`}
+          />
+        </div>
 
-          <div className="res-4-grid py-6">
-            <Details
-              Icon={CalendarMonth}
-              label="Withdrawal Status"
-              value={withdrawalDetails?.withdrawal?.status}
-            />
-          </div>
+        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <StatusIcon />
+          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+        </div>
 
-          <h4 className="text-button font-semibold mb-5">Notes</h4>
+        <div className="res-2-grid py-6">
+          <Details
+            label="Withdrawal Status"
+            value={withdrawalDetails?.status}
+          />
+        </div>
 
-          <div className="border-b border-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-small bg-light-gray">
-            {withdrawalDetails?.withdrawal?.notes}
-          </div>
-        </>
+        <h4 className="text-button font-semibold my-5">Notes</h4>
 
-        {user?.role == Role.ADMIN && (
-          <div className="detailspage mt-6">
-            <div className="flex flex-col gap-4">
-              <div className="my-4 flex flex-col gap-4">
-                <div className=" flex items-center justify-between mb-3">
-                  <h2 className="text-lg font-semibold">User Details</h2>
-                </div>
-
-                <DetailsWrapper title={"Name"} align>
-                  <TransparentInput
-                    label={`First Name`}
-                    value={withdrawalDetails?.withdrawal?.user?.first_name}
-                  />
-
-                  <TransparentInput
-                    label={`Last Name`}
-                    value={withdrawalDetails?.withdrawal?.user?.last_name}
-                  />
-                </DetailsWrapper>
-
-                <DetailsWrapper title={"Contact"} align>
-                  <TransparentInput
-                    label={`Email`}
-                    value={withdrawalDetails?.withdrawal?.user?.email}
-                  />
-
-                  <TransparentInput
-                    label={`Phone`}
-                    value={
-                      withdrawalDetails?.withdrawal?.user?.userDetails
-                        ?.phone_number
-                    }
-                  />
-                </DetailsWrapper>
-              </div>
-
-              <DetailsWrapper title={"Withdrawal Mode"}>
-                <Chip
-                  label="Manual"
-                  color="primary"
-                  onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
-                  icon={
-                    withdrawalType == Withdrawal_Type.MANUAL && (
-                      <Check className="text-sm" />
-                    )
-                  }
-                  variant={
-                    withdrawalType == Withdrawal_Type.MANUAL
-                      ? "filled"
-                      : "outlined"
-                  }
-                  clickable
-                />
-                <Chip
-                  label="Automatic"
-                  onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
-                  color="primary"
-                  icon={
-                    withdrawalType == Withdrawal_Type.AUTOMATIC && (
-                      <Check className="text-sm" />
-                    )
-                  }
-                  variant={
-                    withdrawalType == Withdrawal_Type.AUTOMATIC
-                      ? "filled"
-                      : "outlined"
-                  }
-                  clickable
-                />
-              </DetailsWrapper>
-
-              {withdrawalType == Withdrawal_Type.MANUAL && (
-                <DetailsWrapper title={"Transaction Hash"}>
-                  <TransparentInput
-                    value={withdrawalData?.txhash}
-                    name="txhash"
-                    disabled={false}
-                    onChange={handleChange}
-                  />
-                </DetailsWrapper>
-              )}
-
-              <div className="data-grid-container">
-                <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Wallets Available</h2>
-                </div>
-
-                <DataGrid
-                  rows={wallets}
-                  columns={availableWallets_table_columns}
-                  className="font-semibold primary-color  border-t-0"
-                  checkboxSelection={
-                    withdrawalType == Withdrawal_Type.AUTOMATIC
-                  }
-                  disableMultipleRowSelection
-                  hideFooter
-                  autoHeight
-                  rowSelectionModel={selectionModel}
-                  onRowSelectionModelChange={handleSelectionChange}
-                />
-              </div>
-            </div>
-
-            <ErrorApiText
-              error={isApproveWithdrawalError || isRejectWithdrawalError}
-            />
-            <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
-              <LoaderButton
-                loading={isRejectWithdrawalLoading}
-                content={"Reject"}
-                variant={"outlined"}
-                onClick={handleReject}
-              />
-
-              <Button
-                variant="outlined"
-                className="py-2 px-8"
-                onClick={toggleConfirmModal}
-                disabled={
-                  withdrawalData?.txhash || selectionModel?.length
-                    ? false
-                    : true
-                }
-              >
-                Approve
-              </Button>
-            </div>
-          </div>
-        )}
+        <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+          {withdrawalDetails?.notes}
+        </div>
         <ErrorApiText error={isWithdrawalDetailsError} />
-      </LoadingApi>
-    </div>
+      </div>
+
+      <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+        <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10 mt-8">
+          <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+            User Details
+          </h3>
+
+          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+            <FolderIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          </div>
+          <div className="res-2-grid py-6">
+            <Details
+              label="First Name"
+              value={withdrawalDetails?.user?.first_name}
+            />
+
+            <Details
+              label="Last Name"
+              value={withdrawalDetails?.user?.last_name}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+            <ContactMailOutlined className="text-purple-100" />
+            <h5 className="text-purple-100 text-h5 font-semibold">Contact</h5>
+          </div>
+          <div className="res-2-grid py-6">
+            <Details
+              label="First Name"
+              value={withdrawalDetails?.user?.email}
+            />
+
+            <Details
+              label="Last Name"
+              value={withdrawalDetails?.user?.userDetails?.phone_number}
+            />
+          </div>
+        </div>
+
+        <div className="mt-8"></div>
+        {withdrawalDetails?.status == "pending" && (
+          <>
+            <LoadingApi loading={isWithdrawalWalletsLoading}>
+              <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
+                <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+                  Withdraw
+                </h3>
+
+                <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
+                  <button
+                    className={`w-full  ${
+                      withdrawalType == Withdrawal_Type.MANUAL
+                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                        : "font-medium text-custom-title-gray"
+                    }`}
+                    onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
+                  >
+                    Manual
+                  </button>
+                  <button
+                    className={`w-full  ${
+                      withdrawalType != Withdrawal_Type.MANUAL
+                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                        : "font-medium text-custom-title-gray"
+                    }`}
+                    onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                  >
+                    Automatic
+                  </button>
+                </div>
+
+                <CustomTable
+                  tableWrapper={false}
+                  columns={availableWallets_table_columns}
+                  rows={wallets}
+                  selectable={withdrawalType == Withdrawal_Type.MANUAL}
+                  selectedRows={selectedWallets}
+                  setSelectedRows={setSelectedWallets}
+                  actions={true}
+                />
+
+                <ErrorApiText error={isApproveWithdrawalError} />
+
+                <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
+                  <LoaderButton
+                    content={"Reject"}
+                    color="error"
+                    onClick={rejectModalToggler}
+                    variant="text"
+                  />
+
+                  <LoaderButton
+                    variant="text"
+                    color="success"
+                    onClick={toggleConfirmModal}
+                    content={"Approve"}
+                  />
+                </div>
+              </div>
+            </LoadingApi>
+
+            <ErrorApiText error={isWithdrawalWalletsError} />
+          </>
+        )}
+      </RenderRoleBased>
+
+      {withdrawalDetails?.status == "confirm" && (
+        <div className="mt-8">
+          <CustomTable
+            columns={transactionsList_table_columns}
+            rows={withdrawalDetails?.withdrawalTransactions}
+            actions={
+              <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+                Related Transactions
+              </h3>
+            }
+            rowClickHandler={(row: any) =>
+              router.push(`/transactions/details/${row?.id}?type=Withdrawal`)
+            }
+            columnClassName="max-w-[200px]"
+          />
+        </div>
+      )}
+    </LoadingApi>
   );
 };
 

@@ -1,15 +1,17 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { userSettings_table_columns } from "./columns";
 import LoaderButton from "@/components/common/LoaderButton";
-import LoadingApi from "@/components/common/LoadindApi";
 import CustomTable from "@/components/common/CustomTable";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { generateCSVApi } from "@/services/common";
+
+import useLocalStorage from "@/hooks/useLocalStorage";
+import CreateUserModal from "@/components/Modals/CreateUserModal";
 
 const rows = [
   {
@@ -23,7 +25,9 @@ const rows = [
 
 const Users = () => {
   const router = useRouter();
+  const [isCreateOpen, setCreateOpen] = useState(false);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+  const user = useLocalStorage("user");
 
   const ExportCSVHandler = async () => {
     await callApiHook({
@@ -33,37 +37,46 @@ const Users = () => {
       },
     });
   };
+
+  const createToggleHandler = () => {
+    setCreateOpen(!isCreateOpen);
+  };
+
   return (
     <>
-      <div className="flex items-center justify-between mb-8">
+      <CreateUserModal
+        isOpen={isCreateOpen}
+        toggleHandler={createToggleHandler}
+      />
+
+      <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
 
         <LoaderButton
           content={"New User"}
           className="px-16"
           variant="contained"
+          onClick={createToggleHandler}
         />
       </div>
 
-      <LoadingApi loading={false}>
-        <CustomTable
-          columns={userSettings_table_columns}
-          // Filters={Filters}
-          rows={rows}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
-          initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/settings/users/details/${row?.id}`)
-          }
-          pagination
-        />
+      <CustomTable
+        columns={userSettings_table_columns}
+        // Filters={Filters}
+        rows={rows}
+        csv={{
+          handler: ExportCSVHandler,
+          loading: isCSVLoading,
+          error: isCSVError,
+        }}
+        initialPageSize={10}
+        rowClickHandler={(row: any) =>
+          router.push(`/settings/users/details/${row?.id}`)
+        }
+        pagination
+      />
 
-        <ErrorApiText error={false} />
-      </LoadingApi>
+      <ErrorApiText error={false} />
     </>
   );
 };

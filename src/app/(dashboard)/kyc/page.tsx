@@ -1,73 +1,56 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
-import { callApiHook } from "@/utils/apifuncs";
+import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { getKYCUsersListApi } from "@/services/admin/users";
-import LoadingApi from "@/components/common/LoadindApi";
 import moment from "moment";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import SelectBox from "@/components/common/SelectBox";
 import { withAuth } from "../../../middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
-import { Button, Chip } from "@mui/material";
-import { Sync } from "@mui/icons-material";
+import { TableColumns } from "@/constants/types";
+import Chip from "@/components/common/Chip";
+import CustomTable from "@/components/common/CustomTable";
+import { generateCSVApi } from "@/services/common";
 
-const ChipMaker = (status: boolean) => {
-  return (
-    <Chip
-      label={status ? "Approved" : "UnApproved"}
-      variant="filled"
-      color={status ? "success" : "warning"}
-    />
-  );
-};
-
-const columns = [
-  { field: "id", headerName: "ID", flex: 1 },
-  { field: "firstName", headerName: "First name", flex: 1 },
-  { field: "lastName", headerName: "Last name", flex: 1 },
-  { field: "email", headerName: "Email", flex: 1 },
-  { field: "phone", headerName: "Phone", flex: 1 },
-  { field: "country", headerName: "Country", flex: 1 },
-  { field: "userType", headerName: "User Type", flex: 1 },
+const columns: TableColumns = [
+  { field: "id", headerName: "ID" },
+  { field: "createdAt", headerName: "Created At" },
+  { field: "firstName", headerName: "First name" },
+  { field: "lastName", headerName: "Last name" },
+  { field: "email", headerName: "Email" },
+  { field: "phone", headerName: "Phone" },
+  { field: "country", headerName: "Country" },
+  { field: "userType", headerName: "User Type" },
+  { field: "fees", headerName: "Fee" },
   {
     field: "kycStatus",
-    headerName: "KYC Status",
-    flex: 1,
-    renderCell: (params) => {
-      const { value } = params;
-      return ChipMaker(value);
+    headerName: "Status",
+    dataValidator(value) {
+      const status = value ? "Approved" : "Unapproved";
+      return <Chip status={status} />;
     },
   },
-  { field: "createdAt", headerName: "Created At", flex: 1 },
-];
-
-const statusList = [
-  { label: "All", value: "all" },
-  { label: "Approved", value: "approved" },
-  { label: "Rejected", value: "rejected" },
-  { label: "Pending", value: "pending" },
 ];
 
 const KYCUsersPage = () => {
   const router = useRouter();
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [usersList, setUsersList] = useState(null);
+  const [usersList, setUsersList] = useState([]);
   const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi(true);
+  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getUsersList = async () => {
-    setUsersList(null);
     await callApiHook({
-      apiCall: callUsersListApi(
-        getKYCUsersListApi(selectedStatus == "all" ? "" : selectedStatus)
-      ),
+      apiCall: callUsersListApi(getKYCUsersListApi({ status: "" })),
       successCallBack: (response) => {
         const filteredData = response?.map((data) => {
           return {
             id: data?.id,
+            createdAt: moment(data?.user?.created_at).format(
+              "DD-MM-YYYY : hh:mm a"
+            ),
             userId: data?.user?.id,
             firstName: data?.user?.first_name,
             lastName: data?.user?.last_name,
@@ -75,8 +58,8 @@ const KYCUsersPage = () => {
             phone: data?.phone_number,
             country: data?.country,
             kycStatus: data?.kyc_approved,
+            fees: data?.fees ? `${data?.fees} %` : "_",
             userType: data?.user?.user_type,
-            createdAt: moment(data?.user?.created_at).format("DD-MM-YYYY"),
           };
         });
         setUsersList(filteredData);
@@ -84,65 +67,46 @@ const KYCUsersPage = () => {
     });
   };
 
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
+  const ExportCSVHandler = async () => {
+    await callApiHook({
+      apiCall: callCSVApi(generateCSVApi(usersList)),
+      successCallBack: (response: any) => {
+        downloadCSV(response, "kyc-requests.csv");
+      },
+    });
   };
 
   useEffect(() => {
     getUsersList();
-  }, [selectedStatus]);
+  }, []);
 
   return (
-    <div className="data-grid-container">
-      <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">KYC Users</h2>
-        <div className="actions grid grid-flow-col gap-3">
-          <Button variant="outlined" color="primary" onClick={getUsersList}>
-            <Sync />
-          </Button>
-          <Button variant="outlined" color="primary">
-            Export CSV
-          </Button>
-          <SelectBox
-            className="transparent !border-0 min-w-32 !p-0"
-            options={statusList}
-            value={selectedStatus}
-            placeholder="Status"
-            onChange={handleStatusChange}
-            sx={{
-              ".MuiSelect-outlined": {
-                padding: "8px 12px !important",
-              },
+    <>
+      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+        KYC Requests
+      </h3>
 
-              borderRadius: "0 !important",
-            }}
-          />
-        </div>
-      </div>
+      {/* Table Actions Below */}
 
-      <LoadingApi loading={isUsersListLoading}>
-        <DataGrid
-          rows={usersList || []}
+      <div>
+        <CustomTable
           columns={columns}
-          className="border-t-0 primary-color font-semibold"
-          sx={{
-            ".MuiDataGrid-overlayWrapper": {
-              padding: "25px",
-            },
-            ".MuiDataGrid-overlayWrapperInner": {
-              height: "10px !important",
-            },
+          rows={usersList}
+          csv={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+            error: isCSVError,
           }}
-          onRowClick={(params) => {
-            router.push(`/kyc/${params?.row?.userId}`);
-          }}
-          sortingOrder={["asc", "desc"]}
+          initialPageSize={10}
+          rowClickHandler={(row: any) => router.push(`/kyc/${row?.userId}`)}
           pagination
-          autoHeight
+          columnClassName="max-w-[250px]"
+          loading={isUsersListLoading}
         />
-      </LoadingApi>
-      <ErrorApiText error={isUsersListError} />
-    </div>
+
+        <ErrorApiText error={isUsersListError} />
+      </div>
+    </>
   );
 };
 

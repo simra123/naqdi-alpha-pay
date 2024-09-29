@@ -12,6 +12,12 @@ export const blockchains = [
   { label: "USDC", value: "USDC" },
 ];
 
+export const unitName = {
+  btc: "Bitcoin",
+  eth: "Ethereum",
+  trx: "Tron",
+};
+
 export const blockchain_standards = {
   bitcoin: "Omni-layer",
   Btc: "Omni-layer",
@@ -22,67 +28,69 @@ export const blockchain_standards = {
   tron: "TRC-20",
   Tron: "TRC-20",
   TRON: "TRC-20",
+  TRX: "TRC-20",
 };
 
-export const networks = {
-  bitcoin: [
-    { label: "Mainnet", value: "mainnet" },
-    { label: "Testnet", value: "testnet" },
-  ],
+export const production_networks = {
+  bitcoin: [{ label: "Mainnet", value: "mainnet" }],
 
-  ethereum: [
-    { label: "Mainnet", value: "mainnet" },
-    { label: "Sepolia", value: "sepolia" },
-  ],
-  tron: [
-    { label: "Mainnet", value: "mainnet" },
-    { label: "Nile", value: "nile" },
-  ],
+  ethereum: [{ label: "Mainnet", value: "mainnet" }],
+  tron: [{ label: "Mainnet", value: "mainnet" }],
   USDT: [
     {
       label: "Bitcoin(Omni Layer)",
-      value: "mainnet(btc)",
+      value: "Bitcoin",
       standard: STANDARD.BITCOIN,
     },
-    {
-      label: "Testnet(BTC)(Omni Layer)",
-      value: "testnet",
-      standard: STANDARD.BITCOIN,
-    },
+
     {
       label: "Ethereum(ERC-20)",
-      value: "mainnet(eth)",
+      value: "Ethereum",
       standard: STANDARD.ETHEREUM,
     },
+
+    { label: "Tron(TRC-20)", value: `Tron`, standard: STANDARD.TRON },
+  ],
+  USDC: [{ label: "Ethereum", value: "Ethereum", standard: STANDARD.ETHEREUM }],
+  Btc: [{ label: "Bitcoin", value: "Bitcoin" }],
+
+  Eth: [{ label: "Ethereum", value: "Ethereum" }],
+  Tron: [{ label: "Tron", value: "Tron" }],
+};
+
+export const testnet_networks = {
+  bitcoin: [{ label: "Bitcoin", value: "Bitcoin" }],
+  ethereum: [{ label: "Ethereum", value: "Ethereum" }],
+  tron: [{ label: "Tron", value: "Tron" }],
+  USDT: [
     {
-      label: "Sepolia(ETH)(ERC-20)",
-      value: "sepolia",
+      label: "BTC (Testnet)",
+      value: "Bitcoin",
+      standard: STANDARD.BITCOIN,
+    },
+    {
+      label: "Sepolia (ERC-20)",
+      value: "Ethereum",
       standard: STANDARD.ETHEREUM,
     },
-    { label: "Tron(TRC-20)", value: `mainnet(tron)`, standard: STANDARD.TRON },
+
     {
-      label: "Nile(Tron)(TRC-20)",
-      value: `nile(tron)`,
+      label: "Nile (TRC-20)",
+      value: `Tron`,
       standard: STANDARD.TRON,
     },
   ],
   USDC: [
-    { label: "Ethereum", value: "mainnet(eth)", standard: STANDARD.ETHEREUM },
-    { label: "Sepolia(ETH)", value: "sepolia", standard: STANDARD.ETHEREUM },
+    {
+      label: "Sepolia (ERC-20)",
+      value: "Ethereum",
+      standard: STANDARD.ETHEREUM,
+    },
   ],
-  Btc: [
-    { label: "Mainnet", value: "mainnet" },
-    { label: "Testnet", value: "testnet" },
-  ],
+  Btc: [{ label: "Bitcoin", value: "Bitcoin" }],
 
-  Eth: [
-    { label: "Mainnet", value: "mainnet" },
-    { label: "Sepolia", value: "sepolia" },
-  ],
-  Tron: [
-    { label: "Mainnet", value: "mainnet" },
-    { label: "Nile", value: "nile" },
-  ],
+  Eth: [{ label: "Ethereum", value: "Ethereum" }],
+  Tron: [{ label: "Tron", value: "Tron" }],
 };
 
 export const networks_available = {

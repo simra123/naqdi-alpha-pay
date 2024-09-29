@@ -104,7 +104,7 @@ export const FeeCard = ({ schedule }) => {
       <div className="text-center">
         <span className="font-semibold text-h4">{schedule?.value} %</span>
 
-        <p className=" mt-[2px]">Per Month*</p>
+        <p className=" mt-[2px]">Per Transaction*</p>
       </div>
     </div>
   );

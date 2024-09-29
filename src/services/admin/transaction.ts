@@ -3,7 +3,7 @@
 import api from "@/config/api";
 
 export const getAllTransactionsByAdminApi = () => {
-  return () => api.get(`auth/get-all-transactions`);
+  return () => api.get(`wallet/all-transactions-by-admin`);
 };
 
 export const getTransactionDetailsByAdminApi = (data: { id: number }) => {

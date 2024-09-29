@@ -1,66 +1,128 @@
 "use client";
 
-import Details from "@/components/common/Details";
-import IconSelectBox from "@/components/common/IconSelectBox";
-import LoaderButton from "@/components/common/LoaderButton";
-import { Mail } from "@mui/icons-material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-const supportOptions = [
-  { label: "Deposit Issue", value: "Deposit Issue" },
-  { label: "Payment Issue", value: "Payment Issue" },
-  { label: "WIthdrawal Issue", value: "WIthdrawal Issue" },
+import Chip from "@/components/common/Chip";
+import CustomTable from "@/components/common/CustomTable";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import LoaderButton from "@/components/common/LoaderButton";
+import LoadingApi from "@/components/common/LoadindApi";
+
+import { useApi } from "@/hooks/useApi";
+import { TicketsListApi } from "@/services/support";
+import { callApiHook } from "@/utils/apifuncs";
+import { Add } from "@mui/icons-material";
+import moment from "moment";
+import { withAuth } from "@/middleware/RoleBaseAuth";
+import { Role } from "@/constants/roles";
+
+const supportList_columns = [
+  {
+    field: "id",
+    headerName: "ID",
+    sortable: true,
+  },
+  {
+    field: "date",
+    headerName: "Date",
+    sortable: true,
+  },
+  {
+    field: "subject",
+    headerName: "Subject",
+    sortable: true,
+  },
+  {
+    field: "serviceType",
+    headerName: "Service Type",
+    sortable: true,
+  },
+  {
+    field: "updatedAt",
+    headerName: "Last Updated",
+    sortable: true,
+  },
+  {
+    field: "status",
+    headerName: "Status",
+    sortable: true,
+    dataValidator: (value) => {
+      return <Chip status={value} />;
+    },
+  },
 ];
 
+const getStatusfromNumber = (statusNo: number) => {
+  const status = {
+    2: "Open",
+    3: "Pending",
+    4: "Resolved",
+    5: "Closed",
+  };
+  return status[statusNo];
+};
+
 const Support = () => {
-  const [supportData, setSupportData] = useState({
-    subject: "",
-    message: "",
-  });
+  const router = useRouter();
+  const [ticketsList, setTicketsList] = useState([]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const [isListLoading, isListError, callListApi] = useApi(true);
 
-    setSupportData((pre) => ({ ...pre, [name]: value }));
+  const getListHandler = async () => {
+    await callApiHook({
+      apiCall: callListApi(TicketsListApi()),
+      successCallBack: (response: any) => {
+        const tableData = response.map((item) => {
+          return {
+            id: item?.id,
+            date: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+            updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
+            subject: item?.subject,
+            serviceType: item?.type,
+            requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
+            status: getStatusfromNumber(item?.status),
+          };
+        });
+        setTicketsList(tableData);
+      },
+    });
   };
 
+  useEffect(() => {
+    getListHandler();
+  }, []);
+
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6 shadow-sm">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">Need Help</h3>
-
-      <div className="mt-8 max-w-full w-[480px]">
-        <IconSelectBox
-          options={supportOptions}
-          onChange={handleChange}
-          label={<span className="text-button font-semibold">Subject</span>}
-          name="subject"
-          placeholder="Select your Subject"
-          inputContainerClassName="!bg-blackGrey-filled-input"
-          value={supportData.subject}
-        />
-      </div>
-
-      <div className="flex flex-col gap-2 mt-8">
-        <label className="block mb-1 font-medium">Message</label>
-
-        <textarea
-          value={supportData?.message}
-          placeholder="Your Message Here"
-          onChange={handleChange}
-          name="message"
-          className={`border border-light-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 rounded-medium bg-light-gray outline-none`}
-        />
-      </div>
-
-      <div className="flex gap-4 items-center mt-20 flex-wrap mb-8">
+    <>
+      <div className="items-center justify-between mb-8  hidden md:flex">
+        <h3 className="text-h3 font-semibold text-blackGrey-100">Support</h3>
         <LoaderButton
-          content="Contact Support"
+          content={"New Ticket"}
+          className="px-16"
           variant="contained"
-          className="w-[310px] max-w-full"
+          onClick={() => router.push("/support/create")}
         />
       </div>
-    </div>
+
+  
+
+      {/* Table Actions Below */}
+      <div>
+        <CustomTable
+          loading={isListLoading}
+          columns={supportList_columns}
+          rows={ticketsList}
+          createHandler={() => router.push("/support/create")}
+          initialPageSize={10}
+          rowClickHandler={(row: any) => console.log(row)}
+          pagination
+        />
+
+        <ErrorApiText error={isListError} />
+      </div>
+    </>
   );
 };
 
-export default Support;
+export default withAuth(Support, [Role.USER]);

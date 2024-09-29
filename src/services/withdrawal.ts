@@ -26,15 +26,18 @@ export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {
   return () => api.post(`wallet/withdrawal-details`, data);
 };
 
-export const withdrawalRejectAdminApi = (data: { withdraw_id: number }) => {
+export const withdrawalRejectAdminApi = (data: { withdraw_id: number,reason:string }) => {
   return () => api.post(`wallet/reject-withdraw`, data);
 };
 
 export const withdrawalApproveAdminApi = (data: {
   withdraw_id: number;
-  sender_address?: string;
   withdrawal_mode: Withdrawal_Type;
-  txhash?: string;
+  addresses?: string[];
 }) => {
-  return () => api.post(`wallet/crypto-withdrawals`, data);
+  return () => api.post(`wallet/approve-withdraw`, data);
+};
+
+export const getWithdrawalWalletsApi = (data: { withdraw_id: number }) => {
+  return () => api.post(`wallet/wallet-list`, data);
 };
