@@ -3,12 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-// import ReCaptcha from "react-google- recaptcha";
-import { ReCaptchaProvider, ReCaptcha } from "next-recaptcha-v3";
-import {
-  GoogleReCaptchaProvider,
-  GoogleReCaptcha,
-} from "react-google-recaptcha-v3";
+import ReCaptcha from "react-google-recaptcha";
 
 import { LegalSchema, RegisterSchema } from "@/models/Register";
 
@@ -234,28 +229,14 @@ const IndividualForm = ({ activeForm }) => {
         />
 
         <div>
-          <ReCaptchaProvider
-            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-          >
-            <ReCaptcha reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY} onValidate={() => console.log('Validating')} action="page_view" />
-            {/* <ReCaptcha
+          <ReCaptcha
             sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
             className="mt-1"
             key={activeForm}
             onChange={(token) =>
               handleChange({ target: { name: "captcha", value: token } })
             }
-          /> */}
-          </ReCaptchaProvider>
-          {/* <GoogleReCaptchaProvider
-            reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-          >
-            <GoogleReCaptcha
-              onVerify={(token) =>
-                handleChange({ target: { name: "captcha", value: token } })
-              }
-            />
-          </GoogleReCaptchaProvider> */}
+          />
 
           {errors.captcha && <div className="error_text">{errors.captcha}</div>}
         </div>
