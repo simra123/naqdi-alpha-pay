@@ -8,22 +8,21 @@ const NOT_FOUND_URL = "/not-found";
 const ONBOARDING_URL = "/onboarding";
 const SUPPORT_URL = "/support";
 
-const isAdminRoute = (pathname: string) => 
+const isAdminRoute = (pathname: string) =>
   adminRoutes.some((route) => pathname.startsWith(route));
 
-
-const shouldRedirectToOnboarding = (user: any, pathname: string) => 
-  !user?.userDetails || !user.userDetails.fees && !pathname.startsWith(SUPPORT_URL);
-
+const shouldRedirectToOnboarding = (user: any, pathname: string) =>
+  (!user?.userDetails || !user.userDetails.fees) &&
+  !pathname.startsWith(SUPPORT_URL);
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const userCookie = req.cookies.get("user");
-  
+
   console.log("Middleware is running for ", pathname);
 
   let user = null;
-  
+
   if (userCookie) {
     try {
       user = JSON.parse(userCookie.value);
