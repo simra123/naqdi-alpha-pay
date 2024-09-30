@@ -124,19 +124,6 @@ const TransactionDetails = ({ params }) => {
               autoHeight
             />
           </div>
-          <div className="data-grid-container mt-1">
-            <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Transactions</h2>
-            </div>
-
-            <DataGrid
-              rows={transactions}
-              columns={transactionsList_table_columns}
-              className="font-semibold primary-color border-t-0"
-              hideFooter
-              autoHeight
-            />
-          </div>
         </LoadingApi>
       </div>
     </DashboardPageWrapper>

@@ -6,7 +6,10 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
-import { getPaymentDetailsApi } from "@/services/payments";
+import {
+  getPaymentDetailsApi,
+  getPaymentDetailsByAdminApi,
+} from "@/services/payments";
 import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -65,49 +68,50 @@ const PaymentDetails = ({ params }) => {
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
 
   const getPayment = async () => {
-    if (user?.role == Role.USER) {
-      await callApiHook({
-        apiCall: callPaymentApi(getPaymentDetailsApi(paymentId)),
-        successCallBack: (response: any) => {
-          const transactionsList = response?.paymentTransaction?.map(
-            (item) => ({
-              id: item?.id,
-              dateReceived: moment(item?.created_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              ),
-              senderAddress: item?.sender_address,
-              receiveAddress: response?.wallet?.address,
-              recievedAmount: `${item?.total_amount_received} ${item?.unit}`,
-              netAmount: `${item?.transaction_amount} ${item?.unit}`,
-              transactionHash: item?.transaction_hash,
-              blockchain: capitalize(response?.wallet?.blockchain),
-              status: item?.status,
-            })
-          );
-          setTransacion(transactionsList);
+    // if (user?.role == Role.USER) {
 
-          const totalAmount = response?.paymentTransaction?.reduce(
-            (acc, transaction) => {
-              return acc + parseFloat(transaction.transaction_amount);
-            },
-            0
-          );
-          setRecievedAmount(
-            roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
-          );
+    let paymentDetailCall =
+      user?.role == Role.USER
+        ? getPaymentDetailsApi
+        : getPaymentDetailsByAdminApi;
+    await callApiHook({
+      apiCall: callPaymentApi(paymentDetailCall(paymentId)),
+      successCallBack: (response: any) => {
+        const transactionsList = response?.paymentTransaction?.map((item) => ({
+          id: item?.id,
+          dateReceived: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+          senderAddress: item?.sender_address,
+          receiveAddress: response?.wallet?.address,
+          recievedAmount: `${item?.total_amount_received} ${item?.unit}`,
+          netAmount: `${item?.transaction_amount} ${item?.unit}`,
+          transactionHash: item?.transaction_hash,
+          blockchain: capitalize(response?.wallet?.blockchain),
+          status: item?.status,
+        }));
+        setTransacion(transactionsList);
 
-          console.log(response.passthrough);
+        const totalAmount = response?.paymentTransaction?.reduce(
+          (acc, transaction) => {
+            return acc + parseFloat(transaction.transaction_amount);
+          },
+          0
+        );
+        setRecievedAmount(
+          roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
+        );
 
-          try {
-            const parsedData = JSON.parse(response.passthrough);
-            setOrderInfo(parsedData);
-          } catch (error) {
-            console.error("Failed to parse JSON:", error);
-          }
-          setPayment(response);
-        },
-      });
-    }
+        console.log(response.passthrough);
+
+        try {
+          const parsedData = JSON.parse(response.passthrough);
+          setOrderInfo(parsedData);
+        } catch (error) {
+          console.error("Failed to parse JSON:", error);
+        }
+        setPayment(response);
+      },
+    });
+    // }
   };
 
   useEffect(() => {
