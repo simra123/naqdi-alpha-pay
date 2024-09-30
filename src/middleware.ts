@@ -4,16 +4,17 @@ import type { NextRequest } from "next/server";
 import { Role } from "./constants/roles";
 
 const adminRoutes = ["/kyc", "/users"];
+const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
+
 const NOT_FOUND_URL = "/not-found";
-const ONBOARDING_URL = "/onboarding";
-const SUPPORT_URL = "/support";
 
 const isAdminRoute = (pathname: string) =>
   adminRoutes.some((route) => pathname.startsWith(route));
 
-const shouldRedirectToOnboarding = (user: any, pathname: string) =>
-  (!user?.userDetails || !user.userDetails.fees) &&
-  !pathname.startsWith(SUPPORT_URL);
+const isWithOutFeeRoute = (pathname: string) =>
+  wihtoutFeeUserRoutes.some((route) => pathname.startsWith(route));
+
+const hasFee = (user) => user?.userDetails && user?.userDetails?.fees;
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -30,19 +31,34 @@ export function middleware(req: NextRequest) {
       console.error("Invalid localUser cookie");
     }
 
-    // Handling Redirection In case user tries to access an admin only route
-    if (isAdminRoute(pathname) && user?.role !== Role.ADMIN) {
-      return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+    // Blocking user only routes for admin
+    if (user?.role == Role.ADMIN) {
+      if (isWithOutFeeRoute(pathname)) {
+        return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+      }
     }
 
     // Redirection for user only - depending on the Onboarding Status
-    if (user?.role === Role.USER) {
-      if (pathname.startsWith(ONBOARDING_URL)) {
-        if (user.userDetails?.fees) {
-          return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
-        }
-      } else if (shouldRedirectToOnboarding(user, pathname)) {
-        return NextResponse.redirect(new URL(ONBOARDING_URL, req.url));
+
+    if (user?.role == Role.USER) {
+      if (isAdminRoute(pathname)) {
+        return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+      }
+
+      // Checking if is a onboarding route and dont have fee also if is not onboarding route but has fees then letting the user pass
+      if (
+        (!isWithOutFeeRoute(pathname) && hasFee(user)) ||
+        (isWithOutFeeRoute(pathname) && !hasFee(user))
+      ) {
+        return NextResponse.next();
+      }
+
+      // Checking if is not a onboarding route and dont have fee also if is a onboarding route but has fees then blocking the user
+      if (
+        (!isWithOutFeeRoute(pathname) && !hasFee(user)) ||
+        (isWithOutFeeRoute(pathname) && hasFee(user) && pathname != "/support")
+      ) {
+        return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
     }
   }

@@ -134,7 +134,7 @@ const Integrations = () => {
         Integrations
       </h3>
 
-      <div className="rounded-medium bg-white p-8 mt-8">
+      <div className="rounded-medium bg-white p-6 md:p-10 mt-8">
         <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
             <h4 className="text-button sm:text-p122 font-semibold">
@@ -155,8 +155,9 @@ const Integrations = () => {
         </div>
       </div>
 
-      <div className="rounded-medium bg-white p-4 mt-8">
+      <div className="rounded-medium bg-white p-6 md:p-10 mt-8">
         <CustomTable
+          tableWrapper={null}
           loading={isKeyListLoading}
           actions={
             <div className="flex justify-between items-center mb-6">
