@@ -11,9 +11,13 @@ import { Role } from "@/constants/roles";
 import IconField from "@/components/common/IconField";
 import { Lock, Mail } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
+import Cookie from "js-cookie";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/slices/userSlice";
 
 const Login = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isLoginLoading, isLoginError, callLoginApi] = useApi();
 
   const initialValues = {
@@ -34,11 +38,15 @@ const Login = () => {
       ),
       successCallBack: async (response) => {
         const { token, user } = response?.data;
-        window?.localStorage?.setItem("token", token);
-        window?.localStorage?.setItem("user", JSON.stringify(user));
+        Cookie.set("user", JSON.stringify(user));
+        Cookie.set("token", token);
 
         if (user?.role == Role.USER) {
-          router.push("/onboarding");
+          if (user?.userDetails && user?.userDetails?.fees) {
+            router.push("/");
+          } else {
+            router.push("/onboarding");
+          }
         }
         if (user?.role == Role.ADMIN) {
           router.push("/");

@@ -1,5 +1,5 @@
 "use client";
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {  createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   data: null,

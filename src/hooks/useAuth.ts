@@ -1,13 +1,13 @@
 "use client";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const token = window?.localStorage?.getItem("token");
+    const token = Cookies.get("token");
     setIsAuthenticated(!!token);
     setLoaded(true);
   }, []);

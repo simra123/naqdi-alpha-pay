@@ -3,6 +3,7 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 
 const UNVERIFIED_MESSAGE = "User is not verified";
 
@@ -16,13 +17,10 @@ export const useApi = (initailLoading = false) => {
     setIsLoading(true);
     setError(null);
 
-    console.log("MAKING AN API CALL IN HOOK");
-
     try {
       const response = await apiCall();
       setIsLoading(false);
       setError(null);
-      console.log("    <<<<    RESPONSE FROM THE API     >>>>    ", response);
       dispatch(
         setNotification({ status: "success", message: response?.data?.message })
       );
@@ -41,8 +39,8 @@ export const useApi = (initailLoading = false) => {
             })
           );
         } else {
-          window?.localStorage?.removeItem("token");
-          window?.localStorage?.removeItem("user");
+          Cookies.remove("token");
+          Cookies.remove("user");
           router.replace("/login");
           dispatch(
             setNotification({

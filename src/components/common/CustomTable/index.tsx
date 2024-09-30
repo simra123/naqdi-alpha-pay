@@ -89,7 +89,7 @@ const CustomTable = ({
     }
   };
 
-  console.log(selectedRows);
+
 
   const handleSelectAll = () => {
     if (selectable) {
@@ -206,7 +206,6 @@ const CustomTable = ({
                 inputClassName="py-3"
               />
               <button
-                onClick={() => console.log("searching")}
                 className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
               >
                 <Search />
