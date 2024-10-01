@@ -13,10 +13,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import FeeSetup from "@/components/forms/onBoarding/FeeSetup";
 import "./onboarding.scss";
+import { Role } from "@/constants/roles";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const Onboarding = () => {
   const dipatch = useDispatch();
   const user = useSelector((state: any) => state.user.data?.userDetails);
+  const localUser = useLocalStorage("user");
   const currentStep = useSelector(
     (state: any) => state.onboarding.current_step
   );
@@ -34,8 +37,6 @@ const Onboarding = () => {
   const returnActiveForm = (stepName, FormComponent) => {
     return currentStep === stepName && <FormComponent />;
   };
-
-  console.log(user);
 
   return (
     <>

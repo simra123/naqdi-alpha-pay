@@ -50,7 +50,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
         createDepoistAddressApi(seletedOption?.standard ? TokenData : CoinData)
       ),
       successCallBack: (response: any) => {
-        console.log("deposit address created ", response);
+ 
         setDepositAddress(response);
       },
     });
@@ -110,7 +110,6 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   };
 
   const filteredNetworks = (blockchain, network) => {
-    console.log({ network, blockchain });
 
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };

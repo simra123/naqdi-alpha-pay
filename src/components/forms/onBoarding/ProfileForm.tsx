@@ -143,7 +143,7 @@ const ProfileForm = () => {
     console.log("Form Not submitted successfully!");
   };
 
-  console.log(values);
+
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>

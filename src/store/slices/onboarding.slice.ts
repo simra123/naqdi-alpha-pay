@@ -71,7 +71,7 @@ export const onBoardingSlice = createSlice({
         const current_step = stepsState[i];
         const next_step = stepsState[i + 1];
         if (current_step.condition) {
-          console.log("CONDITION IS MEETING");
+
           state.disabled_steps[current_step.name] = false;
           state.disabled_steps[next_step.name] = false;
           state.previous_step = previous_step?.name || null;

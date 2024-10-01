@@ -8,7 +8,7 @@ import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { getKYCUsersListApi } from "@/services/admin/users";
 import moment from "moment";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import { withAuth } from "../../../middleware/RoleBaseAuth";
+
 import { Role } from "@/constants/roles";
 import { TableColumns } from "@/constants/types";
 import Chip from "@/components/common/Chip";
@@ -110,4 +110,4 @@ const KYCUsersPage = () => {
   );
 };
 
-export default withAuth(KYCUsersPage, [Role.ADMIN]);
+export default KYCUsersPage;
