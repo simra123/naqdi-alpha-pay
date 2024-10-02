@@ -131,7 +131,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       ? userCookie
       : useSelector((state: any) => state.user.data);
 
-  console.log(user, "State logging into sidebar");
+
 
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);

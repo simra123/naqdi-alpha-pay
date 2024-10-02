@@ -14,14 +14,7 @@ import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import {
-  CalendarMonth,
-  Info,
-  InfoOutlined,
-  Mail,
-  Payment,
-  Person,
-} from "@mui/icons-material";
+import { InfoOutlined, Mail } from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
@@ -63,7 +56,7 @@ const PaymentDetails = ({ params }) => {
 
   const [payment, setPayment] = useState(null);
   const [transaction, setTransacion] = useState([]);
-  const [orderInfo, setOrderInfo]: any = useState(null);
+  const [orderInfo, setOrderInfo] = useState<{}>(null);
   const [receivedAmount, setRecievedAmount] = useState("0");
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
 
@@ -74,9 +67,12 @@ const PaymentDetails = ({ params }) => {
       user?.role == Role.USER
         ? getPaymentDetailsApi
         : getPaymentDetailsByAdminApi;
+
     await callApiHook({
       apiCall: callPaymentApi(paymentDetailCall(paymentId)),
       successCallBack: (response: any) => {
+        console.log("Payment details api response", response);
+
         const transactionsList = response?.paymentTransaction?.map((item) => ({
           id: item?.id,
           dateReceived: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
@@ -88,6 +84,7 @@ const PaymentDetails = ({ params }) => {
           blockchain: capitalize(response?.wallet?.blockchain),
           status: item?.status,
         }));
+
         setTransacion(transactionsList);
 
         const totalAmount = response?.paymentTransaction?.reduce(
@@ -96,11 +93,10 @@ const PaymentDetails = ({ params }) => {
           },
           0
         );
+
         setRecievedAmount(
           roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
         );
-
-        console.log(response.passthrough);
 
         try {
           const parsedData = JSON.parse(response.passthrough);
@@ -117,6 +113,8 @@ const PaymentDetails = ({ params }) => {
   useEffect(() => {
     getPayment();
   }, []);
+
+  console.log(payment, "Payment details");
 
   return (
     <>
@@ -243,21 +241,3 @@ const PaymentDetails = ({ params }) => {
 };
 
 export default PaymentDetails;
-
-//     {payment?.paymentTransaction && (
-//       <div className="data-grid-container">
-//         <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-//           <h2 className="text-xl font-semibold">
-//             Related Transactions
-//           </h2>
-//         </div>
-
-//         <DataGrid
-//           rows={transaction}
-//           columns={relatedTransactions_table_columns}
-//           className="font-semibold primary-color  border-t-0"
-//           hideFooter
-//           autoHeight
-//         />
-//       </div>
-//     )}

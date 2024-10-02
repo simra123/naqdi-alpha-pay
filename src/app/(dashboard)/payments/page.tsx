@@ -19,6 +19,7 @@ import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
 import DateField from "@/components/common/DateField";
 import { TableColumns } from "@/constants/types";
+import { roundToPrecision } from "@/utils/math";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -48,6 +49,10 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
+  },
+  {
+    field: "amountToPay",
+    headerName: "Amount to Pay",
   },
   {
     field: "amountPaid",
@@ -92,7 +97,19 @@ const Payments = () => {
             senderAddress: item?.paymentTransaction?.sender_address,
             recieverAddress: item?.wallet?.address,
             requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
-            amountPaid: `${item?.payment_currency_amount} ${item?.payment_currency}`,
+            amountToPay: `${roundToPrecision(
+              item?.payment_currency_amount,
+              6
+            )} ${item?.payment_currency}`,
+            amountPaid:
+              roundToPrecision(
+                item?.paymentTransaction?.reduce((acc, transaction) => {
+                  return acc + parseFloat(transaction.transaction_amount);
+                }, 0),
+                6
+              ) +
+              " " +
+              item?.payment_currency,
             paid: unpaidStatuses.some((status) => status == item?.status)
               ? "No"
               : "Yes",
@@ -183,7 +200,6 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
   // Close filtersChecked when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-
       if (
         filtersRef.current &&
         !filtersRef.current.contains(event.target) &&
@@ -215,10 +231,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     e?.stopPropagation();
     let results = data;
 
-
-
     if (updatedValues?.date?.start && updatedValues?.date?.end) {
-
       updateCheckedState &&
         !filtersChecked?.date &&
         setFiltersChecked({ ...filtersChecked, date: true });
@@ -263,7 +276,6 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     setFiltersChecked({ ...filtersChecked, [name]: checked });
 
     if (!checked) {
-     
       setValues((prevValues) => {
         let updatedValues: any;
         if (name == "date") {
@@ -306,8 +318,6 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
       return updatedValues;
     });
   };
-
-
 
   return (
     <div

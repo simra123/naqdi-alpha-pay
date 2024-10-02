@@ -35,33 +35,29 @@ const TransactionDetails = ({ params }) => {
     return notFound();
   }
 
-
-
   const user = useLocalStorage("user");
-  const [transactionDetails, setTransactionDetails]: any = useState({});
+  const [transactionDetails, setTransactionDetails] = useState<any>({});
   const [
     isTransactionDetailsLoading,
     isTransactionDetailsError,
     callTransactionDetailsApi,
   ] = useApi(true);
 
+  const _getTransactionByType = () => {
+    if (transactionType == "Self Deposit") {
+      return getTransactionDetailsByUserApi({ id: tranascionId });
+    }
+    if (transactionType == "Payment") {
+      return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
+    }
+    if (transactionType == "Withdrawal") {
+      return getWithdrawalTransactionDetailsByUserApi({
+        transaction_id: +tranascionId,
+      });
+    }
+  };
+
   const getTransactionDetails = async () => {
-   
-
-    const _getTransactionByType = () => {
-      if (transactionType == "Self Deposit") {
-        return getTransactionDetailsByUserApi({ id: tranascionId });
-      }
-      if (transactionType == "Payment") {
-        return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
-      }
-      if (transactionType == "Withdrawal") {
-        return getWithdrawalTransactionDetailsByUserApi({
-          transaction_id: +tranascionId,
-        });
-      }
-    };
-
     if (user.role == Role.USER) {
       await callApiHook({
         apiCall: callTransactionDetailsApi(_getTransactionByType()),
