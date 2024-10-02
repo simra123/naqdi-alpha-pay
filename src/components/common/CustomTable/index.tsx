@@ -89,8 +89,6 @@ const CustomTable = ({
     }
   };
 
-
-
   const handleSelectAll = () => {
     if (selectable) {
       if (selectAll) {
@@ -205,9 +203,7 @@ const CustomTable = ({
                 wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
                 inputClassName="py-3"
               />
-              <button
-                className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
-              >
+              <button className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
                 <Search />
               </button>
               <div className="relative filterBtn">
@@ -310,7 +306,9 @@ const CustomTable = ({
                     >
                       {column.dataValidator
                         ? column.dataValidator(row[column.field], row)
-                        : row[column.field]}
+                        : row[column.field]
+                        ? row[column.field]
+                        : "_"}
                     </td>
                   ))}
                 </tr>
