@@ -96,7 +96,7 @@ const PaymentDetails = ({ params }) => {
             roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
           );
 
-          console.log(response.passthrough);
+      
 
           try {
             const parsedData = JSON.parse(response.passthrough);

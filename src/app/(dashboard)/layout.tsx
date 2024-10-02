@@ -21,9 +21,14 @@ const DashboardLayout = ({ children }) => {
   const user = useLocalStorage("user");
   const [isOpen, setIsOpen] = useState(false);
 
+
+
+  
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
-    console.log("TOGGLING");
+ 
+    
   };
   const dispatch = useDispatch();
 
@@ -37,6 +42,7 @@ const DashboardLayout = ({ children }) => {
       await callApiHook({
         apiCall: callUserDetailsApi(userDetailsApi()),
         successCallBack: (response) => {
+        
           dispatch(setUser(response));
           dispatch(validateSteps(response));
         },
@@ -53,7 +59,6 @@ const DashboardLayout = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    console.log("Unautheticated");
     return router.push("/login");
   }
 

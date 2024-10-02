@@ -76,7 +76,7 @@ const CreateWithdrawalModal = ({
     const { value, name } = event.target;
 
     if (name === "blockchain") {
-      console.log(blockchain_standards, blockchain_standards[value], value);
+    
 
       setSourceOptions((prev) => ({
         ...prev,
@@ -123,7 +123,7 @@ const CreateWithdrawalModal = ({
   };
 
   const handleWithdrawal = async () => {
-    console.log({ data, sourceOptions });
+  
 
     await callApiHook({
       apiCall: callWithdrawalApi(
@@ -198,7 +198,7 @@ const CreateWithdrawalModal = ({
   };
 
   const filteredNetworks = (network, blockchain) => {
-    console.log({ network, blockchain });
+  
 
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
