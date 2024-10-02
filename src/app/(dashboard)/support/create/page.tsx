@@ -14,7 +14,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
-import { withAuth } from "@/middleware/RoleBaseAuth";
+
 import { Role } from "@/constants/roles";
 
 const supportOptions = [
@@ -80,8 +80,6 @@ const Support = () => {
       },
     });
   };
-
-  console.log(supportData?.attachments, "attachments");
 
   return (
     <>
@@ -220,4 +218,4 @@ const Support = () => {
   );
 };
 
-export default withAuth(Support, [Role.USER]);
+export default Support;

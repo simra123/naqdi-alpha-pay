@@ -43,8 +43,6 @@ const IconSelectBox = ({
   const [selectedValue, setSelectedValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  console.log({ value, searchQuery, name });
-
   useEffect(() => {
     if (value && searchable) {
       const currentOption = options?.find((item) => item?.value === value);

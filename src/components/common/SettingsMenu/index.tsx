@@ -11,10 +11,12 @@ import { setModal } from "@/store/slices/modal.Slice";
 import "./settingsmenu.scss";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
+import Cookies from "js-cookie";
+
 const SettingsMenu = ({ isOpen, setOpen }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const user = useLocalStorage('user')
+  const user = useLocalStorage("user");
 
   const openUpgrade = () => {
     setOpen(false);
@@ -24,15 +26,15 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
   const redirect = (e) => {
     e.preventDefault();
     setOpen(false);
-    console.log(e.target.href);
+
     router.push(e.target.href);
   };
 
   const logoutHandler = (e) => {
     e.preventDefault();
     setOpen(false);
-    window?.localStorage?.removeItem("token");
-    window?.localStorage?.removeItem("user");
+    Cookies.remove("token");
+    Cookies.remove("user");
     router.push(e.target.href);
   };
 
@@ -43,7 +45,9 @@ const SettingsMenu = ({ isOpen, setOpen }) => {
       }
       onClick={(e) => e.stopPropagation()}
     >
-      <span className="menu_item heading">{user?.first_name} {user?.last_name}</span>
+      <span className="menu_item heading">
+        {user?.first_name} {user?.last_name}
+      </span>
 
       <Link href="/main/profile" onClick={redirect} className="menu_item Link">
         Profile

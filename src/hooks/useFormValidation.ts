@@ -11,7 +11,7 @@ const useFormValidation = (
 
   const handleChange = (event) => {
     const { name, value, type, files, checked } = event.target;
-    console.log(event);
+
 
     if (type == "file") {
       const nameSplit = name.split(`.`);
@@ -31,7 +31,7 @@ const useFormValidation = (
       }
     } else if (type == "checkbox") {
       const nameSplit = name.split(`.`);
-      console.log(nameSplit);
+
       setValues({
         ...values,
         [nameSplit[0]]: {
@@ -75,7 +75,7 @@ const useFormValidation = (
       callback();
     } catch (validationErrors) {
       const formattedErrors = {};
-      console.log(validationErrors);
+      // console.log(validationErrors);
       validationErrors.inner.forEach((error) => {
         formattedErrors[error.path] = error.message;
       });

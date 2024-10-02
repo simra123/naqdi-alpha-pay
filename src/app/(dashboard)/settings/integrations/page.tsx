@@ -13,12 +13,16 @@ import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
 import WebhookURLModal from "@/components/Modals/WebhookURLModal";
+import { useSelector } from "react-redux";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);
+  const user = useSelector((state: { user: any }) => state?.user?.data);
   const [webhookURL, setWebhookURL] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isWebhookOpen, setIsWebhookOpen] = useState(false);
+
+  console.log(user);
 
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi(true);
@@ -64,7 +68,7 @@ const Integrations = () => {
     await callApiHook({
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response) => {
-        setWebhookURL(response?.userDetails?.user?.webhook?.webhook_url);
+        setWebhookURL(response?.webhook?.webhook_url);
       },
     });
   };
@@ -104,7 +108,6 @@ const Integrations = () => {
         callListApi();
       },
     });
-    console.log(data);
     console.log(`Revoke action triggered for ID: ${data.id}`);
   };
 
@@ -131,7 +134,7 @@ const Integrations = () => {
         Integrations
       </h3>
 
-      <div className="rounded-medium bg-white p-8 mt-8">
+      <div className="rounded-medium bg-white p-6 md:p-10 mt-8">
         <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
             <h4 className="text-button sm:text-p122 font-semibold">
@@ -152,8 +155,9 @@ const Integrations = () => {
         </div>
       </div>
 
-      <div className="rounded-medium bg-white p-4 mt-8">
+      <div className="rounded-medium bg-white p-6 md:p-10 mt-8">
         <CustomTable
+          tableWrapper={null}
           loading={isKeyListLoading}
           actions={
             <div className="flex justify-between items-center mb-6">
@@ -171,7 +175,6 @@ const Integrations = () => {
           }
           columns={columns}
           // Filters={Filters}
-          rowClickHandler={(row) => console.log(row)}
           rows={keysList}
           initialPageSize={10}
         />

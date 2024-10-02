@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -11,7 +12,7 @@ const api = axios.create({
 
 // Add an interceptor to modify the headers
 api.interceptors.request.use((config) => {
-  const token = window?.localStorage.getItem("token");
+  const token = Cookies.get("token");
 
   if (token) {
     // Set the bearer token in the headers
