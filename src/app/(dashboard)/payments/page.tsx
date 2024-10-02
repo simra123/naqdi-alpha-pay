@@ -4,7 +4,10 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import { getAllPaymentsApi } from "@/services/payments";
+import {
+  getAllPaymentsApi,
+  getAllPaymentsByAdminApi,
+} from "@/services/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -15,60 +18,53 @@ import { capitalize } from "@/utils/dataFormatters";
 import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
 import DateField from "@/components/common/DateField";
+import { TableColumns } from "@/constants/types";
+import { roundToPrecision } from "@/utils/math";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
-const paymentsList_table_columns = [
+const paymentsList_table_columns: TableColumns = [
   {
     field: "id",
     headerName: "ID",
-
-    sortable: true,
   },
   {
     field: "createdAt",
     headerName: "Created At",
-
-    sortable: true,
   },
   {
     field: "updatedAt",
     headerName: "Updated At",
-    sortable: true,
   },
   // {
   //   field: "senderAddress",
   //   headerName: "Sender Wallet Address",
   //   filterable: false,
-  //   sortable: true,
+  //
   // },
   {
     field: "recieverAddress",
     headerName: "Reciever Wallet Address",
-    sortable: true,
   },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
-    sortable: true,
+  },
+  {
+    field: "amountToPay",
+    headerName: "Amount to Pay",
   },
   {
     field: "amountPaid",
     headerName: "Amount Paid",
-
-    sortable: true,
   },
   {
     field: "paid",
     headerName: "Paid",
-
-    sortable: true,
   },
   {
     field: "status",
     headerName: "Status",
-
-    sortable: true,
 
     dataValidator: (value) => {
       return <Chip status={value} />;
@@ -85,33 +81,45 @@ const Payments = () => {
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getPayments = async () => {
-    if (user?.role == Role.USER) {
-      await callApiHook({
-        apiCall: callPaymentApi(getAllPaymentsApi()),
-        successCallBack: (response: any) => {
-          const tableData = response.map((item) => {
-            return {
-              id: item?.id,
-              createdAt: moment(item?.created_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              ),
-              updatedAt: moment(item?.updated_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              ),
-              senderAddress: item?.paymentTransaction?.sender_address,
-              recieverAddress: item?.wallet?.address,
-              requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
-              amountPaid: `${item?.payment_currency_amount} ${item?.payment_currency}`,
-              paid: unpaidStatuses.some((status) => status == item?.status)
-                ? "No"
-                : "Yes",
-              status: item?.status,
-            };
-          });
-          setPaymentsList(tableData);
-        },
-      });
-    }
+    // if (user?.role == Role.USER) {
+
+    let paymentCall =
+      user?.role == Role.USER ? getAllPaymentsApi : getAllPaymentsByAdminApi;
+
+    await callApiHook({
+      apiCall: callPaymentApi(paymentCall()),
+      successCallBack: (response: any) => {
+        const tableData = response.map((item) => {
+          return {
+            id: item?.id,
+            createdAt: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+            updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
+            senderAddress: item?.paymentTransaction?.sender_address,
+            recieverAddress: item?.wallet?.address,
+            requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
+            amountToPay: `${roundToPrecision(
+              item?.payment_currency_amount,
+              6
+            )} ${item?.payment_currency}`,
+            amountPaid:
+              roundToPrecision(
+                item?.paymentTransaction?.reduce((acc, transaction) => {
+                  return acc + parseFloat(transaction.transaction_amount);
+                }, 0),
+                6
+              ) +
+              " " +
+              item?.payment_currency,
+            paid: unpaidStatuses.some((status) => status == item?.status)
+              ? "No"
+              : "Yes",
+            status: item?.status,
+          };
+        });
+        setPaymentsList(tableData);
+      },
+    });
+    // }
   };
 
   const ExportCSVHandler = async () => {
@@ -192,7 +200,6 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
   // Close filtersChecked when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-
       if (
         filtersRef.current &&
         !filtersRef.current.contains(event.target) &&
@@ -224,10 +231,7 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     e?.stopPropagation();
     let results = data;
 
-
-
     if (updatedValues?.date?.start && updatedValues?.date?.end) {
-
       updateCheckedState &&
         !filtersChecked?.date &&
         setFiltersChecked({ ...filtersChecked, date: true });
@@ -272,7 +276,6 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
     setFiltersChecked({ ...filtersChecked, [name]: checked });
 
     if (!checked) {
-     
       setValues((prevValues) => {
         let updatedValues: any;
         if (name == "date") {
@@ -315,8 +318,6 @@ const Filters = ({ data, setData, isOpen, setIsOpen }) => {
       return updatedValues;
     });
   };
-
-
 
   return (
     <div
