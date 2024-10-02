@@ -63,6 +63,7 @@ const PhoneValidation = () => {
       successCallBack: (response) => {
         setShowCode(true);
         getUserDetails();
+        onSubmit();
       },
     });
   };
@@ -134,44 +135,6 @@ const PhoneValidation = () => {
             </div>
             <ErrorApiText error={isPhoneError} />
 
-            {!showCode && (
-              <div className="mt-12 max-w-[360px]">
-                <LoaderButton
-                  content={"Send Code"}
-                  type="submit"
-                  variant={"contained"}
-                />
-              </div>
-            )}
-
-            {showCode && (
-              <p className="text-black-100 mt-6">
-                An SMS was sent to the mobile phone number you entered. Please
-                enter the code received to validate your mobile number.
-              </p>
-            )}
-          </form>
-        </LoadingApi>
-        {showCode && (
-          <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-            {/* <div className="register_form__trader__heading mt-8">
-              <Typography variant="h5" color="primary" className="text-base">
-                Enter Code
-              </Typography>
-              <div>
-                <TextField
-                  className="input-field"
-                  onChange={handleChange}
-                  value={values.code}
-                  onBlur={validateField}
-                  name="code"
-                  fullWidth
-                  placeholder="EX: CODE!@"
-                />
-                {errors.code && <div className="error_text">{errors.code}</div>}
-              </div>
-            </div> */}
-
             <div className="mt-12 max-w-[360px]">
               <LoaderButton
                 content={"Save & Continue"}
@@ -179,8 +142,36 @@ const PhoneValidation = () => {
                 variant={"contained"}
               />
             </div>
+
+            {/* {!showCode && (
+              <div className="mt-12 max-w-[360px]">
+                <LoaderButton
+                  content={"Send Code"}
+                  type="submit"
+                  variant={"contained"}
+                />
+              </div>
+            )} */}
+
+            {/* {showCode && (
+              <p className="text-black-100 mt-6">
+                An SMS was sent to the mobile phone number you entered. Please
+                enter the code received to validate your mobile number.
+              </p>
+            )} */}
           </form>
-        )}
+        </LoadingApi>
+        {/* {showCode && ( */}
+        {/* <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
+          <div className="mt-12 max-w-[360px]">
+            <LoaderButton
+              content={"Save & Continue"}
+              type="submit"
+              variant={"contained"}
+            />
+          </div>
+        </form> */}
+        {/* )} */}
       </div>
     </div>
   );
