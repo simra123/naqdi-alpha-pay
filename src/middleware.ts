@@ -42,6 +42,7 @@ export function middleware(req: NextRequest) {
 
     if (user?.role == Role.USER) {
       if (isAdminRoute(pathname)) {
+        console.log('I am  admin route')
         return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
 
@@ -50,14 +51,26 @@ export function middleware(req: NextRequest) {
         (!isWithOutFeeRoute(pathname) && hasFee(user)) ||
         (isWithOutFeeRoute(pathname) && !hasFee(user))
       ) {
+        console.log('I should be able to pass')
         return NextResponse.next();
       }
-
+      
       // Checking if is not a onboarding route and dont have fee also if is a onboarding route but has fees then blocking the user
+      if (!isWithOutFeeRoute(pathname) && !hasFee(user)) {
+        console.log('I am not a fee route and dont have fee')
+        if (pathname == "/") {
+          return NextResponse.redirect(new URL("/onboarding", req.url));
+        }
+        return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+      }
+
       if (
-        (!isWithOutFeeRoute(pathname) && !hasFee(user)) ||
-        (isWithOutFeeRoute(pathname) && hasFee(user) && pathname != "/support")
+        isWithOutFeeRoute(pathname) &&
+        hasFee(user) &&
+        pathname != "/support"
       ) {
+        console.log('I am a without fee route but still has fees')
+      
         return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
     }
