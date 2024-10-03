@@ -97,7 +97,7 @@ const WithdrawalDetails = ({ params }) => {
   ] = useApi();
 
   const handleApprove = async () => {
-    const addresses = wallets?.map((item) => item?.wallet_address);
+    const addresses = selectedWallets?.map((item) => item?.wallet_address || item?.address);
 
     const manualData = {
       addresses,
