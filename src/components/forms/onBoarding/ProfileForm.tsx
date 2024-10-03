@@ -261,6 +261,7 @@ const ProfileForm = () => {
             onBlur={validateField}
             onChange={handleChange}
             value={values.postalCode}
+            error={errors.postalCode}
             icon={LocationOn}
             label="Postal Code"
           />
