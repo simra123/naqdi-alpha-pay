@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import {
+  getPaymentTransactionDetailsByAdminApi,
   getPaymentTransactionDetailsByUserApi,
   getTransactionDetailsByUserApi,
   getWithdrawalTransactionDetailsByUserApi,
@@ -44,39 +45,44 @@ const TransactionDetails = ({ params }) => {
   ] = useApi(true);
 
   const _getTransactionByType = () => {
-    if (transactionType == "Self Deposit") {
-      return getTransactionDetailsByUserApi({ id: tranascionId });
+    if (user?.role == Role.USER) {
+      if (transactionType == "Self Deposit") {
+        return getTransactionDetailsByUserApi({ id: tranascionId });
+      }
+      if (transactionType == "Payment") {
+        return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
+      }
+      if (transactionType == "Withdrawal") {
+        return getWithdrawalTransactionDetailsByUserApi({
+          transaction_id: +tranascionId,
+        });
+      }
     }
-    if (transactionType == "Payment") {
-      return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
-    }
-    if (transactionType == "Withdrawal") {
-      return getWithdrawalTransactionDetailsByUserApi({
-        transaction_id: +tranascionId,
-      });
+    if (user?.role == Role.ADMIN) {
+      if (transactionType == "Self Deposit") {
+        return getTransactionDetailsByAdminApi({ id: tranascionId });
+      }
+      if (transactionType == "Payment") {
+        return getPaymentTransactionDetailsByAdminApi({ id: tranascionId });
+      }
+
+      // TODO: Need Admin api for now commenting this
+
+      // if (transactionType == "Withdrawal") {
+      //   return getWithdrawalTransactionDetailsByUserApi({
+      //     transaction_id: +tranascionId,
+      //   });
+      // }
     }
   };
 
   const getTransactionDetails = async () => {
-    if (user.role == Role.USER) {
-      await callApiHook({
-        apiCall: callTransactionDetailsApi(_getTransactionByType()),
-        successCallBack: (response: any) => {
-          setTransactionDetails(response);
-        },
-      });
-    }
-
-    if (user.role == Role.ADMIN) {
-      await callApiHook({
-        apiCall: callTransactionDetailsApi(
-          getTransactionDetailsByAdminApi({ id: tranascionId })
-        ),
-        successCallBack: (response: any) => {
-          setTransactionDetails(response);
-        },
-      });
-    }
+    await callApiHook({
+      apiCall: callTransactionDetailsApi(_getTransactionByType()),
+      successCallBack: (response: any) => {
+        setTransactionDetails(response);
+      },
+    });
   };
 
   useEffect(() => {
