@@ -112,7 +112,7 @@ const MFASetup = () => {
             <QRCodeCanvas
               value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
                 qrCode?.secret
-              )}&issuer=Alphapay
+              )}&issuer=${user?.email}
             `}
               width={200}
               height={200}
