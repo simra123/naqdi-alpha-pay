@@ -7,7 +7,7 @@ export const getAllPaymentsApi = () => {
 };
 
 export const getAllPaymentsByAdminApi = () => {
-  return () => api.get(`v1/client/payments-by-admin`);
+  return () => api.get(`v1/admin/payments-by-admin`);
 };
 
 export const getPaymentDetailsApi = (id: number) => {
@@ -15,5 +15,5 @@ export const getPaymentDetailsApi = (id: number) => {
 };
 
 export const getPaymentDetailsByAdminApi = (id: number) => {
-  return () => api.get(`v1/admin-payments/${id}`);
+  return () => api.get(`v1/admin/payments/${id}`);
 };
