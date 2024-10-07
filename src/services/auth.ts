@@ -10,8 +10,18 @@ export const registerApi = (data) => {
   return () => api.post(`auth/register`, data);
 };
 
-export const verifyApi = (data) => {
-  return () => api.post(`auth/verify`, data);
+export const generateMFAForAdminApi = () => {
+  return () => api.get(`auth/admin/generate-secret-key`);
+};
+
+export const verifyApi = (data: { token: string }, accessToken?: string) => {
+  if (accessToken) {
+    return () =>
+      api.post(`auth/verify-otp`, data, {
+        headers: { Authorization: `bearer ${accessToken}` },
+      });
+  }
+  return () => api.post(`auth/verify-otp`, data);
 };
 
 export const recoverPasswordApi = (data) => {
