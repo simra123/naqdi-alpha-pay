@@ -21,6 +21,7 @@ import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
 
 const Account = () => {
   const localUser = useLocalStorage("user");
+  const [isMFaVerified,setIsMfaVerified] = useState(false)
 
   const user =
     localUser?.role == Role.ADMIN
@@ -44,7 +45,7 @@ const Account = () => {
         isOpen={isChangePasswordOpen}
         toggleHandler={changePasswordModalToggler}
       />
-      <GenerateQRCodeModal isOpen={isQROpen} setIsOpen={setQROpen} />
+      <GenerateQRCodeModal isOpen={isQROpen} setIsOpen={setQROpen} setIsMfaVerified={setIsMfaVerified}/>
 
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Account</h3>
@@ -115,7 +116,7 @@ const Account = () => {
               label="MFA"
               value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
             />
-            {localUser?.role == Role.ADMIN && !localUser?.userDetails?.mfa && (
+            {localUser?.role == Role.ADMIN && (!localUser?.userDetails?.mfa || isMFaVerified) && (
               <LoaderButton
                 content={
                   <div className="flex gap-2 text-[14px] font-semibold items-center">

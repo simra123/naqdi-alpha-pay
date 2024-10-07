@@ -24,6 +24,19 @@ export const verifyApi = (data: { token: string }, accessToken?: string) => {
   return () => api.post(`auth/verify-otp`, data);
 };
 
+export const verifyMFAForAdminApi = (
+  data: { token: string },
+  accessToken?: string
+) => {
+  if (accessToken) {
+    return () =>
+      api.post(`auth/admin/verify-otp`, data, {
+        headers: { Authorization: `bearer ${accessToken}` },
+      });
+  }
+  return () => api.post(`auth/admin/verify-otp`, data);
+};
+
 export const recoverPasswordApi = (data) => {
   return () => api.post(`auth/forgot-password`, data);
 };
