@@ -16,7 +16,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { loginSchema, mfaSchema } from "@/models/login";
 
 import { Role } from "@/constants/roles";
-import { loginApi, verifyApi } from "@/services/auth";
+import { loginApi, verifyApi, verifyMFAForAdminApi } from "@/services/auth";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import useFormValidation from "@/hooks/useFormValidation";
@@ -73,7 +73,12 @@ const Login = () => {
   const verifyHandler = async () => {
     await callApiHook({
       apiCall: callVerificationApi(
-        verifyApi({ token: otpValues?.otp }, userResponse?.data?.token)
+        userResponse?.data?.role == Role.USER
+          ? verifyApi({ token: otpValues?.otp }, userResponse?.data?.token)
+          : verifyMFAForAdminApi(
+              { token: otpValues?.otp },
+              userResponse?.data?.token
+            )
       ),
       successCallBack: async (response) => {
         loginHandler(userResponse);

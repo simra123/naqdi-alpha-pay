@@ -116,7 +116,7 @@ const Account = () => {
               label="MFA"
               value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
             />
-            {localUser?.role == Role.ADMIN && (!localUser?.userDetails?.mfa || isMFaVerified) && (
+            {localUser?.role == Role.ADMIN && (!localUser?.userDetails?.mfa || !isMFaVerified) && (
               <LoaderButton
                 content={
                   <div className="flex gap-2 text-[14px] font-semibold items-center">

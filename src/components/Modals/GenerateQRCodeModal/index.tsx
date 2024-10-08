@@ -45,6 +45,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
         console.log("I am response from admin mfa verification API ", response);
         setIsMfaVerified(true);
         updateMfaInCookie(true);
+        closeModal();
       },
     });
   };
@@ -118,12 +119,13 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
           </>
         )}
 
-        <ErrorApiText error={isQRCodeError} />
+        <ErrorApiText error={isQRCodeError || isVerificationError} />
 
         <div className="flex flex-col justify-end mt-2">
           {qrcode?.qrCodeUrl ? (
             <LoaderButton
               className="mt-6"
+              loading={isVerificationLoading}
               content={step == 1 ? `Next` : "Verify"}
               variant="contained"
               onClick={step == 1 ? handleStepChange(2) : handleVerification}
