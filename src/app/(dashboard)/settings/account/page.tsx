@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -21,7 +21,7 @@ import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
 
 const Account = () => {
   const localUser = useLocalStorage("user");
-  const [isMFaVerified,setIsMfaVerified] = useState(false)
+  const [isMFaVerified, setIsMfaVerified] = useState(false)
 
   const user =
     localUser?.role == Role.ADMIN
@@ -39,13 +39,21 @@ const Account = () => {
     setQROpen(!isQROpen);
   };
 
+  useEffect(() => {
+    if (user?.role == Role.ADMIN && user?.userDetails?.mfa) {
+      setIsMfaVerified(true)
+    }
+  }, [user])
+
+
+
   return (
     <>
       <ChangePasswordModal
         isOpen={isChangePasswordOpen}
         toggleHandler={changePasswordModalToggler}
       />
-      <GenerateQRCodeModal isOpen={isQROpen} setIsOpen={setQROpen} setIsMfaVerified={setIsMfaVerified}/>
+      <GenerateQRCodeModal isOpen={isQROpen} setIsOpen={setQROpen} setIsMfaVerified={setIsMfaVerified} />
 
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Account</h3>

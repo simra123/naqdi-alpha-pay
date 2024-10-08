@@ -71,14 +71,17 @@ const Login = () => {
   };
 
   const verifyHandler = async () => {
+
+    console.log(userResponse, 'VerifyHandler'
+    )
+
+    const verify = userResponse?.data?.user?.role == Role.USER
+      ? verifyApi
+      : verifyMFAForAdminApi
+
     await callApiHook({
       apiCall: callVerificationApi(
-        userResponse?.data?.role == Role.USER
-          ? verifyApi({ token: otpValues?.otp }, userResponse?.data?.token)
-          : verifyMFAForAdminApi(
-              { token: otpValues?.otp },
-              userResponse?.data?.token
-            )
+        verify({ token: otpValues?.otp }, userResponse?.data?.token)
       ),
       successCallBack: async (response) => {
         loginHandler(userResponse);
