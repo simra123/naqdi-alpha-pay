@@ -19,12 +19,31 @@ import {
   transactionsList_table_columns,
   wallet_table_columns,
 } from "../../columns";
+import { FolderIcon, StatusIcon } from "@/assets/Svgs";
+import Details from "@/components/common/Details";
+import { ContactMailOutlined, LocationOnOutlined } from "@mui/icons-material";
+import CustomTable from "@/components/common/CustomTable";
+import { TableColumns } from "@/constants/types";
+import { unitName } from "@/constants/blockchains";
+
+const BalanceColumns: TableColumns = [
+  { field: "id", headerName: "ID" },
+  {
+    field: "unit",
+    headerName: "Currency",
+    dataValidator(value, row: { standard: string | null }) {
+      return row?.standard
+        ? `${value} (${row?.standard})`
+        : `${unitName[value.toLocaleLowerCase()]}`;
+    },
+  },
+  { field: "amount", headerName: "Balance" },
+];
+
 
 const TransactionDetails = ({ params }) => {
   const userId = params?.id;
   const [userDetails, setUserDetails]: any = useState({});
-  const [wallets, setWallets] = useState([]);
-  const [transactions, setTransactions] = useState([]);
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi(true);
 
@@ -32,9 +51,7 @@ const TransactionDetails = ({ params }) => {
     await callApiHook({
       apiCall: callUserDetailsApi(getUserDetailsApi({ userId })),
       successCallBack: (response) => {
-        setUserDetails(response);
-        setWallets(formatBalanceForUser(response?.wallets));
-        setTransactions(formatTransactions(response?.transactions));
+        setUserDetails(response)
       },
     });
   };
@@ -44,85 +61,109 @@ const TransactionDetails = ({ params }) => {
   }, []);
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-        User Details
-      </h3>
+
+
+    <>
       <ErrorApiText error={isUserDetailsError} />
       <LoadingApi loading={isUserDetailsLoading}>
-        <div className="detailspage mt-6">
-          <div className="flex flex-col gap-4">
-            <DetailsWrapper title={"Date Created"}>
-              <TransparentInput
-                value={moment(userDetails?.user?.created_at).format(
-                  "DD-MM-YYYY"
-                )}
-              />
-            </DetailsWrapper>
-            <DetailsWrapper title={"ID"}>
-              <TransparentInput value={userDetails?.id} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"First Name"}>
-              <TransparentInput value={userDetails?.user?.first_name} />
-            </DetailsWrapper>
-            {userDetails?.user?.legal_name && (
-              <DetailsWrapper title={"Legal Name"}>
-                <TransparentInput value={userDetails?.user?.legal_name} />
-              </DetailsWrapper>
-            )}
-            <DetailsWrapper title={"Last Name"}>
-              <TransparentInput value={userDetails?.user?.last_name} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Email"}>
-              <TransparentInput value={userDetails?.user?.email} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Username"}>
-              <TransparentInput value={userDetails?.user?.username} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"User Type"}>
-              <TransparentInput value={userDetails?.user?.user_type} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Status"}>
-              <TransparentInput
-                value={userDetails?.user?.verified ? "Verified" : "UnVerified"}
-              />
-            </DetailsWrapper>
 
-            <DetailsWrapper title={"Address"}>
-              <TransparentInput value={userDetails?.address_line_1} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"State"}>
-              <TransparentInput value={capitalize(userDetails?.state)} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"City"}>
-              <TransparentInput value={userDetails?.city} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Country"}>
-              <TransparentInput value={userDetails?.country} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Phone"}>
-              <TransparentInput value={userDetails?.phone_number} />
-            </DetailsWrapper>
-            <DetailsWrapper title={"Postal Code"}>
-              <TransparentInput value={userDetails?.postal_code} />
-            </DetailsWrapper>
+
+        <div className="rounded-medium flex flex-col  bg-white p-10">
+          <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+            User Details
+          </h3>
+
+          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+            <FolderIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
           </div>
+          <div className="res-2-grid py-6">
+            <Details label="ID" value={userDetails?.id} />
+            <Details
+              label="Created Date"
+              value={moment(userDetails?.user?.created_at).format(
+                "DD-MM-YYYY"
+              )}
+            />
+            <Details label="First Name" value={userDetails?.user?.first_name} />
+            <Details label="Last Name" value={userDetails?.user?.last_name} />
+            <Details
+              label="Legal Name"
+              value={userDetails?.user?.legal_name}
+            />
+            <Details
+              label="User Type"
+              value={userDetails?.user?.user_type}
+            />
+          </div>
+
+
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <ContactMailOutlined className="text-purple-100" />
+            <h5 className="text-purple-100 text-h5 font-semibold">Contacts</h5>
+          </div>
+          <div className="res-2-grid py-6">
+
+            <Details label="Phone" value={userDetails?.phone_number} />
+            <Details label="Email" value={userDetails?.user?.email} />
+
+          </div>
+
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <LocationOnOutlined className="text-purple-100" />
+            <h5 className="text-purple-100 text-h5 font-semibold">
+              Addressess
+            </h5>
+          </div>
+          <div className="res-2-grid py-6">
+            <Details
+              label="Address"
+              value={userDetails?.address_line_1}
+            />
+            <Details label="Country" value={userDetails?.country} />
+            <Details label="State" value={capitalize(userDetails?.state)} />
+            <Details label="City" value={userDetails?.city} />
+            <Details
+              label="Postal Code"
+              value={userDetails?.postal_code}
+            />
+          </div>
+
+
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <StatusIcon />
+            <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          </div>
+          <div className="res-2-grid py-6">
+
+            <Details
+              label="Email Verified"
+              value={userDetails?.user?.verified ? "true" : "false"}
+            />
+            <Details
+              label="MFA"
+              value={userDetails?.mfa ? "Enabled" : "Disabled"}
+            />
+
+            <Details label="KYC" value={userDetails?.kyc_status} />
+            <Details label="Fees" value={userDetails?.fees + "%"} />
+
+          </div>
+
+
         </div>
-        <div className="data-grid-container mt-1">
-          <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Wallets</h2>
-          </div>
 
-          <DataGrid
-            rows={wallets}
-            columns={wallet_table_columns}
-            className="font-semibold primary-color border-t-0"
-            hideFooter
-            autoHeight
-          />
+
+        <div className="mt-8">
+
+          <CustomTable columns={BalanceColumns} rows={userDetails?.user?.balances} actions={
+            <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+              Balance
+            </h3>
+          } columnClassName="max-w-[200px]" />
         </div>
       </LoadingApi>
-    </div>
+    </>
   );
 };
 
