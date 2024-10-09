@@ -61,6 +61,15 @@ export const ChangePassowordApi = (data: {
   return () => api.post(`auth/change-password`, data);
 };
 
+export const ChangePassowordAdminpi = (data: {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  token: number;
+}) => {
+  return () => api.post(`auth/admin/change-password`, data);
+};
+
 export const updatePasswordApi = (data) => {
   return () => api.post(`auth/reset-password`, data);
 };

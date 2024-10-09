@@ -1,3 +1,4 @@
+'use client'
 import React, { useState } from "react";
 import Modal from "../Modal"; // Make sure to adjust the import path if necessary
 
@@ -13,7 +14,9 @@ import OtpInput from "react-otp-input";
 import { Info, Lock } from "@mui/icons-material";
 import { ChangePasswordSchema } from "@/models/ProfilePage";
 import useFormValidation from "@/hooks/useFormValidation";
-import { ChangePassowordApi } from "@/services/auth";
+import { ChangePassowordAdminpi, ChangePassowordApi } from "@/services/auth";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
 
 interface Props {
   isOpen: boolean;
@@ -29,6 +32,7 @@ const initialValues = {
 
 const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
   const dispatch = useDispatch();
+  const user = useLocalStorage('user')
   const [misMatchError, setMisMatchError] = useState("");
   const [
     isChangePasswordLoading,
@@ -46,9 +50,12 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
   } = useFormValidation(initialValues, ChangePasswordSchema);
 
   const onSubmit = async () => {
+
+    let changePasswordFn = user?.role == Role.ADMIN ? ChangePassowordAdminpi : ChangePassowordApi
+
     await callApiHook({
       apiCall: callChangePasswordApi(
-        ChangePassowordApi({
+        changePasswordFn({
           currentPassword: values?.oldPassword,
           newPassword: values?.newPassword,
           confirmPassword: values?.confirmNewPassword,
