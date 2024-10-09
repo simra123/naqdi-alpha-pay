@@ -14,8 +14,11 @@ import { generateMFAForAdminApi, verifyMFAForAdminApi } from "@/services/auth";
 import OTPInput from "react-otp-input";
 import { Info } from "@mui/icons-material";
 import { updateMfaInCookie } from "@/utils/cookies";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { QRCodeCanvas } from "qrcode.react";
 
 const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
+  const user = useLocalStorage('user')
   const [isQRCodeLoading, isQRCodeError, callQRCodeApi] = useApi();
   const [isVerificationLoading, isVerificationError, callVerificationApi] =
     useApi();
@@ -63,12 +66,21 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
           qrcode && (
             <>
               <div className="flex flex-col items-center overflow-hidden">
-                <Image
-                  src={qrcode.qrCodeUrl}
-                  height={250}
-                  width={250}
-                  alt="mfa code"
-                />
+
+                <div className="qr_code mt-6 flex justify-center">
+                  {qrcode && qrcode.secret && (
+                    <QRCodeCanvas
+                      value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
+                        qrcode?.secret
+                      )}&issuer=${user?.email}
+            `}
+                      height={250}
+                      width={250}
+                    />
+                  )}
+                </div>
+
+
 
                 <Details copyable value={qrcode?.secret} />
 
