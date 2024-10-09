@@ -13,6 +13,10 @@ import { setStep } from "@/store/slices/onboarding.slice";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import LoaderButton from "@/components/common/LoaderButton";
 
+interface QrCode {
+  secret: string | null;
+}
+
 const MFASetup = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: any) => state?.user?.data);
@@ -22,13 +26,13 @@ const MFASetup = () => {
   const { getUserDetails } = useGetUserDetaiils();
 
   const [otp, setOtp] = useState(null);
-  const [qrCode, setQrCode] = useState(null);
+  const [qrCode, setQrCode] = useState<QrCode>({ secret: null });
   const [otpError, setOtpError] = useState(null);
   const [isVerified, setIsVerfied] = useState(null);
 
   useEffect(() => {
-    if (!qrCode) {
-      setQrCode(user?.userDetails?.mfa_secret);
+    if (!qrCode?.secret) {
+      setQrCode({ secret: user?.userDetails?.mfa_secret });
     }
   }, [user]);
 
@@ -36,7 +40,8 @@ const MFASetup = () => {
     await callApiHook({
       apiCall: callQrCodeApi(generateMFACodeApi()),
       successCallBack: (response) => {
-        setQrCode(response);
+        console.log(response, "qr code generated response");
+        setQrCode({ secret: response?.secret });
         getUserDetails();
       },
     });
@@ -108,7 +113,7 @@ const MFASetup = () => {
           STEP 2: Generate and Scan the QR Code
         </h4>
         <div className="qr_code mt-6 flex justify-center">
-          {qrCode && (
+          {qrCode && qrCode.secret && (
             <QRCodeCanvas
               value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
                 qrCode?.secret

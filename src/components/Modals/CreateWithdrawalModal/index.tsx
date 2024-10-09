@@ -76,7 +76,7 @@ const CreateWithdrawalModal = ({
     const { value, name } = event.target;
 
     if (name === "blockchain") {
-    
+
 
       setSourceOptions((prev) => ({
         ...prev,
@@ -123,20 +123,26 @@ const CreateWithdrawalModal = ({
   };
 
   const handleWithdrawal = async () => {
-  
+
+    const withdraw_request_payload = {
+      amount: data?.sourceAmount,
+      recipient_address: data.walletAddress,
+      blockchain: sourceOptions.blockchain,
+      notes: data.notes,
+      standard: networks_available[sourceOptions.blockchain]
+        ? sourceOptions.standard
+        : null,
+      token: otp,
+    }
+
+    if (withdraw_request_payload.standard == null) {
+      delete withdraw_request_payload.standard
+    }
+
 
     await callApiHook({
       apiCall: callWithdrawalApi(
-        createWithdrawalApi({
-          amount: data?.sourceAmount,
-          recipient_address: data.walletAddress,
-          blockchain: sourceOptions.blockchain,
-          notes: data.notes,
-          standard: networks_available[sourceOptions.blockchain]
-            ? sourceOptions.standard
-            : "",
-          token: otp,
-        })
+        createWithdrawalApi(withdraw_request_payload)
       ),
       successCallBack: () => {
         dispatch(
@@ -198,7 +204,7 @@ const CreateWithdrawalModal = ({
   };
 
   const filteredNetworks = (network, blockchain) => {
-  
+
 
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
