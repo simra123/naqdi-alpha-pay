@@ -1,21 +1,51 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import { ContactMailOutlined, LocationOnOutlined } from "@mui/icons-material";
+import {
+  ContactMailOutlined,
+  ErrorOutlineOutlined,
+  LocationOnOutlined,
+  WarningOutlined,
+  WarningRounded,
+} from "@mui/icons-material";
 import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 
 import ChangePasswordModal from "@/components/Modals/ChangePasswordModal";
 import Details from "@/components/common/Details";
 import LoaderButton from "@/components/common/LoaderButton";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
 
 const Account = () => {
-  const user = useSelector((state: any) => state?.user?.data);
+  const localUser = useLocalStorage("user");
+  const [isMFaVerified, setIsMfaVerified] = useState(false)
+
+  const user =
+    localUser?.role == Role.ADMIN
+      ? localUser
+      : useSelector((state: any) => state?.user?.data);
+
   const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [isQROpen, setQROpen] = useState(false);
 
   const changePasswordModalToggler = () => {
     setChangePasswordOpen(!isChangePasswordOpen);
   };
+
+  const qrCodeModalToggler = () => {
+    setQROpen(!isQROpen);
+  };
+
+  useEffect(() => {
+    if (user?.role == Role.ADMIN && user?.userDetails?.mfa) {
+      setIsMfaVerified(true)
+    }
+  }, [user])
+
+
 
   return (
     <>
@@ -23,6 +53,8 @@ const Account = () => {
         isOpen={isChangePasswordOpen}
         toggleHandler={changePasswordModalToggler}
       />
+      <GenerateQRCodeModal isOpen={isQROpen} setIsOpen={setQROpen} setIsMfaVerified={setIsMfaVerified} />
+
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Account</h3>
 
@@ -43,7 +75,10 @@ const Account = () => {
           <Details label="First Name" value={user?.first_name} />
           <Details label="Last Name" value={user?.last_name} />
           <Details label="Username" value={user?.username} />
-          <Details label="User Type" value={user?.user_type} />
+          <Details
+            label="User Type"
+            value={localUser?.role == Role.ADMIN ? "Admin" : user?.user_type}
+          />
         </div>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
@@ -52,32 +87,61 @@ const Account = () => {
         </div>
         <div className="res-2-grid py-6">
           <Details label="Email" value={user?.email} />
-          <Details label="Phone" value={user?.userDetails?.phone_number} />
+          <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
+            <Details label="Phone" value={user?.userDetails?.phone_number} />
+          </RenderRoleBased>
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <LocationOnOutlined className="text-purple-100" />
-          <h5 className="text-purple-100 text-h5 font-semibold">Addressess</h5>
-        </div>
-        <div className="res-2-grid py-6">
-          <Details label="Address" value={user?.userDetails?.address_line_1} />
-          <Details label="Country" value={user?.userDetails?.country} />
-          <Details label="State" value={user?.userDetails?.state} />
-          <Details label="City" value={user?.userDetails?.city} />
-          <Details label="Postal Code" value={user?.userDetails?.postal_code} />
-        </div>
+        <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
+          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <LocationOnOutlined className="text-purple-100" />
+            <h5 className="text-purple-100 text-h5 font-semibold">
+              Addressess
+            </h5>
+          </div>
+          <div className="res-2-grid py-6">
+            <Details
+              label="Address"
+              value={user?.userDetails?.address_line_1}
+            />
+            <Details label="Country" value={user?.userDetails?.country} />
+            <Details label="State" value={user?.userDetails?.state} />
+            <Details label="City" value={user?.userDetails?.city} />
+            <Details
+              label="Postal Code"
+              value={user?.userDetails?.postal_code}
+            />
+          </div>
+        </RenderRoleBased>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <StatusIcon />
           <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="KYC" value={user?.userDetails?.kyc_status} />
-          <Details
-            label="MFA"
-            value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
-          />
-          <Details label="Fees" value={user?.userDetails?.fees + "%"} />
+          <div className="flex gap-4 items-center">
+            <Details
+              label="MFA"
+              value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
+            />
+            {localUser?.role == Role.ADMIN && (!localUser?.userDetails?.mfa || !isMFaVerified) && (
+              <LoaderButton
+                content={
+                  <div className="flex gap-2 text-[14px] font-semibold items-center">
+                    <span>Setup MFA</span>
+                    <ErrorOutlineOutlined className="text-purple-100 text-[18px]" />
+                  </div>
+                }
+                variant="text"
+                className="hover:underline"
+                onClick={qrCodeModalToggler}
+              />
+            )}
+          </div>
+          <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
+            <Details label="KYC" value={user?.userDetails?.kyc_status} />
+            <Details label="Fees" value={user?.userDetails?.fees + "%"} />
+          </RenderRoleBased>
         </div>
       </div>
 

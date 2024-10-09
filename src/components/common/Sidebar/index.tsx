@@ -87,12 +87,11 @@ const nav_items: NavItem[] = [
     path: "/payouts",
     roles: [Role.ADMIN, Role.USER],
   },
-
   {
     name: "Settings",
     icon: SettingsIcon,
     path: "/settings/account",
-    roles: [Role.USER],
+    roles: [Role.USER, Role.ADMIN],
     sub_nav: [
       {
         name: "Account",
@@ -104,13 +103,13 @@ const nav_items: NavItem[] = [
         name: "Users",
         icon: PersonRounded,
         path: "/settings/users",
-        roles: [Role.ADMIN, Role.USER],
+        roles: [Role.USER],
       },
       {
         name: "Integrations",
         icon: Key,
         path: "/settings/integrations",
-        roles: [Role.ADMIN, Role.USER],
+        roles: [Role.USER],
       },
     ],
   },
@@ -130,8 +129,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     userCookie && userCookie?.role == Role.ADMIN
       ? userCookie
       : useSelector((state: any) => state.user.data);
-
-
 
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -246,31 +243,34 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                                 !isCollapsed && "pl-14"
                               } pb-3`}
                             >
-                              {sub_nav.map(({ icon: Icon, name, path }) => (
-                                <Link
-                                  href={path}
-                                  className={`flex gap-2  items-center font-medium ${
-                                    isCollapsed && "justify-center"
-                                  } ${
-                                    pathname === path &&
-                                    "text-purple-100 font-semibold text-[17px]"
-                                  }`}
-                                  key={name}
-                                >
-                                  {isCollapsed && (
-                                    <div>
-                                      <Icon
-                                        className={` ${
-                                          pathname === path
-                                            ? "!fill-purple-100 w-6 h-6"
-                                            : "fill-black-100 w-5 h-5"
-                                        }`}
-                                      />
-                                    </div>
-                                  )}
-                                  {!isCollapsed && <span>{name}</span>}
-                                </Link>
-                              ))}
+                              {sub_nav.map(
+                                ({ icon: Icon, name, path, roles }) =>
+                                  roles.includes(user?.role) && (
+                                    <Link
+                                      href={path}
+                                      className={`flex gap-2  items-center font-medium ${
+                                        isCollapsed && "justify-center"
+                                      } ${
+                                        pathname === path &&
+                                        "text-purple-100 font-semibold text-[17px]"
+                                      }`}
+                                      key={name}
+                                    >
+                                      {isCollapsed && (
+                                        <div>
+                                          <Icon
+                                            className={` ${
+                                              pathname === path
+                                                ? "!fill-purple-100 w-6 h-6"
+                                                : "fill-black-100 w-5 h-5"
+                                            }`}
+                                          />
+                                        </div>
+                                      )}
+                                      {!isCollapsed && <span>{name}</span>}
+                                    </Link>
+                                  )
+                              )}
                             </div>
                           )}
                       </div>

@@ -21,8 +21,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { TableColumns } from "@/constants/types";
 import { unitName } from "@/constants/blockchains";
 
-const columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+const adminColumns: TableColumns = [
   {
     field: "unit",
     headerName: "Currency",
@@ -33,6 +32,11 @@ const columns: TableColumns = [
     },
   },
   { field: "amount", headerName: "Balance" },
+];
+
+const columns: TableColumns = [
+  { field: "id", headerName: "ID" },
+  ...adminColumns,
 ];
 
 const Home = () => {
@@ -104,7 +108,7 @@ const Home = () => {
     await callApiHook({
       apiCall: callBalanceApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-        setBalance(response?.result);
+        setBalance(response);
       },
     });
   };
@@ -124,7 +128,7 @@ const Home = () => {
       <div>
         {/* <LoadingApi loading={isBalanceLoading}> */}
         <CustomTable
-          columns={columns}
+          columns={user?.role == Role.USER ? columns : adminColumns}
           rows={balance}
           loading={isBalanceLoading}
           initialPageSize={10}
