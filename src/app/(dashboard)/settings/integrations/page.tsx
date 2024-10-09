@@ -175,6 +175,7 @@ const Integrations = () => {
           }
           columns={columns}
           // Filters={Filters}
+          pagination
           rows={keysList}
           initialPageSize={10}
         />

@@ -21,9 +21,9 @@ export const useApi = (initailLoading = false) => {
       const response = await apiCall();
       setIsLoading(false);
       setError(null);
-      dispatch(
-        setNotification({ status: "success", message: response?.data?.message })
-      );
+      // dispatch(
+      //   setNotification({ status: "success", message: response?.data?.message })
+      // );
       return response;
     } catch (error) {
       setIsLoading(false);
