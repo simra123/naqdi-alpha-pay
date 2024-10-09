@@ -16,7 +16,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { loginSchema, mfaSchema } from "@/models/login";
 
 import { Role } from "@/constants/roles";
-import { loginApi, verifyApi, verifyMFAForAdminApi } from "@/services/auth";
+import { loginApi, verifyMFAForUserApi, verifyMFAForAdminApi } from "@/services/auth";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import useFormValidation from "@/hooks/useFormValidation";
@@ -76,7 +76,7 @@ const Login = () => {
     )
 
     const verify = userResponse?.data?.user?.role == Role.USER
-      ? verifyApi
+      ? verifyMFAForUserApi
       : verifyMFAForAdminApi
 
     await callApiHook({
