@@ -54,7 +54,7 @@ export function middleware(req: NextRequest) {
         console.log('I should be able to pass')
         return NextResponse.next();
       }
-      
+
       // Checking if is not a onboarding route and dont have fee also if is a onboarding route but has fees then blocking the user
       if (!isWithOutFeeRoute(pathname) && !hasFee(user)) {
         console.log('I am not a fee route and dont have fee')
@@ -67,10 +67,10 @@ export function middleware(req: NextRequest) {
       if (
         isWithOutFeeRoute(pathname) &&
         hasFee(user) &&
-        pathname != "/support"
+        !pathname.includes("/support")
       ) {
         console.log('I am a without fee route but still has fees')
-      
+
         return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
     }
