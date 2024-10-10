@@ -120,7 +120,15 @@ const TransactionDetails = ({ params }) => {
             label="Amount"
             value={`${roundToPrecision(
               +transactionDetails?.transaction_amount ||
-                +transactionDetails?.amount,
+              +transactionDetails?.amount,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+          <Details
+            label="Fees"
+            value={`${roundToPrecision(
+              +transactionDetails?.alphaspay_fees ?
+                +transactionDetails?.alphaspay_fees : 0,
               10
             )} ${transactionDetails?.unit}`}
           />
@@ -138,7 +146,7 @@ const TransactionDetails = ({ params }) => {
               transactionType == "Withdrawal"
                 ? transactionDetails?.withdrawal?.recipient_address
                 : transactionDetails?.wallet?.wallet_address ||
-                  transactionDetails?.wallet?.address
+                transactionDetails?.wallet?.address
             }
           />
           <Details
