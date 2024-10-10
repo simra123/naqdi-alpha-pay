@@ -56,7 +56,7 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
+     
         <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
 
         <form className="mt-8 flex flex-col gap-2">
@@ -87,7 +87,7 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
         </form>
 
         <ErrorApiText error={isRejectError} />
-      </div>
+    
     </Modal>
   );
 };

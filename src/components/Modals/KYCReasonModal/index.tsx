@@ -37,7 +37,7 @@ const KYCReasonModal = ({
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
+    
         <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
 
         <form
@@ -73,8 +73,7 @@ const KYCReasonModal = ({
         </form>
 
         <ErrorApiText error={error} />
-      </div>
-    </Modal>
+         </Modal>
   );
 };
 
