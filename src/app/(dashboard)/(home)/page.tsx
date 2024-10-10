@@ -45,43 +45,7 @@ const Home = () => {
   const [balance, setBalance] = useState([]);
   const [openDeposit, setOpenDeposit] = useState(null);
 
-  // const modal = createWeb3Modal({
-  //   themeMode: "light",
 
-  //   ethersConfig: defaultConfig({
-  //     metadata: ConstantsUtil.Metadata,
-  //     defaultChainId: 1,
-  //     rpcUrl: "https://cloudflare-eth.com",
-  //   }),
-  //   chains: EthersConstants.chains,
-  //   projectId: ConstantsUtil.ProjectId,
-  //   enableAnalytics: true,
-  //   metadata: ConstantsUtil.Metadata,
-  //   termsConditionsUrl: "https://walletconnect.com/terms",
-  //   privacyPolicyUrl: "https://walletconnect.com/privacy",
-  // });
-
-  // const onSendTransaction = async () => {
-  //   const walletProvider = modal?.getWalletProvider();
-  //   const walletConnected = modal?.getIsConnected();
-  //   const walletChain = modal?.getChainId();
-
-  //   try {
-  //     if (!walletProvider || !walletConnected) {
-  //       throw Error("user is disconnected");
-  //     }
-  //     const provider = new BrowserProvider(walletProvider, walletChain);
-  //     const signer = new JsonRpcSigner(provider, modal?.getAddress());
-  //     const tx = await signer.sendTransaction({
-  //       to: modal?.getAddress(),
-  //       value: ethers.parseUnits("8000", "gwei"),
-  //       // maxFeePerGas: ethers.parseUnits("200", "gwei"),
-  //       // maxPriorityFeePerGas: ethers.parseUnits("200", "gwei"),
-  //     });
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
 
   const handleDepoist = () => {
     setOpenDeposit(true);

@@ -54,7 +54,7 @@ const CreateApiKeyModal = ({
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
+      
         <h2 className="text-h3.5 font-semibold mb-4">Add API KEY</h2>
 
         <form className="mt-8 flex flex-col gap-2">
@@ -85,7 +85,7 @@ const CreateApiKeyModal = ({
         </form>
 
         <ErrorApiText error={isKeyError} />
-      </div>
+    
     </Modal>
   );
 };

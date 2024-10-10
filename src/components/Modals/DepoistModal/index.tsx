@@ -50,7 +50,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
         createDepoistAddressApi(seletedOption?.standard ? TokenData : CoinData)
       ),
       successCallBack: (response: any) => {
- 
+
         setDepositAddress(response);
       },
     });
@@ -116,72 +116,72 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white px-6 p-8 sm:px-8 rounded-md shadow-lg w-[547px] max-w-[90%]">
-        <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
 
+      <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
+
+      <IconSelectBox
+        label="Select a Blockchain"
+        options={blockchains}
+        name="blockchain"
+        value={seletedOption.blockchain}
+        placeholder="Select a Blockchain"
+        onChange={handleChange}
+      />
+
+      {networks_available[seletedOption.blockchain] && (
         <IconSelectBox
-          label="Select a Blockchain"
-          options={blockchains}
-          name="blockchain"
-          value={seletedOption.blockchain}
-          placeholder="Select a Blockchain"
+          options={filteredNets}
+          name="network"
+          value={seletedOption.network}
+          placeholder="Select a Standard"
+          label="Select a Standard"
           onChange={handleChange}
         />
+      )}
 
-        {networks_available[seletedOption.blockchain] && (
-          <IconSelectBox
-            options={filteredNets}
-            name="network"
-            value={seletedOption.network}
-            placeholder="Select a Standard"
-            label="Select a Standard"
-            onChange={handleChange}
-          />
+      <ErrorApiText error={isDepositError} />
+
+      <LoadingApi loading={isDepoistLoading}>
+        {depositAddress && (
+          <>
+            <div className="flex flex-col items-center overflow-hidden">
+              <Image
+                src={depositAddress?.qrCode}
+                height={250}
+                width={250}
+                alt="Depoist"
+              />
+
+              <Details copyable value={depositAddress?.wallet_Address} />
+            </div>
+
+            <p className="text-custom-caption-gray text-button mt-6">
+              This Address is generated for Depositing{" "}
+              {depositAddress?.blockchain} on the {depositAddress?.network}{" "}
+              network.
+            </p>
+          </>
         )}
+      </LoadingApi>
 
-        <ErrorApiText error={isDepositError} />
+      <div className="flex flex-col justify-end mt-2">
+        <LoaderButton
+          type="submit"
+          className="mt-6"
+          content={`Create Deposit Address`}
+          variant="contained"
+          onClick={createDepoistAddress}
+        />
 
-        <LoadingApi loading={isDepoistLoading}>
-          {depositAddress && (
-            <>
-              <div className="flex flex-col items-center overflow-hidden">
-                <Image
-                  src={depositAddress?.qrCode}
-                  height={250}
-                  width={250}
-                  alt="Depoist"
-                />
-
-                <Details copyable value={depositAddress?.wallet_Address} />
-              </div>
-
-              <p className="text-custom-caption-gray text-button mt-6">
-                This Address is generated for Depositing{" "}
-                {depositAddress?.blockchain} on the {depositAddress?.network}{" "}
-                network.
-              </p>
-            </>
-          )}
-        </LoadingApi>
-
-        <div className="flex flex-col justify-end mt-2">
-          <LoaderButton
-            type="submit"
-            className="mt-6"
-            content={`Create Deposit Address`}
-            variant="contained"
-            onClick={createDepoistAddress}
-          />
-
-          <button
-            type="button"
-            className="text-black-100 px-4 py-2 mt-2"
-            onClick={closeModal}
-          >
-            Cancel
-          </button>
-        </div>
+        <button
+          type="button"
+          className="text-black-100 px-4 py-2 mt-2"
+          onClick={closeModal}
+        >
+          Cancel
+        </button>
       </div>
+
     </Modal>
   );
 };

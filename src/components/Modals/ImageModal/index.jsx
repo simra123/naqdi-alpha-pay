@@ -4,7 +4,7 @@ import { Close } from "@mui/icons-material";
 
 const ImageModal = ({ isOpen, setIsOpen }) => {
   return (
-    <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+    <Modal isOpen={isOpen} setIsOpen={setIsOpen} className="!w-auto">
 
       <div className="flex items-center justify-center h-full relative">
       <button

@@ -141,7 +141,7 @@ export const formatWithdrawals = (response: []) => {
     created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
     updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
     requested_amount: item?.requested_amount,
-    network: `${item?.unit}${item?.standard && `(${item?.standard})`}`,
+    network: `${item?.unit}${item?.standard ? `(${item?.standard})` : '' }`,
     withdrawal_type: capitalize(item?.transaction_type),
     transaction_hash: item?.transaction_hash || "_",
     recipient_address: item?.recipient_address,
