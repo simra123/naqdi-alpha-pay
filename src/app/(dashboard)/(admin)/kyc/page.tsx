@@ -38,7 +38,7 @@ const columns: TableColumns = [
 const KYCUsersPage = () => {
   const router = useRouter();
   const [usersList, setUsersList] = useState([]);
-  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi(true);
+  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({initailLoading:true});
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getUsersList = async () => {

@@ -73,7 +73,7 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [isTransactionsLoading, isTransactionsError, callTransactionsApi] =
-    useApi(true);
+    useApi({initailLoading:true});
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getTransactions = async () => {

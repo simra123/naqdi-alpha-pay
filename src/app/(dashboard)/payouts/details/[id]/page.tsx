@@ -40,7 +40,7 @@ const PayoutDetails = ({ params }) => {
   const [payout, setpayout] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
   const [isPayoutDetailsLoading, isPayoutDetailsError, callPayoutDetailsApi] =
-    useApi(true);
+    useApi({initailLoading:true});
 
   const [isApprovePayoutLoading, isApprovePayoutError, callApprovePayoutApi] =
     useApi();

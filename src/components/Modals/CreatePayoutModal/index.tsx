@@ -50,7 +50,7 @@ const CreatePayoutModal = ({
   const [withdrawalFee, setWithdrawalFee] = useState(0);
   const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
     useApi();
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
   const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [sourceOptions, setSourceOptions] = useState({

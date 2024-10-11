@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import ProfileForm from "@/components/forms/onBoarding/ProfileForm";
 import { STEPS } from "@/constants/onboarding";
 import PhoneValidation from "@/components/forms/onBoarding/PhoneValidation";
