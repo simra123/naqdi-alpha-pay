@@ -32,23 +32,27 @@ const KYCUserID = ({ params }) => {
   const [fee, setFee]: any = useState(0);
   const userId = params?.userId;
   const [userDetails, setUserDetails] = useState(null);
-  const [
-    isUserDetailsListLoading,
-    isUserDetailsListError,
-    callUserDetailsListApi,
-  ] = useApi(true);
-  const [isFeeUpdateLoading, isFeeUpdateError, callFeeUpdateApi] = useApi();
-  const [isKYCSubmitLoading, isKYCSubmitError, callKYCSubmitApi] = useApi();
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
+    { initailLoading: true }
+  );
+  const [isFeeUpdateLoading, isFeeUpdateError, callFeeUpdateApi] = useApi({
+    notify: true,
+  });
+  const [isKYCSubmitLoading, isKYCSubmitError, callKYCSubmitApi] = useApi({
+    notify: true,
+  });
 
   const getUserDetails = async () => {
     await callApiHook({
-      apiCall: callUserDetailsListApi(getUserDetailsApi({ userId: +userId })),
+      apiCall: callUserDetailsApi(getUserDetailsApi({ userId: +userId })),
       successCallBack: (response) => {
         setUserDetails(response);
         setFee(response?.fees ? response.fees : null);
       },
     });
   };
+
+  console.log({ userDetails });
 
   const handleSubmit = (status) => async () => {
     await callApiHook({
@@ -82,7 +86,7 @@ const KYCUserID = ({ params }) => {
   }, [userId]);
 
   return (
-    <LoadingApi loading={isUserDetailsListLoading}>
+    <LoadingApi loading={isUserDetailsLoading}>
       <ImageModal isOpen={url} setIsOpen={setUrl} />
       <KYCReasonModal
         isOpen={isRejectOpen}
@@ -96,7 +100,7 @@ const KYCUserID = ({ params }) => {
       <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         User Details
       </h3>
-      <ErrorApiText error={isUserDetailsListError}>
+      <ErrorApiText error={isUserDetailsError}>
         {userDetails?.kyc_approved && (
           <div className="rounded-medium flex flex-col  bg-white p-6 sm:p-10 shadow-sm">
             <div>
@@ -168,19 +172,43 @@ const KYCUserID = ({ params }) => {
           <ErrorApiText error={isKYCSubmitError} />
 
           <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
-            <LoaderButton
-              content={"Reject"}
-              color="error"
-              onClick={toggleRejectHandler}
-              variant="text"
-            />
+            {userDetails?.kyc_status == "pending" ? (
+              <>
+                <LoaderButton
+                  content={"Reject"}
+                  color="error"
+                  onClick={toggleRejectHandler}
+                  variant="text"
+                />
 
-            <LoaderButton
-              variant="text"
-              color="success"
-              onClick={handleSubmit(statuses.APPROVED)}
-              content={"Approve"}
-            />
+                <LoaderButton
+                  variant="text"
+                  color="success"
+                  onClick={handleSubmit(statuses.APPROVED)}
+                  content={"Approve"}
+                />
+              </>
+            ) : (
+              <>
+                {userDetails?.kyc_approved && (
+                  <LoaderButton
+                    content={"Reject"}
+                    color="error"
+                    onClick={toggleRejectHandler}
+                    variant="text"
+                  />
+                )}
+
+                {!userDetails?.kyc_approved && (
+                  <LoaderButton
+                    variant="text"
+                    color="success"
+                    onClick={handleSubmit(statuses.APPROVED)}
+                    content={"Approve"}
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </ErrorApiText>

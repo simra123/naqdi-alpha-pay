@@ -66,7 +66,7 @@ const Support = () => {
   const router = useRouter();
   const [ticketsList, setTicketsList] = useState([]);
 
-  const [isListLoading, isListError, callListApi] = useApi(true);
+  const [isListLoading, isListError, callListApi] = useApi({initailLoading:true});
 
   const getListHandler = async () => {
     await callApiHook({

@@ -41,7 +41,7 @@ const usersList_table_columns: TableColumns = [
 const Users = () => {
   const router = useRouter();
   const [users, setUsers] = useState([]);
-  const [isUsersLoading, isUsersError, callUsersApi] = useApi(true);
+  const [isUsersLoading, isUsersError, callUsersApi] = useApi({initailLoading:true});
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getAllUsersAdmin = async () => {

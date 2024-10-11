@@ -9,3 +9,13 @@ export const updateMfaInCookie = (newMfaValue) => {
     Cookies.set("user", JSON.stringify(user));
   }
 };
+
+export const updatedOnboardingCookies = (userDetails: {}) => {
+  // Get the current userDetails cookie
+  let user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+
+  if (user) {
+    user.userDetails = userDetails;
+    Cookies.set("user", JSON.stringify(user));
+  }
+};

@@ -58,7 +58,7 @@ const PaymentDetails = ({ params }) => {
   const [transaction, setTransacion] = useState([]);
   const [orderInfo, setOrderInfo] = useState<{}>(null);
   const [receivedAmount, setRecievedAmount] = useState("0");
-  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
+  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({initailLoading:true});
 
   const getPayment = async () => {
     // if (user?.role == Role.USER) {

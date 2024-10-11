@@ -44,7 +44,7 @@ const Payouts = () => {
   const [payoutsList, setpayoutsList] = useState([]);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
   const [isPayoutsListLoading, isPayoutsListError, callPayoutsListApi] =
-    useApi(true);
+    useApi({initailLoading:true});
 
   const getAllPayouts = async () => {
     await callApiHook({

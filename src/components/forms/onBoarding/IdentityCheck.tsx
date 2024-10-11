@@ -164,7 +164,9 @@ const IdentityCheck = () => {
                 ))}
               </div>
               {errors.documentFormat && (
-                <div className="error_text">{errors?.documentFormat}</div>
+                <p className="text-red-error-dark text-caption mt-[4px] ml-4">
+                  {errors.documentFormat}
+                </p>
               )}
             </>
           )}
@@ -271,7 +273,9 @@ const IdentityCheck = () => {
               )}
 
               {errors.document && (
-                <div className="error_text">{errors?.document}</div>
+                <p className="text-red-error-dark text-caption mt-[4px] ml-4">
+                  {errors.document}
+                </p>
               )}
             </>
           )}

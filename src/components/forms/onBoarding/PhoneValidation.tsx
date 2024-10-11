@@ -130,7 +130,9 @@ const PhoneValidation = () => {
               />
 
               {phoneErrors.phone && (
-                <div className="error_text">{phoneErrors.phone}</div>
+                 <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+                 {phoneErrors.phone}
+               </p>
               )}
             </div>
             <ErrorApiText error={isPhoneError} />

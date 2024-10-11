@@ -45,7 +45,7 @@ const TransactionDetails = ({ params }) => {
   const userId = params?.id;
   const [userDetails, setUserDetails]: any = useState({});
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
+    useApi({initailLoading:true});
 
   const getUserDetailsAdmin = async () => {
     await callApiHook({

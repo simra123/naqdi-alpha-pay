@@ -10,13 +10,16 @@ import { userDetailsApi } from "@/services/user";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useRouter } from "next/navigation";
 import LoaderButton from "@/components/common/LoaderButton";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { updatedOnboardingCookies } from "@/utils/cookies";
 
 const FeeSchedule = () => {
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
+  const localUser = useLocalStorage("user");
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
+    { initailLoading: true }
+  );
 
   useEffect(() => {
     getUserDetails();
@@ -27,22 +30,16 @@ const FeeSchedule = () => {
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response: any) => {
         setUser(response);
+        console.log(localUser.userDetails?.fees, response?.userDetails?.fees);
+        if (
+          localUser &&
+          localUser.userDetails?.fees != response?.userDetails?.fees
+        ) {
+          updatedOnboardingCookies(response?.userDetails);
+        }
       },
     });
   };
-
-  // const handleScheduleSelect = (id) => () => {
-  //   setSelectedSchedule(id);
-  // };
-
-  // const handleSubmit = () => {
-  //   if (!selectedSchedule) {
-  //     return setError("Please Select a Schedule");
-  //   }
-
-  //   setError(null);
-  //   // submit logic
-  // };
 
   return (
     <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
