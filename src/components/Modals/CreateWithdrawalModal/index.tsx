@@ -63,7 +63,7 @@ const CreateWithdrawalModal = ({
   const [currentSchema, setCurrentSchema] = useState(emptySchema)
 
   const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
 
 
   const getCurrentAssetAmount = (value) => {

@@ -69,7 +69,7 @@ const IconField = ({
           <Icon className="absolute left-4 top-0 flex h-full items-center text-gray-400" />
         )}
         <input
-          type={isPasswordField && !showPassword ? "password" : type}
+          type={isPasswordField ? (!showPassword ? "password" : "text") : type}
           onChange={onChange}
           onBlur={onBlur}
           name={name}

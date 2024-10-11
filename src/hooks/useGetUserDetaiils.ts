@@ -9,7 +9,7 @@ const useGetUserDetaiils = () => {
   const dispatch = useDispatch();
 
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
+    useApi({initailLoading:true});
 
   const getUserDetails = async () => {
     await callApiHook({

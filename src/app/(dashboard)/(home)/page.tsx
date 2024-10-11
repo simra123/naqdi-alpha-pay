@@ -41,7 +41,7 @@ const columns: TableColumns = [
 
 const Home = () => {
   const user = useLocalStorage("user");
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
   const [balance, setBalance] = useState([]);
   const [openDeposit, setOpenDeposit] = useState(null);
 

@@ -77,7 +77,7 @@ const Payments = () => {
   const user = useLocalStorage("user");
   const [paymentsList, setPaymentsList] = useState([]);
 
-  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
+  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({initailLoading:true});
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getPayments = async () => {

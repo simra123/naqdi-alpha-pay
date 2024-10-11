@@ -42,7 +42,7 @@ const TransactionDetails = ({ params }) => {
     isTransactionDetailsLoading,
     isTransactionDetailsError,
     callTransactionDetailsApi,
-  ] = useApi(true);
+  ] = useApi({initailLoading:true});
 
   const _getTransactionByType = () => {
     if (user?.role == Role.USER) {

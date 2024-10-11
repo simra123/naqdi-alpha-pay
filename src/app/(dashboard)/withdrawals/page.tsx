@@ -58,7 +58,7 @@ const Withdrawals = () => {
     isWithdrawalsListLoading,
     isWithdrawalsListError,
     callWithdrawalsListApi,
-  ] = useApi(true);
+  ] = useApi({initailLoading:true});
 
   const getAllWithdrawals = async () => {
     await callApiHook({

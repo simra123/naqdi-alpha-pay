@@ -25,8 +25,8 @@ const Integrations = () => {
   console.log(user);
 
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
-  const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi(true);
+    useApi({initailLoading:true});
+  const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi({initailLoading:true});
   const [isRevokeLoading, isRevokeError, callRevokeApi] = useApi();
 
   const columns = [

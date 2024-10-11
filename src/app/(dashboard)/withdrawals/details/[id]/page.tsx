@@ -82,13 +82,13 @@ const WithdrawalDetails = ({ params }) => {
     isWithdrawalDetailsLoading,
     isWithdrawalDetailsError,
     callWithdrawalDetailsApi,
-  ] = useApi(true);
+  ] = useApi({initailLoading:true});
 
   const [
     isWithdrawalWalletsLoading,
     isWithdrawalWalletsError,
     callWithdrawalWalletsApi,
-  ] = useApi(true);
+  ] = useApi({initailLoading:true});
 
   const [
     isApproveWithdrawalLoading,

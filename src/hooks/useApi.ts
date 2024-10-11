@@ -7,7 +7,17 @@ import Cookies from "js-cookie";
 
 const UNVERIFIED_MESSAGE = "User is not verified";
 
-export const useApi = (initailLoading = false) => {
+interface Props {
+  initailLoading?: boolean;
+  notify?: boolean;
+}
+
+export const useApi = ({
+  initailLoading,
+  notify,
+}: Props = {}) => {
+  console.log({ initailLoading, notify });
+
   const dispatch = useDispatch();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(initailLoading);
@@ -21,9 +31,14 @@ export const useApi = (initailLoading = false) => {
       const response = await apiCall();
       setIsLoading(false);
       setError(null);
-      // dispatch(
-      //   setNotification({ status: "success", message: response?.data?.message })
-      // );
+      if (notify) {
+        dispatch(
+          setNotification({
+            status: "success",
+            message: response?.data?.message,
+          })
+        );
+      }
       return response;
     } catch (error) {
       setIsLoading(false);
