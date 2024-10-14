@@ -15,14 +15,13 @@ import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
 import { Role } from "@/constants/roles";
-import { updatedOnboardingCookies } from "@/utils/cookies";
+import { debounce, updatedOnboardingCookies } from "@/utils/cookies";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  const [cookiesLoading, setCookiesLoading] = useState(true);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -31,8 +30,9 @@ const DashboardLayout = ({ children }) => {
 
   const { isAuthenticated, loaded } = useAuth();
 
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi();
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
+    { initailLoading: true }
+  );
 
   const getUserDetails = async () => {
     if (user?.role == Role.USER) {
@@ -43,16 +43,13 @@ const DashboardLayout = ({ children }) => {
           dispatch(setUser(response));
           dispatch(validateSteps(response));
 
-          if (pathname == "/onboarding" && response?.userDetails?.fees) {
-            console.log(
-              "I am in onboarding route fetching user details",
-              response?.userDetails
-            );
-            router.replace("/");
-          }
-          setTimeout(() => {
-            setCookiesLoading(false);
-          }, 1000);
+          // if (pathname == "/onboarding" && response?.userDetails?.fees) {
+          //   console.log(
+          //     "I am in onboarding route fetching user details",
+          //     response?.userDetails
+          //   );
+          //   router.push("/");
+          // }
         },
       });
     }
@@ -63,7 +60,7 @@ const DashboardLayout = ({ children }) => {
     getUserDetails();
   }, []);
 
-  if (!loaded || isUserDetailsLoading || cookiesLoading) {
+  if (!loaded || isUserDetailsLoading) {
     return <LoadingScreen />;
   }
 
