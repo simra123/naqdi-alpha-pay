@@ -19,3 +19,13 @@ export const updatedOnboardingCookies = (userDetails: {}) => {
     Cookies.set("user", JSON.stringify(user));
   }
 };
+
+export const debounce = (func: Function, delay: number) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
