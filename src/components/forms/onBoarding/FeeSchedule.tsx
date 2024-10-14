@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Typography } from "@mui/material";
-import { Check, CheckCircle, Forward } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -31,12 +29,12 @@ const FeeSchedule = () => {
       successCallBack: (response: any) => {
         setUser(response);
         console.log(localUser.userDetails?.fees, response?.userDetails?.fees);
-        if (
-          localUser &&
-          localUser.userDetails?.fees != response?.userDetails?.fees
-        ) {
-          updatedOnboardingCookies(response?.userDetails);
-        }
+        // if (
+        //   localUser &&
+        //   localUser.userDetails?.fees != response?.userDetails?.fees
+        // ) {
+        //   updatedOnboardingCookies(response?.userDetails);
+        // }
       },
     });
   };
@@ -46,9 +44,12 @@ const FeeSchedule = () => {
       <h4 className="text-black-100 text-h3.5 font-semibold">
         Your Fee Schdeule
       </h4>
-      <p className="text-button text-black-100">
-        You will be paying the following fee for alphaspay.
-      </p>
+
+      {user?.userDetails?.fees && (
+        <p className="text-button text-black-100">
+          You will be paying the following fee for alphaspay.
+        </p>
+      )}
 
       <div>
         <div className=" mt-10 mb-2">
@@ -73,16 +74,18 @@ const FeeSchedule = () => {
         </div>
       </div>
 
-      <p className="text-black-100  mt-5">
-        Your Fee Schedule is mentioned above. For any querires you can contact
-        us.
-      </p>
+      {user?.userDetails?.fees && (
+        <p className="text-black-100  mt-5">
+          Your Fee Schedule is mentioned above. For any querires you can contact
+          us.
+        </p>
+      )}
 
       {user?.userDetails?.fees && (
         <div className="mt-8 max-w-[360px]">
           <LoaderButton
             content={"Go to Dashboard"}
-            onClick={() => router.push("/")}
+            onClick={() => router.replace("/")}
             variant={"contained"}
           />
         </div>
