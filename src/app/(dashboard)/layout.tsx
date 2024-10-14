@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import Sidebar from "@/components/common/Sidebar";
@@ -15,42 +15,48 @@ import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
 import { Role } from "@/constants/roles";
+import { debounce, updatedOnboardingCookies } from "@/utils/cookies";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const user = useLocalStorage("user");
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-
-
-  
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
- 
-    
   };
   const dispatch = useDispatch();
 
   const { isAuthenticated, loaded } = useAuth();
 
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi();
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
+    { initailLoading: true }
+  );
 
   const getUserDetails = async () => {
     if (user?.role == Role.USER) {
       await callApiHook({
         apiCall: callUserDetailsApi(userDetailsApi()),
         successCallBack: (response) => {
-        
+          updatedOnboardingCookies(response?.userDetails);
           dispatch(setUser(response));
           dispatch(validateSteps(response));
+
+          // if (pathname == "/onboarding" && response?.userDetails?.fees) {
+          //   console.log(
+          //     "I am in onboarding route fetching user details",
+          //     response?.userDetails
+          //   );
+          //   router.push("/");
+          // }
         },
       });
     }
   };
 
   useEffect(() => {
+    console.log("dashoboard layout is running");
     getUserDetails();
   }, []);
 
