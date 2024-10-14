@@ -22,6 +22,7 @@ const DashboardLayout = ({ children }) => {
   const user = useLocalStorage("user");
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [cookiesLoading, setCookiesLoading] = useState(true);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -41,18 +42,28 @@ const DashboardLayout = ({ children }) => {
           updatedOnboardingCookies(response?.userDetails);
           dispatch(setUser(response));
           dispatch(validateSteps(response));
+
+          if (pathname == "/onboarding" && response?.userDetails?.fees) {
+            console.log(
+              "I am in onboarding route fetching user details",
+              response?.userDetails
+            );
+            router.replace("/");
+          }
+          setTimeout(() => {
+            setCookiesLoading(false);
+          }, 1000);
         },
       });
     }
   };
 
-
-
-  useLayoutEffect(() => {
+  useEffect(() => {
+    console.log("dashoboard layout is running");
     getUserDetails();
   }, []);
 
-  if (!loaded || isUserDetailsLoading) {
+  if (!loaded || isUserDetailsLoading || cookiesLoading) {
     return <LoadingScreen />;
   }
 
