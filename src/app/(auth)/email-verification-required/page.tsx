@@ -71,7 +71,7 @@ const page = () => {
               <LoaderButton
                 content={"Go Back"}
                 variant="text"
-                onClick={() => router.push("/")}
+                onClick={() => router.push("/login")}
               />
             </div>
           </div>
