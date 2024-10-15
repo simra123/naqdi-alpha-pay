@@ -30,9 +30,8 @@ const DashboardLayout = ({ children }) => {
 
   const { isAuthenticated, loaded } = useAuth();
 
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
-    { initailLoading: true }
-  );
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
+    useApi();
 
   const getUserDetails = async () => {
     if (user?.role == Role.USER) {
@@ -42,14 +41,6 @@ const DashboardLayout = ({ children }) => {
           updatedOnboardingCookies(response?.userDetails);
           dispatch(setUser(response));
           dispatch(validateSteps(response));
-
-          // if (pathname == "/onboarding" && response?.userDetails?.fees) {
-          //   console.log(
-          //     "I am in onboarding route fetching user details",
-          //     response?.userDetails
-          //   );
-          //   router.push("/");
-          // }
         },
       });
     }
