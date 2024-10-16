@@ -42,7 +42,7 @@ const TransactionDetails = ({ params }) => {
     isTransactionDetailsLoading,
     isTransactionDetailsError,
     callTransactionDetailsApi,
-  ] = useApi({initailLoading:true});
+  ] = useApi({ initailLoading: true });
 
   const _getTransactionByType = () => {
     if (user?.role == Role.USER) {
@@ -102,7 +102,14 @@ const TransactionDetails = ({ params }) => {
           <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="ID" value={transactionDetails?.id} />
+          <Details
+            label="ID"
+            value={
+              transactionDetails?.payment_transaction_uuid ||
+              transactionDetails?.withdrawal_transaction_uuid ||
+              transactionDetails?.id
+            }
+          />
           <Details
             label="Blockchain"
             value={transactionDetails?.wallet?.blockchain}
@@ -120,15 +127,16 @@ const TransactionDetails = ({ params }) => {
             label="Amount"
             value={`${roundToPrecision(
               +transactionDetails?.transaction_amount ||
-              +transactionDetails?.amount,
+                +transactionDetails?.amount,
               10
             )} ${transactionDetails?.unit}`}
           />
           <Details
             label="Fees"
             value={`${roundToPrecision(
-              +transactionDetails?.alphaspay_fees ?
-                +transactionDetails?.alphaspay_fees : 0,
+              +transactionDetails?.alphaspay_fees
+                ? +transactionDetails?.alphaspay_fees
+                : 0,
               10
             )} ${transactionDetails?.unit}`}
           />
@@ -146,7 +154,7 @@ const TransactionDetails = ({ params }) => {
               transactionType == "Withdrawal"
                 ? transactionDetails?.withdrawal?.recipient_address
                 : transactionDetails?.wallet?.wallet_address ||
-                transactionDetails?.wallet?.address
+                  transactionDetails?.wallet?.address
             }
           />
           <Details

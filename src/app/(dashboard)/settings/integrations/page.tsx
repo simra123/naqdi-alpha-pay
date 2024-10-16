@@ -24,13 +24,16 @@ const Integrations = () => {
 
   console.log(user);
 
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi({initailLoading:true});
-  const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi({initailLoading:true});
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
+    { initailLoading: true }
+  );
+  const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi({
+    initailLoading: true,
+  });
   const [isRevokeLoading, isRevokeError, callRevokeApi] = useApi();
 
   const columns = [
-    { field: "id", headerName: "ID" },
+    { field: "user_secretKey_uuid", headerName: "ID" },
 
     { field: "createdAt", headerName: "Created At" },
     { field: "name", headerName: "Name" },
@@ -80,6 +83,7 @@ const Integrations = () => {
         const tableData = response?.map((item) => {
           return {
             id: item?.id,
+            user_secretKey_uuid: item?.user_secretKey_uuid,
             apiKey: item?.secret_key,
             createdAt: moment(item?.created_at).format("DD-MM-YYYY"),
             revoked: item?.revoked,

@@ -64,6 +64,10 @@ export const formatBalanceForAdmin = (balance: []) => {
 export const formatTransactions = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
+    uuid:
+      item?.payment_transaction_uuid ||
+      item?.withdrawal_transaction_uuid ||
+      item?.id,
     dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
     transactionHash: item?.transaction_hash,
     amount:
@@ -91,6 +95,10 @@ export const formatTransactions = (response: []) => {
 export const formatTransactionsByAdmin = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
+    uuid:
+      item?.payment_transaction_uuid ||
+      item?.withdrawal_transaction_uuid ||
+      item?.id,
     dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
@@ -141,7 +149,7 @@ export const formatWithdrawals = (response: []) => {
     created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
     updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
     requested_amount: item?.requested_amount,
-    network: `${item?.unit}${item?.standard ? `(${item?.standard})` : '' }`,
+    network: `${item?.unit}${item?.standard ? `(${item?.standard})` : ""}`,
     withdrawal_type: capitalize(item?.transaction_type),
     transaction_hash: item?.transaction_hash || "_",
     recipient_address: item?.recipient_address,
