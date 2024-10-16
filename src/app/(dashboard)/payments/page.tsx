@@ -25,7 +25,7 @@ const unpaidStatuses = ["Pending", "Cancel", "New"];
 
 const paymentsList_table_columns: TableColumns = [
   {
-    field: "id",
+    field: "payment_uuid",
     headerName: "ID",
   },
   {
@@ -36,12 +36,7 @@ const paymentsList_table_columns: TableColumns = [
     field: "updatedAt",
     headerName: "Updated At",
   },
-  // {
-  //   field: "senderAddress",
-  //   headerName: "Sender Wallet Address",
-  //   filterable: false,
-  //
-  // },
+
   {
     field: "recieverAddress",
     headerName: "Reciever Wallet Address",
@@ -77,7 +72,9 @@ const Payments = () => {
   const user = useLocalStorage("user");
   const [paymentsList, setPaymentsList] = useState([]);
 
-  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({initailLoading:true});
+  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
+    initailLoading: true,
+  });
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getPayments = async () => {
@@ -92,6 +89,7 @@ const Payments = () => {
         const tableData = response.map((item) => {
           return {
             id: item?.id,
+            payment_uuid: item?.payment_uuid,
             createdAt: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
             updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
             senderAddress: item?.paymentTransaction?.sender_address,
