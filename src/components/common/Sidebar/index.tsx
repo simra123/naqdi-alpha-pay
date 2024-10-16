@@ -139,6 +139,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       ? nav_items
       : boarding_nav_items;
 
+  console.log({ CurrentNav , user });
+
   // Function to toggle sub-navigation
   const toggleSubNav = (name: string, subnav: any) => {
     if (subnav) {

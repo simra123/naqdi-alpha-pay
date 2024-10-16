@@ -30,7 +30,7 @@ import { roundToPrecision } from "@/utils/math";
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
 const transactionsList_table_columns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "payment_transaction_uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
   { field: "senderAddress", headerName: "Sender Address", sortable: true },
   { field: "receiveAddress", headerName: "Receive Address", sortable: true },
@@ -75,6 +75,7 @@ const PaymentDetails = ({ params }) => {
 
         const transactionsList = response?.paymentTransaction?.map((item) => ({
           id: item?.id,
+          payment_transaction_uuid: item?.payment_transaction_uuid,
           dateReceived: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
           senderAddress: item?.sender_address,
           receiveAddress: response?.wallet?.address,
@@ -135,7 +136,7 @@ const PaymentDetails = ({ params }) => {
                 label="Requested Amount"
                 value={`${payment?.requested_amount} ${payment?.requested_currency}`}
               />
-              <Details label="ID" value={payment?.id} />
+              <Details label="ID" value={payment?.payment_uuid} />
               <Details
                 label="Wallet Address"
                 value={payment?.wallet?.address}

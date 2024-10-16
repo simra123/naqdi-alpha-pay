@@ -28,7 +28,7 @@ const statusList = [
 ];
 
 const transactionsList_table_columns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
   { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
   { field: "amount", headerName: "Amount", sortable: true },
@@ -47,7 +47,7 @@ const transactionsList_table_columns = [
 ];
 
 const transactionsList_Admin_table_columns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
   { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
   { field: "amount", headerName: "Amount", sortable: true },
@@ -73,7 +73,7 @@ const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [isTransactionsLoading, isTransactionsError, callTransactionsApi] =
-    useApi({initailLoading:true});
+    useApi({ initailLoading: true });
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getTransactions = async () => {
@@ -92,10 +92,8 @@ const Transactions = () => {
       await callApiHook({
         apiCall: callTransactionsApi(getAllTransactionsByAdminApi()),
         successCallBack: (response: any) => {
-          const tableData =
-            user?.role == Role.ADMIN
-              ? formatTransactionsByAdmin(response)
-              : formatTransactions(response);
+          const tableData = formatTransactionsByAdmin(response);
+
           setTransactions(tableData);
         },
       });
