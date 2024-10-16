@@ -1,20 +1,30 @@
-'use client'
+"use client";
 
 import React from "react";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import useAuth from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 const Authlayout = ({ children }) => {
-  const { isAuthenticated, loaded } = useAuth();
+  const { isAuthenticated, loaded, logOut } = useAuth();
+  const pathname = usePathname();
   const router = useRouter();
 
   if (!loaded) {
     return <LoadingScreen />;
   }
-  
+
   if (isAuthenticated) {
-    return router.push("/");
+    if (pathname.includes("email-verification-required")) {
+      logOut();
+    } else {
+      console.log("layout is running and sendinng to / ", {
+        pathname,
+        isAuthenticated,
+      });
+      return router.push("/");
+    }
   }
 
   return (

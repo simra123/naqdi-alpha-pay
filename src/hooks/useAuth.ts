@@ -12,7 +12,13 @@ const useAuth = () => {
     setLoaded(true);
   }, []);
 
-  return { isAuthenticated, loaded };
+  const logOut = () => {
+    Cookies.remove("user");
+    Cookies.remove("token");
+    setIsAuthenticated(false);
+  };
+
+  return { isAuthenticated, loaded, logOut };
 };
 
 export default useAuth;

@@ -8,6 +8,7 @@ import { callApiHook } from "@/utils/apifuncs";
 import { verifyApi } from "@/services/auth";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
+import Cookies from "js-cookie";
 
 const page = ({ params }) => {
   const router = useRouter();
@@ -23,10 +24,12 @@ const page = ({ params }) => {
           userId: +userId,
         })
       ),
-      successCallBack: () =>
+      successCallBack: () => {
+
         setTimeout(() => {
           router.push("/login");
-        }, 3000),
+        }, 3000);
+      },
     });
   };
   useEffect(() => {
