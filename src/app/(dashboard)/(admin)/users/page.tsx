@@ -20,7 +20,7 @@ import { generateCSVApi } from "@/services/common";
 
 
 const usersList_table_columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  { field: "user_uuid", headerName: "ID" },
   { field: "created_at", headerName: "Created" },
   { field: "updated_at", headerName: "Updated" },
   { field: "first_name", headerName: "First Name" },

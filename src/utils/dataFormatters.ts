@@ -131,6 +131,7 @@ export const formatUsers = (response: []) => {
     email: item?.email,
     first_name: item?.first_name,
     id: item?.id,
+    user_uuid: item?.user_uuid,
     last_name: item?.last_name,
     legal_name: item?.legal_name,
     legal_type: capitalize(item?.legal_type),

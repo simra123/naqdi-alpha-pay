@@ -16,7 +16,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 
 const columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  { field: "user_details_uuid", headerName: "ID" },
   { field: "createdAt", headerName: "Created At" },
   { field: "firstName", headerName: "First name" },
   { field: "lastName", headerName: "Last name" },
@@ -48,6 +48,7 @@ const KYCUsersPage = () => {
         const filteredData = response?.map((data) => {
           return {
             id: data?.id,
+            user_details_uuid: data?.user_details_uuid,
             createdAt: moment(data?.user?.created_at).format(
               "DD-MM-YYYY : hh:mm a"
             ),

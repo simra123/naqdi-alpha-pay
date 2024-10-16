@@ -78,7 +78,7 @@ const TransactionDetails = ({ params }) => {
             <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
           </div>
           <div className="res-2-grid py-6">
-            <Details label="ID" value={userDetails?.id} />
+            <Details label="ID" value={userDetails?.user_details_uuid} />
             <Details
               label="Created Date"
               value={moment(userDetails?.user?.created_at).format(
