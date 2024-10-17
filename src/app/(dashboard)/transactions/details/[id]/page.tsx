@@ -112,7 +112,7 @@ const TransactionDetails = ({ params }) => {
           />
           <Details
             label="Blockchain"
-            value={transactionDetails?.wallet?.blockchain}
+            value={transactionDetails?.wallet?.blockchain || transactionDetails?.clientWallet?.blockchain}
           />
           <Details
             label="Transaction Type"
