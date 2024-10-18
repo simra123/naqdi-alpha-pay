@@ -68,11 +68,11 @@ const TransactionDetails = ({ params }) => {
 
       // TODO: Need Admin api for now commenting this
 
-      // if (transactionType == "Withdrawal") {
-      //   return getWithdrawalTransactionDetailsByUserApi({
-      //     transaction_id: +tranascionId,
-      //   });
-      // }
+      if (transactionType == "Withdrawal") {
+        return getWithdrawalTransactionDetailsByUserApi({
+          transaction_id: +tranascionId,
+        });
+      }
     }
   };
 
@@ -112,7 +112,10 @@ const TransactionDetails = ({ params }) => {
           />
           <Details
             label="Blockchain"
-            value={transactionDetails?.wallet?.blockchain}
+            value={
+              transactionDetails?.wallet?.blockchain ||
+              transactionDetails?.clientWallet?.blockchain
+            }
           />
           <Details
             label="Transaction Type"
