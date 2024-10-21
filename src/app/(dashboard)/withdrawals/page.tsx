@@ -25,7 +25,7 @@ import { Add } from "@mui/icons-material";
 import { TableColumns } from "@/constants/types";
 
 const withdrawalsList_table_columns: TableColumns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "uuid", headerName: "ID", sortable: true },
   { field: "created_at", headerName: "Created At", sortable: true },
   { field: "updated_at", headerName: "Updated At", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },

@@ -18,7 +18,7 @@ import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
 
 const payoutsList_table_columns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "uuid", headerName: "ID", sortable: true },
   { field: "created_at", headerName: "Date", sortable: true },
   { field: "from_currency", headerName: "From Currency", sortable: true },
   { field: "to_currency", headerName: "To Currency", sortable: true },

@@ -8,7 +8,7 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 
-import { userDetailsApi } from "@/services/user";
+import { getWebhookURLAPI } from "@/services/Integration";
 import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
@@ -24,9 +24,11 @@ const Integrations = () => {
 
   console.log(user);
 
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
-    { initailLoading: true }
-  );
+  const [
+    iswebhookDetailsLoading,
+    iswebhookDetailsError,
+    callwebhookDetailsApi,
+  ] = useApi({ initailLoading: true });
   const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi({
     initailLoading: true,
   });
@@ -67,11 +69,13 @@ const Integrations = () => {
     },
   ];
 
-  const getUserDetails = async () => {
+  const getwebhookDetails = async () => {
     await callApiHook({
-      apiCall: callUserDetailsApi(userDetailsApi()),
+      apiCall: callwebhookDetailsApi(getWebhookURLAPI()),
       successCallBack: (response) => {
-        setWebhookURL(response?.webhook?.webhook_url);
+        if (response && response?.length > 0) {
+          setWebhookURL(response[0]?.webhook_url);
+        }
       },
     });
   };
@@ -96,7 +100,7 @@ const Integrations = () => {
   };
 
   useEffect(() => {
-    getUserDetails();
+    getwebhookDetails();
     callListApi();
   }, []);
 
@@ -126,7 +130,8 @@ const Integrations = () => {
     <>
       <WebhookURLModal
         isOpen={isWebhookOpen}
-        refreshHandler={getUserDetails}
+        initialWebhookValue={webhookURL}
+        refreshHandler={getwebhookDetails}
         toggleHandler={toggleWebhookModal}
       />
       <CreateApiKeyModal
@@ -144,12 +149,12 @@ const Integrations = () => {
             <h4 className="text-button sm:text-p122 font-semibold">
               Webhook URL
             </h4>
-            {/* <LoadingApi loading={isUserDetailsLoading}> */}
-            <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-              {webhookURL}
-            </span>
-            {/* </LoadingApi> */}
-            <ErrorApiText error={isUserDetailsError} />
+            <LoadingApi loading={iswebhookDetailsLoading}>
+              <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+                {webhookURL}
+              </span>
+            </LoadingApi>
+            <ErrorApiText error={iswebhookDetailsError} />
           </div>
           <LoaderButton
             content={"Update URL"}

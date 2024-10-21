@@ -9,6 +9,8 @@ const Chip = ({ status }: Props) => {
 
   const capStatus = capitalize(status);
 
+  console.log({capStatus})
+
   if (capStatus == "New" || capStatus == "Open") {
     statusColor = "text-purple-100";
     statusBg = "bg-purple-10";
@@ -42,10 +44,11 @@ const Chip = ({ status }: Props) => {
     statusBg = "bg-chip-blue";
   }
 
-  if (capStatus == "Incomplete" || capStatus == "Unverified" || capStatus == "Unapproved") {
+  if (capStatus == "Incomplete" || capStatus == "In-progress" || capStatus == "Unverified" || capStatus == "Unapproved") {
     statusColor = "text-yellow-dull";
     statusBg = "bg-yellow-chip-dull";
   }
+  
 
   return (
     <p
