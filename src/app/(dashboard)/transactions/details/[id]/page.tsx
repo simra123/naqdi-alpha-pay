@@ -106,8 +106,8 @@ const TransactionDetails = ({ params }) => {
             label="ID"
             value={
               transactionDetails?.payment_transaction_uuid ||
-              transactionDetails?.withdrawal_transaction_uuid ||
-              transactionDetails?.id
+              transactionDetails?.withdraw_transaction_uuid ||
+              transactionDetails?.transaction_uuid
             }
           />
           <Details
