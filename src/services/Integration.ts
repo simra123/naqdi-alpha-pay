@@ -20,3 +20,7 @@ export const listApiKeysApi = () => {
 export const addWebhookURLAPI = (data: { url: string }) => {
   return () => api.post(`auth/add/webhook`, data);
 };
+
+export const getWebhookURLAPI = () => {
+  return () => api.get(`auth/get/user-webhooks`);
+};

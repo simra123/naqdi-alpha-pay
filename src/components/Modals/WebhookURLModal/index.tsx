@@ -15,11 +15,17 @@ interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
   refreshHandler: () => void;
+  initialWebhookValue: string | null;
 }
 
-const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
+const WebhookURLModal = ({
+  isOpen,
+  toggleHandler,
+  refreshHandler,
+  initialWebhookValue,
+}: Props) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState({ url: "" });
+  const [data, setData] = useState({ url: initialWebhookValue });
   const [isURLLoading, isURLError, callURLApi] = useApi();
 
   const handleWebhook = async () => {
@@ -44,44 +50,42 @@ const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
 
   useEffect(() => {
     if (isOpen) {
-      setData({ url: "" });
+      setData({ url: initialWebhookValue });
     }
   }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen}>
-     
-        <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
+      <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
 
-        <form className="mt-8 flex flex-col gap-2">
-          <IconField
-            value={data.url}
-            name="url"
-            label="Webhook URL"
-            onChange={handleInputChange}
+      <form className="mt-8 flex flex-col gap-2">
+        <IconField
+          value={data.url}
+          name="url"
+          label="Webhook URL"
+          onChange={handleInputChange}
+        />
+
+        <div className="flex flex-col justify-end mt-4">
+          <LoaderButton
+            type="submit"
+            content={`Update`}
+            variant="contained"
+            onClick={handleWebhook}
+            loading={isURLLoading}
           />
 
-          <div className="flex flex-col justify-end mt-4">
-            <LoaderButton
-              type="submit"
-              content={`Update`}
-              variant="contained"
-              onClick={handleWebhook}
-              loading={isURLLoading}
-            />
+          <button
+            type="button"
+            className="text-black-100 px-4 py-2 mt-2"
+            onClick={toggleHandler}
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
 
-            <button
-              type="button"
-              className="text-black-100 px-4 py-2 mt-2"
-              onClick={toggleHandler}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-
-        <ErrorApiText error={isURLError} />
-    
+      <ErrorApiText error={isURLError} />
     </Modal>
   );
 };
