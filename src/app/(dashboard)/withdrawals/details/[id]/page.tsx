@@ -35,7 +35,13 @@ import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
 
 const transactionsList_table_columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  {
+    field: "id",
+    headerName: "ID",
+    dataValidator(value, row: { withdraw_transaction_uuid: string }) {
+      return row?.withdraw_transaction_uuid;
+    },
+  },
   {
     field: "createdAt",
     headerName: "Date",
@@ -82,13 +88,13 @@ const WithdrawalDetails = ({ params }) => {
     isWithdrawalDetailsLoading,
     isWithdrawalDetailsError,
     callWithdrawalDetailsApi,
-  ] = useApi({initailLoading:true});
+  ] = useApi({ initailLoading: true });
 
   const [
     isWithdrawalWalletsLoading,
     isWithdrawalWalletsError,
     callWithdrawalWalletsApi,
-  ] = useApi({initailLoading:true});
+  ] = useApi({ initailLoading: true });
 
   const [
     isApproveWithdrawalLoading,
@@ -97,7 +103,9 @@ const WithdrawalDetails = ({ params }) => {
   ] = useApi();
 
   const handleApprove = async () => {
-    const addresses = selectedWallets?.map((item) => item?.wallet_address || item?.address);
+    const addresses = selectedWallets?.map(
+      (item) => item?.wallet_address || item?.address
+    );
 
     const manualData = {
       addresses,
@@ -203,7 +211,7 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
 
-          <Details label="ID" value={withdrawalDetails?.id} />
+          <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
             label={`${withdrawalDetails?.unit} ${
               withdrawalDetails?.standard && `(${withdrawalDetails?.standard})`

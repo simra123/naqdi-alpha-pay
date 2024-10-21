@@ -66,8 +66,8 @@ export const formatTransactions = (response: []) => {
     id: item?.id,
     uuid:
       item?.payment_transaction_uuid ||
-      item?.withdrawal_transaction_uuid ||
-      item?.id,
+      item?.withdraw_transaction_uuid ||
+      item?.transaction_uuid,
     dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
     transactionHash: item?.transaction_hash,
     amount:
@@ -86,7 +86,9 @@ export const formatTransactions = (response: []) => {
         : "Self Deposit"
     ),
     network: capitalize(item?.wallet?.network),
-    blockchain: capitalize(item?.wallet?.blockchain || item?.clientWallet?.blockchain),
+    blockchain: capitalize(
+      item?.wallet?.blockchain || item?.clientWallet?.blockchain
+    ),
     status: capitalize(item?.status),
   }));
   return tableData;
@@ -97,8 +99,8 @@ export const formatTransactionsByAdmin = (response: []) => {
     id: item?.id,
     uuid:
       item?.payment_transaction_uuid ||
-      item?.withdrawal_transaction_uuid ||
-      item?.id,
+      item?.withdraw_transaction_uuid ||
+      item?.transaction_uuid,
     dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
@@ -119,7 +121,9 @@ export const formatTransactionsByAdmin = (response: []) => {
         : "Self Deposit"
     ),
     network: capitalize(item?.wallet?.network),
-    blockchain: capitalize(item?.wallet?.blockchain || item?.clientWallet?.blockchain),
+    blockchain: capitalize(
+      item?.wallet?.blockchain || item?.clientWallet?.blockchain
+    ),
     status: capitalize(item?.status),
   }));
   return tableData;
@@ -147,6 +151,7 @@ export const formatUsers = (response: []) => {
 export const formatWithdrawals = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
+    uuid: item?.withdrawal_uuid,
     created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
     updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
     requested_amount: item?.requested_amount,
@@ -162,6 +167,7 @@ export const formatWithdrawals = (response: []) => {
 export const formatPayouts = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
+    uuid: item?.payout_uuid,
     created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
     updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
     requested_amount: `${item?.requested_amount} ${item?.from_currency}`,

@@ -35,7 +35,7 @@ const adminColumns: TableColumns = [
 ];
 
 const columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  { field: "user_balance_uuid", headerName: "ID" },
   ...adminColumns,
 ];
 
