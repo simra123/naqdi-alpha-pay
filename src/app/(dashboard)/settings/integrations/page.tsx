@@ -14,6 +14,7 @@ import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
 import WebhookURLModal from "@/components/Modals/WebhookURLModal";
 import { useSelector } from "react-redux";
+import { TableColumns } from "@/constants/types";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);
@@ -34,17 +35,17 @@ const Integrations = () => {
   });
   const [isRevokeLoading, isRevokeError, callRevokeApi] = useApi();
 
-  const columns = [
+  const columns: TableColumns = [
     { field: "user_secretKey_uuid", headerName: "ID" },
 
     { field: "createdAt", headerName: "Created At" },
     { field: "name", headerName: "Name" },
-    { field: "apiKey", headerName: "API Key" },
+    { field: "apiKey", headerName: "API Key", copyable: true },
     {
       field: "revoked",
       headerName: "Status",
 
-      dataValidator: (id, row) => {
+      dataValidator: (id, row: { revoked: boolean | null }) => {
         return row.revoked ? "InActive" : "Active";
       },
     },
@@ -52,7 +53,7 @@ const Integrations = () => {
       field: "revoked",
       headerName: "Actions",
 
-      dataValidator: (id, row) => {
+      dataValidator: (id, row: { revoked: boolean | null }) => {
         return (
           <button
             onClick={(event) => handleRevoke(event, row)}
