@@ -10,6 +10,8 @@ import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import ErrorApiText from "../../common/ErrorApiText";
 import { addWebhookURLAPI, generateApiKeyApi } from "@/services/Integration";
+import useFormValidation from "@/hooks/useFormValidation";
+import { urlSchema } from "@/models/webhook";
 
 interface Props {
   isOpen: boolean;
@@ -18,6 +20,8 @@ interface Props {
   initialWebhookValue: string | null;
 }
 
+const initalValue = { url: "" };
+
 const WebhookURLModal = ({
   isOpen,
   toggleHandler,
@@ -25,12 +29,20 @@ const WebhookURLModal = ({
   initialWebhookValue,
 }: Props) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState({ url: initialWebhookValue });
   const [isURLLoading, isURLError, callURLApi] = useApi();
+
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    values,
+    setValues,
+    validateField,
+  } = useFormValidation(initalValue, urlSchema);
 
   const handleWebhook = async () => {
     await callApiHook({
-      apiCall: callURLApi(addWebhookURLAPI({ url: data.url })),
+      apiCall: callURLApi(addWebhookURLAPI({ url: values.url })),
       successCallBack: () => {
         dispatch(
           setNotification({
@@ -43,27 +55,32 @@ const WebhookURLModal = ({
       },
     });
   };
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setData((pre) => ({ ...pre, [name]: value }));
-  };
 
   useEffect(() => {
     if (isOpen) {
-      setData({ url: initialWebhookValue });
+      setValues({ url: initialWebhookValue });
     }
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen}  onClose={toggleHandler}>
+    <Modal isOpen={isOpen} onClose={toggleHandler}>
       <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
 
-      <form className="mt-8 flex flex-col gap-2">
+      <form
+        className="mt-8 flex flex-col gap-2"
+        onSubmit={(e) =>
+          handleSubmit(e, handleWebhook, () =>
+            console.log("Something went wrong")
+          )
+        }
+      >
         <IconField
-          value={data.url}
+          value={values.url}
           name="url"
+          onBlur={validateField}
           label="Webhook URL"
-          onChange={handleInputChange}
+          error={errors?.url}
+          onChange={handleChange}
         />
 
         <div className="flex flex-col justify-end mt-4">
@@ -71,7 +88,6 @@ const WebhookURLModal = ({
             type="submit"
             content={`Update`}
             variant="contained"
-            onClick={handleWebhook}
             loading={isURLLoading}
           />
 
