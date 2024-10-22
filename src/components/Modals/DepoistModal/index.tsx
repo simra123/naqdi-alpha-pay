@@ -115,7 +115,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   };
 
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={isOpen} onClose={closeModal}>
 
       <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
 
@@ -173,13 +173,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
           onClick={createDepoistAddress}
         />
 
-        <button
-          type="button"
-          className="text-black-100 px-4 py-2 mt-2"
-          onClick={closeModal}
-        >
-          Cancel
-        </button>
+
       </div>
 
     </Modal>
