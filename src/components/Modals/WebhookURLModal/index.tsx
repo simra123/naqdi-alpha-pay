@@ -55,7 +55,7 @@ const WebhookURLModal = ({
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen={isOpen}  onClose={toggleHandler}>
       <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
 
       <form className="mt-8 flex flex-col gap-2">
@@ -75,13 +75,13 @@ const WebhookURLModal = ({
             loading={isURLLoading}
           />
 
-          <button
+          {/* <button
             type="button"
             className="text-black-100 px-4 py-2 mt-2"
             onClick={toggleHandler}
           >
             Cancel
-          </button>
+          </button> */}
         </div>
       </form>
 
