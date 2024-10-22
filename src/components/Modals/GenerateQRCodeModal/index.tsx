@@ -18,7 +18,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { QRCodeCanvas } from "qrcode.react";
 
 const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
-  const user = useLocalStorage('user')
+  const user = useLocalStorage("user");
   const [isQRCodeLoading, isQRCodeError, callQRCodeApi] = useApi();
   const [isVerificationLoading, isVerificationError, callVerificationApi] =
     useApi();
@@ -58,15 +58,13 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
   };
 
   return (
-    <Modal isOpen={isOpen}>
-
+    <Modal isOpen={isOpen} onClose={closeModal}>
       <h2 className="text-xl font-bold mb-6">Secure You Account</h2>
 
       {step == 1 ? (
         qrcode && (
           <>
             <div className="flex flex-col items-center overflow-hidden">
-
               <div className="qr_code mt-6 flex justify-center">
                 {qrcode && qrcode.secret && (
                   <QRCodeCanvas
@@ -79,8 +77,6 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
                   />
                 )}
               </div>
-
-
 
               <Details copyable value={qrcode?.secret} />
 
@@ -153,15 +149,16 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
           />
         )}
 
-        <button
-          type="button"
-          className="text-black-100 px-4 py-2 mt-2"
-          onClick={step == 1 ? closeModal : handleStepChange(1)}
-        >
-          {step == 1 ? "Cancel" : "Back"}
-        </button>
+        {step == 2 && (
+          <button
+            type="button"
+            className="text-black-100 px-4 py-2 mt-2"
+            onClick={handleStepChange(1)}
+          >
+            Back
+          </button>
+        )}
       </div>
-
     </Modal>
   );
 };

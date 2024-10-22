@@ -19,6 +19,7 @@ import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
+import { TableColumns } from "@/constants/types";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -27,10 +28,15 @@ const statusList = [
   { label: "Pending", value: "pending" },
 ];
 
-const transactionsList_table_columns = [
+const transactionsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
-  { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
+  {
+    field: "transactionHash",
+    headerName: "Transaction Hash",
+    sortable: true,
+    copyable: true,
+  },
   { field: "amount", headerName: "Amount", sortable: true },
 
   { field: "receiveAddress", headerName: "Receive Address", sortable: true },
