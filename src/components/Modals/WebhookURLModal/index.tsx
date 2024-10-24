@@ -10,21 +10,39 @@ import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import ErrorApiText from "../../common/ErrorApiText";
 import { addWebhookURLAPI, generateApiKeyApi } from "@/services/Integration";
+import useFormValidation from "@/hooks/useFormValidation";
+import { urlSchema } from "@/models/webhook";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
   refreshHandler: () => void;
+  initialWebhookValue: string | null;
 }
 
-const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
+const initalValue = { url: "" };
+
+const WebhookURLModal = ({
+  isOpen,
+  toggleHandler,
+  refreshHandler,
+  initialWebhookValue,
+}: Props) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState({ url: "" });
   const [isURLLoading, isURLError, callURLApi] = useApi();
+
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    values,
+    setValues,
+    validateField,
+  } = useFormValidation(initalValue, urlSchema);
 
   const handleWebhook = async () => {
     await callApiHook({
-      apiCall: callURLApi(addWebhookURLAPI({ url: data.url })),
+      apiCall: callURLApi(addWebhookURLAPI({ url: values.url })),
       successCallBack: () => {
         dispatch(
           setNotification({
@@ -37,51 +55,53 @@ const WebhookURLModal = ({ isOpen, toggleHandler, refreshHandler }: Props) => {
       },
     });
   };
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setData((pre) => ({ ...pre, [name]: value }));
-  };
 
   useEffect(() => {
     if (isOpen) {
-      setData({ url: "" });
+      setValues({ url: initialWebhookValue });
     }
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
+    <Modal isOpen={isOpen} onClose={toggleHandler}>
+      <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
 
-        <form className="mt-8 flex flex-col gap-2">
-          <IconField
-            value={data.url}
-            name="url"
-            label="Webhook URL"
-            onChange={handleInputChange}
+      <form
+        className="mt-8 flex flex-col gap-2"
+        onSubmit={(e) =>
+          handleSubmit(e, handleWebhook, () =>
+            console.log("Something went wrong")
+          )
+        }
+      >
+        <IconField
+          value={values.url}
+          name="url"
+          onBlur={validateField}
+          label="Webhook URL"
+          error={errors?.url}
+          onChange={handleChange}
+        />
+
+        <div className="flex flex-col justify-end mt-4">
+          <LoaderButton
+            type="submit"
+            content={`Update`}
+            variant="contained"
+            loading={isURLLoading}
           />
 
-          <div className="flex flex-col justify-end mt-4">
-            <LoaderButton
-              type="submit"
-              content={`Update`}
-              variant="contained"
-              onClick={handleWebhook}
-              loading={isURLLoading}
-            />
+          {/* <button
+            type="button"
+            className="text-black-100 px-4 py-2 mt-2"
+            onClick={toggleHandler}
+          >
+            Cancel
+          </button> */}
+        </div>
+      </form>
 
-            <button
-              type="button"
-              className="text-black-100 px-4 py-2 mt-2"
-              onClick={toggleHandler}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-
-        <ErrorApiText error={isURLError} />
-      </div>
+      <ErrorApiText error={isURLError} />
     </Modal>
   );
 };

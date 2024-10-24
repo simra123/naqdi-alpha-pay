@@ -143,7 +143,7 @@ const ProfileForm = () => {
     console.log("Form Not submitted successfully!");
   };
 
-  console.log(values);
+
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
@@ -261,6 +261,7 @@ const ProfileForm = () => {
             onBlur={validateField}
             onChange={handleChange}
             value={values.postalCode}
+            error={errors.postalCode}
             icon={LocationOn}
             label="Postal Code"
           />

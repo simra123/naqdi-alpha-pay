@@ -23,7 +23,7 @@ const NotFound = () => {
             <LoaderButton
               content={"Go Back"}
               variant="contained"
-              onClick={() => router.back()}
+              onClick={() => router.replace("/")}
             />
           </div>
         </div>

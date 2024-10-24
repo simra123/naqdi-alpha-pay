@@ -7,7 +7,6 @@ import { getAllUsersByAdminApi } from "@/services/admin/users";
 
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import { withAuth } from "@/middleware/RoleBaseAuth";
 
 import { formatUsers } from "@/utils/dataFormatters";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
@@ -21,7 +20,7 @@ import { generateCSVApi } from "@/services/common";
 
 
 const usersList_table_columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  { field: "user_uuid", headerName: "ID" },
   { field: "created_at", headerName: "Created" },
   { field: "updated_at", headerName: "Updated" },
   { field: "first_name", headerName: "First Name" },
@@ -42,7 +41,7 @@ const usersList_table_columns: TableColumns = [
 const Users = () => {
   const router = useRouter();
   const [users, setUsers] = useState([]);
-  const [isUsersLoading, isUsersError, callUsersApi] = useApi(true);
+  const [isUsersLoading, isUsersError, callUsersApi] = useApi({initailLoading:true});
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getAllUsersAdmin = async () => {
@@ -99,4 +98,4 @@ const Users = () => {
   );
 };
 
-export default withAuth(Users, [Role.ADMIN]);
+export default Users;

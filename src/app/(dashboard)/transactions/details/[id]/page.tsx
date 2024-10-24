@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import {
+  getPaymentTransactionDetailsByAdminApi,
   getPaymentTransactionDetailsByUserApi,
   getTransactionDetailsByUserApi,
   getWithdrawalTransactionDetailsByUserApi,
@@ -35,20 +36,16 @@ const TransactionDetails = ({ params }) => {
     return notFound();
   }
 
-  console.log(transactionType);
-
   const user = useLocalStorage("user");
-  const [transactionDetails, setTransactionDetails]: any = useState({});
+  const [transactionDetails, setTransactionDetails] = useState<any>({});
   const [
     isTransactionDetailsLoading,
     isTransactionDetailsError,
     callTransactionDetailsApi,
-  ] = useApi(true);
+  ] = useApi({ initailLoading: true });
 
-  const getTransactionDetails = async () => {
-    console.log(transactionType, transactionType == "Self Deposit");
-
-    const _getTransactionByType = () => {
+  const _getTransactionByType = () => {
+    if (user?.role == Role.USER) {
       if (transactionType == "Self Deposit") {
         return getTransactionDetailsByUserApi({ id: tranascionId });
       }
@@ -60,27 +57,32 @@ const TransactionDetails = ({ params }) => {
           transaction_id: +tranascionId,
         });
       }
-    };
-
-    if (user.role == Role.USER) {
-      await callApiHook({
-        apiCall: callTransactionDetailsApi(_getTransactionByType()),
-        successCallBack: (response: any) => {
-          setTransactionDetails(response);
-        },
-      });
     }
+    if (user?.role == Role.ADMIN) {
+      if (transactionType == "Self Deposit") {
+        return getTransactionDetailsByAdminApi({ id: tranascionId });
+      }
+      if (transactionType == "Payment") {
+        return getPaymentTransactionDetailsByAdminApi({ id: tranascionId });
+      }
 
-    if (user.role == Role.ADMIN) {
-      await callApiHook({
-        apiCall: callTransactionDetailsApi(
-          getTransactionDetailsByAdminApi({ id: tranascionId })
-        ),
-        successCallBack: (response: any) => {
-          setTransactionDetails(response);
-        },
-      });
+      // TODO: Need Admin api for now commenting this
+
+      if (transactionType == "Withdrawal") {
+        return getWithdrawalTransactionDetailsByUserApi({
+          transaction_id: +tranascionId,
+        });
+      }
     }
+  };
+
+  const getTransactionDetails = async () => {
+    await callApiHook({
+      apiCall: callTransactionDetailsApi(_getTransactionByType()),
+      successCallBack: (response: any) => {
+        setTransactionDetails(response);
+      },
+    });
   };
 
   useEffect(() => {
@@ -100,10 +102,20 @@ const TransactionDetails = ({ params }) => {
           <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="ID" value={transactionDetails?.id} />
+          <Details
+            label="ID"
+            value={
+              transactionDetails?.payment_transaction_uuid ||
+              transactionDetails?.withdraw_transaction_uuid ||
+              transactionDetails?.transaction_uuid
+            }
+          />
           <Details
             label="Blockchain"
-            value={transactionDetails?.wallet?.blockchain}
+            value={
+              transactionDetails?.wallet?.blockchain ||
+              transactionDetails?.clientWallet?.blockchain
+            }
           />
           <Details
             label="Transaction Type"
@@ -119,6 +131,15 @@ const TransactionDetails = ({ params }) => {
             value={`${roundToPrecision(
               +transactionDetails?.transaction_amount ||
                 +transactionDetails?.amount,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+          <Details
+            label="Fees"
+            value={`${roundToPrecision(
+              +transactionDetails?.alphaspay_fees
+                ? +transactionDetails?.alphaspay_fees
+                : 0,
               10
             )} ${transactionDetails?.unit}`}
           />

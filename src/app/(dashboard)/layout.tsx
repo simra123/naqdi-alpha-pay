@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import Sidebar from "@/components/common/Sidebar";
@@ -15,15 +15,16 @@ import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
 import { Role } from "@/constants/roles";
+import { debounce, updatedOnboardingCookies } from "@/utils/cookies";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
   const user = useLocalStorage("user");
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
-    console.log("TOGGLING");
   };
   const dispatch = useDispatch();
 
@@ -37,6 +38,7 @@ const DashboardLayout = ({ children }) => {
       await callApiHook({
         apiCall: callUserDetailsApi(userDetailsApi()),
         successCallBack: (response) => {
+          updatedOnboardingCookies(response?.userDetails);
           dispatch(setUser(response));
           dispatch(validateSteps(response));
         },
@@ -45,6 +47,7 @@ const DashboardLayout = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log("dashoboard layout is running");
     getUserDetails();
   }, []);
 
@@ -53,7 +56,6 @@ const DashboardLayout = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    console.log("Unautheticated");
     return router.push("/login");
   }
 

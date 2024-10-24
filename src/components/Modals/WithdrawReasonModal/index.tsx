@@ -55,39 +55,37 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-10 rounded-md shadow-lg w-[547px] max-w-full">
-        <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
+    <Modal isOpen={isOpen} onClose={toggleHandler}>
+      <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
 
-        <form className="mt-8 flex flex-col gap-2">
-          <IconField
-            value={data.reason}
-            name="reason"
-            label="Reason"
-            onChange={handleInputChange}
+      <form className="mt-8 flex flex-col gap-2">
+        <IconField
+          value={data.reason}
+          name="reason"
+          label="Reason"
+          onChange={handleInputChange}
+        />
+
+        <div className="flex flex-col justify-end mt-4">
+          <LoaderButton
+            type="submit"
+            content={`Reject`}
+            variant="contained"
+            onClick={handleWithdrawalReject}
+            loading={isRejectLoading}
           />
 
-          <div className="flex flex-col justify-end mt-4">
-            <LoaderButton
-              type="submit"
-              content={`Reject`}
-              variant="contained"
-              onClick={handleWithdrawalReject}
-              loading={isRejectLoading}
-            />
-
-            <button
+          {/* <button
               type="button"
               className="text-black-100 px-4 py-2 mt-2"
               onClick={toggleHandler}
             >
               Cancel
-            </button>
-          </div>
-        </form>
+            </button> */}
+        </div>
+      </form>
 
-        <ErrorApiText error={isRejectError} />
-      </div>
+      <ErrorApiText error={isRejectError} />
     </Modal>
   );
 };

@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
-import { withAuth } from "@/middleware/RoleBaseAuth";
 import { Role } from "@/constants/roles";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -26,7 +25,7 @@ import { Add } from "@mui/icons-material";
 import { TableColumns } from "@/constants/types";
 
 const withdrawalsList_table_columns: TableColumns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "uuid", headerName: "ID", sortable: true },
   { field: "created_at", headerName: "Created At", sortable: true },
   { field: "updated_at", headerName: "Updated At", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
@@ -59,7 +58,7 @@ const Withdrawals = () => {
     isWithdrawalsListLoading,
     isWithdrawalsListError,
     callWithdrawalsListApi,
-  ] = useApi(true);
+  ] = useApi({initailLoading:true});
 
   const getAllWithdrawals = async () => {
     await callApiHook({
@@ -139,4 +138,4 @@ const Withdrawals = () => {
   );
 };
 
-export default withAuth(Withdrawals, [Role.ADMIN, Role.USER]);
+export default Withdrawals;

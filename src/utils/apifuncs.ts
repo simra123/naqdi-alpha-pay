@@ -13,7 +13,7 @@ export const callApiHook = async ({
 }: callApi) => {
   const response = await apiCall;
 
-  console.log(response, "_____________________");
+
 
   if (response?.status == statusCode) {
     return successCallBack(response.data);

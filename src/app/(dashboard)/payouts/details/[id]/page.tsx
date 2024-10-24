@@ -40,7 +40,7 @@ const PayoutDetails = ({ params }) => {
   const [payout, setpayout] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
   const [isPayoutDetailsLoading, isPayoutDetailsError, callPayoutDetailsApi] =
-    useApi(true);
+    useApi({initailLoading:true});
 
   const [isApprovePayoutLoading, isApprovePayoutError, callApprovePayoutApi] =
     useApi();
@@ -113,7 +113,7 @@ const PayoutDetails = ({ params }) => {
           <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="ID" value={payout?.id} />
+          <Details label="ID" value={payout?.payout_uuid} />
           <Details label="Account Title" value={payout?.account_title} />
           <Details label="Account No." value={payout?.account_no} />
           <Details label="From Currency" value={payout?.from_currency} />

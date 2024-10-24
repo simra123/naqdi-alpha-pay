@@ -1,5 +1,9 @@
+
+
+
 import React, { useEffect, useRef, useState } from "react";
-import Modal from "../Modal"; // Make sure to adjust the import path if necessary
+
+import Modal from "../Modal";
 import IconSelectBox from "../../common/IconSelectBox";
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
@@ -21,6 +25,8 @@ import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
 import { Info } from "@mui/icons-material";
+import useFormValidation from "@/hooks/useFormValidation";
+import { emptySchema, getWithdrawalSchema } from "@/models/withdrawal";
 
 interface Props {
   isOpen: boolean;
@@ -34,67 +40,60 @@ interface Network {
   standard?: string;
 }
 
+const initalFormValues = {
+  blockchain: '',
+  network: '',
+  token: '',
+  amount: 0,
+  recipient_address: '',
+  notes: '',
+}
+
 const CreateWithdrawalModal = ({
   isOpen,
   toggleHandler,
   refreshHandler,
 }: Props) => {
   const dispatch = useDispatch();
-  const debounceTimeout = useRef(null);
-  const [balance, setBalance] = useState([]);
-  const [networks, setNeworks] = useState<Record<string, Network[]>>({});
-  const [destinationAmount, setDestinationAmount] = useState("0");
-  const [otp, setOtp] = useState("");
-  const [withdrawalFee, setWithdrawalFee] = useState(0);
-  const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
-  const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
-  const [sourceOptions, setSourceOptions] = useState({
-    filteredNets: [],
-    blockchain: "",
-    network: "",
-    standard: "",
-    token: "",
-  });
+
+
+  const [balance, setBalance] = useState([]);
+  const [networks, setNetworks] = useState<Record<string, Network[]>>({});
+  const [currentSchema, setCurrentSchema] = useState(emptySchema)
+
+  const [isWithdrawalLoading, isWithdrawalError, callWithdrawalApi] = useApi();
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
+
+
+  const getCurrentAssetAmount = (value) => {
+    return balance.find((item) => item.value == value)?.amount;
+  };
+
+  // Initialize useFormValidation
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    values,
+    setValues,
+    validateField,
+    setErrors,
+  } = useFormValidation(initalFormValues, currentSchema);
+
 
   useEffect(() => {
-    setNeworks(
+    setNetworks(
       process.env.NEXT_PUBLIC_ENVIRONMENT == "dev"
         ? testnet_networks
         : production_networks
     );
   }, []);
 
-  const [data, setData] = useState({
-    sourceAmount: "",
-    walletAddress: "",
-    notes: "",
-  });
-
-  const handleSourceChange = (event) => {
-    const { value, name } = event.target;
-
-    if (name === "blockchain") {
-      console.log(blockchain_standards, blockchain_standards[value], value);
-
-      setSourceOptions((prev) => ({
-        ...prev,
-        filteredNets: networks[value],
-        blockchain: value,
-        network: "",
-        standard: blockchain_standards[value], // Reset standard when blockchain changes
-      }));
-    } else if (name === "network") {
-      const standard = filteredNetworks(value, sourceOptions.blockchain);
-
-      setSourceOptions((prev) => ({
-        ...prev,
-        [name]: value,
-        standard: standard || "", // Set standard if available, otherwise reset
-      }));
-    }
-  };
+  useEffect(() => {
+    const maxAmount = getCurrentAssetAmount(values?.blockchain)
+    setCurrentSchema(getWithdrawalSchema(!!networks_available[values?.blockchain], +maxAmount || 0))
+  }, [values])
 
   const _getUserBalance = async () => {
     await callApiHook({
@@ -112,32 +111,41 @@ const CreateWithdrawalModal = ({
     });
   };
 
-  const getAlphasPayFee = async () => {
-    await callApiHook({
-      apiCall: callFeeApi(getFeesApi(data?.sourceAmount)),
-      successCallBack: (response: any) => {
-        setWithdrawalFee(response?.alphaspayFees);
-        setDestinationAmount(response?.netAmount);
-      },
-    });
+  const handleSourceChange = (event) => {
+    const { value, name } = event.target;
+
+    if (name === "blockchain") {
+      setValues((prev) => ({
+        ...prev,
+        blockchain: value,
+        network: "",
+        standard: blockchain_standards[value],
+      }));
+    } else if (name === "network") {
+      const standard = filteredNetworks(value, values.blockchain);
+      setValues((prev) => ({
+        ...prev,
+        [name]: value,
+        standard: standard || "",
+      }));
+    }
+    validateField(event)
   };
 
   const handleWithdrawal = async () => {
-    console.log({ data, sourceOptions });
+    const withdraw_request_payload = {
+      ...values,
+      standard: networks_available[values.blockchain]
+        ? values.standard
+        : null,
+    };
+
+    if (withdraw_request_payload.standard == null) {
+      delete withdraw_request_payload.standard;
+    }
 
     await callApiHook({
-      apiCall: callWithdrawalApi(
-        createWithdrawalApi({
-          amount: data?.sourceAmount,
-          recipient_address: data.walletAddress,
-          blockchain: sourceOptions.blockchain,
-          notes: data.notes,
-          standard: networks_available[sourceOptions.blockchain]
-            ? sourceOptions.standard
-            : "",
-          token: otp,
-        })
-      ),
+      apiCall: callWithdrawalApi(createWithdrawalApi(withdraw_request_payload)),
       successCallBack: () => {
         dispatch(
           setNotification({
@@ -154,193 +162,135 @@ const CreateWithdrawalModal = ({
   useEffect(() => {
     if (isOpen) {
       _getUserBalance();
-      setData({
-        notes: "",
-        sourceAmount: "",
-        walletAddress: "",
-      });
-      setSourceOptions({
-        blockchain: "",
-        filteredNets: [],
-        network: "",
-        standard: "",
-        token: "",
-      });
+      setErrors({})
+      setValues(initalFormValues); // Reset form values
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (data?.sourceAmount && isOpen) {
-      getAlphasPayFee();
-    }
-  }, [data.sourceAmount, isOpen]);
-
-  const handleInputChange = (event, name) => {
-    const { value } = event.target;
-
-    if (name === "sourceAmount") {
-      if (debounceTimeout.current) {
-        clearTimeout(debounceTimeout.current);
-      }
-
-      setData((prev) => ({ ...prev, [name]: value }));
-
-      debounceTimeout.current = setTimeout(() => {
-        const maxVal = clamp(
-          parseFloat(value),
-          getCurrentAssetAmount(sourceOptions.blockchain)
-        );
-        setData((prev) => ({ ...prev, [name]: maxVal }));
-      }, 500); // 500ms debounce delay
-    } else {
-      setData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
   const filteredNetworks = (network, blockchain) => {
-    console.log({ network, blockchain });
-
-    return networks[blockchain].find((item) => item.value == network)?.standard;
+    return networks[blockchain].find((item) => item.value === network)?.standard;
   };
 
-  const getCurrentAssetAmount = (value) => {
-    return balance.find((item) => item.value == value)?.amount;
-  };
+
+  console.log(errors)
 
   return (
-    <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-6 md:p-10 rounded-md shadow-lg w-[547px] max-w-[90%] my-4">
-        <h2 className="text-h3.5 font-semibold mb-4">Add Withdrawal</h2>
+    <Modal isOpen={isOpen} onClose={toggleHandler}>
+      <h2 className="text-h3.5 font-semibold mb-4">Add Withdrawal</h2>
 
-        <LoadingApi loading={isBalanceLoading}>
-          <form className="mt-8 flex flex-col gap-2">
+      <LoadingApi loading={isBalanceLoading}>
+        <form className="mt-8 flex flex-col gap-2" onSubmit={(e) => handleSubmit(e, handleWithdrawal, () => console.log('Something went wrong'))}>
+          <IconSelectBox
+            wrapperClassName="!mb-2"
+            label="Source Currency & Network"
+            options={balance}
+            name="blockchain"
+            value={values.blockchain}
+            placeholder="Select a Blockchain"
+            onChange={handleSourceChange}
+            error={errors.blockchain}
+          />
+
+          {values.blockchain && (
+            <div className="mb-1">
+              <p className="text-black-100 font-medium">
+                {balance.find((item) => item.value === values.blockchain)?.amount}
+              </p>
+              <p className="font-medium text-[13px] text-custom-title-gray">
+                Available Balance
+              </p>
+            </div>
+          )}
+
+          {networks_available[values.blockchain] && (
             <IconSelectBox
-              wrapperClassName="!mb-2"
-              label="Source Currency & Network"
-              options={balance}
-              name="blockchain"
-              value={sourceOptions.blockchain}
-              placeholder="Select a Blockchain"
+              options={networks[values.blockchain] || []}
+              name="network"
+              value={values.network}
+              placeholder="Select a Network"
               onChange={handleSourceChange}
+              label="Select a Network"
+              error={errors.network}
             />
+          )}
 
-            {sourceOptions.blockchain && (
-              <div className="mb-1">
-                <p className="text-black-100 font-medium">
-                  {getCurrentAssetAmount(sourceOptions.blockchain)}
-                </p>
-                <p className="font-medium text-[13px] text-custom-title-gray">
-                  Available Balance
-                </p>
+          <IconField
+            value={values.amount}
+            label="Source Amount"
+            onChange={handleChange}
+            name="amount"
+            type="number"
+            disabled={!values?.blockchain}
+            onBlur={validateField}
+            error={errors.amount}
+          />
+
+          <IconField
+            value={values.recipient_address}
+            label="Recipient Wallet Address"
+            placeholder="Wallet Address"
+            onChange={handleChange}
+            name="recipient_address"
+            error={errors.recipient_address}
+          />
+
+          <div className="mt-2">
+            <div className="flex gap-2 items-center">
+              <label className="block mb-2 font-medium">Enter Code</label>
+              <div className="relative flex items-center group">
+                <Info className="text-blue-info mb-1 text-[18px]" />
               </div>
-            )}
-
-            {networks_available[sourceOptions.blockchain] && (
-              <IconSelectBox
-                options={sourceOptions.filteredNets}
-                name="network"
-                value={sourceOptions.network}
-                placeholder="Select a Network"
-                onChange={handleSourceChange}
-                label="Select a Network"
-              />
-            )}
-
-            <IconField
-              value={data?.sourceAmount}
-              label="Source Amount & Destination Amount"
-              onChange={(e) => handleInputChange(e, "sourceAmount")}
-            />
-
-            <LoadingApi loading={isFeeLoading}>
-              {destinationAmount && (
-                <div className="mb-1">
-                  <p className="text-black-100 font-medium">
-                    {destinationAmount}
-                  </p>
-                  <p className="font-medium text-[13px] text-custom-title-gray">
-                    Destination Amount
-                  </p>
-                </div>
+            </div>
+            <OtpInput
+              numInputs={6}
+              containerStyle={{
+                display: "flex",
+                gap: "1rem",
+                marginTop: "6px",
+                flexWrap: "wrap",
+              }}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                />
               )}
-            </LoadingApi>
-            <ErrorApiText error={isFeeError} />
-
-            <IconField
-              value={data?.walletAddress}
-              label="Recipient Wallet Address"
-              placeholder="Wallet Address"
-              onChange={(e) => handleInputChange(e, "walletAddress")}
+              onChange={(otp) => setValues(pre => ({ ...pre, token: otp }))}
+              value={values?.token}
             />
+          </div>
+          {errors?.token && <p className="text-red-error-dark text-[12px] ml-3">{errors?.token}</p>}
 
-            <div className="mt-2">
-              <div className="flex gap-2 items-center">
-                <label className="block mb-2 font-medium">Enter Code</label>
+          <div className="flex flex-col gap-2">
+            <label className="block mb-1 font-medium">Notes</label>
+            <textarea
+              value={values.notes}
+              name="notes"
+              placeholder="Your Message Here"
+              onChange={handleChange}
+              className={`border-b border-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 bg-light-gray outline-none`}
 
-                <div className="relative flex items-center group">
-                  <Info className="text-blue-info mb-1 text-[18px]" />
+            />
+          </div>
 
-                  <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
-                    <div className="relative p-2">
-                      <p className="w-full text-center">
-                        Use your Google Autheticator code here
-                      </p>
-                      <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <OtpInput
-                numInputs={6}
-                containerStyle={{
-                  display: "flex",
-                  gap: "1rem",
-                  marginTop: "6px",
-                  flexWrap: "wrap",
-                }}
-                renderInput={(props) => (
-                  <input
-                    {...props}
-                    className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
-                  />
-                )}
-                onChange={(value) => setOtp(value)}
-                value={otp}
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="block mb-1 font-medium">Notes</label>
-
-              <textarea
-                value={data?.notes}
-                placeholder="Your Message Here"
-                onChange={(e) => handleInputChange(e, "notes")}
-                className={`border-b border-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 bg-light-gray outline-none`}
-              />
-            </div>
-
-            <div className="flex flex-col justify-end mt-4">
-              <LoaderButton
-                type="submit"
-                content={`Create Withdrawal`}
-                variant="contained"
-                onClick={handleWithdrawal}
-                loading={isWithdrawalLoading}
-              />
-
-              <button
-                type="button"
-                className="text-black-100 px-4 py-2 mt-2"
-                onClick={toggleHandler}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </LoadingApi>
-        <ErrorApiText error={isBalanceError || isWithdrawalError} />
-      </div>
+          <div className="flex flex-col justify-end mt-4">
+            <LoaderButton
+              type="submit"
+              content="Create Withdrawal"
+              variant="contained"
+              loading={isWithdrawalLoading}
+            />
+            {/* <button
+              type="button"
+              className="text-black-100 px-4 py-2 mt-2"
+              onClick={toggleHandler}
+            >
+              Cancel
+            </button> */}
+          </div>
+        </form>
+      </LoadingApi>
+      <ErrorApiText error={isBalanceError || isWithdrawalError} />
     </Modal>
   );
 };

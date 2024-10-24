@@ -23,6 +23,9 @@ import {
   WithdrawalIcon,
 } from "@/assets/Svgs";
 import "./sidebar.scss";
+import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { setUser } from "@/store/slices/userSlice";
 
 interface NavItem {
   name: string;
@@ -32,13 +35,16 @@ interface NavItem {
   sub_nav?: NavItem[];
 }
 
-const nav_items: NavItem[] = [
+const boarding_nav_items: NavItem[] = [
   {
     name: "Onboarding",
     icon: onBoardingIcon,
     path: "/onboarding",
     roles: [Role.USER],
   },
+];
+
+const nav_items: NavItem[] = [
   {
     name: "Dashboard",
     icon: DashboardIcon,
@@ -69,24 +75,23 @@ const nav_items: NavItem[] = [
     path: "/transactions",
     roles: [Role.ADMIN, Role.USER],
   },
-  {
-    name: "Withdrawals",
-    icon: WithdrawalIcon,
-    path: "/withdrawals",
-    roles: [Role.ADMIN, Role.USER],
-  },
-  {
-    name: "Payouts",
-    icon: PayoutsIcon,
-    path: "/payouts",
-    roles: [Role.ADMIN, Role.USER],
-  },
-
+  // {
+  //   name: "Withdrawals",
+  //   icon: WithdrawalIcon,
+  //   path: "/withdrawals",
+  //   roles: [Role.ADMIN, Role.USER],
+  // },
+  // {
+  //   name: "Payouts",
+  //   icon: PayoutsIcon,
+  //   path: "/payouts",
+  //   roles: [Role.ADMIN, Role.USER],
+  // },
   {
     name: "Settings",
     icon: SettingsIcon,
     path: "/settings/account",
-    roles: [Role.USER],
+    roles: [Role.USER, Role.ADMIN],
     sub_nav: [
       {
         name: "Account",
@@ -94,17 +99,17 @@ const nav_items: NavItem[] = [
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
-      {
-        name: "Users",
-        icon: PersonRounded,
-        path: "/settings/users",
-        roles: [Role.ADMIN, Role.USER],
-      },
+      // {
+      //   name: "Users",
+      //   icon: PersonRounded,
+      //   path: "/settings/users",
+      //   roles: [Role.USER],
+      // },
       {
         name: "Integrations",
         icon: Key,
         path: "/settings/integrations",
-        roles: [Role.ADMIN, Role.USER],
+        roles: [Role.USER],
       },
     ],
   },
@@ -118,9 +123,23 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const dispatch = useDispatch();
+  const userCookie = useLocalStorage("user");
+  const user =
+    userCookie && userCookie?.role == Role.ADMIN
+      ? userCookie
+      : useSelector((state: any) => state.user.data);
+
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);
+  let CurrentNav =
+    user?.role == Role.ADMIN
+      ? nav_items
+      : user?.userDetails && user?.userDetails?.fees
+      ? nav_items
+      : boarding_nav_items;
+
+  console.log({ CurrentNav , user });
 
   // Function to toggle sub-navigation
   const toggleSubNav = (name: string, subnav: any) => {
@@ -135,8 +154,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   };
 
   const logoutHandler = () => {
-    window.localStorage.removeItem("user");
-    window.localStorage.removeItem("token");
+    Cookies.remove("token");
+    Cookies.remove("user");
+    dispatch(setUser(null));
     router.replace("/login");
   };
 
@@ -182,7 +202,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
             <div className="max-h-[calc(100vh-350px)] overflow-y-auto sidebar-scrollbar">
               <div className="p-2 flex flex-col gap-3">
-                {nav_items.map(
+                {CurrentNav.map(
                   ({ icon: Icon, name, path, sub_nav, roles }) =>
                     roles.includes(user?.role) && (
                       <div
@@ -225,29 +245,34 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                                 !isCollapsed && "pl-14"
                               } pb-3`}
                             >
-                              {sub_nav.map(({ icon: Icon, name, path }) => (
-                                <Link
-                                  href={path}
-                                  className={`flex gap-2  items-center font-medium ${isCollapsed && 'justify-center'} ${
-                                    pathname === path &&
-                                    "text-purple-100 font-semibold text-[17px]"
-                                  }`}
-                                  key={name}
-                                >
-                                  {isCollapsed && (
-                                    <div>
-                                      <Icon
-                                        className={` ${
-                                          pathname === path
-                                            ? "!fill-purple-100 w-6 h-6"
-                                            : "fill-black-100 w-5 h-5"
-                                        }`}
-                                      />
-                                    </div>
-                                  )}
-                                  {!isCollapsed && <span>{name}</span>}
-                                </Link>
-                              ))}
+                              {sub_nav.map(
+                                ({ icon: Icon, name, path, roles }) =>
+                                  roles.includes(user?.role) && (
+                                    <Link
+                                      href={path}
+                                      className={`flex gap-2  items-center font-medium ${
+                                        isCollapsed && "justify-center"
+                                      } ${
+                                        pathname === path &&
+                                        "text-purple-100 font-semibold text-[17px]"
+                                      }`}
+                                      key={name}
+                                    >
+                                      {isCollapsed && (
+                                        <div>
+                                          <Icon
+                                            className={` ${
+                                              pathname === path
+                                                ? "!fill-purple-100 w-6 h-6"
+                                                : "fill-black-100 w-5 h-5"
+                                            }`}
+                                          />
+                                        </div>
+                                      )}
+                                      {!isCollapsed && <span>{name}</span>}
+                                    </Link>
+                                  )
+                              )}
                             </div>
                           )}
                       </div>

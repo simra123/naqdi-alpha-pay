@@ -10,6 +10,7 @@ import {
   NavigateBefore,
   FirstPage,
   Add,
+  ContentCopy,
 } from "@mui/icons-material"; // Import MUI icons
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
@@ -19,9 +20,10 @@ import Loader from "../Loader";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { TableColumns } from "@/constants/types";
 
 interface TableProps {
-  columns: any[];
+  columns: TableColumns;
   rows: any[];
   initialPageSize?: number;
   equalColumns?: boolean;
@@ -68,12 +70,12 @@ const CustomTable = ({
   const [columnWidths, setColumnWidths]: any = useState();
   const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
-  const totalPages = Math.ceil(rows.length / pageSize);
+  const totalPages = Math.ceil(rows?.length / pageSize);
 
   useEffect(() => {
     if (selectable) {
       setSelectAll(
-        currentRows.length > 0 &&
+        currentRows?.length > 0 &&
           currentRows.every((row) => selectedRows.includes(row))
       );
     }
@@ -89,8 +91,6 @@ const CustomTable = ({
     }
   };
 
-  console.log(selectedRows);
-
   const handleSelectAll = () => {
     if (selectable) {
       if (selectAll) {
@@ -104,7 +104,7 @@ const CustomTable = ({
 
   useEffect(() => {
     if (equalColumns) {
-      setColumnWidths(`${100 / columns.length}%`);
+      setColumnWidths(`${100 / columns?.length}%`);
     } else {
       setColumnWidths("auto");
     }
@@ -205,10 +205,7 @@ const CustomTable = ({
                 wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
                 inputClassName="py-3"
               />
-              <button
-                onClick={() => console.log("searching")}
-                className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
-              >
+              <button className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
                 <Search />
               </button>
               <div className="relative filterBtn">
@@ -309,9 +306,19 @@ const CustomTable = ({
                         column.dataValidator ? "py-4" : "py-6"
                       } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     >
-                      {column.dataValidator
-                        ? column.dataValidator(row[column.field], row)
-                        : row[column.field]}
+                      {column.dataValidator ? (
+                        <CopyButtonColumn
+                          value={column.dataValidator(row[column.field], row)}
+                          copyable={column.copyable}
+                        />
+                      ) : row[column.field] ? (
+                        <CopyButtonColumn
+                          value={row[column.field]}
+                          copyable={column.copyable}
+                        />
+                      ) : (
+                        "_"
+                      )}
                     </td>
                   ))}
                 </tr>
@@ -341,6 +348,46 @@ const CustomTable = ({
     </div>
   );
 };
+
+const CopyButtonColumn = ({
+  value,
+  copyable,
+}: {
+  value: string;
+  copyable: boolean;
+}) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const copyToClipboard = (text: string) => async (event) => {
+    event.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+
+      // Reset the copied state after 2 seconds
+      setTimeout(() => setIsCopied(false), 1000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap max-w-max">
+        {isCopied ? "Copied" : value}
+      </span>
+      {copyable && (
+        <button
+          onClick={copyToClipboard(value)}
+          className="bg-transparent border-0 outline-0 text-[14px] hover:bg-purple-10 active:bg-purple-20 transition-all w-8 h-8 aspect-square rounded-full p-1 flex-shrink-0"
+        >
+          <ContentCopy className="text-[12px]" />
+        </button>
+      )}
+    </div>
+  );
+};
+
 
 const Pagination = ({
   currentPage,

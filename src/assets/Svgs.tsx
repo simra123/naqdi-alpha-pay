@@ -998,3 +998,23 @@ export const LogoutIcon = ({
     </svg>
   );
 };
+
+export const CancelIcon = ({ className }: { className?: string }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="13"
+      height="13"
+      viewBox="0 0 13 13"
+      fill="none"
+      className={className}
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M2.79841 0.347656L0.347656 2.79841L4.04925 6.50001L0.347656 10.2016L2.79841 12.6524L6.50001 8.95076L10.2016 12.6524L12.6524 10.2016L8.95079 6.50001L12.6524 2.79841L10.2016 0.347656L6.50001 4.04922L2.79841 0.347656Z"
+        fill="#FFFFFE"
+      />
+    </svg>
+  );
+};

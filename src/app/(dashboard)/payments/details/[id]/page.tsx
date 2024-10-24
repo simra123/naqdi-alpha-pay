@@ -6,19 +6,15 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
-import { getPaymentDetailsApi } from "@/services/payments";
+import {
+  getPaymentDetailsApi,
+  getPaymentDetailsByAdminApi,
+} from "@/services/payments";
 import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import {
-  CalendarMonth,
-  Info,
-  InfoOutlined,
-  Mail,
-  Payment,
-  Person,
-} from "@mui/icons-material";
+import { InfoOutlined, Mail } from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
@@ -34,7 +30,7 @@ import { roundToPrecision } from "@/utils/math";
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
 const transactionsList_table_columns = [
-  { field: "id", headerName: "ID", sortable: true },
+  { field: "payment_transaction_uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
   { field: "senderAddress", headerName: "Sender Address", sortable: true },
   { field: "receiveAddress", headerName: "Receive Address", sortable: true },
@@ -60,59 +56,66 @@ const PaymentDetails = ({ params }) => {
 
   const [payment, setPayment] = useState(null);
   const [transaction, setTransacion] = useState([]);
-  const [orderInfo, setOrderInfo]: any = useState(null);
+  const [orderInfo, setOrderInfo] = useState<{}>(null);
   const [receivedAmount, setRecievedAmount] = useState("0");
-  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi(true);
+  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({initailLoading:true});
 
   const getPayment = async () => {
-    if (user?.role == Role.USER) {
-      await callApiHook({
-        apiCall: callPaymentApi(getPaymentDetailsApi(paymentId)),
-        successCallBack: (response: any) => {
-          const transactionsList = response?.paymentTransaction?.map(
-            (item) => ({
-              id: item?.id,
-              dateReceived: moment(item?.created_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              ),
-              senderAddress: item?.sender_address,
-              receiveAddress: response?.wallet?.address,
-              recievedAmount: `${item?.total_amount_received} ${item?.unit}`,
-              netAmount: `${item?.transaction_amount} ${item?.unit}`,
-              transactionHash: item?.transaction_hash,
-              blockchain: capitalize(response?.wallet?.blockchain),
-              status: item?.status,
-            })
-          );
-          setTransacion(transactionsList);
+    // if (user?.role == Role.USER) {
 
-          const totalAmount = response?.paymentTransaction?.reduce(
-            (acc, transaction) => {
-              return acc + parseFloat(transaction.transaction_amount);
-            },
-            0
-          );
-          setRecievedAmount(
-            roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
-          );
+    let paymentDetailCall =
+      user?.role == Role.USER
+        ? getPaymentDetailsApi
+        : getPaymentDetailsByAdminApi;
 
-          console.log(response.passthrough);
+    await callApiHook({
+      apiCall: callPaymentApi(paymentDetailCall(paymentId)),
+      successCallBack: (response: any) => {
+        console.log("Payment details api response", response);
 
-          try {
-            const parsedData = JSON.parse(response.passthrough);
-            setOrderInfo(parsedData);
-          } catch (error) {
-            console.error("Failed to parse JSON:", error);
-          }
-          setPayment(response);
-        },
-      });
-    }
+        const transactionsList = response?.paymentTransaction?.map((item) => ({
+          id: item?.id,
+          payment_transaction_uuid: item?.payment_transaction_uuid,
+          dateReceived: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+          senderAddress: item?.sender_address,
+          receiveAddress: response?.wallet?.address,
+          recievedAmount: `${item?.total_amount_received} ${item?.unit}`,
+          netAmount: `${item?.transaction_amount} ${item?.unit}`,
+          transactionHash: item?.transaction_hash,
+          blockchain: capitalize(response?.wallet?.blockchain),
+          status: item?.status,
+        }));
+
+        setTransacion(transactionsList);
+
+        const totalAmount = response?.paymentTransaction?.reduce(
+          (acc, transaction) => {
+            return acc + parseFloat(transaction.transaction_amount);
+          },
+          0
+        );
+
+        setRecievedAmount(
+          roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
+        );
+
+        try {
+          const parsedData = JSON.parse(response.passthrough);
+          setOrderInfo(parsedData);
+        } catch (error) {
+          console.error("Failed to parse JSON:", error);
+        }
+        setPayment(response);
+      },
+    });
+    // }
   };
 
   useEffect(() => {
     getPayment();
   }, []);
+
+  console.log(payment, "Payment details");
 
   return (
     <>
@@ -133,7 +136,7 @@ const PaymentDetails = ({ params }) => {
                 label="Requested Amount"
                 value={`${payment?.requested_amount} ${payment?.requested_currency}`}
               />
-              <Details label="ID" value={payment?.id} />
+              <Details label="ID" value={payment?.payment_uuid} />
               <Details
                 label="Wallet Address"
                 value={payment?.wallet?.address}
@@ -239,21 +242,3 @@ const PaymentDetails = ({ params }) => {
 };
 
 export default PaymentDetails;
-
-//     {payment?.paymentTransaction && (
-//       <div className="data-grid-container">
-//         <div className="tableheader  border border-b-0 py-6 px-3 flex items-center justify-between">
-//           <h2 className="text-xl font-semibold">
-//             Related Transactions
-//           </h2>
-//         </div>
-
-//         <DataGrid
-//           rows={transaction}
-//           columns={relatedTransactions_table_columns}
-//           className="font-semibold primary-color  border-t-0"
-//           hideFooter
-//           autoHeight
-//         />
-//       </div>
-//     )}
