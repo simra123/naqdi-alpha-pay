@@ -70,12 +70,12 @@ const CustomTable = ({
   const [columnWidths, setColumnWidths]: any = useState();
   const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
-  const totalPages = Math.ceil(rows.length / pageSize);
+  const totalPages = Math.ceil(rows?.length / pageSize);
 
   useEffect(() => {
     if (selectable) {
       setSelectAll(
-        currentRows.length > 0 &&
+        currentRows?.length > 0 &&
           currentRows.every((row) => selectedRows.includes(row))
       );
     }
@@ -104,7 +104,7 @@ const CustomTable = ({
 
   useEffect(() => {
     if (equalColumns) {
-      setColumnWidths(`${100 / columns.length}%`);
+      setColumnWidths(`${100 / columns?.length}%`);
     } else {
       setColumnWidths("auto");
     }
