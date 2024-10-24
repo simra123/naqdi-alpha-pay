@@ -52,10 +52,23 @@ export const UserSchema = Yup.object().shape({
     .required("Last name is required")
     .min(2, "Minimum 2 letters required")
     .max(50, "Maximum 50 letters only."),
+  username: Yup.string()
+    .required("Username is required")
+    .matches(/^[a-zA-Z0-9_]+$/, {
+      message: "Only text, numbers, and underscores are allowed",
+    })
+    .required("Username is required"),
   email: Yup.string()
     .required("Email is required")
     .email("Invalid Email Format")
     .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, {
       message: "Email format is not valid",
     }),
+  password: Yup.string()
+    .required("password is required")
+    .min(8, "Password must be at least 8 characters")
+    .matches(
+      /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,24}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    ),
 });
