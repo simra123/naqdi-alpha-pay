@@ -105,7 +105,7 @@ const TransactionDetails = ({ params }) => {
           <div className="res-2-grid py-6">
             <Details
               label="Email Verified"
-              value={userDetails?.user?.verified ? "true" : "false"}
+              value={userDetails?.user?.verified ? "Verified" : "Unverified"}
             />
             <Details
               label="MFA"
