@@ -50,7 +50,7 @@ const CreatePayoutModal = ({
   const [withdrawalFee, setWithdrawalFee] = useState(0);
   const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
     useApi();
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi(true);
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
   const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [sourceOptions, setSourceOptions] = useState({
@@ -81,7 +81,7 @@ const CreatePayoutModal = ({
     const { value, name } = event.target;
 
     if (name === "blockchain") {
-      console.log(blockchain_standards, blockchain_standards[value], value);
+
 
       setSourceOptions((prev) => ({
         ...prev,
@@ -107,12 +107,10 @@ const CreatePayoutModal = ({
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {
           return {
-            label: `${item?.unit}${
-              item?.standard ? `(${item?.standard})` : ""
-            }`,
-            value: `${item?.unit}${
-              item?.standard ? `(${item?.standard})` : ""
-            }`,
+            label: `${item?.unit}${item?.standard ? `(${item?.standard})` : ""
+              }`,
+            value: `${item?.unit}${item?.standard ? `(${item?.standard})` : ""
+              }`,
             amount: item?.amount,
           };
         });
@@ -200,7 +198,6 @@ const CreatePayoutModal = ({
   };
 
   const filteredNetworks = (network, blockchain) => {
-    console.log({ network, blockchain });
 
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
@@ -210,154 +207,154 @@ const CreatePayoutModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen}>
-      <div className="modal_content_wrapper bg-white p-6 md:p-10 rounded-md shadow-lg w-[547px] max-w-[90%] my-4">
-        <h2 className="text-h3.5 font-semibold mb-4">Add Payout</h2>
+    <Modal isOpen={isOpen} onClose={toggleHandler}>
 
-        <LoadingApi loading={isBalanceLoading}>
-          <form className="mt-8 flex flex-col gap-2">
+      <h2 className="text-h3.5 font-semibold mb-4">Add Payout</h2>
+
+      <LoadingApi loading={isBalanceLoading}>
+        <form className="mt-8 flex flex-col gap-2">
+          <IconSelectBox
+            wrapperClassName="!mb-2"
+            label="Source Currency & Network"
+            options={balance}
+            name="blockchain"
+            value={sourceOptions.blockchain}
+            placeholder="Select a Blockchain"
+            onChange={handleSourceChange}
+          />
+
+          {sourceOptions.blockchain && (
+            <div className="mb-1">
+              <p className="text-black-100 font-medium">
+                {getCurrentAssetAmount(sourceOptions.blockchain)}
+              </p>
+              <p className="font-medium text-[13px] text-custom-title-gray">
+                Available Balance
+              </p>
+            </div>
+          )}
+
+          {networks_available[sourceOptions.blockchain] && (
             <IconSelectBox
-              wrapperClassName="!mb-2"
-              label="Source Currency & Network"
-              options={balance}
-              name="blockchain"
-              value={sourceOptions.blockchain}
-              placeholder="Select a Blockchain"
+              options={sourceOptions.filteredNets}
+              name="network"
+              value={sourceOptions.network}
+              placeholder="Select a Network"
               onChange={handleSourceChange}
+              label="Select a Network"
             />
+          )}
 
-            {sourceOptions.blockchain && (
+          <IconField
+            value={data?.amount}
+            label="Source Amount & Destination Amount"
+            onChange={(e) => handleInputChange(e, "amount")}
+          />
+
+          <LoadingApi loading={isFeeLoading}>
+            {destinationAmount && (
               <div className="mb-1">
                 <p className="text-black-100 font-medium">
-                  {getCurrentAssetAmount(sourceOptions.blockchain)}
+                  {destinationAmount}
                 </p>
                 <p className="font-medium text-[13px] text-custom-title-gray">
-                  Available Balance
+                  Destination Amount
                 </p>
               </div>
             )}
+          </LoadingApi>
+          <ErrorApiText error={isFeeError} />
 
-            {networks_available[sourceOptions.blockchain] && (
-              <IconSelectBox
-                options={sourceOptions.filteredNets}
-                name="network"
-                value={sourceOptions.network}
-                placeholder="Select a Network"
-                onChange={handleSourceChange}
-                label="Select a Network"
-              />
-            )}
+          <IconSelectBox
+            wrapperClassName="!mb-2"
+            label="Requested Currency"
+            options={fiatOptions}
+            value={data.requested_currency}
+            placeholder="Select a Currency"
+            onChange={(e) => handleInputChange(e, "requested_currency")}
+          />
 
-            <IconField
-              value={data?.amount}
-              label="Source Amount & Destination Amount"
-              onChange={(e) => handleInputChange(e, "amount")}
-            />
+          <IconField
+            value={data?.bank_account}
+            label="To Bank Account (IBAN)"
+            placeholder="Account Title"
+            onChange={(e) => handleInputChange(e, "bank_account")}
+          />
+          <IconField
+            value={data?.account_title}
+            label="Account Title"
+            placeholder="Account title"
+            onChange={(e) => handleInputChange(e, "account_title")}
+          />
 
-            <LoadingApi loading={isFeeLoading}>
-              {destinationAmount && (
-                <div className="mb-1">
-                  <p className="text-black-100 font-medium">
-                    {destinationAmount}
-                  </p>
-                  <p className="font-medium text-[13px] text-custom-title-gray">
-                    Destination Amount
-                  </p>
-                </div>
-              )}
-            </LoadingApi>
-            <ErrorApiText error={isFeeError} />
+          <div className="mt-2">
+            <div className="flex gap-2 items-center">
+              <label className="block mb-2 font-medium">Enter Code</label>
 
-            <IconSelectBox
-              wrapperClassName="!mb-2"
-              label="Requested Currency"
-              options={fiatOptions}
-              value={data.requested_currency}
-              placeholder="Select a Currency"
-              onChange={(e) => handleInputChange(e, "requested_currency")}
-            />
+              <div className="relative flex items-center group">
+                <Info className="text-blue-info mb-1 text-[18px]" />
 
-            <IconField
-              value={data?.bank_account}
-              label="To Bank Account (IBAN)"
-              placeholder="Account Title"
-              onChange={(e) => handleInputChange(e, "bank_account")}
-            />
-            <IconField
-              value={data?.account_title}
-              label="Account Title"
-              placeholder="Account title"
-              onChange={(e) => handleInputChange(e, "account_title")}
-            />
-
-            <div className="mt-2">
-              <div className="flex gap-2 items-center">
-                <label className="block mb-2 font-medium">Enter Code</label>
-
-                <div className="relative flex items-center group">
-                  <Info className="text-blue-info mb-1 text-[18px]" />
-
-                  <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
-                    <div className="relative p-2">
-                      <p className="w-full text-center">
-                        Use your Google Autheticator code here
-                      </p>
-                      <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
-                    </div>
+                <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                  <div className="relative p-2">
+                    <p className="w-full text-center">
+                      Use your Google Autheticator code here
+                    </p>
+                    <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
                   </div>
                 </div>
               </div>
-              <OtpInput
-                numInputs={6}
-                containerStyle={{
-                  display: "flex",
-                  gap: "1rem",
-                  marginTop: "6px",
-                  flexWrap: "wrap",
-                }}
-                renderInput={(props) => (
-                  <input
-                    {...props}
-                    className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
-                  />
-                )}
-                onChange={(value) => setOtp(value)}
-                value={otp}
-              />
             </div>
+            <OtpInput
+              numInputs={6}
+              containerStyle={{
+                display: "flex",
+                gap: "1rem",
+                marginTop: "6px",
+                flexWrap: "wrap",
+              }}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                />
+              )}
+              onChange={(value) => setOtp(value)}
+              value={otp}
+            />
+          </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="block mb-1 font-medium">Notes</label>
+          <div className="flex flex-col gap-2">
+            <label className="block mb-1 font-medium">Notes</label>
 
-              <textarea
-                value={data?.notes}
-                placeholder="Your Message Here"
-                onChange={(e) => handleInputChange(e, "notes")}
-                className={`border-b border-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 bg-light-gray outline-none`}
-              />
-            </div>
+            <textarea
+              value={data?.notes}
+              placeholder="Your Message Here"
+              onChange={(e) => handleInputChange(e, "notes")}
+              className={`border-b border-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 bg-light-gray outline-none`}
+            />
+          </div>
 
-            <div className="flex flex-col justify-end mt-4">
-              <LoaderButton
-                type="submit"
-                content={`Create Payout`}
-                variant="contained"
-                onClick={handleCreatePayout}
-                loading={isCreatePayoutLoading}
-              />
+          <div className="flex flex-col justify-end mt-4">
+            <LoaderButton
+              type="submit"
+              content={`Create Payout`}
+              variant="contained"
+              onClick={handleCreatePayout}
+              loading={isCreatePayoutLoading}
+            />
 
-              <button
-                type="button"
-                className="text-black-100 px-4 py-2 mt-2"
-                onClick={toggleHandler}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </LoadingApi>
-        <ErrorApiText error={isBalanceError || isCreatePayoutError} />
-      </div>
+            {/* <button
+              type="button"
+              className="text-black-100 px-4 py-2 mt-2"
+              onClick={toggleHandler}
+            >
+              Cancel
+            </button> */}
+          </div>
+        </form>
+      </LoadingApi>
+      <ErrorApiText error={isBalanceError || isCreatePayoutError} />
+
     </Modal>
   );
 };

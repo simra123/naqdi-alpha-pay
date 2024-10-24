@@ -15,6 +15,7 @@ import IconField from "@/components/common/IconField";
 import { Mail } from "@mui/icons-material";
 
 const page = () => {
+  const router = useRouter();
   const email = decodeURIComponent(useSearchParams().get("email") || "");
   const [isResendLoading, isResendError, callResendApi] = useApi();
 
@@ -66,9 +67,13 @@ const page = () => {
               variant={"contained"}
             />
 
-            <p className="text-p120 text-blackGrey-100 text-center mt-5">
-              Go To Email
-            </p>
+            <div className="mx-auto w-[310px] mt-4">
+              <LoaderButton
+                content={"Go Back"}
+                variant="text"
+                onClick={() => router.push("/login")}
+              />
+            </div>
           </div>
         </div>
       ) : (

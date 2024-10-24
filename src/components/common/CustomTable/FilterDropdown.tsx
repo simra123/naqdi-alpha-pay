@@ -15,10 +15,10 @@ const FilterDropdown = ({ column, rows, setCurrentRows, columnsList }) => {
     setCurrentRows(filtered);
   };
 
-  console.log(columnsList);
+
 
   const handleCheckboxChange = (col) => {
-    console.log(col);
+
   };
 
   return (

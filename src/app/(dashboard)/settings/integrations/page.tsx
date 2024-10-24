@@ -8,34 +8,44 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 
-import { userDetailsApi } from "@/services/user";
+import { getWebhookURLAPI } from "@/services/Integration";
 import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
 import WebhookURLModal from "@/components/Modals/WebhookURLModal";
+import { useSelector } from "react-redux";
+import { TableColumns } from "@/constants/types";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);
+  const user = useSelector((state: { user: any }) => state?.user?.data);
   const [webhookURL, setWebhookURL] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isWebhookOpen, setIsWebhookOpen] = useState(false);
 
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
-  const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi(true);
+  console.log(user);
+
+  const [
+    iswebhookDetailsLoading,
+    iswebhookDetailsError,
+    callwebhookDetailsApi,
+  ] = useApi({ initailLoading: true });
+  const [isKeyListLoading, isKeyListError, callKeyListApi] = useApi({
+    initailLoading: true,
+  });
   const [isRevokeLoading, isRevokeError, callRevokeApi] = useApi();
 
-  const columns = [
-    { field: "id", headerName: "ID" },
+  const columns: TableColumns = [
+    { field: "user_secretKey_uuid", headerName: "ID" },
 
     { field: "createdAt", headerName: "Created At" },
     { field: "name", headerName: "Name" },
-    { field: "apiKey", headerName: "API Key" },
+    { field: "apiKey", headerName: "API Key", copyable: true },
     {
       field: "revoked",
       headerName: "Status",
 
-      dataValidator: (id, row) => {
+      dataValidator: (id, row: { revoked: boolean | null }) => {
         return row.revoked ? "InActive" : "Active";
       },
     },
@@ -43,7 +53,7 @@ const Integrations = () => {
       field: "revoked",
       headerName: "Actions",
 
-      dataValidator: (id, row) => {
+      dataValidator: (id, row: { revoked: boolean | null }) => {
         return (
           <button
             onClick={(event) => handleRevoke(event, row)}
@@ -60,11 +70,13 @@ const Integrations = () => {
     },
   ];
 
-  const getUserDetails = async () => {
+  const getwebhookDetails = async () => {
     await callApiHook({
-      apiCall: callUserDetailsApi(userDetailsApi()),
+      apiCall: callwebhookDetailsApi(getWebhookURLAPI()),
       successCallBack: (response) => {
-        setWebhookURL(response?.userDetails?.user?.webhook?.webhook_url);
+        if (response && response?.length > 0) {
+          setWebhookURL(response[0]?.webhook_url);
+        }
       },
     });
   };
@@ -76,6 +88,7 @@ const Integrations = () => {
         const tableData = response?.map((item) => {
           return {
             id: item?.id,
+            user_secretKey_uuid: item?.user_secretKey_uuid,
             apiKey: item?.secret_key,
             createdAt: moment(item?.created_at).format("DD-MM-YYYY"),
             revoked: item?.revoked,
@@ -88,7 +101,7 @@ const Integrations = () => {
   };
 
   useEffect(() => {
-    getUserDetails();
+    getwebhookDetails();
     callListApi();
   }, []);
 
@@ -104,7 +117,6 @@ const Integrations = () => {
         callListApi();
       },
     });
-    console.log(data);
     console.log(`Revoke action triggered for ID: ${data.id}`);
   };
 
@@ -119,7 +131,8 @@ const Integrations = () => {
     <>
       <WebhookURLModal
         isOpen={isWebhookOpen}
-        refreshHandler={getUserDetails}
+        initialWebhookValue={webhookURL}
+        refreshHandler={getwebhookDetails}
         toggleHandler={toggleWebhookModal}
       />
       <CreateApiKeyModal
@@ -131,18 +144,18 @@ const Integrations = () => {
         Integrations
       </h3>
 
-      <div className="rounded-medium bg-white p-8 mt-8">
+      <div className="rounded-medium bg-white p-6 md:p-10 mt-8">
         <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
             <h4 className="text-button sm:text-p122 font-semibold">
               Webhook URL
             </h4>
-            {/* <LoadingApi loading={isUserDetailsLoading}> */}
-            <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-              {webhookURL}
-            </span>
-            {/* </LoadingApi> */}
-            <ErrorApiText error={isUserDetailsError} />
+            <LoadingApi loading={iswebhookDetailsLoading}>
+              <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+                {webhookURL}
+              </span>
+            </LoadingApi>
+            <ErrorApiText error={iswebhookDetailsError} />
           </div>
           <LoaderButton
             content={"Update URL"}
@@ -152,8 +165,9 @@ const Integrations = () => {
         </div>
       </div>
 
-      <div className="rounded-medium bg-white p-4 mt-8">
+      <div className="rounded-medium bg-white p-6 md:p-10 mt-8">
         <CustomTable
+          tableWrapper={null}
           loading={isKeyListLoading}
           actions={
             <div className="flex justify-between items-center mb-6">
@@ -171,7 +185,7 @@ const Integrations = () => {
           }
           columns={columns}
           // Filters={Filters}
-          rowClickHandler={(row) => console.log(row)}
+          pagination
           rows={keysList}
           initialPageSize={10}
         />

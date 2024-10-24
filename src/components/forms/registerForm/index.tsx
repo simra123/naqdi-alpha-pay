@@ -237,6 +237,7 @@ const IndividualForm = ({ activeForm }) => {
               handleChange({ target: { name: "captcha", value: token } })
             }
           />
+
           {errors.captcha && <div className="error_text">{errors.captcha}</div>}
         </div>
 

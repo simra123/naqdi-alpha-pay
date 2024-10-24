@@ -30,7 +30,7 @@ const FeeSetup = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
+    useApi({initailLoading:true});
   const [isFeeSetupLoading, isFeeSetupError, callFeeSetupApi] = useApi();
 
   useEffect(() => {

@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Typography } from "@mui/material";
-import { Check, CheckCircle, Forward } from "@mui/icons-material";
+import React, { useEffect, useState } from "react";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -10,13 +8,16 @@ import { userDetailsApi } from "@/services/user";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useRouter } from "next/navigation";
 import LoaderButton from "@/components/common/LoaderButton";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { updatedOnboardingCookies } from "@/utils/cookies";
 
 const FeeSchedule = () => {
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
   const router = useRouter();
   const [user, setUser] = useState(null);
-  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
-    useApi(true);
+  const localUser = useLocalStorage("user");
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
+    { initailLoading: true }
+  );
 
   useEffect(() => {
     getUserDetails();
@@ -27,31 +28,28 @@ const FeeSchedule = () => {
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response: any) => {
         setUser(response);
+        console.log(localUser.userDetails?.fees, response?.userDetails?.fees);
+        // if (
+        //   localUser &&
+        //   localUser.userDetails?.fees != response?.userDetails?.fees
+        // ) {
+        //   updatedOnboardingCookies(response?.userDetails);
+        // }
       },
     });
   };
-
-  // const handleScheduleSelect = (id) => () => {
-  //   setSelectedSchedule(id);
-  // };
-
-  // const handleSubmit = () => {
-  //   if (!selectedSchedule) {
-  //     return setError("Please Select a Schedule");
-  //   }
-
-  //   setError(null);
-  //   // submit logic
-  // };
 
   return (
     <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
       <h4 className="text-black-100 text-h3.5 font-semibold">
         Your Fee Schdeule
       </h4>
-      <p className="text-button text-black-100">
-        You will be paying the following fee for alphaspay.
-      </p>
+
+      {user?.userDetails?.fees && (
+        <p className="text-button text-black-100">
+          You will be paying the following fee for alphaspay.
+        </p>
+      )}
 
       <div>
         <div className=" mt-10 mb-2">
@@ -76,16 +74,18 @@ const FeeSchedule = () => {
         </div>
       </div>
 
-      <p className="text-black-100  mt-5">
-        Your Fee Schedule is mentioned above. For any querires you can contact
-        us.
-      </p>
+      {user?.userDetails?.fees && (
+        <p className="text-black-100  mt-5">
+          Your Fee Schedule is mentioned above. For any querires you can contact
+          us.
+        </p>
+      )}
 
       {user?.userDetails?.fees && (
         <div className="mt-8 max-w-[360px]">
           <LoaderButton
             content={"Go to Dashboard"}
-            onClick={() => router.push("/")}
+            onClick={() => router.replace("/")}
             variant={"contained"}
           />
         </div>

@@ -8,7 +8,7 @@ import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { getKYCUsersListApi } from "@/services/admin/users";
 import moment from "moment";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import { withAuth } from "../../../middleware/RoleBaseAuth";
+
 import { Role } from "@/constants/roles";
 import { TableColumns } from "@/constants/types";
 import Chip from "@/components/common/Chip";
@@ -16,7 +16,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 
 const columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  { field: "user_details_uuid", headerName: "ID" },
   { field: "createdAt", headerName: "Created At" },
   { field: "firstName", headerName: "First name" },
   { field: "lastName", headerName: "Last name" },
@@ -38,7 +38,7 @@ const columns: TableColumns = [
 const KYCUsersPage = () => {
   const router = useRouter();
   const [usersList, setUsersList] = useState([]);
-  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi(true);
+  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({initailLoading:true});
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getUsersList = async () => {
@@ -48,6 +48,7 @@ const KYCUsersPage = () => {
         const filteredData = response?.map((data) => {
           return {
             id: data?.id,
+            user_details_uuid: data?.user_details_uuid,
             createdAt: moment(data?.user?.created_at).format(
               "DD-MM-YYYY : hh:mm a"
             ),
@@ -110,4 +111,4 @@ const KYCUsersPage = () => {
   );
 };
 
-export default withAuth(KYCUsersPage, [Role.ADMIN]);
+export default KYCUsersPage;

@@ -42,13 +42,17 @@ export const converstion_table_columns = [
 ];
 
 export const availableWallets_table_columns: TableColumns = [
-  { field: "id", headerName: "ID" },
+  {
+    field: "wallet_uuid",
+    headerName: "ID",
+    dataValidator(value, row: { wallet_uuid: string; id: number }) {
+      return row?.wallet_uuid || row?.id;
+    },
+  },
   { field: "blockchain", headerName: "Currency" },
   { field: "blockchain", headerName: "Blockchain" },
   { field: "amount", headerName: "Available Balance" },
 ];
-
-
 
 export const webhooks_table_columns = [
   {

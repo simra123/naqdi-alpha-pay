@@ -163,6 +163,7 @@ module.exports = {
           "error-dark": "#B00020",
           chip: "#AC0606",
           button: "#FF5659",
+          cancel: '#D32F2F'
         },
         yellow: {
           light: "#AC8B06",

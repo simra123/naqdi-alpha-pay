@@ -19,3 +19,14 @@ export const getWithdrawalTransactionDetailsByUserApi = (data: {
 }) => {
   return () => api.post(`wallet/withdrawtransaction-details`, data);
 };
+
+
+export const getPaymentTransactionDetailsByAdminApi = (data: { id: number }) => {
+  return () => api.get(`v1/admin/payment_transaction/${data?.id}`);
+};
+
+export const getWithdrawalTransactionDetailsByAdminApi = (data: {
+  transaction_id: number;
+}) => {
+  return () => api.post(`wallet/withdrawtransaction-details`, data);
+};
