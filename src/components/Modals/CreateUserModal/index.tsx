@@ -4,16 +4,12 @@ import Modal from "../Modal"; // Make sure to adjust the import path if necessar
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 
-import { callApiHook } from "@/utils/apifuncs";
-import { setNotification } from "@/store/slices/modal.Slice";
 import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import ErrorApiText from "../../common/ErrorApiText";
 
-import { Info, Lock } from "@mui/icons-material";
-
 import useFormValidation from "@/hooks/useFormValidation";
-import { ChangePassowordApi } from "@/services/auth";
+
 import { UserSchema } from "@/models/Register";
 import SwitchButton from "@/components/common/SwitchButton";
 import IconSelectBox from "@/components/common/IconSelectBox";
@@ -26,7 +22,9 @@ interface Props {
 const initialValues = {
   firstName: "",
   lastName: "",
+  username: "",
   email: "",
+  password: "",
 };
 
 const permissionOptions = [
@@ -98,7 +96,6 @@ const CreateUserModal = ({ isOpen, toggleHandler }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
-
       <h2 className="text-h3.5 font-semibold mb-4">
         {step == 1 ? "Add User" : "Permissions"}
       </h2>
@@ -106,9 +103,7 @@ const CreateUserModal = ({ isOpen, toggleHandler }: Props) => {
         <form
           className="mt-8 flex flex-col gap-2"
           onSubmit={(e) =>
-            handleSubmit(e, onSubmit, () =>
-              console.log("Something went wrong")
-            )
+            handleSubmit(e, onSubmit, () => console.log("Something went wrong"))
           }
         >
           <IconField
@@ -132,6 +127,16 @@ const CreateUserModal = ({ isOpen, toggleHandler }: Props) => {
           />
 
           <IconField
+            label="Username"
+            error={errors.username}
+            value={values.username}
+            onChange={handleChange}
+            onBlur={validateField}
+            name="username"
+            placeholder="Enter Username"
+          />
+
+          <IconField
             label="Email"
             error={errors.email}
             value={values.email}
@@ -139,6 +144,17 @@ const CreateUserModal = ({ isOpen, toggleHandler }: Props) => {
             onBlur={validateField}
             name="email"
             placeholder="Enter Email"
+          />
+
+          <IconField
+            label="Password"
+            error={errors.password}
+            value={values.password}
+            onChange={handleChange}
+            onBlur={validateField}
+            name="password"
+            type="password"
+            placeholder="Enter Password"
           />
 
           <div className="flex flex-col justify-end mt-4">
@@ -271,7 +287,6 @@ const CreateUserModal = ({ isOpen, toggleHandler }: Props) => {
       )}
 
       <ErrorApiText error={isCreateUserError} />
-
     </Modal>
   );
 };
