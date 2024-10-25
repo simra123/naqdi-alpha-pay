@@ -58,7 +58,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   useEffect(() => {
     setNeworks(
-      process.env.NEXT_PUBLIC_ENVIRONMENT == "dev"
+      process.env.NEXT_PUBLIC_ENVIRONMENT == "development"
         ? testnet_networks
         : production_networks
     );
