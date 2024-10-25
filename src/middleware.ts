@@ -23,9 +23,9 @@ const hasFee = (user) => user?.userDetails && user?.userDetails?.fees;
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // if (isNonFunctionalRoute(pathname)) {
-  //   return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
-  // }
+  if (isNonFunctionalRoute(pathname)) {
+    return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+  }
 
   const userCookie = req.cookies.get("user");
 
