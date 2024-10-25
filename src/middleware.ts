@@ -5,11 +5,15 @@ import { Role } from "./constants/roles";
 
 const adminRoutes = ["/kyc", "/users"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
+const nonFunctionalRoutes = ["/withdrawals", "/payouts", "/settings/users"];
 
 const NOT_FOUND_URL = "/not-found";
 
 const isAdminRoute = (pathname: string) =>
   adminRoutes.some((route) => pathname.startsWith(route));
+
+const isNonFunctionalRoute = (pathname: string) =>
+  nonFunctionalRoutes.some((route) => pathname.startsWith(route));
 
 const isWithOutFeeRoute = (pathname: string) =>
   wihtoutFeeUserRoutes.some((route) => pathname.startsWith(route));
@@ -18,6 +22,11 @@ const hasFee = (user) => user?.userDetails && user?.userDetails?.fees;
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // if (isNonFunctionalRoute(pathname)) {
+  //   return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+  // }
+
   const userCookie = req.cookies.get("user");
 
   console.log("Middleware is running for ", pathname);

@@ -70,6 +70,7 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
             status: "success",
           })
         );
+        setValues(initialValues)
       },
     });
   };
