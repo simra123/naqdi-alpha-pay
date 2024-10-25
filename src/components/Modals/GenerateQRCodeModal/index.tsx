@@ -21,7 +21,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
   const user = useLocalStorage("user");
   const [isQRCodeLoading, isQRCodeError, callQRCodeApi] = useApi();
   const [isVerificationLoading, isVerificationError, callVerificationApi] =
-    useApi();
+    useApi({notify:true});
 
   const [qrcode, setQRCode] = useState(null);
   const [step, setStep] = useState(1);

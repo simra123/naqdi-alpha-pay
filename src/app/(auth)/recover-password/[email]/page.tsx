@@ -9,11 +9,16 @@ import { recoverSchema } from "@/models/recoverPassword";
 import IconField from "@/components/common/IconField";
 import LoaderButton from "@/components/common/LoaderButton";
 import { Lock } from "@mui/icons-material";
-
+import { useState } from "react";
 
 const UpdatePassword = ({ params }) => {
   const router = useRouter();
-  const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi();
+  const [confirmPassError, setConfirmPassError] = useState<string | boolean>(
+    false
+  );
+  const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi({
+    notify: true,
+  });
   const email = decodeURIComponent(params?.email);
 
   const initialValues = {
@@ -35,6 +40,16 @@ const UpdatePassword = ({ params }) => {
       ),
       successCallBack: () => router.push("/login"),
     });
+  };
+
+  const validateMatchPass = (e) => {
+    const { value } = e.target;
+
+    if (value == values?.password) {
+      setConfirmPassError(false);
+    } else {
+      setConfirmPassError("Passwords Must Match.");
+    }
   };
 
   const onSubmitError = () => {
@@ -70,11 +85,11 @@ const UpdatePassword = ({ params }) => {
         />
         <IconField
           type="password"
-          onBlur={validateField}
+          onBlur={validateMatchPass}
           name="confirmPassword"
           onChange={handleChange}
           value={values.confirmPassword}
-          error={errors.confirmPassword}
+          error={confirmPassError}
           icon={Lock}
           label="Confirm Password"
           placeholder="Enter Your Password"

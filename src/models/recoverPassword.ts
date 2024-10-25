@@ -8,7 +8,4 @@ export const recoverSchema = Yup.object().shape({
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,24}$/,
       "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
     ),
-  confirmPassword: Yup.string()
-    .required("Please retype your password.")
-    .oneOf([Yup.ref("password")], "Your passwords do not match."),
 });
