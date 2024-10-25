@@ -13,7 +13,9 @@ import LoaderButton from "@/components/common/LoaderButton";
 
 const ForgotPassword = () => {
   const router = useRouter();
-  const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi();
+  const [isRecoverLoading, isRecoverError, callRecoverApi] = useApi({
+    notify: true,
+  });
   const initialValues = {
     email: "",
   };
