@@ -99,12 +99,12 @@ const nav_items: NavItem[] = [
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
-      // {
-      //   name: "Users",
-      //   icon: PersonRounded,
-      //   path: "/settings/users",
-      //   roles: [Role.USER],
-      // },
+      {
+        name: "Users",
+        icon: PersonRounded,
+        path: "/settings/users",
+        roles: [Role.USER],
+      },
       {
         name: "Integrations",
         icon: Key,
