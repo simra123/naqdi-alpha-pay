@@ -75,18 +75,18 @@ const nav_items: NavItem[] = [
     path: "/transactions",
     roles: [Role.ADMIN, Role.USER],
   },
-  // {
-  //   name: "Withdrawals",
-  //   icon: WithdrawalIcon,
-  //   path: "/withdrawals",
-  //   roles: [Role.ADMIN, Role.USER],
-  // },
-  // {
-  //   name: "Payouts",
-  //   icon: PayoutsIcon,
-  //   path: "/payouts",
-  //   roles: [Role.ADMIN, Role.USER],
-  // },
+  {
+    name: "Withdrawals",
+    icon: WithdrawalIcon,
+    path: "/withdrawals",
+    roles: [Role.ADMIN, Role.USER],
+  },
+  {
+    name: "Payouts",
+    icon: PayoutsIcon,
+    path: "/payouts",
+    roles: [Role.ADMIN, Role.USER],
+  },
   {
     name: "Settings",
     icon: SettingsIcon,
