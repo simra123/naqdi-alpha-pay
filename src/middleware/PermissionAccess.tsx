@@ -13,7 +13,7 @@ type Permissions = {
 }[];
 
 type WithPermissionProps = {
-  // This prop is not required anymore since we fetch permissions from cookies
+ 
 };
 
 const PermissionAccess = <T extends object>(
@@ -47,12 +47,7 @@ const PermissionAccess = <T extends object>(
     const { access_level } = modulePermission.permission;
 
     // Check access level
-    const hasAccess =
-      (requiredAccessLevel === "read_only" &&
-        (access_level === "read_only" || access_level === "full_access")) ||
-      (requiredAccessLevel === "full_access" &&
-        access_level === "full_access") ||
-      requiredAccessLevel === "none";
+    const hasAccess = requiredAccessLevel === access_level 
 
     // If access is denied, render NotFound
     if (!hasAccess) {
