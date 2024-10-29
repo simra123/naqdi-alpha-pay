@@ -18,8 +18,9 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 
 const Onboarding = () => {
   const dipatch = useDispatch();
-  const user = useSelector((state: any) => state.user.data?.userDetails);
-  const localUser = useLocalStorage("user");
+  const userState = useSelector((state: any) => state.user.data);
+  const user = userState?.userDetails;
+  // const localUser = useLocalStorage("user");
   const currentStep = useSelector(
     (state: any) => state.onboarding.current_step
   );
@@ -38,13 +39,19 @@ const Onboarding = () => {
     return currentStep === stepName && <FormComponent />;
   };
 
+  console.log({ userState });
+
   return (
     <>
       <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
         Onboarding
       </h3>
       {/* Header steps */}
-      <div className="justify-between gap-3 px-4 hidden lg:flex bg-white rounded-small">
+      <div
+        className={`${
+          userState?.parentUser && "justify-between"
+        } gap-8 px-4 hidden lg:flex bg-white rounded-small`}
+      >
         <button
           className={
             "px-4 py-3 header_step_btn flex-1" + returnActiveStep(STEPS.PROFILE)
@@ -92,76 +99,81 @@ const Onboarding = () => {
             <span>MFA Setup</span>
           </div>
         </button>
+        {userState?.parentUser && (
+          <>
+            <button
+              className={
+                "px-4 py-3 header_step_btn  flex-1" +
+                returnActiveStep(STEPS.FEESETUP)
+              }
+              disabled={
+                disabledSteps[STEPS.FEESETUP] ||
+                user?.client_fees ||
+                user?.merchant_fees
+              }
+              onClick={handleStepChange(STEPS.FEESETUP)}
+            >
+              <div
+                className="flex gap-2 
+            items-center"
+              >
+                <span className="step-no">4</span>
+                <span>Fee Setup</span>
+              </div>
+            </button>
 
-        <button
-          className={
-            "px-4 py-3 header_step_btn  flex-1" +
-            returnActiveStep(STEPS.FEESETUP)
-          }
-          disabled={
-            disabledSteps[STEPS.FEESETUP] ||
-            user?.client_fees ||
-            user?.merchant_fees
-          }
-          onClick={handleStepChange(STEPS.FEESETUP)}
-        >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
-            <span className="step-no">4</span>
-            <span>Fee Setup</span>
-          </div>
-        </button>
-
-        <button
-          className={
-            "px-4 py-3 header_step_btn  flex-1" +
-            returnActiveStep(STEPS.IDENTITYCHECK)
-          }
-          disabled={disabledSteps[STEPS.IDENTITYCHECK] || user?.kyc_approved}
-          onClick={handleStepChange(STEPS.IDENTITYCHECK)}
-        >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
-            <span className="step-no">5</span>
-            <span>Identity Check</span>
-          </div>
-        </button>
-        <button
-          className={
-            "px-4 py-3 header_step_btn  flex-1" +
-            returnActiveStep(STEPS.KYCAPPROVAL)
-          }
-          disabled={disabledSteps[STEPS.KYCAPPROVAL] || user?.kyc_approved}
-          onClick={handleStepChange(STEPS.KYCAPPROVAL)}
-        >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
-            <span className="step-no">6</span>
-            <span>KYC Approval</span>
-          </div>
-        </button>
-        <button
-          className={
-            "px-4 py-3 header_step_btn  flex-1" +
-            returnActiveStep(STEPS.FEESCHEDULE)
-          }
-          disabled={disabledSteps[STEPS.FEESCHEDULE] || user?.fees}
-          onClick={handleStepChange(STEPS.FEESCHEDULE)}
-        >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
-            <span className="step-no">7</span>
-            <span>Fee Schedule</span>
-          </div>
-        </button>
+            <button
+              className={
+                "px-4 py-3 header_step_btn  flex-1" +
+                returnActiveStep(STEPS.IDENTITYCHECK)
+              }
+              disabled={
+                disabledSteps[STEPS.IDENTITYCHECK] || user?.kyc_approved
+              }
+              onClick={handleStepChange(STEPS.IDENTITYCHECK)}
+            >
+              <div
+                className="flex gap-2 
+            items-center"
+              >
+                <span className="step-no">5</span>
+                <span>Identity Check</span>
+              </div>
+            </button>
+            <button
+              className={
+                "px-4 py-3 header_step_btn  flex-1" +
+                returnActiveStep(STEPS.KYCAPPROVAL)
+              }
+              disabled={disabledSteps[STEPS.KYCAPPROVAL] || user?.kyc_approved}
+              onClick={handleStepChange(STEPS.KYCAPPROVAL)}
+            >
+              <div
+                className="flex gap-2 
+            items-center"
+              >
+                <span className="step-no">6</span>
+                <span>KYC Approval</span>
+              </div>
+            </button>
+            <button
+              className={
+                "px-4 py-3 header_step_btn  flex-1" +
+                returnActiveStep(STEPS.FEESCHEDULE)
+              }
+              disabled={disabledSteps[STEPS.FEESCHEDULE] || user?.fees}
+              onClick={handleStepChange(STEPS.FEESCHEDULE)}
+            >
+              <div
+                className="flex gap-2 
+            items-center"
+              >
+                <span className="step-no">7</span>
+                <span>Fee Schedule</span>
+              </div>
+            </button>
+          </>
+        )}
       </div>
 
       {returnActiveForm(STEPS.PROFILE, ProfileForm)}

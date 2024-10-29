@@ -19,10 +19,10 @@ const Authlayout = ({ children }) => {
     if (pathname.includes("email-verification-required")) {
       logOut();
     } else {
-      console.log("layout is running and sendinng to / ", {
-        pathname,
-        isAuthenticated,
-      });
+      // console.log("layout is running and sendinng to / ", {
+      //   pathname,
+      //   isAuthenticated,
+      // });
       return router.push("/");
     }
   }

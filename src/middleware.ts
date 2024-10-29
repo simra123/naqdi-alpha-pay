@@ -38,6 +38,15 @@ export function middleware(req: NextRequest) {
       }
     }
 
+    // Handling Subuser scenarios as they have differnt onboarding process\
+
+    if (user?.role == Role.USER && !user?.parentUser) {
+      if (user?.userDetails?.mfa && pathname == "/onboarding") {
+        return NextResponse.redirect(new URL("/", req.url));
+      }
+      return NextResponse.next();
+    }
+
     // Redirection for user only - depending on the Onboarding Status
 
     if (user?.role == Role.USER) {
