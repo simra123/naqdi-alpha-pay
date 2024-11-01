@@ -49,7 +49,7 @@ export const availableWallets_table_columns: TableColumns = [
       return row?.wallet_uuid || row?.id;
     },
   },
-  { field: "blockchain", headerName: "Currency" },
+  { field: "currency", headerName: "Currency" },
   { field: "blockchain", headerName: "Blockchain" },
   { field: "amount", headerName: "Available Balance" },
 ];
