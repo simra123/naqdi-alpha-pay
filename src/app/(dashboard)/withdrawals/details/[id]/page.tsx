@@ -214,7 +214,9 @@ const WithdrawalDetails = ({ params }) => {
           <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
             label={`${withdrawalDetails?.unit} ${
-              withdrawalDetails?.standard && `(${withdrawalDetails?.standard})`
+              withdrawalDetails?.standard
+                ? `(${withdrawalDetails?.standard})`
+                : ""
             } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
           />
