@@ -215,8 +215,8 @@ const WithdrawalDetails = ({ params }) => {
           <Details
             label={`${withdrawalDetails?.unit} ${
               withdrawalDetails?.standard
-              ? `(${withdrawalDetails?.standard})`
-              : ""
+                ? `(${withdrawalDetails?.standard})`
+                : ""
             } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
           />
@@ -278,6 +278,15 @@ const WithdrawalDetails = ({ params }) => {
         <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
           {withdrawalDetails?.notes}
         </div>
+        {withdrawalDetails?.status == "reject" && withdrawalDetails?.reason && (
+          <>
+            <h4 className="text-button font-semibold my-5">Rejection Reason</h4>
+
+            <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+              {withdrawalDetails?.reason}
+            </div>
+          </>
+        )}
         <ErrorApiText error={isWithdrawalDetailsError} />
       </div>
 
