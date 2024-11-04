@@ -28,15 +28,55 @@ import { capitalize } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
 import { nileExplorerBaseURL } from "@/constants/block-explorers";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import { TableColumns } from "@/constants/types";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
-const transactionsList_table_columns = [
+const transactionsList_table_columns: TableColumns = [
   { field: "payment_transaction_uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
-  { field: "senderAddress", headerName: "Sender Address", sortable: true },
-  { field: "receiveAddress", headerName: "Receive Address", sortable: true },
-  { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
+  {
+    field: "senderAddress",
+    headerName: "Sender Address",
+    sortable: true,
+    copyable: true,
+    link(row: { blockchain: string; senderAddress: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.senderAddress,
+      });
+    },
+  },
+  {
+    field: "receiveAddress",
+    headerName: "Receive Address",
+    sortable: true,
+    copyable: true,
+    link(row: { blockchain: string; receiveAddress: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.receiveAddress,
+      });
+    },
+  },
+  {
+    field: "transactionHash",
+    headerName: "Transaction Hash",
+    sortable: true,
+    copyable: true,
+    link(row: { blockchain: string; transactionHash: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "hash",
+        hash: row?.transactionHash,
+      });
+    },
+  },
   { field: "recievedAmount", headerName: "Recieved Amount", sortable: true },
   { field: "netAmount", headerName: "Net Amount", sortable: true },
 
