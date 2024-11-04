@@ -310,11 +310,13 @@ const CustomTable = ({
                         <CopyButtonColumn
                           value={column.dataValidator(row[column.field], row)}
                           copyable={column.copyable}
+                          link={column?.link ? column?.link(row) : null}
                         />
                       ) : row[column.field] ? (
                         <CopyButtonColumn
                           value={row[column.field]}
                           copyable={column.copyable}
+                          link={column?.link ? column?.link(row) : null}
                         />
                       ) : (
                         "_"
@@ -352,9 +354,11 @@ const CustomTable = ({
 const CopyButtonColumn = ({
   value,
   copyable,
+  link,
 }: {
   value: string;
   copyable: boolean;
+  link: string;
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -373,9 +377,20 @@ const CopyButtonColumn = ({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap max-w-max">
-        {isCopied ? "Copied" : value}
-      </span>
+      {link ? (
+        <a
+          onClick={(event) => event.stopPropagation()}
+          href={link}
+          target="_blank"
+          className="hover:text-blue-700 hover:underline transition-all text-black-100 font-semibold text-ellipsis overflow-hidden capitalize"
+        >
+          {isCopied ? "Copied" : value}
+        </a>
+      ) : (
+        <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap max-w-max">
+          {isCopied ? "Copied" : value}
+        </span>
+      )}
       {copyable && (
         <button
           onClick={copyToClipboard(value)}
@@ -387,7 +402,6 @@ const CopyButtonColumn = ({
     </div>
   );
 };
-
 
 const Pagination = ({
   currentPage,
