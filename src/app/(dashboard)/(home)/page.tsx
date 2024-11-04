@@ -41,11 +41,11 @@ const columns: TableColumns = [
 
 const Home = () => {
   const user = useLocalStorage("user");
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({
+    initailLoading: true,
+  });
   const [balance, setBalance] = useState([]);
   const [openDeposit, setOpenDeposit] = useState(null);
-
-
 
   const handleDepoist = () => {
     setOpenDeposit(true);
@@ -117,12 +117,14 @@ const Home = () => {
                   onClick={getBalances}
                   variant="text"
                 />
-                <LoaderButton
-                  content={"Deposit Crypto"}
-                  className="px-4"
-                  variant="outlined"
-                  onClick={handleDepoist}
-                />
+                {user?.role == Role.USER && (
+                  <LoaderButton
+                    content={"Deposit Crypto"}
+                    className="px-4"
+                    variant="outlined"
+                    onClick={handleDepoist}
+                  />
+                )}
               </div>
             </div>
           }
