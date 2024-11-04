@@ -21,27 +21,28 @@ export const showExplorerDetailsByChain = ({
   blockchain = blockchain?.toLowerCase();
   if (blockchain == "tron") {
     if (type == "address") {
-      return env == "development"
-        ? `${nileExplorerBaseURL}/address/${address}`
-        : `${tronExplorerBaseURL}/address/${address}`;
+      return env == "production"
+        ? `${tronExplorerBaseURL}/address/${address}`
+        : `${nileExplorerBaseURL}/address/${address}`;
     }
     if (type == "hash") {
-      return env == "development"
-        ? `${nileExplorerBaseURL}/transaction/${hash}`
-        : `${tronExplorerBaseURL}/transaction/${hash}`;
+      return env == "production"
+        ? `${tronExplorerBaseURL}/transaction/${hash}`
+        : `${nileExplorerBaseURL}/transaction/${hash}`;
     }
   }
 
   if (blockchain == "ethereum") {
     if (type == "address") {
-      return env == "development"
-        ? `${sepoliaExplorerBaseURL}/address/${address}`
-        : `${ethereumExplorerBaseURL}/address/${address}`;
+      return env == "production"
+        ? `${ethereumExplorerBaseURL}/address/${address}`
+        : `${sepoliaExplorerBaseURL}/address/${address}`;
     }
+
     if (type == "hash") {
-      return env == "development"
-        ? `${sepoliaExplorerBaseURL}/tx/${hash}`
-        : `${ethereumExplorerBaseURL}/tx/${hash}`;
+      return env == "production"
+        ? `${ethereumExplorerBaseURL}/tx/${hash}`
+        : `${sepoliaExplorerBaseURL}/tx/${hash}`;
     }
   }
   return null;
