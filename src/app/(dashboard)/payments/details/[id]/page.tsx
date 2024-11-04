@@ -26,6 +26,8 @@ import Chip from "@/components/common/Chip";
 import { useRouter } from "next/navigation";
 import { capitalize } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
+import { nileExplorerBaseURL } from "@/constants/block-explorers";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -58,7 +60,9 @@ const PaymentDetails = ({ params }) => {
   const [transaction, setTransacion] = useState([]);
   const [orderInfo, setOrderInfo] = useState<{}>(null);
   const [receivedAmount, setRecievedAmount] = useState("0");
-  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({initailLoading:true});
+  const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
+    initailLoading: true,
+  });
 
   const getPayment = async () => {
     // if (user?.role == Role.USER) {
@@ -140,6 +144,13 @@ const PaymentDetails = ({ params }) => {
               <Details
                 label="Wallet Address"
                 value={payment?.wallet?.address}
+                link={showExplorerDetailsByChain({
+                  env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+                  blockchain: payment?.wallet?.blockchain,
+                  type: "address",
+                  address: payment?.wallet?.address,
+                })}
+                copyable
               />
             </div>
 
@@ -176,6 +187,10 @@ const PaymentDetails = ({ params }) => {
                 value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
               />
               <Details label="Payment Amount Recieved" value={receivedAmount} />
+              <Details
+                label="Alphaspay Fee"
+                value={`${payment?.alphaspay_fees} ${payment?.payment_currency}`}
+              />
             </div>
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">

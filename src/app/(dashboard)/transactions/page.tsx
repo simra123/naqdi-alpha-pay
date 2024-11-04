@@ -20,6 +20,7 @@ import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -31,17 +32,37 @@ const statusList = [
 const transactionsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
+  { field: "blockchain", headerName: "Blockchain", sortable: true },
   {
     field: "transactionHash",
     headerName: "Transaction Hash",
     sortable: true,
     copyable: true,
+    link: (row: { blockchain: string; transactionHash: string }) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "hash",
+        hash: row?.transactionHash,
+      });
+    },
   },
   { field: "amount", headerName: "Amount", sortable: true },
-
-  { field: "receiveAddress", headerName: "Receive Address", sortable: true },
+  {
+    field: "receiveAddress",
+    headerName: "Receive Address",
+    sortable: true,
+    copyable: true,
+    link: (row: { blockchain: string; receiveAddress: string }) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.receiveAddress,
+      });
+    },
+  },
   { field: "transactionType", headerName: "Transacion Type", sortable: true },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
   {
     field: "status",
     headerName: "Status",
@@ -52,16 +73,41 @@ const transactionsList_table_columns: TableColumns = [
   },
 ];
 
-const transactionsList_Admin_table_columns = [
+const transactionsList_Admin_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
   { field: "dateReceived", headerName: "Date Received", sortable: true },
-  { field: "transactionHash", headerName: "Transaction Hash", sortable: true },
+  { field: "blockchain", headerName: "Blockchain", sortable: true },
+  {
+    field: "transactionHash",
+    headerName: "Transaction Hash",
+    sortable: true,
+    link: (row: { blockchain: string; transactionHash: string }) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "hash",
+        hash: row?.transactionHash,
+      });
+    },
+  },
   { field: "amount", headerName: "Amount", sortable: true },
   // { field: "userName", headerName: "UserName", sortable: true },
   // { field: "email", headerName: "Email", sortable: true },
-  { field: "receiveAddress", headerName: "Receive Address", sortable: true },
+  {
+    field: "receiveAddress",
+    headerName: "Receive Address",
+    sortable: true,
+    copyable: true,
+    link: (row: { blockchain: string; receiveAddress: string }) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.receiveAddress,
+      });
+    },
+  },
   { field: "transactionType", headerName: "Transacion Type", sortable: true },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
   {
     field: "status",
     headerName: "Status",

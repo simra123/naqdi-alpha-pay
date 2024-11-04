@@ -33,6 +33,7 @@ import CustomTable from "@/components/common/CustomTable";
 import ReasonModal from "@/components/Modals/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -219,6 +220,13 @@ const WithdrawalDetails = ({ params }) => {
                 : ""
             } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
+            copyable
+            link={showExplorerDetailsByChain({
+              env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+              blockchain: withdrawalDetails?.blockchain,
+              type: "address",
+              address: withdrawalDetails?.recipient_address,
+            })}
           />
         </div>
 
