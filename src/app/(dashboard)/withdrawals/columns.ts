@@ -64,7 +64,7 @@ export const availableWallets_table_columns: TableColumns = [
       });
     },
   },
-  { field: "blockchain", headerName: "Currency" },
+  { field: "currency", headerName: "Currency" },
   { field: "blockchain", headerName: "Blockchain" },
   { field: "amount", headerName: "Available Balance" },
 ];
