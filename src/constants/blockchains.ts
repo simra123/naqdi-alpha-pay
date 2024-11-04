@@ -18,6 +18,11 @@ export const unitName = {
   trx: "Tron",
 };
 
+export const standardBlockchain = {
+  'TRC-20' : 'tron',
+  'ERC-20' : 'ethereum',
+}
+
 export const blockchain_standards = {
   // bitcoin: "Omni-layer",
   // Btc: "Omni-layer",

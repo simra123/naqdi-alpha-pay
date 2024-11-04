@@ -20,6 +20,7 @@ import Chip from "@/components/common/Chip";
 import DateField from "@/components/common/DateField";
 import { TableColumns } from "@/constants/types";
 import { roundToPrecision } from "@/utils/math";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -36,10 +37,23 @@ const paymentsList_table_columns: TableColumns = [
     field: "updatedAt",
     headerName: "Updated At",
   },
+  {
+    field: "blockchain",
+    headerName: "Blockchain",
+  },
 
   {
     field: "recieverAddress",
     headerName: "Reciever Wallet Address",
+    copyable: true,
+    link: (row: { blockchain: string; recieverAddress: string }) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.recieverAddress,
+      });
+    },
   },
   {
     field: "requestedPaymentAmount",
@@ -90,6 +104,7 @@ const Payments = () => {
           return {
             id: item?.id,
             payment_uuid: item?.payment_uuid,
+            blockchain: item?.wallet?.blockchain,
             createdAt: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
             updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
             senderAddress: item?.paymentTransaction?.sender_address,
