@@ -69,14 +69,10 @@ const CreateWithdrawalModal = ({
   } = useFormValidation(initalFormValues, currentSchema);
 
   useEffect(() => {
+    console.log('updating schema')
     const maxAmount = getCurrentAssetAmount(values?.blockchain);
-    setCurrentSchema(
-      getWithdrawalSchema(
-        !!networks_available[values?.blockchain],
-        +maxAmount || 0
-      )
-    );
-  }, [values]);
+    setCurrentSchema(getWithdrawalSchema(+maxAmount || 0));
+  }, [values?.blockchain]);
 
   const _getUserBalance = async () => {
     await callApiHook({
