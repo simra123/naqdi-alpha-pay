@@ -23,6 +23,11 @@ import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
 import { TableColumns } from "@/constants/types";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import {
+  blockchain_standards,
+  standardBlockchain,
+} from "@/constants/blockchains";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
@@ -30,12 +35,35 @@ const withdrawalsList_table_columns: TableColumns = [
   { field: "updated_at", headerName: "Updated At", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
-  { field: "network", headerName: "Network", sortable: true },
+  { field: "blockchain", headerName: "Blockchain", sortable: true },
 
   {
     field: "recipient_address",
     headerName: "Recipient Address",
     sortable: true,
+    link(row: {
+      standard: string | null;
+      recipient_address: string;
+      unit: string;
+    }) {
+      let blockchain: string | null;
+
+      if (row?.standard) {
+        blockchain = standardBlockchain[row?.standard];
+      } else {
+        let standard = blockchain_standards[row?.unit];
+        blockchain = standardBlockchain[standard];
+      }
+
+      console.log(blockchain);
+
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: blockchain,
+        type: "address",
+        address: row?.recipient_address,
+      });
+    },
   },
   {
     field: "status",
@@ -58,7 +86,7 @@ const Withdrawals = () => {
     isWithdrawalsListLoading,
     isWithdrawalsListError,
     callWithdrawalsListApi,
-  ] = useApi({initailLoading:true});
+  ] = useApi({ initailLoading: true });
 
   const getAllWithdrawals = async () => {
     await callApiHook({

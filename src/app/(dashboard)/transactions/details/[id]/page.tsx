@@ -26,6 +26,7 @@ import {
   StatusIcon,
 } from "@/assets/Svgs";
 import { notFound, useSearchParams } from "next/navigation";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
@@ -124,6 +125,14 @@ const TransactionDetails = ({ params }) => {
           <Details
             label="Transaction Hash"
             value={transactionDetails?.transaction_hash}
+            link={showExplorerDetailsByChain({
+              env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+              blockchain:
+                transactionDetails?.wallet?.blockchain ||
+                transactionDetails?.clientWallet?.blockchain,
+              type: "hash",
+              hash: transactionDetails?.transaction_hash,
+            })}
             copyable
           />
           <Details
@@ -159,11 +168,31 @@ const TransactionDetails = ({ params }) => {
                 : transactionDetails?.wallet?.wallet_address ||
                   transactionDetails?.wallet?.address
             }
+            link={showExplorerDetailsByChain({
+              env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+              blockchain:
+                transactionDetails?.wallet?.blockchain ||
+                transactionDetails?.clientWallet?.blockchain,
+              type: "address",
+              address:
+                transactionType == "Withdrawal"
+                  ? transactionDetails?.withdrawal?.recipient_address
+                  : transactionDetails?.wallet?.wallet_address ||
+                    transactionDetails?.wallet?.address,
+            })}
           />
           <Details
             label="Sender Wallet Address"
             copyable
             value={transactionDetails?.sender_address}
+            link={showExplorerDetailsByChain({
+              env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+              blockchain:
+                transactionDetails?.wallet?.blockchain ||
+                transactionDetails?.clientWallet?.blockchain,
+              type: "address",
+              address: transactionDetails?.sender_address,
+            })}
           />
         </div>
 
