@@ -8,9 +8,7 @@ export const getWithdrawalSchema = (maxSourceAmount: number) => {
       .required("Token is required")
       .length(6, "Token must be exactly 6 characters long"),
     amount: Yup.number()
-      .transform((value, originalValue) => {
-        return originalValue.trim() === "" ? null : value;
-      })
+      .typeError("Entered value must not be empty and should be a number")
       .min(0.0001)
       .max(
         maxSourceAmount,
