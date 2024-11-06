@@ -1,4 +1,5 @@
 import { TableColumns } from "@/constants/types";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import moment from "moment";
 
 export const withdrawalsList_table_columns = [
@@ -47,6 +48,20 @@ export const availableWallets_table_columns: TableColumns = [
     headerName: "ID",
     dataValidator(value, row: { wallet_uuid: string; id: number }) {
       return row?.wallet_uuid || row?.id;
+    },
+  },
+
+  {
+    field: "address",
+    headerName: "Wallet Address",
+    copyable: true,
+    link(row: { address: string; blockchain: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.address,
+      });
     },
   },
   { field: "currency", headerName: "Currency" },

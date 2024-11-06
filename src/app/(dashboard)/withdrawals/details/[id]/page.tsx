@@ -33,6 +33,7 @@ import CustomTable from "@/components/common/CustomTable";
 import ReasonModal from "@/components/Modals/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
+import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -56,10 +57,35 @@ const transactionsList_table_columns: TableColumns = [
       return moment(value).format("DD-MM-YYYY : hh:mm A");
     },
   },
+  { field: "blockchain", headerName: "Blockchain" },
   { field: "unit", headerName: "Currency" },
   { field: "amount", headerName: "Amount" },
-  { field: "sender_address", headerName: "Wallet Address" },
-  { field: "transaction_hash", headerName: "Transaction Hash" },
+  {
+    field: "sender_address",
+    headerName: "Wallet Address",
+    copyable: true,
+    link(row: { blockchain: string; sender_address: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.sender_address,
+      });
+    },
+  },
+  {
+    field: "transaction_hash",
+    headerName: "Transaction Hash",
+    copyable: true,
+    link(row: { blockchain: string; transaction_hash: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "hash",
+        hash: row?.transaction_hash,
+      });
+    },
+  },
   {
     field: "status",
     headerName: "Status",
@@ -214,9 +240,18 @@ const WithdrawalDetails = ({ params }) => {
           <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
             label={`${withdrawalDetails?.unit} ${
-              withdrawalDetails?.standard && `(${withdrawalDetails?.standard})`
+              withdrawalDetails?.standard
+                ? `(${withdrawalDetails?.standard})`
+                : ""
             } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
+            copyable
+            link={showExplorerDetailsByChain({
+              env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+              blockchain: withdrawalDetails?.blockchain,
+              type: "address",
+              address: withdrawalDetails?.recipient_address,
+            })}
           />
         </div>
 
@@ -276,6 +311,15 @@ const WithdrawalDetails = ({ params }) => {
         <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
           {withdrawalDetails?.notes}
         </div>
+        {withdrawalDetails?.status == "reject" && withdrawalDetails?.reason && (
+          <>
+            <h4 className="text-button font-semibold my-5">Rejection Reason</h4>
+
+            <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+              {withdrawalDetails?.reason}
+            </div>
+          </>
+        )}
         <ErrorApiText error={isWithdrawalDetailsError} />
       </div>
 
@@ -389,7 +433,9 @@ const WithdrawalDetails = ({ params }) => {
         <div className="mt-8">
           <CustomTable
             columns={transactionsList_table_columns}
-            rows={withdrawalDetails?.withdrawalTransactions}
+            rows={withdrawalDetails?.withdrawalTransactions?.map((item) => {
+              return { ...item, blockchain: withdrawalDetails?.blockchain };
+            })}
             actions={
               <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
                 Related Transactions
