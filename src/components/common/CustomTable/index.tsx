@@ -115,9 +115,9 @@ const CustomTable = ({
       ? rows.filter((row) =>
           columns.some((column) =>
             row[column.field]
-              .toString()
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase())
+              ?.toString()
+              ?.toLowerCase()
+              ?.includes(searchQuery.toLowerCase())
           )
         )
       : rows;
@@ -500,7 +500,10 @@ const Pagination = ({
         <select
           id="page-size"
           value={pageSize}
-          onChange={(e) => setPageSize(parseInt(e.target.value))}
+          onChange={(e) => {
+            setPageSize(parseInt(e.target.value));
+            onChangePage(1);
+          }}
           className="p-1 border-b cursor-pointer outline-none"
         >
           {[5, 10, 20, 30, 50].map((size) => (
