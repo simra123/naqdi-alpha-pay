@@ -45,6 +45,7 @@ const Details = ({ label, value, copyable, link }: Props) => {
       )}
       {copyable && (
         <button
+          type="button"
           onClick={copyToClipboard(value)}
           className="bg-transparent border-0 outline-0 text-[14px] hover:bg-purple-10 active:bg-purple-20 transition-all w-8 h-8 aspect-square rounded-full p-1"
         >

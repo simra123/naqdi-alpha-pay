@@ -28,7 +28,7 @@ export const addFeeVirtualWalletAdminApi = (data: {
   wallet_Address: string;
   requested_currency: string;
   requested_amount: string;
-  payment_currency: string;
+  payment_currency?: string;
   passthrough: string;
 }) => {
   return () => api.post(`v1/admin/add/network-fees`, data);

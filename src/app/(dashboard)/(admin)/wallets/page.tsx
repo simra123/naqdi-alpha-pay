@@ -14,9 +14,16 @@ import { generateCSVApi } from "@/services/common";
 import { getAllWalletsListByAdminApi } from "@/services/wallet";
 import moment from "moment";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import GasPaymentModal from "@/components/Modals/GasPaymentModal";
 
 const Wallets = () => {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState<boolean>();
+  const [paymentWallet, setPaymentWallet] = useState({
+    walletType: null,
+    walletAddress: null,
+    blockchain: null,
+  });
   const [wallets, setWallets] = useState([]);
   const [isWalletsLoading, isWalletsError, callWalletsApi] = useApi({
     initailLoading: true,
@@ -63,7 +70,27 @@ const Wallets = () => {
     { walletType, walletAddress, blockchain }
   ) => {
     event.stopPropagation();
-    console.log(walletAddress, walletType, blockchain);
+
+    console.log({
+      walletAddress,
+      blockchain,
+      walletType,
+    });
+    setPaymentWallet({
+      walletAddress,
+      blockchain,
+      walletType,
+    });
+    setIsOpen(() => true);
+  };
+
+  const closeFeePayModal = () => {
+    setPaymentWallet({
+      blockchain: null,
+      walletAddress: null,
+      walletType: null,
+    });
+    setIsOpen(false);
   };
 
   const wallets_table_columns = useCallback((): TableColumns => {
@@ -109,14 +136,14 @@ const Wallets = () => {
         sortable: true,
       },
       {
-        field: "status",
-        headerName: "Wallet Type",
+        field: "acrion",
+        headerName: "Action",
         dataValidator: (
-          value,
+          _value,
           row: {
             wallet_address: string;
             address: string;
-            status: string;
+            wallet_type: string;
             blockchain: string;
           }
         ) => {
@@ -125,9 +152,7 @@ const Wallets = () => {
               onClick={(event) =>
                 handlePaymentModal(event, {
                   walletAddress: row?.wallet_address || row?.address,
-                  walletType: row?.status
-                    ? WalletType.Virtual
-                    : WalletType.Static,
+                  walletType: row?.wallet_type,
                   blockchain: row?.blockchain,
                 })
               }
@@ -143,8 +168,16 @@ const Wallets = () => {
 
   return (
     <>
+      <GasPaymentModal
+        isOpen={isOpen}
+        closeModal={closeFeePayModal}
+        blockchain={paymentWallet?.blockchain}
+        walletAddress={paymentWallet?.walletAddress}
+        walletType={paymentWallet?.walletType}
+      />
+
       <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
-        Users
+        Wallets
       </h3>
 
       {/* Table Actions Below */}
@@ -160,9 +193,6 @@ const Wallets = () => {
             error: isCSVError,
           }}
           initialPageSize={10}
-          rowClickHandler={(row: any) =>
-            router.push(`/users/details/${row?.id}`)
-          }
           pagination
           columnClassName="max-w-[250px]"
         />
