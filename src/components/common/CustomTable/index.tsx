@@ -117,7 +117,7 @@ const CustomTable = ({
             row[column.field]
               ?.toString()
               ?.toLowerCase()
-              ?.includes(searchQuery.toLowerCase())
+              ?.includes(searchQuery?.toLowerCase()?.trim())
           )
         )
       : rows;
