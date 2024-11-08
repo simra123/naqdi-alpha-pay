@@ -16,3 +16,7 @@ export const fiatOptions = [
     value: "EUR",
   },
 ];
+
+export enum Fiats {
+  USD = "USD",
+}
