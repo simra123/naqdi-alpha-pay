@@ -19,9 +19,9 @@ export const unitName = {
 };
 
 export const standardBlockchain = {
-  'TRC-20' : 'tron',
-  'ERC-20' : 'ethereum',
-}
+  "TRC-20": "tron",
+  "ERC-20": "ethereum",
+};
 
 export const blockchain_standards = {
   // bitcoin: "Omni-layer",
@@ -96,6 +96,11 @@ export const testnet_networks = {
 
   Eth: [{ label: "Ethereum", value: "Ethereum" }],
   Tron: [{ label: "Tron", value: "Tron" }],
+};
+
+export const blockchain_units = {
+  ethereum: "Eth",
+  tron: "TRX",
 };
 
 export const networks_available = {
