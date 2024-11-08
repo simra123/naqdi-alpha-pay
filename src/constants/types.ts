@@ -8,3 +8,8 @@ interface tableColumns {
 }
 
 export type TableColumns = tableColumns[];
+
+export enum WalletType {
+  Static = "Static",
+  Virtual = "Virtual",
+}
