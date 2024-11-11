@@ -14,7 +14,8 @@ import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
 import WebhookURLModal from "@/components/Modals/WebhookURLModal";
 import { useSelector } from "react-redux";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);
@@ -157,11 +158,17 @@ const Integrations = () => {
             </LoadingApi>
             <ErrorApiText error={iswebhookDetailsError} />
           </div>
-          <LoaderButton
-            content={"Update URL"}
-            variant="outlined"
-            onClick={toggleWebhookModal}
-          />
+          <>
+            {PermissionAccess(
+              LoaderButton,
+              ModulesEnum.integration,
+              AccessLevelEnum.full
+            )({
+              content: "Update URL",
+              variant: "outlined",
+              onClick: toggleWebhookModal,
+            })}
+          </>
         </div>
       </div>
 
@@ -175,12 +182,18 @@ const Integrations = () => {
                 API Keys
               </h2>
 
-              <LoaderButton
-                variant="outlined"
-                content={"New API Key"}
-                className="w-48"
-                onClick={toggleCreateModal}
-              />
+              <>
+                {PermissionAccess(
+                  LoaderButton,
+                  ModulesEnum.integration,
+                  AccessLevelEnum.full
+                )({
+                  variant: "outlined",
+                  content: "New API Key",
+                  className: "w-48",
+                  onClick: toggleCreateModal,
+                })}
+              </>
             </div>
           }
           columns={columns}
@@ -196,4 +209,8 @@ const Integrations = () => {
   );
 };
 
-export default Integrations;
+export default PermissionAccess(
+  Integrations,
+  ModulesEnum?.integration,
+  AccessLevelEnum?.read
+);

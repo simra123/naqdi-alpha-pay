@@ -13,3 +13,18 @@ export enum WalletType {
   Static = "Static",
   Virtual = "Virtual",
 }
+
+export enum ModulesEnum {
+  wallet = "wallet",
+  integration = "integrations",
+  user = "user",
+  payment = "payment",
+  withdrawal = "withdrawal",
+  transaction = "transaction",
+}
+
+export enum AccessLevelEnum {
+  read = "read_only",
+  full = "full_access",
+  none = "none",
+}

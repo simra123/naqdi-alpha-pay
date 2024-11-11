@@ -1,6 +1,7 @@
 "use client";
 
 import api from "@/config/api";
+import { AccessLevelEnum, ModulesEnum} from "@/constants/types";
 
 export const loginApi = (data) => {
   return () => api.post(`auth/login`, data);
@@ -72,4 +73,22 @@ export const ChangePassowordAdminpi = (data: {
 
 export const updatePasswordApi = (data) => {
   return () => api.post(`auth/reset-password`, data);
+};
+
+export const createSubuserApi = (data: {
+  username: string;
+  first_name: string;
+  email: string;
+  last_name: string;
+  password: string;
+  permissions: {
+    module: ModulesEnum;
+    access_level: AccessLevelEnum;
+  }[];
+}) => {
+  return () => api.post(`auth/create/sub-users`, data);
+};
+
+export const getSubusersApi = () => {
+  return () => api.get(`auth/sub-users`);
 };

@@ -71,7 +71,7 @@ const MFASetup = () => {
   };
 
   const handleSubmitMfaSetup = () => {
-    if (!user?.parentUser) {
+    if (user?.parentUser) {
       return router.push("/");
     }
     dispatch(

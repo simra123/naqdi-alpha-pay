@@ -1,5 +1,6 @@
-import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
+import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
+import humanizeString from "humanize-string";
 
 interface Props {
   label?: string | any;
@@ -146,7 +147,9 @@ const IconSelectBox = ({
                 : "border-light-gray focus:border-purple-100"
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
           >
-            {value || (
+            {value ? (
+              humanizeString(value)
+            ) : (
               <span className="text-blackGrey-placeholder">{placeholder}</span>
             )}
           </div>

@@ -1,10 +1,13 @@
 import React from "react";
 import Cookies from "js-cookie";
 import { notFound } from "next/navigation";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 type Permission = {
-  module: string;
-  access_level: "none" | "read_only" | "full_access";
+  id: number;
+  module: ModulesEnum;
+  access_level: AccessLevelEnum;
 };
 
 type Permissions = {
@@ -12,27 +15,27 @@ type Permissions = {
   permission: Permission;
 }[];
 
-type WithPermissionProps = {
- 
+type WithPermissionProps = {};
+
+// Helper function to determine if the access level meets the required level
+const hasSufficientAccess = (
+  userAccessLevel: AccessLevelEnum,
+  requiredAccessLevel: AccessLevelEnum
+) => {
+  if (userAccessLevel === AccessLevelEnum.full) return true;
+  return userAccessLevel === requiredAccessLevel;
 };
 
-const PermissionAccess = <T extends object>(
-  WrappedComponent: React.ComponentType<T>,
-  requiredModule: string,
-  requiredAccessLevel: "none" | "read_only" | "full_access"
+const PermissionAccess = (
+  WrappedComponent: any,
+  requiredModule: ModulesEnum,
+  requiredAccessLevel: AccessLevelEnum
 ) => {
-  return (props: T & WithPermissionProps) => {
+  console.log("permission access hoc running");
+  return (props: WithPermissionProps) => {
     // Get permissions from cookies and parse them
-    const permissionsString = Cookies.get("permissions");
-    let permissions: Permissions = [];
-
-    if (permissionsString) {
-      try {
-        permissions = JSON.parse(permissionsString);
-      } catch (error) {
-        console.error("Failed to parse permissions from cookies:", error);
-      }
-    }
+    const user = useLocalStorage("user");
+    let permissions: Permissions = user?.permissions;
 
     // Find the specific module permission
     const modulePermission = permissions.find(
@@ -46,12 +49,23 @@ const PermissionAccess = <T extends object>(
 
     const { access_level } = modulePermission.permission;
 
-    // Check access level
-    const hasAccess = requiredAccessLevel === access_level 
+    // Check if the user has sufficient access level
+    const hasAccess = hasSufficientAccess(access_level, requiredAccessLevel);
+    console.log({
+      requiredAccessLevel,
+      requiredModule,
+      modulePermission,
+      access_level,
+      permissions,
+      hasAccess,
+    });
 
     // If access is denied, render NotFound
     if (!hasAccess) {
-      return notFound();
+      if (requiredAccessLevel == AccessLevelEnum.read) {
+        return notFound();
+      }
+      return <></>;
     }
 
     return <WrappedComponent {...props} />;

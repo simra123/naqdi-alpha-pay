@@ -3,6 +3,8 @@ import React, { useState } from "react";
 
 import Details from "@/components/common/Details";
 import { Mail } from "@mui/icons-material";
+import DeleteModal from "@/components/Modals/DeleteModal";
+import { useApi } from "@/hooks/useApi";
 
 const permissionsList = [
   "Integrations",
@@ -14,6 +16,10 @@ const permissionsList = [
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isUserDeleteLoading, isUserDeleteError, callUserDeleteApi] = useApi({
+    notify: true,
+  });
   const [permissions, setPermissions] = useState({
     integrations: "none",
     payments: "none",
@@ -35,6 +41,7 @@ const UserDetails = ({ params }) => {
         type="radio"
         name={permission}
         value={value}
+        disabled
         checked={permissions[permission] === value}
         onChange={() => handleChange(permission, value)}
       />
@@ -44,14 +51,31 @@ const UserDetails = ({ params }) => {
     </label>
   );
 
+  const handleUserDelete = () => {
+    console.log("deleting ", userID);
+  };
+
+  const handleDeleteOpen = () => {
+    setIsDeleteOpen(true);
+  };
+
   return (
     <div className="rounded-medium flex flex-col  bg-white shadow-sm px-4 sm:p-10">
+      <DeleteModal
+        handleConfirm={handleUserDelete}
+        isOpen={isDeleteOpen}
+        setIsOpen={setIsDeleteOpen}
+        content="Are you sure, you want to delete this user. Once the action is performed it can't be undone!"
+        title="Are you Sure?"
+        confirmLoading={isUserDeleteLoading}
+        error={isUserDeleteError}
+      />
       <h3 className="text-h3.5 font-semibold text-blackGrey-100 hidden md:block">
         User Details
       </h3>
 
       <div className="res-4-grid py-6 md:mt-4 border-light-gray border-b-2">
-        <Details Icon={Mail} label="Profile ID" value={"1"} />
+        <Details Icon={Mail} label="Profile ID" value={userID} />
         <Details Icon={Mail} label="First Name" value={"Muhammad"} />
         <Details Icon={Mail} label="Last Name" value={"Ahmed"} />
         <Details Icon={Mail} label="Email" value={"aw708596@gmail.com"} />
@@ -94,7 +118,7 @@ const UserDetails = ({ params }) => {
       </div>
 
       <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-20 flex-wrap">
-        <button className="border-0 py-3 text-center text-white bg-red-button rounded-medium sm:w-56 ">
+        <button className="border-0 py-3 text-center text-white bg-red-button rounded-medium sm:w-56 " onClick={handleDeleteOpen}>
           Delete
         </button>
         <button className="border-0 py-3 text-center text-white bg-green-button rounded-medium sm:w-56 ">

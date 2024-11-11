@@ -49,7 +49,7 @@ const Onboarding = () => {
       {/* Header steps */}
       <div
         className={`${
-          userState?.parentUser && "justify-between"
+          !userState?.parentUser && "justify-between"
         } gap-8 px-4 hidden lg:flex bg-white rounded-small`}
       >
         <button
@@ -99,7 +99,7 @@ const Onboarding = () => {
             <span>MFA Setup</span>
           </div>
         </button>
-        {userState?.parentUser && (
+        {!userState?.parentUser && (
           <>
             <button
               className={

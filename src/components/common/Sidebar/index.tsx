@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Link from "next/link";
 import {
   AccountBalance,
@@ -6,6 +6,7 @@ import {
   Key,
   KeyboardArrowLeft,
   KeyboardArrowRight,
+  PersonRounded,
   Wallet,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
@@ -25,12 +26,14 @@ import "./sidebar.scss";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { setUser } from "@/store/slices/userSlice";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 interface NavItem {
   name: string;
   icon: any;
   path: string;
   roles: any[];
+  module?: ModulesEnum;
   sub_nav?: NavItem[];
 }
 
@@ -49,6 +52,7 @@ const nav_items: NavItem[] = [
     icon: DashboardIcon,
     path: "/",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.wallet,
   },
   {
     name: "Users",
@@ -73,18 +77,21 @@ const nav_items: NavItem[] = [
     icon: PaymentsIcon,
     path: "/payments",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.payment,
   },
   {
     name: "Transactions",
     icon: TransactionsIcon,
     path: "/transactions",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.transaction,
   },
   {
     name: "Withdrawals",
     icon: WithdrawalIcon,
     path: "/withdrawals",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.withdrawal,
   },
   // {
   //   name: "Payouts",
@@ -104,17 +111,19 @@ const nav_items: NavItem[] = [
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
-      // {
-      //   name: "Users",
-      //   icon: PersonRounded,
-      //   path: "/settings/users",
-      //   roles: [Role.USER],
-      // },
+      {
+        name: "Users",
+        icon: PersonRounded,
+        path: "/settings/users",
+        roles: [Role.USER],
+        module: ModulesEnum.user,
+      },
       {
         name: "Integrations",
         icon: Key,
         path: "/settings/integrations",
         roles: [Role.USER],
+        module: ModulesEnum.integration,
       },
     ],
   },
@@ -137,15 +146,43 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);
-  let CurrentNav =
-    user?.role == Role.ADMIN
-      ? nav_items
-      : user?.userDetails && user?.userDetails?.fees
-      ? nav_items
-      : boarding_nav_items;
 
-  // console.log({ CurrentNav , user });
+  const getCurrentNav = useCallback(() => {
+    let CurrentNav = [];
+    console.log(user);
 
+    if (
+      user?.role == Role.ADMIN ||
+      (user?.parentUser && user?.userDetails?.mfa) ||
+      (!user?.parentUser && user?.userDetails && user?.userDetails?.fees)
+    ) {
+      return nav_items;
+    } else {
+      return boarding_nav_items;
+    }
+
+    return CurrentNav;
+  }, [user]);
+
+  // Check if the user has at least read access for a specific module
+  const hasAccess = useCallback(
+    (module: ModulesEnum | undefined) => {
+      if (!module) return true; // No module specified, render item
+
+      const permissions = user?.permissions || [];
+      const modulePermission = permissions.find(
+        (perm: any) => perm.permission.module === module
+      );
+
+      // Check if user has at least read access
+      return (
+        modulePermission &&
+        (modulePermission.permission.access_level == AccessLevelEnum.read ||
+          modulePermission.permission.access_level == AccessLevelEnum.full)
+      );
+    },
+    [user]
+  );
   // Function to toggle sub-navigation
   const toggleSubNav = (name: string, subnav: any) => {
     if (subnav) {
@@ -207,9 +244,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
             <div className="max-h-[calc(100vh-350px)] overflow-y-auto sidebar-scrollbar">
               <div className="p-2 flex flex-col gap-3">
-                {CurrentNav.map(
-                  ({ icon: Icon, name, path, sub_nav, roles }) =>
-                    roles.includes(user?.role) && (
+                {getCurrentNav().map(
+                  ({ icon: Icon, name, path, sub_nav, roles, module }) =>
+                    roles.includes(user?.role) &&
+                    hasAccess(module) && (
                       <div
                         className={`flex flex-col gap-2 ${
                           (pathname === path || name == openSubNav) &&
@@ -251,8 +289,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                               } pb-3`}
                             >
                               {sub_nav.map(
-                                ({ icon: Icon, name, path, roles }) =>
-                                  roles.includes(user?.role) && (
+                                ({ icon: Icon, name, path, roles, module }) =>
+                                  roles.includes(user?.role) &&
+                                  hasAccess(module) && (
                                     <Link
                                       href={path}
                                       className={`flex gap-2  items-center font-medium ${

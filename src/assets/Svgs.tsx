@@ -1018,3 +1018,39 @@ export const CancelIcon = ({ className }: { className?: string }) => {
     </svg>
   );
 };
+
+export const DeleteCheckIcon = ({ className }: { className?: string }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="92"
+      height="92"
+      viewBox="0 0 92 92"
+      fill="none"
+    >
+      <circle cx="46" cy="46" r="45.5" fill="#E84550" />
+      <mask
+        id="mask0_698_20915"
+        maskUnits="userSpaceOnUse"
+        x="11"
+        y="11"
+        width="70"
+        height="70"
+      >
+        <rect
+          x="11.875"
+          y="11.875"
+          width="68.25"
+          height="68.25"
+          fill="#D9D9D9"
+        />
+      </mask>
+      <g mask="url(#mask0_698_20915)">
+        <path
+          d="M31 65.6211L13.582 48.2742L18.9141 43.0133L36.2609 60.3602L31 65.6211ZM46.9961 64.3414L29.5781 46.9234L34.9102 41.5914L46.9961 53.6773L73.0875 27.5859L78.4195 32.918L46.9961 64.3414ZM46.9961 46.9234L41.6641 41.6625L55.7406 27.5859L61.0727 32.8469L46.9961 46.9234Z"
+          fill="white"
+        />
+      </g>
+    </svg>
+  );
+};
