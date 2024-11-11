@@ -6,7 +6,7 @@ import {
   Key,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-  PersonRounded,
+  Wallet,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
@@ -17,7 +17,6 @@ import {
   NeedHelpIcon,
   onBoardingIcon,
   PaymentsIcon,
-  PayoutsIcon,
   SettingsIcon,
   TransactionsIcon,
   WithdrawalIcon,
@@ -64,6 +63,12 @@ const nav_items: NavItem[] = [
     roles: [Role.ADMIN],
   },
   {
+    name: "Wallets",
+    icon: Wallet,
+    path: "/wallets",
+    roles: [Role.ADMIN],
+  },
+  {
     name: "Payments",
     icon: PaymentsIcon,
     path: "/payments",
@@ -81,12 +86,12 @@ const nav_items: NavItem[] = [
     path: "/withdrawals",
     roles: [Role.ADMIN, Role.USER],
   },
-  {
-    name: "Payouts",
-    icon: PayoutsIcon,
-    path: "/payouts",
-    roles: [Role.ADMIN, Role.USER],
-  },
+  // {
+  //   name: "Payouts",
+  //   icon: PayoutsIcon,
+  //   path: "/payouts",
+  //   roles: [Role.ADMIN, Role.USER],
+  // },
   {
     name: "Settings",
     icon: SettingsIcon,
@@ -99,12 +104,12 @@ const nav_items: NavItem[] = [
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
-      {
-        name: "Users",
-        icon: PersonRounded,
-        path: "/settings/users",
-        roles: [Role.USER],
-      },
+      // {
+      //   name: "Users",
+      //   icon: PersonRounded,
+      //   path: "/settings/users",
+      //   roles: [Role.USER],
+      // },
       {
         name: "Integrations",
         icon: Key,

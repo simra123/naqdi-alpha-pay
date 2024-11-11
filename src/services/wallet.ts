@@ -12,3 +12,7 @@ export const createDepoistAddressApi = (data: {
 export const getAllWalletBalancesApi = () => {
   return () => api.get(`wallet/balance`);
 };
+
+export const getAllWalletsListByAdminApi = () => {
+  return () => api.get(`wallet/wallet-list`);
+};
