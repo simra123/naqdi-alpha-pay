@@ -1,7 +1,7 @@
 "use client";
 
 import api from "@/config/api";
-import { AccessLevelEnum, ModulesEnum} from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 export const loginApi = (data) => {
   return () => api.post(`auth/login`, data);
@@ -91,4 +91,15 @@ export const createSubuserApi = (data: {
 
 export const getSubusersApi = () => {
   return () => api.get(`auth/sub-users`);
+};
+
+export const deleteSubusersApi = (data: {
+  username: string;
+  child_id: number;
+}) => {
+  return () => api.post(`auth/delete/sub-user`,data);
+};
+
+export const getSubuserDetailsApi = (data: { id: number }) => {
+  return () => api.get(`auth/detail-sub-users/${data.id}`);
 };

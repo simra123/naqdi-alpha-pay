@@ -16,7 +16,6 @@ type Props = {
 
 const DeleteModal = ({
   isOpen,
-
   handleConfirm,
   title = "Confirmation",
   error,
@@ -39,8 +38,8 @@ const DeleteModal = ({
         <LoaderButton
           color="error"
           content={`Delete`}
-          variant="outlined"
-          className="!py-4 !text-button hover:!bg-[#E84550] active:!opacity-95"
+          variant="contained"
+          className="!min-w-[75px] !text-button active:!opacity-95"
           onClick={handleConfirm}
           loading={confirmLoading}
         />
