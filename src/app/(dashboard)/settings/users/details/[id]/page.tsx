@@ -5,16 +5,18 @@ import { useRouter } from "next/navigation";
 import Details from "@/components/common/Details";
 import DeleteModal from "@/components/Modals/DeleteModal";
 import { useApi } from "@/hooks/useApi";
-import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import { callApiHook } from "@/utils/apifuncs";
 import { deleteSubusersApi, getSubuserDetailsApi } from "@/services/auth";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
+import CreateUserModal from "@/components/Modals/CreateUserModal";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
   const router = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [userDetails, setUserDetails] = useState<null | any>(null);
   const [isUserDeleteLoading, isUserDeleteError, callUserDeleteApi] = useApi({
     notify: true,
@@ -104,6 +106,13 @@ const UserDetails = ({ params }) => {
         confirmLoading={isUserDeleteLoading}
         error={isUserDeleteError}
       />
+      <CreateUserModal
+        isOpen={isEditOpen}
+        type={ModalType.EDIT}
+        refreshList={fetchUserDetails}
+        toggleHandler={() => setIsEditOpen(false)}
+        userPermissions={userDetails?.permissions}
+      />
       <h3 className="text-h3.5 font-semibold text-blackGrey-100 hidden md:block">
         User Details
       </h3>
@@ -166,7 +175,10 @@ const UserDetails = ({ params }) => {
           >
             Delete
           </button>
-          <button className="border-0 py-3 text-center text-white bg-green-button rounded-medium sm:w-56 ">
+          <button
+            className="border-0 py-3 text-center text-white bg-green-button rounded-medium sm:w-56 "
+            onClick={() => setIsEditOpen(true)}
+          >
             Edit
           </button>
         </div>

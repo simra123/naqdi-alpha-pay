@@ -16,12 +16,14 @@ import IconSelectBox from "@/components/common/IconSelectBox";
 import { callApiHook } from "@/utils/apifuncs";
 import { createSubuserApi } from "@/services/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
-import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
   refreshList: () => void;
+  type: ModalType;
+  userPermissions?: any;
 }
 
 const initialValues = {
@@ -46,7 +48,13 @@ const permissions = {
   [ModulesEnum?.withdrawal]: null,
 };
 
-const CreateUserModal = ({ isOpen, toggleHandler, refreshList }: Props) => {
+const CreateUserModal = ({
+  isOpen,
+  toggleHandler,
+  refreshList,
+  type,
+  userPermissions,
+}: Props) => {
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
 
@@ -62,8 +70,14 @@ const CreateUserModal = ({ isOpen, toggleHandler, refreshList }: Props) => {
 
   const [isCreateUserLoading, isCreateUserError, callCreateUserApi] = useApi();
 
-  const { errors, handleChange, handleSubmit, validateField, values } =
-    useFormValidation(initialValues, UserSchema);
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    validateField,
+    values,
+    setValues,
+  } = useFormValidation(initialValues, UserSchema);
 
   const onSubmit = () => {
     setStep(2);
@@ -133,8 +147,11 @@ const CreateUserModal = ({ isOpen, toggleHandler, refreshList }: Props) => {
       apiCall: callCreateUserApi(createSubuserApi(requestBody)),
       statusCode: 201,
       successCallBack: () => {
-        toggleHandler();
         refreshList();
+        toggleHandler();
+        setStep(1);
+        setValues(initialValues);
+        setSelectedPermissions(permissions);
         dispatch(
           setNotification({
             message: "User created successfully",
@@ -146,10 +163,21 @@ const CreateUserModal = ({ isOpen, toggleHandler, refreshList }: Props) => {
   };
 
   useEffect(() => {
-    if (isOpen) {
-      setSelectedPermissions(permissions);
+    if (type == ModalType.EDIT) {
+      setStep(2);
+      if (userPermissions) {
+        let currentPermission: any = {};
+
+        for (let i = 0; i < userPermissions.length; i++) {
+          currentPermission[userPermissions[i].permission.module] =
+            userPermissions[i].permission.access_level == AccessLevelEnum.none
+              ? null
+              : userPermissions[i].permission.access_level;
+        }
+        setSelectedPermissions(currentPermission);
+      }
     }
-  }, []);
+  }, [type, userPermissions, isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
@@ -363,19 +391,25 @@ const CreateUserModal = ({ isOpen, toggleHandler, refreshList }: Props) => {
 
             <div className="flex flex-col gap-1 mt-6">
               <LoaderButton
-                content={`Create User`}
+                content={type == ModalType.EDIT ? "Submit" : `Create User`}
                 variant="contained"
                 loading={isCreateUserLoading}
-                onClick={createSubUser}
+                onClick={
+                  type == ModalType.EDIT
+                    ? () => console.log("eiditng")
+                    : createSubUser
+                }
               />
 
-              <button
-                type="button"
-                className="text-black-100 px-4 py-2 mt-2"
-                onClick={goToStep(1)}
-              >
-                Back
-              </button>
+              {type != ModalType.EDIT && (
+                <button
+                  type="button"
+                  className="text-black-100 px-4 py-2 mt-2"
+                  onClick={goToStep(1)}
+                >
+                  Back
+                </button>
+              )}
             </div>
           </div>
         </>

@@ -12,7 +12,7 @@ import { generateCSVApi } from "@/services/common";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import { getSubusersApi } from "@/services/auth";
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModalType, ModulesEnum, TableColumns } from "@/constants/types";
 import Chip from "@/components/common/Chip";
 import PermissionAccess from "@/middleware/PermissionAccess";
 
@@ -29,6 +29,8 @@ export const userSettings_table_columns: TableColumns = [
     },
   },
 ];
+
+
 
 const Users = () => {
   const router = useRouter();
@@ -69,6 +71,7 @@ const Users = () => {
     <>
       <CreateUserModal
         isOpen={isCreateOpen}
+        type={ModalType.CREATE}
         refreshList={fetchSubUsersList}
         toggleHandler={createToggleHandler}
       />

@@ -28,3 +28,8 @@ export enum AccessLevelEnum {
   full = "full_access",
   none = "none",
 }
+
+export enum ModalType {
+  EDIT = "edit",
+  CREATE = "create",
+}
