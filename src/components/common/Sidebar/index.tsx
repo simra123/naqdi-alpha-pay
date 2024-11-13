@@ -27,6 +27,8 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { setUser } from "@/store/slices/userSlice";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
+import { STEPS } from "@/constants/onboarding";
 
 interface NavItem {
   name: string;
@@ -199,6 +201,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     Cookies.remove("token");
     Cookies.remove("user");
     dispatch(setUser(null));
+    dispatch(resetSteps({}));
     router.replace("/login");
   };
 

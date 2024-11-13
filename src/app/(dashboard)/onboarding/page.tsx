@@ -13,14 +13,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import FeeSetup from "@/components/forms/onBoarding/FeeSetup";
 import "./onboarding.scss";
-import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
 
 const Onboarding = () => {
-  const dipatch = useDispatch();
+  const dispatch = useDispatch();
   const userState = useSelector((state: any) => state.user.data);
   const user = userState?.userDetails;
-  // const localUser = useLocalStorage("user");
+
   const currentStep = useSelector(
     (state: any) => state.onboarding.current_step
   );
@@ -28,8 +26,10 @@ const Onboarding = () => {
     (state: any) => state.onboarding.disabled_steps
   );
 
+  console.log({ user, userState, currentStep, disabledSteps });
+
   const handleStepChange = (stepName) => () => {
-    dipatch(setStep({ current_step: stepName }));
+    dispatch(setStep({ current_step: stepName }));
   };
 
   const returnActiveStep = (stepName) => {
