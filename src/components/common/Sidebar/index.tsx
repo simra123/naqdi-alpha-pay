@@ -200,9 +200,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const logoutHandler = () => {
     Cookies.remove("token");
     Cookies.remove("user");
-    dispatch(setUser(null));
-    dispatch(resetSteps({}));
     router.replace("/login");
+    dispatch(resetSteps({}));
+    dispatch(setUser(null));
   };
 
   // Close sidebar if clicked outside

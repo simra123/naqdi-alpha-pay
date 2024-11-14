@@ -1,6 +1,6 @@
 import React from "react";
 import Cookies from "js-cookie";
-import { notFound } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";
 
@@ -26,49 +26,96 @@ const hasSufficientAccess = (
   return userAccessLevel === requiredAccessLevel;
 };
 
+const findFirstNonNoneAccessLevel = (permission: Permissions) => {
+  if (permission && permission?.length) {
+    const item = permission.find(
+      (item) => item.permission.access_level !== "none"
+    );
+    return item ? item?.permission : null;
+  }
+};
+
+interface IPermissionConfig {
+  redirectOnNoAccess?: boolean;
+}
+
+let ModuleRoutes = {
+  [ModulesEnum.payment]: "/payments",
+  [ModulesEnum.integration]: "settings/integrations",
+  [ModulesEnum.transaction]: "/transactions",
+  [ModulesEnum.user]: "/settings/users",
+  [ModulesEnum.wallet]: "/",
+  [ModulesEnum.withdrawal]: "/withdrawals",
+};
+
 const PermissionAccess = (
-  WrappedComponent: any,
+  WrappedComponent: (props: any) => React.JSX.Element,
   requiredModule: ModulesEnum,
-  requiredAccessLevel: AccessLevelEnum
+  requiredAccessLevel: AccessLevelEnum,
+  config?: IPermissionConfig
 ) => {
   console.log("permission access hoc running");
   return (props: WithPermissionProps) => {
     // Get permissions from cookies and parse them
+    let router = useRouter();
     const user = useLocalStorage("user");
-    let permissions: Permissions = user?.permissions;
+    if (user && user?.permissions) {
+      let permissions: Permissions = user?.permissions;
 
-    // Find the specific module permission
-    const modulePermission = permissions.find(
-      (perm) => perm.permission.module === requiredModule
-    );
+      const redirectOnNoAccess = config?.redirectOnNoAccess;
 
-    if (!modulePermission) {
-      // Module not found in permissions, render NotFound
-      return notFound();
-    }
+      console.log({
+        permissions,
+        message: "testing issue of integration loggout",
+      });
 
-    const { access_level } = modulePermission.permission;
+      // Find the specific module permission
+      const modulePermission = permissions.find(
+        (perm) => perm.permission.module === requiredModule
+      );
 
-    // Check if the user has sufficient access level
-    const hasAccess = hasSufficientAccess(access_level, requiredAccessLevel);
-    console.log({
-      requiredAccessLevel,
-      requiredModule,
-      modulePermission,
-      access_level,
-      permissions,
-      hasAccess,
-    });
-
-    // If access is denied, render NotFound
-    if (!hasAccess) {
-      if (requiredAccessLevel == AccessLevelEnum.read) {
+      if (!modulePermission) {
+        // Module not found in permissions, render NotFound
         return notFound();
       }
-      return <></>;
-    }
 
-    return <WrappedComponent {...props} />;
+      const { access_level } = modulePermission.permission;
+
+      // Check if the user has sufficient access level
+      const hasAccess = hasSufficientAccess(access_level, requiredAccessLevel);
+
+      if (redirectOnNoAccess && !hasAccess) {
+        // Redirect based on permission available
+        let availableModule = findFirstNonNoneAccessLevel(permissions);
+        console.log({
+          availableModule,
+          message: "redirect on no access is true",
+        });
+        if (availableModule) {
+          return router.push(ModuleRoutes[availableModule.module]);
+        } else {
+          return router.push("/settings/account");
+        }
+      }
+      console.log({
+        requiredAccessLevel,
+        requiredModule,
+        modulePermission,
+        access_level,
+        permissions,
+        hasAccess,
+      });
+
+      // If access is denied, render NotFound
+      if (!hasAccess) {
+        if (requiredAccessLevel == AccessLevelEnum.read) {
+          return notFound();
+        }
+        return <></>;
+      }
+
+      return <WrappedComponent {...props} />;
+    }
   };
 };
 

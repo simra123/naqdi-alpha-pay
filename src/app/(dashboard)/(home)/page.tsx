@@ -176,4 +176,9 @@ const Home = () => {
   );
 };
 
-export default PermissionAccess(Home, ModulesEnum.wallet, AccessLevelEnum.read);
+export default PermissionAccess(
+  Home,
+  ModulesEnum.wallet,
+  AccessLevelEnum.read,
+  { redirectOnNoAccess: true }
+);
