@@ -89,6 +89,20 @@ export const createSubuserApi = (data: {
   return () => api.post(`auth/create/sub-users`, data);
 };
 
+export const updateSubuserApi = (data: {
+  user_id: number | string;
+  user_permission: {
+    id: number;
+    permissions: {
+      id: number;
+      module: ModulesEnum;
+      access_level: AccessLevelEnum;
+    };
+  }[];
+}) => {
+  return () => api.post(`auth/user/update-permission`, data);
+};
+
 export const getSubusersApi = () => {
   return () => api.get(`auth/sub-users`);
 };
@@ -97,7 +111,7 @@ export const deleteSubusersApi = (data: {
   username: string;
   child_id: number;
 }) => {
-  return () => api.post(`auth/delete/sub-user`,data);
+  return () => api.post(`auth/delete/sub-user`, data);
 };
 
 export const getSubuserDetailsApi = (data: { id: number }) => {

@@ -14,7 +14,7 @@ import { UserSchema } from "@/models/Register";
 import SwitchButton from "@/components/common/SwitchButton";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import { callApiHook } from "@/utils/apifuncs";
-import { createSubuserApi } from "@/services/auth";
+import { createSubuserApi, updateSubuserApi } from "@/services/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 
@@ -24,6 +24,7 @@ interface Props {
   refreshList: () => void;
   type: ModalType;
   userPermissions?: any;
+  user_id?: number | string;
 }
 
 const initialValues = {
@@ -54,6 +55,7 @@ const CreateUserModal = ({
   refreshList,
   type,
   userPermissions,
+  user_id,
 }: Props) => {
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
@@ -69,6 +71,8 @@ const CreateUserModal = ({
     };
 
   const [isCreateUserLoading, isCreateUserError, callCreateUserApi] = useApi();
+
+  console.log({ selectedPermissions, userPermissions });
 
   const {
     errors,
@@ -155,6 +159,44 @@ const CreateUserModal = ({
         dispatch(
           setNotification({
             message: "User created successfully",
+            status: "success",
+          })
+        );
+      },
+    });
+  };
+
+  const updateSubUser = async () => {
+    let mappedPermissions = userPermissions?.map((perm) => {
+      if (
+        selectedPermissions[perm?.permission?.module] ||
+        selectedPermissions[perm?.permission?.module] === null
+      ) {
+        let currentAccessLevel = selectedPermissions[perm?.permission?.module];
+        return {
+          ...perm,
+          permission: {
+            ...perm?.permission,
+            access_level: currentAccessLevel || "none",
+          },
+        };
+      }
+    });
+
+    await callApiHook({
+      apiCall: callCreateUserApi(
+        updateSubuserApi({
+          user_permission: mappedPermissions,
+          user_id: +user_id,
+        })
+      ),
+      statusCode: 200,
+      successCallBack: () => {
+        refreshList();
+        toggleHandler();
+        dispatch(
+          setNotification({
+            message: "User updated successfully",
             status: "success",
           })
         );
@@ -394,11 +436,7 @@ const CreateUserModal = ({
                 content={type == ModalType.EDIT ? "Submit" : `Create User`}
                 variant="contained"
                 loading={isCreateUserLoading}
-                onClick={
-                  type == ModalType.EDIT
-                    ? () => console.log("eiditng")
-                    : createSubUser
-                }
+                onClick={type == ModalType.EDIT ? updateSubUser : createSubUser}
               />
 
               {type != ModalType.EDIT && (

@@ -111,6 +111,7 @@ const UserDetails = ({ params }) => {
         type={ModalType.EDIT}
         refreshList={fetchUserDetails}
         toggleHandler={() => setIsEditOpen(false)}
+        user_id={userID}
         userPermissions={userDetails?.permissions}
       />
       <h3 className="text-h3.5 font-semibold text-blackGrey-100 hidden md:block">
@@ -135,37 +136,40 @@ const UserDetails = ({ params }) => {
           </div>
         </div>
         <div className="overflow-x-auto w-full">
-          {userDetails?.permissions.map((item, index) => (
-            <div
-              className="flex justify-between w-full min-w-max sm:grid sm:grid-cols-4 md:justify-between lg:grid-cols-5  gap-4 items-center py-5 border-light-gray border-b"
-              key={item?.id}
-            >
-              <div className="min-w-20 md:col-span-1 lg:col-span-2 text-[14px] md:text-button  text-black-100 capitalize">
-                {item?.permission?.module}
-              </div>
-              <div className="text-center md:col-span-1">
-                {renderRadioButton(
-                  item?.permission?.module?.toLowerCase(),
-                  AccessLevelEnum.none,
-                  "None"
-                )}
-              </div>
-              <div className="text-center md:col-span-1">
-                {renderRadioButton(
-                  item?.permission?.module?.toLowerCase(),
-                  AccessLevelEnum.read,
-                  "Read Only"
-                )}
-              </div>
-              <div className="text-center md:col-span-1">
-                {renderRadioButton(
-                  item?.permission?.module?.toLowerCase(),
-                  AccessLevelEnum.full,
-                  "Full Access"
-                )}
-              </div>
-            </div>
-          ))}
+          {userDetails?.permissions.map(
+            (item, index) =>
+              item?.permission?.module != ModulesEnum.payout && (
+                <div
+                  className="flex justify-between w-full min-w-max sm:grid sm:grid-cols-4 md:justify-between lg:grid-cols-5  gap-4 items-center py-5 border-light-gray border-b"
+                  key={item?.id}
+                >
+                  <div className="min-w-20 md:col-span-1 lg:col-span-2 text-[14px] md:text-button  text-black-100 capitalize">
+                    {item?.permission?.module}
+                  </div>
+                  <div className="text-center md:col-span-1">
+                    {renderRadioButton(
+                      item?.permission?.module?.toLowerCase(),
+                      AccessLevelEnum.none,
+                      "None"
+                    )}
+                  </div>
+                  <div className="text-center md:col-span-1">
+                    {renderRadioButton(
+                      item?.permission?.module?.toLowerCase(),
+                      AccessLevelEnum.read,
+                      "Read Only"
+                    )}
+                  </div>
+                  <div className="text-center md:col-span-1">
+                    {renderRadioButton(
+                      item?.permission?.module?.toLowerCase(),
+                      AccessLevelEnum.full,
+                      "Full Access"
+                    )}
+                  </div>
+                </div>
+              )
+          )}
         </div>
 
         <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-20 flex-wrap">

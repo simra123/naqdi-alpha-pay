@@ -21,6 +21,7 @@ export enum ModulesEnum {
   payment = "payment",
   withdrawal = "withdrawal",
   transaction = "transaction",
+  payout = "payout",
 }
 
 export enum AccessLevelEnum {
