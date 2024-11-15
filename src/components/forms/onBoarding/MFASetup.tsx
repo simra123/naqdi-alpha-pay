@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setStep } from "@/store/slices/onboarding.slice";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import LoaderButton from "@/components/common/LoaderButton";
+import { useRouter } from "next/navigation";
 
 interface QrCode {
   secret: string | null;
@@ -19,6 +20,7 @@ interface QrCode {
 
 const MFASetup = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const user = useSelector((state: any) => state?.user?.data);
   const [isQrCodeLoading, isQrCodeError, callQrCodeApi] = useApi();
   const [isVerifyLoading, isVerifyError, callVerifyApi] = useApi();
@@ -69,6 +71,9 @@ const MFASetup = () => {
   };
 
   const handleSubmitMfaSetup = () => {
+    if (user?.parentUser) {
+      return router.push("/");
+    }
     dispatch(
       setStep({
         previous_step: STEPS.MFASETUP,

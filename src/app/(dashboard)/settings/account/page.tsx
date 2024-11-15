@@ -21,7 +21,7 @@ import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
 
 const Account = () => {
   const localUser = useLocalStorage("user");
-  const [isMFaVerified, setIsMfaVerified] = useState(false)
+  const [isMFaVerified, setIsMfaVerified] = useState(false);
 
   const user =
     localUser?.role == Role.ADMIN
@@ -41,11 +41,9 @@ const Account = () => {
 
   useEffect(() => {
     if (user?.role == Role.ADMIN && user?.userDetails?.mfa) {
-      setIsMfaVerified(true)
+      setIsMfaVerified(true);
     }
-  }, [user])
-
-
+  }, [user]);
 
   return (
     <>
@@ -53,7 +51,11 @@ const Account = () => {
         isOpen={isChangePasswordOpen}
         toggleHandler={changePasswordModalToggler}
       />
-      <GenerateQRCodeModal isOpen={isQROpen} setIsOpen={setQROpen} setIsMfaVerified={setIsMfaVerified} />
+      <GenerateQRCodeModal
+        isOpen={isQROpen}
+        setIsOpen={setQROpen}
+        setIsMfaVerified={setIsMfaVerified}
+      />
 
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Account</h3>
@@ -114,35 +116,40 @@ const Account = () => {
           </div>
         </RenderRoleBased>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <StatusIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
-        </div>
-        <div className="res-2-grid py-6">
-          <div className="flex gap-4 items-center">
-            <Details
-              label="MFA"
-              value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
-            />
-            {localUser?.role == Role.ADMIN && (!localUser?.userDetails?.mfa || !isMFaVerified) && (
-              <LoaderButton
-                content={
-                  <div className="flex gap-2 text-[14px] font-semibold items-center">
-                    <span>Setup MFA</span>
-                    <ErrorOutlineOutlined className="text-purple-100 text-[18px]" />
-                  </div>
-                }
-                variant="text"
-                className="hover:underline"
-                onClick={qrCodeModalToggler}
-              />
-            )}
-          </div>
-          <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
-            <Details label="KYC" value={user?.userDetails?.kyc_status} />
-            <Details label="Fees" value={user?.userDetails?.fees + "%"} />
-          </RenderRoleBased>
-        </div>
+        {!user?.parentUser && (
+          <>
+            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+              <StatusIcon />
+              <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+            </div>
+            <div className="res-2-grid py-6">
+              <div className="flex gap-4 items-center">
+                <Details
+                  label="MFA"
+                  value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
+                />
+                {localUser?.role == Role.ADMIN &&
+                  (!localUser?.userDetails?.mfa || !isMFaVerified) && (
+                    <LoaderButton
+                      content={
+                        <div className="flex gap-2 text-[14px] font-semibold items-center">
+                          <span>Setup MFA</span>
+                          <ErrorOutlineOutlined className="text-purple-100 text-[18px]" />
+                        </div>
+                      }
+                      variant="text"
+                      className="hover:underline"
+                      onClick={qrCodeModalToggler}
+                    />
+                  )}
+              </div>
+              <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
+                <Details label="KYC" value={user?.userDetails?.kyc_status} />
+                <Details label="Fees" value={user?.userDetails?.fees + "%"} />
+              </RenderRoleBased>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="mt-16 max-w-[360px] pb-8 md:hidden">
