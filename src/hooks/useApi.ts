@@ -12,10 +12,7 @@ interface Props {
   notify?: boolean;
 }
 
-export const useApi = ({
-  initailLoading,
-  notify,
-}: Props = {}) => {
+export const useApi = ({ initailLoading, notify }: Props = {}) => {
   console.log({ initailLoading, notify });
 
   const dispatch = useDispatch();
@@ -60,7 +57,9 @@ export const useApi = ({
           dispatch(
             setNotification({
               status: "error",
-              message: "Your Session has been expired.",
+              message:
+                error?.response?.data?.message ||
+                "Your Session has been expired.",
             })
           );
         }

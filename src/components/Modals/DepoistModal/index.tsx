@@ -50,7 +50,6 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
         createDepoistAddressApi(seletedOption?.standard ? TokenData : CoinData)
       ),
       successCallBack: (response: any) => {
-
         setDepositAddress(response);
       },
     });
@@ -110,13 +109,11 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   };
 
   const filteredNetworks = (blockchain, network) => {
-
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-
       <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
 
       <IconSelectBox
@@ -172,10 +169,7 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
           variant="contained"
           onClick={createDepoistAddress}
         />
-
-
       </div>
-
     </Modal>
   );
 };
