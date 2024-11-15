@@ -16,7 +16,7 @@ import { AccessLevelEnum, ModalType, ModulesEnum, TableColumns } from "@/constan
 import Chip from "@/components/common/Chip";
 import PermissionAccess from "@/middleware/PermissionAccess";
 
-export const userSettings_table_columns: TableColumns = [
+const userSettings_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
   { field: "email", headerName: "Email" },
   { field: "first_name", headerName: "First Name" },
@@ -24,7 +24,7 @@ export const userSettings_table_columns: TableColumns = [
   {
     field: "verified",
     headerName: "Status",
-    dataValidator(value) {
+    dataValidator(value,row) {
       return <Chip status={value ? "accepted" : "pending"} />;
     },
   },
