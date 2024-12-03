@@ -117,7 +117,7 @@ const nav_items: NavItem[] = [
         name: "Users",
         icon: PersonRounded,
         path: "/settings/users",
-        roles: [Role.USER],
+        roles: [Role.USER, Role.ADMIN],
         module: ModulesEnum.user,
       },
       {

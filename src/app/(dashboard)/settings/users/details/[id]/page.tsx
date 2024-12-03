@@ -11,10 +11,14 @@ import { deleteSubusersApi, getSubuserDetailsApi } from "@/services/auth";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
+import { resolve } from "path";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
   const router = useRouter();
+  const user = useLocalStorage("user");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [userDetails, setUserDetails] = useState<null | any>(null);
@@ -35,12 +39,16 @@ const UserDetails = ({ params }) => {
   // });
 
   const fetchUserDetails = async () => {
-    await callApiHook({
-      apiCall: callUserDetailsApi(getSubuserDetailsApi({ id: userID })),
-      successCallBack: (response: any) => {
-        setUserDetails(response);
-      },
-    });
+    if (user?.role == Role.USER) {
+      await callApiHook({
+        apiCall: callUserDetailsApi(getSubuserDetailsApi({ id: userID })),
+        successCallBack: (response: any) => {
+          setUserDetails(response);
+        },
+      });
+    }else{
+      callUserDetailsApi(()=> console.log('jello'))
+    }
   };
 
   const deleteSubUser = async () => {

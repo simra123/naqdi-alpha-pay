@@ -17,6 +17,8 @@ import { callApiHook } from "@/utils/apifuncs";
 import { createSubuserApi, updateSubuserApi } from "@/services/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
 
 interface Props {
   isOpen: boolean;
@@ -59,6 +61,7 @@ const CreateUserModal = ({
 }: Props) => {
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
+  const user = useLocalStorage("user");
 
   const [selectedPermissions, setSelectedPermissions] = useState(permissions);
 
@@ -304,6 +307,80 @@ const CreateUserModal = ({
       ) : (
         <>
           <div className="flex flex-col gap-4 justify-end mt-4">
+
+          {user?.role == Role.ADMIN && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-base">Balance</span>
+                <SwitchButton
+                  handleToggle={togglePermission(
+                    ModulesEnum.balance,
+                    AccessLevelEnum.read
+                  )}
+                  isOn={selectedPermissions[ModulesEnum.balance]}
+                />
+              </div>
+              {selectedPermissions[ModulesEnum.balance] && (
+                <IconSelectBox
+                  wrapperClassName="!m-0"
+                  options={permissionOptions}
+                  onChange={handlePermissionChange}
+                  name={ModulesEnum.balance}
+                  value={selectedPermissions[ModulesEnum.balance]}
+                />
+              )}
+            </div>
+
+          )}
+          {user?.role == Role.ADMIN && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-base">Merchant</span>
+                <SwitchButton
+                  handleToggle={togglePermission(
+                    ModulesEnum.merchant,
+                    AccessLevelEnum.read
+                  )}
+                  isOn={selectedPermissions[ModulesEnum.merchant]}
+                />
+              </div>
+              {selectedPermissions[ModulesEnum.merchant] && (
+                <IconSelectBox
+                  wrapperClassName="!m-0"
+                  options={permissionOptions}
+                  onChange={handlePermissionChange}
+                  name={ModulesEnum.merchant}
+                  value={selectedPermissions[ModulesEnum.merchant]}
+                />
+              )}
+            </div>
+
+          )}
+          {user?.role == Role.ADMIN && (
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-base">KYC</span>
+                <SwitchButton
+                  handleToggle={togglePermission(
+                    ModulesEnum.kyc,
+                    AccessLevelEnum.read
+                  )}
+                  isOn={selectedPermissions[ModulesEnum.kyc]}
+                />
+              </div>
+              {selectedPermissions[ModulesEnum.kyc] && (
+                <IconSelectBox
+                  wrapperClassName="!m-0"
+                  options={permissionOptions}
+                  onChange={handlePermissionChange}
+                  name={ModulesEnum.kyc}
+                  value={selectedPermissions[ModulesEnum.kyc]}
+                />
+              )}
+            </div>
+
+          )}
+
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-base">Wallet</span>
@@ -346,24 +423,28 @@ const CreateUserModal = ({
                 />
               )}
             </div>
-            <div className="flex justify-between items-center">
-              <span className="font-medium text-base">Integrations</span>
-              <SwitchButton
-                handleToggle={togglePermission(
-                  ModulesEnum.integration,
-                  AccessLevelEnum.read
+            {user?.role == Role.USER && (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-base">Integrations</span>
+                  <SwitchButton
+                    handleToggle={togglePermission(
+                      ModulesEnum.integration,
+                      AccessLevelEnum.read
+                    )}
+                    isOn={selectedPermissions[ModulesEnum.integration]}
+                  />
+                </div>
+                {selectedPermissions[ModulesEnum.integration] && (
+                  <IconSelectBox
+                    wrapperClassName="!m-0"
+                    options={permissionOptions}
+                    onChange={handlePermissionChange}
+                    name={ModulesEnum.integration}
+                    value={selectedPermissions[ModulesEnum.integration]}
+                  />
                 )}
-                isOn={selectedPermissions[ModulesEnum.integration]}
-              />
-            </div>
-            {selectedPermissions[ModulesEnum.integration] && (
-              <IconSelectBox
-                wrapperClassName="!m-0"
-                options={permissionOptions}
-                onChange={handlePermissionChange}
-                name={ModulesEnum.integration}
-                value={selectedPermissions[ModulesEnum.integration]}
-              />
+              </>
             )}
 
             <div className="flex flex-col gap-2">
