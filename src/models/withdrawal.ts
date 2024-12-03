@@ -4,9 +4,6 @@ import * as Yup from "yup";
 export const getWithdrawalSchema = (maxSourceAmount: number) => {
   return Yup.object().shape({
     blockchain: Yup.string().required("Blockchain is required"),
-    token: Yup.string()
-      .required("Token is required")
-      .length(6, "Token must be exactly 6 characters long"),
     amount: Yup.number()
       .typeError("Entered value must not be empty and should be a number")
       .min(0.0001)
@@ -17,6 +14,13 @@ export const getWithdrawalSchema = (maxSourceAmount: number) => {
       .required("Source amount is required"),
     recipient_address: Yup.string().required("Wallet address is required"),
     notes: Yup.string().notRequired(),
+  });
+};
+export const otpSchema = () => {
+  return Yup.object().shape({
+    token: Yup.string()
+      .required("Token is required")
+      .length(6, "Token must be exactly 6 characters long"),
   });
 };
 

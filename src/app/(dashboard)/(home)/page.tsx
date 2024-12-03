@@ -83,7 +83,7 @@ const Home = () => {
 
   return (
     <>
-      <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} />
+      {/* <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} /> */}
 
       <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Alphaspay Dashboard
@@ -117,14 +117,14 @@ const Home = () => {
                   onClick={getBalances}
                   variant="text"
                 />
-                {user?.role == Role.USER && (
+                {/* {user?.role == Role.USER && (
                   <LoaderButton
                     content={"Deposit Crypto"}
                     className="px-4"
                     variant="outlined"
                     onClick={handleDepoist}
                   />
-                )}
+                )} */}
               </div>
             </div>
           }

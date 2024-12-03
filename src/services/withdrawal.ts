@@ -26,7 +26,10 @@ export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {
   return () => api.post(`wallet/withdrawal-details`, data);
 };
 
-export const withdrawalRejectAdminApi = (data: { withdraw_id: number, reason: string }) => {
+export const withdrawalRejectAdminApi = (data: {
+  withdraw_id: number;
+  reason: string;
+}) => {
   return () => api.post(`wallet/reject-withdraw`, data);
 };
 
@@ -36,12 +39,16 @@ export const withdrawalApproveAdminApi = (data: {
   addresses?: string[];
 }) => {
   if (data.withdrawal_mode == Withdrawal_Type.AUTOMATIC) {
-    return () => api.post(`wallet/auto-withdraw-approval`, { withdraw_id: data.withdraw_id });
+    return () =>
+      api.post(`wallet/auto-withdraw-approval`, {
+        withdraw_id: data.withdraw_id,
+      });
   }
-  return () => api.post(`wallet/manual-withdraw-approval`, {
-    withdraw_id: data.withdraw_id,
-    addresses: data.addresses
-  });
+  return () =>
+    api.post(`/wallet/withdraw-approval`, {
+      withdraw_id: data.withdraw_id,
+      addresses: data.addresses,
+    });
 };
 
 export const getWithdrawalWalletsApi = (data: { withdraw_id: number }) => {
