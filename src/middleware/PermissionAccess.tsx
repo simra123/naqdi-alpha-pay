@@ -55,7 +55,7 @@ const PermissionAccess = (
   config?: IPermissionConfig
 ) => {
   console.log("permission access hoc running");
-  return (props: WithPermissionProps) => {
+  return (props: WithPermissionProps): any => {
     // Get permissions from cookies and parse them
     let router = useRouter();
     const user = useLocalStorage("user");
