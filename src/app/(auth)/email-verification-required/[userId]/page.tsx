@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
