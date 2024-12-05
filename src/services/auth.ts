@@ -117,3 +117,37 @@ export const deleteSubusersApi = (data: {
 export const getSubuserDetailsApi = (data: { id: number }) => {
   return () => api.get(`auth/detail-sub-users/${data.id}`);
 };
+
+export const createSubAdminApi = (data: {
+  username: string;
+  first_name: string;
+  email: string;
+  last_name: string;
+  password: string;
+  permissions: {
+    module: ModulesEnum;
+    access_level: AccessLevelEnum;
+  }[];
+}) => {
+  return () => api.post(`auth/create/admin-sub-users`, data);
+};
+export const getSubAdminsApi = () => {
+  return () => api.get(`auth/admin/sub-admin`);
+};
+
+export const getSubAdminDetailsApi = (data: { id: number }) => {
+  return () => api.get(`auth/admin/detail-sub-admin/${data.id}`);
+};
+  export const updateSubAdminApi = (data: {
+    user_id: number | string;
+    user_permission: {
+      id: number;
+      permissions: {
+        id: number;
+        module: ModulesEnum;
+        access_level: AccessLevelEnum;
+      };
+    }[];
+  }) => {
+    return () => api.post(`auth/admin/update-permission`, data);
+  };
