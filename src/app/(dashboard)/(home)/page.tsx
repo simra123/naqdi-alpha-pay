@@ -6,7 +6,7 @@ import { Sync } from "@mui/icons-material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import DepositModal from "@/components/Modals/DepoistModal";
+// import DepositModal from "@/components/Modals/DepoistModal";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
@@ -81,7 +81,7 @@ const Home = () => {
 
   return (
     <>
-      <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} />
+      {/* <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} /> */}
 
       <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Alphaspay Dashboard
@@ -115,7 +115,7 @@ const Home = () => {
                   onClick={getBalances}
                   variant="text"
                 />
-                {user?.role == Role.USER && (
+                {/* {user?.role == Role.USER && (
                   <>
                     {PermissionAccess(
                       LoaderButton,
@@ -129,7 +129,7 @@ const Home = () => {
                     })}
                     ,
                   </>
-                )}
+                )} */}
               </div>
             </div>
           }
