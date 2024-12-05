@@ -66,7 +66,7 @@ const IconField = ({
         className={`relative rounded-large bg-white ${inputContainerClassName}`}
       >
         {Icon && (
-          <Icon className="absolute left-4 top-0 flex h-full items-center text-gray-400" />
+          <Icon className="absolute left-4 top-0 flex !h-full items-center text-gray-400" />
         )}
         <input
           type={isPasswordField ? (!showPassword ? "password" : "text") : type}
@@ -86,7 +86,7 @@ const IconField = ({
         />
         {isPasswordField && (
           <div
-            className="absolute right-4 top-0 cursor-pointer flex h-full items-center text-gray-400"
+            className="absolute right-4 top-0 cursor-pointer flex !h-full items-center text-gray-400"
             onClick={togglePasswordVisibility}
           >
             {showPassword ? <VisibilityOff /> : <Visibility />}

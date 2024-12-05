@@ -5,7 +5,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import theme from "@/config/theme";
 import store from "@/store";
 import Notification from "@/components/common/Notification";
 import "./globals.scss";
@@ -21,11 +20,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={barlow.className}>
         <Provider store={store}>
-          <ThemeProvider theme={theme}>
-            <LocalizationProvider dateAdapter={AdapterMoment}>
-              {children}
-            </LocalizationProvider>
-          </ThemeProvider>
+
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            {children}
+          </LocalizationProvider>
+
           <Notification />
         </Provider>
       </body>

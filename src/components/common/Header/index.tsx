@@ -68,7 +68,7 @@ const Header = ({ navHandler }) => {
               </span>
             </div>
             <div className="icon ml-3">
-              <KeyboardArrowDown />
+              {/* <KeyboardArrowDown /> */}
             </div>
           </div>
 

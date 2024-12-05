@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Typography } from "@mui/material";
-import { Check, CheckCircle, Forward } from "@mui/icons-material";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";

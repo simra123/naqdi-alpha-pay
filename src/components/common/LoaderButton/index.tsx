@@ -1,4 +1,3 @@
-import { CircularProgress } from "@mui/material";
 import React from "react";
 import Loader from "../Loader";
 
@@ -73,15 +72,14 @@ const LoaderButton = ({
           variant === "contained" ? (
             <Loader />
           ) : (
-            <CircularProgress
-              className={
-                color == "success"
+            <div
+              className={`loader-circle 
+                ${color == "success"
                   ? "text-green-button"
                   : color == "error"
-                  ? "text-red-button"
-                  : "text-purple-100"
-              }
-              size={20}
+                    ? "text-red-button"
+                    : "text-purple-100"
+                }`}
             />
           )
         ) : (
