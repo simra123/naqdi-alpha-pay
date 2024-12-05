@@ -14,7 +14,11 @@ import { UserSchema } from "@/models/Register";
 import SwitchButton from "@/components/common/SwitchButton";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import { callApiHook } from "@/utils/apifuncs";
-import { createSubuserApi, updateSubuserApi } from "@/services/auth";
+import {
+  createSubAdminApi,
+  createSubuserApi,
+  updateSubuserApi,
+} from "@/services/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -42,13 +46,22 @@ const permissionOptions = [
   { label: "Full Access", value: AccessLevelEnum.full },
 ];
 
-const permissions = {
+const subUserPermissions = {
   [ModulesEnum?.integration]: null,
   [ModulesEnum?.payment]: null,
   [ModulesEnum?.transaction]: null,
   [ModulesEnum?.user]: null,
   [ModulesEnum?.wallet]: null,
   [ModulesEnum?.withdrawal]: null,
+};
+const subAdminPermissions = {
+  [ModulesEnum?.payment]: null,
+  [ModulesEnum?.transaction]: null,
+  [ModulesEnum?.user]: null,
+  [ModulesEnum?.wallet]: null,
+  [ModulesEnum?.withdrawal]: null,
+  [ModulesEnum?.kyc]: null,
+  [ModulesEnum?.merchant]: null,
 };
 
 const CreateUserModal = ({
@@ -62,6 +75,8 @@ const CreateUserModal = ({
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
   const user = useLocalStorage("user");
+  let permissions =
+    user?.role == Role.ADMIN ? subAdminPermissions : subUserPermissions;
 
   const [selectedPermissions, setSelectedPermissions] = useState(permissions);
 
@@ -149,9 +164,28 @@ const CreateUserModal = ({
         },
       ],
     };
+    if (user?.role == Role.ADMIN) {
+      // requestBody?.permissions?.shift();
+      //   requestBody.permissions.push(
+      //     {
+      //       module: ModulesEnum.kyc,
+      //       access_level: checkCondition(selectedPermissions[ModulesEnum.kyc]),
+      //     },
+      //     {
+      //       module: ModulesEnum.merchant,
+      //       access_level: checkCondition(
+      //         selectedPermissions[ModulesEnum.merchant]
+      //       ),
+      //     }
+      //   );
+    }
     console.log(requestBody);
     await callApiHook({
-      apiCall: callCreateUserApi(createSubuserApi(requestBody)),
+      apiCall: callCreateUserApi(
+        user?.role == Role.USER
+          ? createSubuserApi(requestBody)
+          : createSubAdminApi(requestBody)
+      ),
       statusCode: 201,
       successCallBack: () => {
         refreshList();
@@ -307,80 +341,6 @@ const CreateUserModal = ({
       ) : (
         <>
           <div className="flex flex-col gap-4 justify-end mt-4">
-
-          {user?.role == Role.ADMIN && (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-base">Balance</span>
-                <SwitchButton
-                  handleToggle={togglePermission(
-                    ModulesEnum.balance,
-                    AccessLevelEnum.read
-                  )}
-                  isOn={selectedPermissions[ModulesEnum.balance]}
-                />
-              </div>
-              {selectedPermissions[ModulesEnum.balance] && (
-                <IconSelectBox
-                  wrapperClassName="!m-0"
-                  options={permissionOptions}
-                  onChange={handlePermissionChange}
-                  name={ModulesEnum.balance}
-                  value={selectedPermissions[ModulesEnum.balance]}
-                />
-              )}
-            </div>
-
-          )}
-          {user?.role == Role.ADMIN && (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-base">Merchant</span>
-                <SwitchButton
-                  handleToggle={togglePermission(
-                    ModulesEnum.merchant,
-                    AccessLevelEnum.read
-                  )}
-                  isOn={selectedPermissions[ModulesEnum.merchant]}
-                />
-              </div>
-              {selectedPermissions[ModulesEnum.merchant] && (
-                <IconSelectBox
-                  wrapperClassName="!m-0"
-                  options={permissionOptions}
-                  onChange={handlePermissionChange}
-                  name={ModulesEnum.merchant}
-                  value={selectedPermissions[ModulesEnum.merchant]}
-                />
-              )}
-            </div>
-
-          )}
-          {user?.role == Role.ADMIN && (
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center">
-                <span className="font-medium text-base">KYC</span>
-                <SwitchButton
-                  handleToggle={togglePermission(
-                    ModulesEnum.kyc,
-                    AccessLevelEnum.read
-                  )}
-                  isOn={selectedPermissions[ModulesEnum.kyc]}
-                />
-              </div>
-              {selectedPermissions[ModulesEnum.kyc] && (
-                <IconSelectBox
-                  wrapperClassName="!m-0"
-                  options={permissionOptions}
-                  onChange={handlePermissionChange}
-                  name={ModulesEnum.kyc}
-                  value={selectedPermissions[ModulesEnum.kyc]}
-                />
-              )}
-            </div>
-
-          )}
-
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-base">Wallet</span>
@@ -402,6 +362,52 @@ const CreateUserModal = ({
                 />
               )}
             </div>
+            {user?.role == Role.ADMIN && (
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-base">Merchant</span>
+                  <SwitchButton
+                    handleToggle={togglePermission(
+                      ModulesEnum.merchant,
+                      AccessLevelEnum.read
+                    )}
+                    isOn={selectedPermissions[ModulesEnum.merchant]}
+                  />
+                </div>
+                {selectedPermissions[ModulesEnum.merchant] && (
+                  <IconSelectBox
+                    wrapperClassName="!m-0"
+                    options={permissionOptions}
+                    onChange={handlePermissionChange}
+                    name={ModulesEnum.merchant}
+                    value={selectedPermissions[ModulesEnum.merchant]}
+                  />
+                )}
+              </div>
+            )}
+            {user?.role == Role.ADMIN && (
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-base">KYC</span>
+                  <SwitchButton
+                    handleToggle={togglePermission(
+                      ModulesEnum.kyc,
+                      AccessLevelEnum.read
+                    )}
+                    isOn={selectedPermissions[ModulesEnum.kyc]}
+                  />
+                </div>
+                {selectedPermissions[ModulesEnum.kyc] && (
+                  <IconSelectBox
+                    wrapperClassName="!m-0"
+                    options={permissionOptions}
+                    onChange={handlePermissionChange}
+                    name={ModulesEnum.kyc}
+                    value={selectedPermissions[ModulesEnum.kyc]}
+                  />
+                )}
+              </div>
+            )}
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-base">Transaction</span>

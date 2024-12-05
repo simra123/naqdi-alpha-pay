@@ -13,7 +13,6 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
-import { resolve } from "path";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;

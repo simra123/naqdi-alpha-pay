@@ -16,15 +16,14 @@ export enum WalletType {
 
 export enum ModulesEnum {
   wallet = "wallet",
+  merchant = "merchant",
+  kyc = "kyc",
   integration = "integrations",
-  user = "user",
   payment = "payment",
   withdrawal = "withdrawal",
   transaction = "transaction",
   payout = "payout",
-  balance= "balance",
-  kyc="kyc",
-  merchant="merchant"
+  user = "user",
 }
 
 export enum AccessLevelEnum {

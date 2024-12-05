@@ -29,6 +29,7 @@ import { setUser } from "@/store/slices/userSlice";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
+import { FaUsers } from "react-icons/fa";
 
 interface NavItem {
   name: string;
@@ -57,8 +58,8 @@ const nav_items: NavItem[] = [
     module: ModulesEnum.wallet,
   },
   {
-    name: "Users",
-    icon: Assignment,
+    name: "Merchants",
+    icon: FaUsers,
     path: "/users",
     roles: [Role.ADMIN],
   },
@@ -72,7 +73,7 @@ const nav_items: NavItem[] = [
     name: "Wallets",
     icon: Wallet,
     path: "/wallets",
-    roles: [Role.ADMIN],
+    roles: null,
   },
   {
     name: "Payments",
@@ -249,6 +250,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
               <div className="p-2 flex flex-col gap-3">
                 {getCurrentNav().map(
                   ({ icon: Icon, name, path, sub_nav, roles, module }) =>
+                    roles &&
                     roles.includes(user?.role) &&
                     hasAccess(module) && (
                       <div
@@ -293,6 +295,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                             >
                               {sub_nav.map(
                                 ({ icon: Icon, name, path, roles, module }) =>
+                                  roles &&
                                   roles.includes(user?.role) &&
                                   hasAccess(module) && (
                                     <Link
