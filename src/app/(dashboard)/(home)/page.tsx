@@ -1,15 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
-import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
-import { ConstantsUtil } from "@/constants/ConstantsUtil";
-import { EthersConstants } from "@/constants/EthersConstants";
+
 import { Sync } from "@mui/icons-material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import DepositModal from "@/components/Modals/DepoistModal";
+// import DepositModal from "@/components/Modals/DepoistModal";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";

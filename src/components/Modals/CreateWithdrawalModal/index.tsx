@@ -171,6 +171,7 @@ const CreateWithdrawalModal = ({
       setBalanceError(null);
       setWithdrawalError(null);
       _getUserBalance();
+      setCurrentStep(1)
       setValues(initalFormValues); // Reset form values
     }
   }, [isOpen]);

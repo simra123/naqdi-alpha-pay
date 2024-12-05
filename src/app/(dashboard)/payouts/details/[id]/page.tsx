@@ -18,7 +18,6 @@ import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { useRouter } from "next/navigation";
 import LoaderButton from "@/components/common/LoaderButton";
-import { Button } from "@mui/material";
 import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { Role } from "@/constants/roles";
 import Details from "@/components/common/Details";
@@ -40,7 +39,7 @@ const PayoutDetails = ({ params }) => {
   const [payout, setpayout] = useState(null);
   const [confirmModal, setConfirmModal] = useState(false);
   const [isPayoutDetailsLoading, isPayoutDetailsError, callPayoutDetailsApi] =
-    useApi({initailLoading:true});
+    useApi({ initailLoading: true });
 
   const [isApprovePayoutLoading, isApprovePayoutError, callApprovePayoutApi] =
     useApi();
@@ -183,13 +182,13 @@ const PayoutDetails = ({ params }) => {
 
             <ErrorApiText error={isApprovePayoutError || isRejectPayoutError} />
             <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
-              <Button
-                variant="outlined"
+              <button
+
                 className="py-2 px-8"
                 onClick={toggleConfirmModal}
               >
                 Approve
-              </Button>
+              </button>
               <LoaderButton
                 loading={isRejectPayoutLoading}
                 content={"Reject"}
