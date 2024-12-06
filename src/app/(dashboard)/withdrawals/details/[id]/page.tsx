@@ -33,6 +33,7 @@ import ReasonModal from "@/components/Modals/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import { roundToPrecision } from "@/utils/math";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -281,15 +282,20 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Requested Amount"
-            value={`${withdrawalDetails?.requested_amount} ${withdrawalDetails?.unit}`}
+            value={`${withdrawalDetails?.total_requested_amount} ${withdrawalDetails?.unit}`}
           />
           <Details
             label="Fee"
-            value={`${withdrawalDetails?.withdraw_fees} ${withdrawalDetails?.unit}`}
+            value={`${roundToPrecision(
+              +withdrawalDetails?.alphaspay_fee,
+              10
+            )} ${withdrawalDetails?.unit}`}
           />
           <Details
             label="Net Amount"
-            value={`${withdrawalDetails?.net_amount} ${withdrawalDetails?.unit}`}
+            value={`${roundToPrecision(withdrawalDetails?.requested_amount, 10)} ${
+              withdrawalDetails?.unit
+            }`}
           />
         </div>
 
