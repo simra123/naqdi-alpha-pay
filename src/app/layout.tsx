@@ -1,8 +1,10 @@
 "use client";
 
 import { Montserrat, Barlow } from "next/font/google";
+import { ThemeProvider } from "@mui/material/styles";
 import { Provider } from "react-redux";
-
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import store from "@/store";
 import Notification from "@/components/common/Notification";
 import "./globals.scss";
@@ -19,7 +21,9 @@ export default function RootLayout({ children }) {
       <body className={barlow.className}>
         <Provider store={store}>
 
-          {children}
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            {children}
+          </LocalizationProvider>
 
           <Notification />
         </Provider>
