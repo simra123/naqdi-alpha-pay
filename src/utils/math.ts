@@ -1,7 +1,10 @@
 export const roundToPrecision = (number: number, precision: number) => {
-  let numb = +number;
+  if (number) {
+    let numb = +number;
 
-  return parseFloat(numb.toFixed(precision));
+    return parseFloat(numb.toFixed(precision));
+  }
+  return number;
 };
 
 export const clamp = (value: number, max: number, min: number = 0): string => {
@@ -10,7 +13,7 @@ export const clamp = (value: number, max: number, min: number = 0): string => {
 
   if (isNaN(parsedValue)) {
     // If the value can't be parsed as a number, return an empty string or handle it as needed
-    return '';
+    return "";
   }
 
   // Ensure min is less than or equal to max
@@ -29,4 +32,3 @@ export const clamp = (value: number, max: number, min: number = 0): string => {
   // If the value is valid and within bounds, return it as is
   return parsedValue.toString();
 };
-
