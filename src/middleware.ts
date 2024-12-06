@@ -3,9 +3,9 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./constants/roles";
 
-const adminRoutes = ["/kyc", "/users" ,"/wallets"];
+const adminRoutes = ["/kyc", "/users", "/wallets"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
-const nonFunctionalRoutes = ["/payouts", "/settings/users"];
+const nonFunctionalRoutes = ["/payouts", "/wallets", "/settings/users"];
 
 const NOT_FOUND_URL = "/not-found";
 
