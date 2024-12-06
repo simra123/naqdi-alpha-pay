@@ -203,6 +203,6 @@ const Transactions = () => {
 
 export default PermissionAccess(
   Transactions,
-  ModulesEnum.payment,
+  ModulesEnum.transaction,
   AccessLevelEnum.read
 );

@@ -17,6 +17,7 @@ import { callApiHook } from "@/utils/apifuncs";
 import {
   createSubAdminApi,
   createSubuserApi,
+  updateSubAdminApi,
   updateSubuserApi,
 } from "@/services/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
@@ -222,10 +223,15 @@ const CreateUserModal = ({
 
     await callApiHook({
       apiCall: callCreateUserApi(
-        updateSubuserApi({
-          user_permission: mappedPermissions,
-          user_id: +user_id,
-        })
+        user?.role == Role.USER
+          ? updateSubuserApi({
+              user_permission: mappedPermissions,
+              user_id: +user_id,
+            })
+          : updateSubAdminApi({
+              user_permission: mappedPermissions,
+              user_id: +user_id,
+            })
       ),
       statusCode: 200,
       successCallBack: () => {

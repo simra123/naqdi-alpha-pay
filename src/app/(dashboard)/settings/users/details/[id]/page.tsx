@@ -7,7 +7,12 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import { useApi } from "@/hooks/useApi";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import { callApiHook } from "@/utils/apifuncs";
-import { deleteSubusersApi, getSubuserDetailsApi } from "@/services/auth";
+import {
+  deleteSubAdminApi,
+  deleteSubusersApi,
+  getSubAdminDetailsApi,
+  getSubuserDetailsApi,
+} from "@/services/auth";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
@@ -38,25 +43,28 @@ const UserDetails = ({ params }) => {
   // });
 
   const fetchUserDetails = async () => {
-    if (user?.role == Role.USER) {
-      await callApiHook({
-        apiCall: callUserDetailsApi(getSubuserDetailsApi({ id: userID })),
-        successCallBack: (response: any) => {
-          setUserDetails(response);
-        },
-      });
-    }else{
-      callUserDetailsApi(()=> console.log('jello'))
-    }
+    await callApiHook({
+      apiCall: callUserDetailsApi(
+        user?.role == Role.USER
+          ? getSubuserDetailsApi({ id: userID })
+          : getSubAdminDetailsApi({ id: userID })
+      ),
+      successCallBack: (response: any) => {
+        setUserDetails(response);
+      },
+    });
   };
 
   const deleteSubUser = async () => {
+    let deleteUser = {
+      child_id: +userID,
+      username: userDetails?.username,
+    };
     await callApiHook({
       apiCall: callUserDeleteApi(
-        deleteSubusersApi({
-          child_id: +userID,
-          username: userDetails?.username,
-        })
+        user?.role == Role.USER
+          ? deleteSubusersApi(deleteUser)
+          : deleteSubAdminApi(deleteUser)
       ),
       successCallBack(data) {
         setIsDeleteOpen(false);
