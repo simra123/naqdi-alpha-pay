@@ -164,12 +164,13 @@ const Integrations = () => {
               </div>
               <div className="flex items-center gap-3">
 
-                <h4 className="text-button sm:text-button font-semibold w-16">
-                  Secret
-                </h4>
+                {webhookURL?.secret && (<>
+                  <h4 className="text-button sm:text-button font-semibold w-16">
+                    Secret
+                  </h4>
+                  <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => console.log('hello')} disabled value={webhookURL?.secret} />
 
-                <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => console.log('hello')} disabled value={webhookURL?.secret} />
-
+                </>)}
 
               </div>
             </LoadingApi>
