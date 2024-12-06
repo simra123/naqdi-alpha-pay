@@ -11,7 +11,7 @@ import { generateCSVApi } from "@/services/common";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
-import { getSubusersApi } from "@/services/auth";
+import { getSubAdminsApi, getSubusersApi } from "@/services/auth";
 import {
   AccessLevelEnum,
   ModalType,
@@ -55,14 +55,14 @@ const Users = () => {
   };
 
   const fetchSubUsersList = async () => {
-    if (user?.role == Role.USER) {
-      await callApiHook({
-        apiCall: callSubUsersListApi(getSubusersApi()),
-        successCallBack: (response: any) => {
-          setSubUsersList(response);
-        },
-      });
-    }
+    await callApiHook({
+      apiCall: callSubUsersListApi(
+        user?.role == Role.USER ? getSubusersApi() : getSubAdminsApi()
+      ),
+      successCallBack: (response: any) => {
+        setSubUsersList(response);
+      },
+    });
   };
 
   useEffect(() => {
