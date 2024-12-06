@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 const NotFound = () => {
   const router = useRouter();
   return (
-    <div className="p-10 bg-[#FAFAFA] h-dvh">
-      <div className="bg-white shadow-sm h-full p-6 md:p-16">
+    <div className="p-10 bg-[#FAFAFA] min-h-dvh">
+      <div className="bg-white shadow-sm min-h-full p-6 md:p-16">
         <img
           src="/404.png"
           alt="404"
