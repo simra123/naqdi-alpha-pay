@@ -97,6 +97,7 @@ const transactionsList_table_columns: TableColumns = [
 ];
 
 const WithdrawalDetails = ({ params }) => {
+  let isMounted = true
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
   const router = useRouter();
@@ -183,21 +184,29 @@ const WithdrawalDetails = ({ params }) => {
       apiCall: callWithdrawalWalletsApi(
         getWithdrawalWalletsApi(
           { withdraw_id },
-          { page: currentWalletsPage, limit: 8 }
+          { page: currentWalletsPage, limit: 5 }
         )
       ),
       successCallBack: (response: any) => {
-        setCurrentWalletsPage((page) => page + 1);
         setWallets((wals) => [...wals, ...response]);
+        setCurrentWalletsPage((page) => page + 1);
       },
     });
   };
 
   useEffect(() => {
-    getWithdrawalDetails();
-    if (user?.role == Role.ADMIN) {
-      getWithdrawalWallets();
+
+    if (isMounted) {
+
+      getWithdrawalDetails();
+      if (user?.role == Role.ADMIN) {
+        getWithdrawalWallets();
+      }
+      isMounted = false
     }
+    return () => {
+      isMounted = false; // Cleanup when component unmounts
+    };
   }, []);
 
   const handleWithdrawalType = (type: Withdrawal_Type) => () => {
@@ -245,11 +254,10 @@ const WithdrawalDetails = ({ params }) => {
 
           <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
-            label={`${withdrawalDetails?.unit} ${
-              withdrawalDetails?.standard
-                ? `(${withdrawalDetails?.standard})`
-                : ""
-            } Wallet Address`}
+            label={`${withdrawalDetails?.unit} ${withdrawalDetails?.standard
+              ? `(${withdrawalDetails?.standard})`
+              : ""
+              } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
             copyable
             link={showExplorerDetailsByChain({
@@ -299,9 +307,8 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Net Amount"
-            value={`${roundToPrecision(withdrawalDetails?.requested_amount, 10)} ${
-              withdrawalDetails?.unit
-            }`}
+            value={`${roundToPrecision(withdrawalDetails?.requested_amount, 10)} ${withdrawalDetails?.unit
+              }`}
           />
         </div>
 
@@ -384,21 +391,19 @@ const WithdrawalDetails = ({ params }) => {
 
               <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
                 <button
-                  className={`w-full  ${
-                    withdrawalType == Withdrawal_Type.MANUAL
-                      ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                      : "font-medium text-custom-title-gray"
-                  }`}
+                  className={`w-full  ${withdrawalType == Withdrawal_Type.MANUAL
+                    ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                    : "font-medium text-custom-title-gray"
+                    }`}
                   onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
                 >
                   Manual
                 </button>
                 <button
-                  className={`w-full  ${
-                    withdrawalType != Withdrawal_Type.MANUAL
-                      ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                      : "font-medium text-custom-title-gray"
-                  }`}
+                  className={`w-full  ${withdrawalType != Withdrawal_Type.MANUAL
+                    ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                    : "font-medium text-custom-title-gray"
+                    }`}
                   onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
                 >
                   Automatic
@@ -407,6 +412,7 @@ const WithdrawalDetails = ({ params }) => {
 
               <CustomTable
                 tableWrapper={false}
+                initialPageSize={10000}
                 columns={availableWallets_table_columns}
                 rows={wallets}
                 selectable={withdrawalType == Withdrawal_Type.MANUAL}
@@ -426,7 +432,7 @@ const WithdrawalDetails = ({ params }) => {
                     />
                   </div>
                   <LoaderButton
-                    content={<FiRefreshCw  />}
+                    content={<FiRefreshCw />}
                     variant="outlined"
                     className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
                     loading={isWithdrawalWalletsLoading}
