@@ -34,6 +34,7 @@ import Chip from "@/components/common/Chip";
 import { TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
+import { FiRefreshCw } from "react-icons/fi";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -99,6 +100,7 @@ const WithdrawalDetails = ({ params }) => {
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
   const router = useRouter();
+  const [currentWalletsPage, setCurrentWalletsPage] = useState(1);
   const withdraw_id = +params?.id;
 
   const [confirmModal, setConfirmModal] = useState(false);
@@ -179,10 +181,14 @@ const WithdrawalDetails = ({ params }) => {
   const getWithdrawalWallets = async () => {
     await callApiHook({
       apiCall: callWithdrawalWalletsApi(
-        getWithdrawalWalletsApi({ withdraw_id })
+        getWithdrawalWalletsApi(
+          { withdraw_id },
+          { page: currentWalletsPage, limit: 8 }
+        )
       ),
       successCallBack: (response: any) => {
-        setWallets(response);
+        setCurrentWalletsPage((page) => page + 1);
+        setWallets((wals) => [...wals, ...response]);
       },
     });
   };
@@ -370,64 +376,84 @@ const WithdrawalDetails = ({ params }) => {
         <div className="mt-8"></div>
         {withdrawalDetails?.status == "pending" && (
           <>
-            <LoadingApi loading={isWithdrawalWalletsLoading}>
-              <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
-                <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-                  Withdraw
-                </h3>
+            {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
+            <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
+              <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+                Withdraw
+              </h3>
 
-                <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
-                  <button
-                    className={`w-full  ${
-                      withdrawalType == Withdrawal_Type.MANUAL
-                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                        : "font-medium text-custom-title-gray"
-                    }`}
-                    onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
-                  >
-                    Manual
-                  </button>
-                  <button
-                    className={`w-full  ${
-                      withdrawalType != Withdrawal_Type.MANUAL
-                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                        : "font-medium text-custom-title-gray"
-                    }`}
-                    onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
-                  >
-                    Automatic
-                  </button>
-                </div>
+              <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
+                <button
+                  className={`w-full  ${
+                    withdrawalType == Withdrawal_Type.MANUAL
+                      ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                      : "font-medium text-custom-title-gray"
+                  }`}
+                  onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
+                >
+                  Manual
+                </button>
+                <button
+                  className={`w-full  ${
+                    withdrawalType != Withdrawal_Type.MANUAL
+                      ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                      : "font-medium text-custom-title-gray"
+                  }`}
+                  onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                >
+                  Automatic
+                </button>
+              </div>
 
-                <CustomTable
-                  tableWrapper={false}
-                  columns={availableWallets_table_columns}
-                  rows={wallets}
-                  selectable={withdrawalType == Withdrawal_Type.MANUAL}
-                  selectedRows={selectedWallets}
-                  setSelectedRows={setSelectedWallets}
-                  actions={true}
+              <CustomTable
+                tableWrapper={false}
+                columns={availableWallets_table_columns}
+                rows={wallets}
+                selectable={withdrawalType == Withdrawal_Type.MANUAL}
+                selectedRows={selectedWallets}
+                setSelectedRows={setSelectedWallets}
+                actions={true}
+              />
+
+              {Withdrawal_Type.MANUAL == withdrawalType && (
+                <>
+                  <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
+                    <LoaderButton
+                      content={"Load More Wallets"}
+                      variant="contained"
+                      loading={isWithdrawalWalletsLoading}
+                      onClick={getWithdrawalWallets}
+                    />
+                  </div>
+                  <LoaderButton
+                    content={<FiRefreshCw  />}
+                    variant="outlined"
+                    className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
+                    loading={isWithdrawalWalletsLoading}
+                    onClick={getWithdrawalWallets}
+                  />
+                </>
+              )}
+
+              <ErrorApiText error={isApproveWithdrawalError} />
+
+              <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
+                <LoaderButton
+                  content={"Reject"}
+                  color="error"
+                  onClick={rejectModalToggler}
+                  variant="error"
                 />
 
-                <ErrorApiText error={isApproveWithdrawalError} />
-
-                <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
-                  <LoaderButton
-                    content={"Reject"}
-                    color="error"
-                    onClick={rejectModalToggler}
-                    variant="text"
-                  />
-
-                  <LoaderButton
-                    variant="text"
-                    color="success"
-                    onClick={toggleConfirmModal}
-                    content={"Approve"}
-                  />
-                </div>
+                <LoaderButton
+                  variant="text"
+                  color="success"
+                  onClick={toggleConfirmModal}
+                  content={"Approve"}
+                />
               </div>
-            </LoadingApi>
+            </div>
+            {/* </LoadingApi> */}
 
             <ErrorApiText error={isWithdrawalWalletsError} />
           </>
