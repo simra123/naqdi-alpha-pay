@@ -16,6 +16,7 @@ interface Props {
   info?: string;
   inputContainerClassName?: string;
   inputClassName?: string;
+  iconClassName?: string;
   disabled?: boolean;
 }
 
@@ -33,6 +34,7 @@ const IconField = ({
   info,
   inputContainerClassName,
   inputClassName,
+  iconClassName,
   disabled,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -66,7 +68,7 @@ const IconField = ({
         className={`relative rounded-large bg-white ${inputContainerClassName}`}
       >
         {Icon && (
-          <Icon className="absolute left-4 top-0 flex h-full items-center text-gray-400" />
+          <Icon className="absolute left-4 top-0 flex !h-full items-center text-gray-400" />
         )}
         <input
           type={isPasswordField ? (!showPassword ? "password" : "text") : type}
@@ -76,17 +78,15 @@ const IconField = ({
           disabled={disabled}
           value={value}
           placeholder={placeholder}
-          className={`w-full p-4 bg-transparent ${inputClassName} ${
-            Icon ? "pl-12" : "pl-4"
-          } border-[1.5px] ${
-            error
+          className={`w-full p-4 bg-transparent ${inputClassName} ${Icon ? "pl-12" : "pl-4"
+            } border-[1.5px] ${error
               ? "border-error-dark"
               : "border-light-gray focus:border-purple"
-          } border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
+            } border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
         />
         {isPasswordField && (
           <div
-            className="absolute right-4 top-0 cursor-pointer flex h-full items-center text-gray-400"
+            className={`absolute right-4 top-0 cursor-pointer flex !h-full items-center text-gray-400 ${iconClassName}`}
             onClick={togglePasswordVisibility}
           >
             {showPassword ? <VisibilityOff /> : <Visibility />}

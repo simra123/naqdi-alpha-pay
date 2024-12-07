@@ -1,15 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers/react";
-import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
-import { ConstantsUtil } from "@/constants/ConstantsUtil";
-import { EthersConstants } from "@/constants/EthersConstants";
+
 import { Sync } from "@mui/icons-material";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import DepositModal from "@/components/Modals/DepoistModal";
+// import DepositModal from "@/components/Modals/DepoistModal";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
@@ -83,7 +80,7 @@ const Home = () => {
 
   return (
     <>
-      <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} />
+      {/* <DepositModal isOpen={openDeposit} setIsOpen={setOpenDeposit} /> */}
 
       <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
         Alphaspay Dashboard
@@ -117,14 +114,14 @@ const Home = () => {
                   onClick={getBalances}
                   variant="text"
                 />
-                {user?.role == Role.USER && (
+                {/* {user?.role == Role.USER && (
                   <LoaderButton
                     content={"Deposit Crypto"}
                     className="px-4"
                     variant="outlined"
                     onClick={handleDepoist}
                   />
-                )}
+                )} */}
               </div>
             </div>
           }
