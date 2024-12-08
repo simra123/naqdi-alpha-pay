@@ -102,6 +102,7 @@ const WithdrawalDetails = ({ params }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const [currentWalletsPage, setCurrentWalletsPage] = useState(1);
+  const [totalWallets, setTotalWallets] = useState(0);
   const withdraw_id = +params?.id;
 
   const [confirmModal, setConfirmModal] = useState(false);
@@ -188,7 +189,8 @@ const WithdrawalDetails = ({ params }) => {
         )
       ),
       successCallBack: (response: any) => {
-        setWallets((wals) => [...wals, ...response]);
+        setTotalWallets(response?.totalItems)
+        setWallets((wals) => [...wals, ...response?.wallets]);
         setCurrentWalletsPage((page) => page + 1);
       },
     });
@@ -421,7 +423,7 @@ const WithdrawalDetails = ({ params }) => {
                 actions={true}
               />
 
-              {Withdrawal_Type.MANUAL == withdrawalType && (
+              {Withdrawal_Type.MANUAL == withdrawalType && wallets?.length < totalWallets && (
                 <>
                   <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
                     <LoaderButton
