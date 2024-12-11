@@ -16,11 +16,12 @@ import WebhookURLModal from "@/components/Modals/WebhookURLModal";
 import { useSelector } from "react-redux";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import PermissionAccess from "@/middleware/PermissionAccess";
+import IconField from "@/components/common/IconField";
 
 const Integrations = () => {
   const [keysList, setKeysList] = useState([]);
   const user = useSelector((state: { user: any }) => state?.user?.data);
-  const [webhookURL, setWebhookURL] = useState("");
+  const [webhookURL, setWebhookURL] = useState<any>({});
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isWebhookOpen, setIsWebhookOpen] = useState(false);
 
@@ -58,11 +59,10 @@ const Integrations = () => {
         return (
           <button
             onClick={(event) => handleRevoke(event, row)}
-            className={`px-7 rounded-medium py-1 ${
-              row.revoked
-                ? "bg-yellow-chip-light text-yellow-light"
-                : "bg-blue-table-button text-blue-table-button-text"
-            }`}
+            className={`px-7 rounded-medium py-1 ${row.revoked
+              ? "bg-yellow-chip-light text-yellow-light"
+              : "bg-blue-table-button text-blue-table-button-text"
+              }`}
           >
             {row.revoked ? "Enable" : "Revoke"}
           </button>
@@ -76,7 +76,7 @@ const Integrations = () => {
       apiCall: callwebhookDetailsApi(getWebhookURLAPI()),
       successCallBack: (response) => {
         if (response && response?.length > 0) {
-          setWebhookURL(response[0]?.webhook_url);
+          setWebhookURL(response[0]);
         }
       },
     });
@@ -132,7 +132,7 @@ const Integrations = () => {
     <>
       <WebhookURLModal
         isOpen={isWebhookOpen}
-        initialWebhookValue={webhookURL}
+        initialWebhookValue={webhookURL?.webhook_url}
         refreshHandler={getwebhookDetails}
         toggleHandler={toggleWebhookModal}
       />
@@ -149,12 +149,31 @@ const Integrations = () => {
         <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
             <h4 className="text-button sm:text-p122 font-semibold">
-              Webhook URL
+              Webhook
             </h4>
+
+
             <LoadingApi loading={iswebhookDetailsLoading}>
-              <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
-                {webhookURL}
-              </span>
+              <div className="flex items-center gap-3">
+
+                <h4 className="text-button sm:text-button font-semibold w-16">
+                  URL
+                </h4>
+                <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+                  {webhookURL?.webhook_url}
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+
+                {webhookURL?.secret && (<>
+                  <h4 className="text-button sm:text-button font-semibold w-16">
+                    Secret
+                  </h4>
+                  <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1 text-ellipsis" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => console.log('hello')} disabled value={webhookURL?.secret} />
+
+                </>)}
+
+              </div>
             </LoadingApi>
             <ErrorApiText error={iswebhookDetailsError} />
           </div>

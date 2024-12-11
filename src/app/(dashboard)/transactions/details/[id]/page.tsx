@@ -146,9 +146,8 @@ const TransactionDetails = ({ params }) => {
           <Details
             label="Fees"
             value={`${roundToPrecision(
-              +transactionDetails?.alphaspay_fees
-                ? +transactionDetails?.alphaspay_fees
-                : 0,
+              +transactionDetails?.withdrawal?.alphaspay_fee ||
+                +transactionDetails?.alphaspay_fees,
               10
             )} ${transactionDetails?.unit}`}
           />
