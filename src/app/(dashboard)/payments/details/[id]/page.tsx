@@ -99,7 +99,11 @@ const PaymentDetails = ({ params }) => {
   const [payment, setPayment] = useState(null);
   const [transaction, setTransacion] = useState([]);
   const [orderInfo, setOrderInfo] = useState<{}>(null);
-  const [receivedAmount, setRecievedAmount] = useState("0");
+  const [receivedAmount, setRecievedAmount] = useState({
+    totalAmount: "0",
+    netAmount: "0",
+    fees: "0",
+  });
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
   });
@@ -132,16 +136,37 @@ const PaymentDetails = ({ params }) => {
 
         setTransacion(transactionsList);
 
-        const totalAmount = response?.paymentTransaction?.reduce(
+        const netAmountReceived = response?.paymentTransaction?.reduce(
           (acc, transaction) => {
             return acc + parseFloat(transaction.transaction_amount);
           },
           0
         );
-
-        setRecievedAmount(
-          roundToPrecision(totalAmount, 6) + " " + response?.payment_currency
+        const totalAmountReceived = response?.paymentTransaction?.reduce(
+          (acc, transaction) => {
+            return acc + parseFloat(transaction.total_amount_received);
+          },
+          0
         );
+        const totalFees = response?.paymentTransaction?.reduce(
+          (acc, transaction) => {
+            return acc + parseFloat(transaction.alphaspay_fees);
+          },
+          0
+        );
+
+        setRecievedAmount({
+          totalAmount:
+            roundToPrecision(totalAmountReceived, 6) +
+            " " +
+            response?.payment_currency,
+          netAmount:
+            roundToPrecision(netAmountReceived, 6) +
+            " " +
+            response?.payment_currency,
+          fees:
+            roundToPrecision(totalFees, 6) + " " + response?.payment_currency,
+        });
 
         try {
           const parsedData = JSON.parse(response.passthrough);
@@ -219,18 +244,22 @@ const PaymentDetails = ({ params }) => {
 
             <div className="res-2-grid py-6">
               <Details
-                label="Payment Amount "
+                label="Payment Amount"
                 value={`${payment?.requested_amount} ${payment?.requested_currency}`}
               />
               <Details
                 label="Payment Currency Amount "
                 value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
               />
-              <Details label="Payment Amount Recieved" value={receivedAmount} />
               <Details
-                label="Alphaspay Fee"
-                value={`${payment?.alphaspay_fees} ${payment?.payment_currency}`}
+                label="Total Payment Amount Recieved"
+                value={receivedAmount?.totalAmount}
               />
+              <Details
+                label="Net Payment Amount Recieved"
+                value={receivedAmount?.netAmount}
+              />
+              <Details label="Alphaspay Fee" value={receivedAmount?.fees} />
             </div>
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">

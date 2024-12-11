@@ -68,12 +68,12 @@ const nav_items: NavItem[] = [
     path: "/kyc",
     roles: [Role.ADMIN],
   },
-  {
-    name: "Wallets",
-    icon: Wallet,
-    path: "/wallets",
-    roles: [Role.ADMIN],
-  },
+  // {
+  //   name: "Wallets",
+  //   icon: Wallet,
+  //   path: "/wallets",
+  //   roles: [Role.ADMIN],
+  // },
   {
     name: "Payments",
     icon: PaymentsIcon,

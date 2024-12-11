@@ -51,6 +51,10 @@ export const withdrawalApproveAdminApi = (data: {
     });
 };
 
-export const getWithdrawalWalletsApi = (data: { withdraw_id: number }) => {
-  return () => api.post(`wallet/wallet-list`, data);
+export const getWithdrawalWalletsApi = (
+  data: { withdraw_id: number },
+  { page, limit }: { page: number; limit: number }
+) => {
+  return () =>
+    api.post(`wallet/wallet-list`, data, { params: { page, limit } });
 };
