@@ -47,7 +47,7 @@ const LoaderButton = ({
     };
 
     const colors = {
-      error: "border-0 py-3 text-white !bg-red-button rounded-medium w-56",
+      error: "border-0 py-3 text-white !bg-red-button !bg-none",
       success: "border-0 py-3 text-white !bg-green-button rounded-medium w-56",
     };
     console.log(colors[color]);
@@ -60,7 +60,7 @@ const LoaderButton = ({
   return (
     <div className="flex justify-center">
       <button
-        className={`transition-[width] whitespace-nowrap  ease-in-out ${getVariantClasses(
+        className={`transition-[width] whitespace-nowrap ease-in-out ${getVariantClasses(
           variant,
           loading
         )} ${className}`}

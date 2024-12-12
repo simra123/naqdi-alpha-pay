@@ -15,8 +15,9 @@ import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
 
 import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { unitName } from "@/constants/blockchains";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const adminColumns: TableColumns = [
   {
@@ -115,12 +116,19 @@ const Home = () => {
                   variant="text"
                 />
                 {/* {user?.role == Role.USER && (
-                  <LoaderButton
-                    content={"Deposit Crypto"}
-                    className="px-4"
-                    variant="outlined"
-                    onClick={handleDepoist}
-                  />
+                  <>
+                    {PermissionAccess(
+                      LoaderButton,
+                      ModulesEnum.wallet,
+                      AccessLevelEnum.full
+                    )({
+                      content: "Deposit Crypto",
+                      className: "px-4",
+                      variant: "outlined",
+                      onClick: handleDepoist,
+                    })}
+                    ,
+                  </>
                 )} */}
               </div>
             </div>
@@ -165,4 +173,9 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default PermissionAccess(
+  Home,
+  ModulesEnum.wallet,
+  AccessLevelEnum.read,
+  { redirectOnNoAccess: true }
+);

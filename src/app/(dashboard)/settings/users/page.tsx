@@ -1,8 +1,7 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { userSettings_table_columns } from "./columns";
 import LoaderButton from "@/components/common/LoaderButton";
 import CustomTable from "@/components/common/CustomTable";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -12,31 +11,57 @@ import { generateCSVApi } from "@/services/common";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
+import { getSubusersApi } from "@/services/auth";
+import { AccessLevelEnum, ModalType, ModulesEnum, TableColumns } from "@/constants/types";
+import Chip from "@/components/common/Chip";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
-const rows = [
+const userSettings_table_columns: TableColumns = [
+  { field: "user_uuid", headerName: "ID" },
+  { field: "email", headerName: "Email" },
+  { field: "first_name", headerName: "First Name" },
+  { field: "last_name", headerName: "Last Name" },
   {
-    id: 1,
-    email: "user@gmail.com",
-    firstName: "Profile A",
-    lastName: "https://example.com/webhook",
-    status: "USD",
+    field: "verified",
+    headerName: "Status",
+    dataValidator(value,row) {
+      return <Chip status={value ? "accepted" : "pending"} />;
+    },
   },
 ];
 
+
+
 const Users = () => {
   const router = useRouter();
+  const user = useLocalStorage("user");
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
-  const user = useLocalStorage("user");
+  const [subUsersList, setSubUsersList] = useState([]);
+  const [isSubUsersListLoading, isSubUsersListError, callSubUsersListApi] =
+    useApi();
 
   const ExportCSVHandler = async () => {
     await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(rows)),
+      apiCall: callCSVApi(generateCSVApi(subUsersList)),
       successCallBack: (response: any) => {
-        downloadCSV(response, "users.csv");
+        downloadCSV(response, "sub-users.csv");
       },
     });
   };
+
+  const fetchSubUsersList = async () => {
+    await callApiHook({
+      apiCall: callSubUsersListApi(getSubusersApi()),
+      successCallBack: (response: any) => {
+        setSubUsersList(response);
+      },
+    });
+  };
+
+  useEffect(() => {
+    fetchSubUsersList();
+  }, []);
 
   const createToggleHandler = () => {
     setCreateOpen(!isCreateOpen);
@@ -46,24 +71,33 @@ const Users = () => {
     <>
       <CreateUserModal
         isOpen={isCreateOpen}
+        type={ModalType.CREATE}
+        refreshList={fetchSubUsersList}
         toggleHandler={createToggleHandler}
       />
 
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
-
-        <LoaderButton
-          content={"New User"}
-          className="px-16"
-          variant="contained"
-          onClick={createToggleHandler}
-        />
+        <>
+          {PermissionAccess(
+            LoaderButton,
+            ModulesEnum.user,
+            AccessLevelEnum.full
+          )({
+            content: "New User",
+            className: "px-16",
+            variant: "contained",
+            onClick: createToggleHandler,
+          })}
+        </>
       </div>
+      <ErrorApiText error={isSubUsersListError} />
 
       <CustomTable
         columns={userSettings_table_columns}
         // Filters={Filters}
-        rows={rows}
+        loading={isSubUsersListLoading}
+        rows={subUsersList}
         csv={{
           handler: ExportCSVHandler,
           loading: isCSVLoading,
@@ -75,10 +109,9 @@ const Users = () => {
         }
         pagination
       />
-
-      <ErrorApiText error={false} />
+      {/*  */}
     </>
   );
 };
 
-export default Users;
+export default PermissionAccess(Users, ModulesEnum.user, AccessLevelEnum.read);

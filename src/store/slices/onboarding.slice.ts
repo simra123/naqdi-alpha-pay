@@ -21,8 +21,20 @@ export const onBoardingSlice = createSlice({
   name: "onboarding",
   initialState,
   reducers: {
+    resetSteps(state, action) {
+      state.current_step = initialState.current_step;
+      state.next_step = initialState.next_step;
+      state.previous_step = initialState.previous_step;
+      state.disabled_steps = initialState.disabled_steps;
+    },
     setStep(state, action) {
       const { previous_step, current_step } = action.payload;
+
+      console.log({
+        previous_step,
+        current_step,
+        message: "In step change method",
+      });
 
       if (previous_step) {
         state.disabled_steps[previous_step] = false;
@@ -35,53 +47,62 @@ export const onBoardingSlice = createSlice({
     validateSteps(state, action) {
       const details = action?.payload?.userDetails;
 
-      const stepsState = [
-        {
-          name: STEPS.PROFILE,
-          condition: details,
-        },
-        {
-          name: STEPS.PHONEVALIDATION,
-          condition: details?.phone_number,
-        },
-        {
-          name: STEPS.MFASETUP,
-          condition: details?.mfa,
-        },
-        {
-          name: STEPS.FEESETUP,
-          condition: details?.client_fees || details?.merchant_fees,
-        },
-        {
-          name: STEPS.IDENTITYCHECK,
-          condition: details?.front_image,
-        },
-        {
-          name: STEPS.KYCAPPROVAL,
-          condition: details?.kyc_approved,
-        },
-        {
-          name: STEPS.FEESCHEDULE,
-          condition: details?.fee,
-        },
-      ];
+      if (details) {
+        console.log(
+          action.payload.userDetails,
+          "In Reduxb validate steps method"
+        );
 
-      for (let i = 0; i < stepsState.length; i++) {
-        const previous_step = stepsState[i - 1];
-        const current_step = stepsState[i];
-        const next_step = stepsState[i + 1];
-        if (current_step.condition) {
+        const stepsState = [
+          {
+            name: STEPS.PROFILE,
+            condition: details,
+          },
+          {
+            name: STEPS.PHONEVALIDATION,
+            condition: details?.phone_number,
+          },
+          {
+            name: STEPS.MFASETUP,
+            condition: details?.mfa,
+          },
+          {
+            name: STEPS.FEESETUP,
+            condition: details?.client_fees || details?.merchant_fees,
+          },
+          {
+            name: STEPS.IDENTITYCHECK,
+            condition: details?.front_image,
+          },
+          {
+            name: STEPS.KYCAPPROVAL,
+            condition: details?.kyc_approved,
+          },
+          {
+            name: STEPS.FEESCHEDULE,
+            condition: details?.fee,
+          },
+        ];
 
-          state.disabled_steps[current_step.name] = false;
-          state.disabled_steps[next_step.name] = false;
-          state.previous_step = previous_step?.name || null;
-          state.current_step = next_step?.name || null;
+        for (let i = 0; i < stepsState.length; i++) {
+          const previous_step = stepsState[i - 1];
+          const current_step = stepsState[i];
+          const next_step = stepsState[i + 1];
+
+          console.log({ previous_step, current_step, next_step });
+          if (current_step.condition) {
+            console.log("Found a staisfying condition");
+            state.disabled_steps[current_step.name] = false;
+            state.disabled_steps[next_step.name] = false;
+            state.previous_step = previous_step?.name || null;
+            state.current_step = next_step?.name || null;
+          }
         }
       }
     },
   },
 });
 
-export const { setStep, validateSteps } = onBoardingSlice.actions;
+export const { setStep, validateSteps, resetSteps } = onBoardingSlice.actions;
 
 export default onBoardingSlice.reducer;

@@ -5,7 +5,7 @@ import { Role } from "./constants/roles";
 
 const adminRoutes = ["/kyc", "/users", "/wallets"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
-const nonFunctionalRoutes = ["/payouts", "/wallets", "/settings/users"];
+const nonFunctionalRoutes = ["/payouts", "/wallets"];
 
 const NOT_FOUND_URL = "/not-found";
 
@@ -45,6 +45,15 @@ export function middleware(req: NextRequest) {
       if (isWithOutFeeRoute(pathname)) {
         return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
+    }
+
+    // Handling Subuser scenarios as they have differnt onboarding process\
+
+    if (user?.role == Role.USER && user?.parentUser) {
+      if (user?.userDetails?.mfa && pathname == "/onboarding") {
+        return NextResponse.redirect(new URL("/", req.url));
+      }
+      return NextResponse.next();
     }
 
     // Redirection for user only - depending on the Onboarding Status

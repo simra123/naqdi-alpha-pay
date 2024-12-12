@@ -38,6 +38,7 @@ const DashboardLayout = ({ children }) => {
       await callApiHook({
         apiCall: callUserDetailsApi(userDetailsApi()),
         successCallBack: (response) => {
+          console.log(response, "IN User Details APi In Layout for dashboard");
           updatedOnboardingCookies(response?.userDetails);
           dispatch(setUser(response));
           dispatch(validateSteps(response));
@@ -47,7 +48,6 @@ const DashboardLayout = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("dashoboard layout is running");
     getUserDetails();
   }, []);
 
