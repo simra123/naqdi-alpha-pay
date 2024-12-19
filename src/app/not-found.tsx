@@ -16,8 +16,7 @@ const NotFound = () => {
         <div className="text-center text-black-100">
           <p className="font-medium text-h3 mt-16">Oops! Page not Found</p>
           <p className="font-medium text-p122 mt-4">
-            Remote developers with strong technical and communication skills at
-            unbeatable prices, ready to work in your timezone.
+            Sorry, the page you're looking for doesn't exist or has been moved.
           </p>
           <div className="mx-auto w-[310px] mt-12">
             <LoaderButton
