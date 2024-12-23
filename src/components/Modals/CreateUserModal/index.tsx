@@ -62,7 +62,7 @@ const subAdminPermissions = {
   [ModulesEnum?.wallet]: null,
   [ModulesEnum?.withdrawal]: null,
   [ModulesEnum?.kyc]: null,
-  [ModulesEnum?.merchant]: null,
+  // [ModulesEnum?.merchant]: null, 
 };
 
 const CreateUserModal = ({
@@ -166,19 +166,19 @@ const CreateUserModal = ({
       ],
     };
     if (user?.role == Role.ADMIN) {
-      // requestBody?.permissions?.shift();
-      //   requestBody.permissions.push(
-      //     {
-      //       module: ModulesEnum.kyc,
-      //       access_level: checkCondition(selectedPermissions[ModulesEnum.kyc]),
-      //     },
-      //     {
-      //       module: ModulesEnum.merchant,
-      //       access_level: checkCondition(
-      //         selectedPermissions[ModulesEnum.merchant]
-      //       ),
-      //     }
-      //   );
+      requestBody?.permissions?.shift();
+        requestBody.permissions.push(
+          {
+            module: ModulesEnum.kyc,
+            access_level: checkCondition(selectedPermissions[ModulesEnum.kyc]),
+          },
+          // {
+          //   module: ModulesEnum.merchant,
+          //   access_level: checkCondition(
+          //     selectedPermissions[ModulesEnum.merchant]
+          //   ),
+          // }
+        );
     }
     console.log(requestBody);
     await callApiHook({
@@ -368,7 +368,7 @@ const CreateUserModal = ({
                 />
               )}
             </div>
-            {user?.role == Role.ADMIN && (
+            {/* {user?.role == Role.ADMIN && (
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-base">Merchant</span>
@@ -390,7 +390,7 @@ const CreateUserModal = ({
                   />
                 )}
               </div>
-            )}
+            )} */}
             {user?.role == Role.ADMIN && (
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">

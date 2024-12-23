@@ -1,3 +1,4 @@
+import { ModulesEnum } from "@/constants/types";
 import Cookies from "js-cookie";
 
 export const updateMfaInCookie = (newMfaValue) => {
@@ -36,3 +37,10 @@ export const debounce = (func: Function, delay: number) => {
     }, delay);
   };
 };
+
+
+export const getPermission = (moduleName: ModulesEnum) => {
+  const currentUser = JSON.parse(Cookies.get('user'))
+  const permissionObj = currentUser?.permissions?.find(perm => perm?.permission?.module == moduleName);
+  return permissionObj?.permission
+}
