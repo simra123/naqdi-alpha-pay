@@ -17,6 +17,8 @@ import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
 import Details from "@/components/common/Details";
 import KYCReasonModal from "@/components/Modals/KYCReasonModal";
+import PermissionAccess from "@/middleware/PermissionAccess";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 const statuses = {
   APPROVED: "approved",
@@ -216,4 +218,4 @@ const KYCUserID = ({ params }) => {
   );
 };
 
-export default KYCUserID;
+export default PermissionAccess(KYCUserID, ModulesEnum.kyc, AccessLevelEnum.full);

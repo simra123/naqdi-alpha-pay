@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import FilterDropdown from "./FilterDropdown";
 import {
   ArrowUpward,
@@ -400,6 +400,61 @@ const CopyButtonColumn = ({
   );
 };
 
+const getPaginationPages = (
+  currentPage: number,
+  totalPages: number,
+  siblingCount: number = 1
+): (number | string)[] => {
+  // Ensure totalPages and currentPage are valid
+  if (totalPages <= 0 || currentPage < 1 || currentPage > totalPages) return [];
+
+  const totalPageNumbers = siblingCount * 2 + 3; // 5 includes current, first, last, and 2 ellipses
+  const pages: (number | string)[] = [];
+
+  if (totalPages <= totalPageNumbers) {
+    console.log("Show all pages if total pages fit within the range")
+    // Show all pages if total pages fit within the range
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+  const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+  const showLeftEllipsis = leftSiblingIndex > 2;
+  const showRightEllipsis = rightSiblingIndex < totalPages - 1;
+
+  console.log({ leftSiblingIndex, rightSiblingIndex, showLeftEllipsis, showRightEllipsis })
+
+
+
+  if (showLeftEllipsis) {
+    pages.push("..."); // Left ellipsis
+  }
+
+  // Add middle pages
+  for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+    pages.push(i);
+  }
+
+  if (showRightEllipsis) {
+    pages.push("..."); // Right ellipsis
+  }
+  if (!pages?.includes(1)) {
+    pages?.unshift(1)
+  }
+
+  // Add the last page
+  if (!pages?.includes(totalPages)) {
+    pages.push(totalPages);
+  }
+
+  return pages;
+}
+
+
 const Pagination = ({
   currentPage,
   totalPages,
@@ -409,6 +464,10 @@ const Pagination = ({
   createHandler,
 }) => {
   const user = useLocalStorage("user");
+
+  const pages = useMemo(() => getPaginationPages(currentPage, totalPages), [currentPage, pageSize, totalPages])
+
+  console.log({ pages })
   return (
     <div className="flex justify-center sm:justify-between items-center mt-4 relative">
       {/* Pages Indicator */}
@@ -440,18 +499,19 @@ const Pagination = ({
           >
             <NavigateBefore />
           </IconButton>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <IconButton
-              key={i + 1}
-              className={
-                currentPage === i + 1 &&
-                "text-black-100 font-bold bg-light-gray"
-              }
-              onClick={() => onChangePage(i + 1)}
-            >
-              {i + 1}
-            </IconButton>
-          ))}
+          {pages.map(item =>
+            item == "..." ? <span>...</span> :
+              <IconButton
+                key={item}
+                className={
+                  currentPage === item &&
+                  "text-black-100 font-bold bg-light-gray"
+                }
+                onClick={() => onChangePage(item)}
+              >
+                {item}
+              </IconButton>
+          )}
           <IconButton
             className={
               currentPage === totalPages
@@ -522,5 +582,8 @@ const Pagination = ({
     </div>
   );
 };
+
+
+
 
 export default CustomTable;

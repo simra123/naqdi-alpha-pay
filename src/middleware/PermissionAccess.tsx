@@ -59,6 +59,7 @@ const PermissionAccess = (
     // Get permissions from cookies and parse them
     let router = useRouter();
     const user = useLocalStorage("user");
+    console.log({ user, permissions: user?.permissions });
     if (user && user?.permissions) {
       let permissions: Permissions = user?.permissions;
 
@@ -73,6 +74,8 @@ const PermissionAccess = (
       const modulePermission = permissions.find(
         (perm) => perm.permission.module === requiredModule
       );
+
+      console.log({ modulePermission });
 
       if (!modulePermission) {
         // Module not found in permissions, render NotFound

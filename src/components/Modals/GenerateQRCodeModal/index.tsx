@@ -21,7 +21,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
   const user = useLocalStorage("user");
   const [isQRCodeLoading, isQRCodeError, callQRCodeApi] = useApi();
   const [isVerificationLoading, isVerificationError, callVerificationApi] =
-    useApi({notify:true});
+    useApi({ notify: true });
 
   const [qrcode, setQRCode] = useState(null);
   const [step, setStep] = useState(1);
@@ -48,7 +48,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
         console.log("I am response from admin mfa verification API ", response);
         setIsMfaVerified(true);
         updateMfaInCookie(true);
-        closeModal();
+        setIsOpen(false);
       },
     });
   };

@@ -5,7 +5,7 @@ import { Role } from "./constants/roles";
 
 const adminRoutes = ["/kyc", "/users", "/wallets"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
-const nonFunctionalRoutes = ["/payouts", "/wallets"];
+const nonFunctionalRoutes = ["/payouts","/wallets"];
 
 const NOT_FOUND_URL = "/not-found";
 
