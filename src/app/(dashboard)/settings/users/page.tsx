@@ -11,10 +11,16 @@ import { generateCSVApi } from "@/services/common";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
-import { getSubusersApi } from "@/services/auth";
-import { AccessLevelEnum, ModalType, ModulesEnum, TableColumns } from "@/constants/types";
+import { getSubAdminsApi, getSubusersApi } from "@/services/auth";
+import {
+  AccessLevelEnum,
+  ModalType,
+  ModulesEnum,
+  TableColumns,
+} from "@/constants/types";
 import Chip from "@/components/common/Chip";
 import PermissionAccess from "@/middleware/PermissionAccess";
+import { Role } from "@/constants/roles";
 
 const userSettings_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
@@ -24,13 +30,11 @@ const userSettings_table_columns: TableColumns = [
   {
     field: "verified",
     headerName: "Status",
-    dataValidator(value,row) {
+    dataValidator(value, row) {
       return <Chip status={value ? "accepted" : "pending"} />;
     },
   },
 ];
-
-
 
 const Users = () => {
   const router = useRouter();
@@ -52,7 +56,9 @@ const Users = () => {
 
   const fetchSubUsersList = async () => {
     await callApiHook({
-      apiCall: callSubUsersListApi(getSubusersApi()),
+      apiCall: callSubUsersListApi(
+        user?.role == Role.USER ? getSubusersApi() : getSubAdminsApi()
+      ),
       successCallBack: (response: any) => {
         setSubUsersList(response);
       },

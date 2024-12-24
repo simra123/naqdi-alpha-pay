@@ -10,10 +10,13 @@ import moment from "moment";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
 import { Role } from "@/constants/roles";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
+import PermissionAccess from "@/middleware/PermissionAccess";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { getPermission } from "@/utils/cookies";
 
 const columns: TableColumns = [
   { field: "user_details_uuid", headerName: "ID" },
@@ -37,8 +40,9 @@ const columns: TableColumns = [
 
 const KYCUsersPage = () => {
   const router = useRouter();
+  const currentUser = useLocalStorage('user')
   const [usersList, setUsersList] = useState([]);
-  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({initailLoading:true});
+  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({ initailLoading: true });
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getUsersList = async () => {
@@ -99,7 +103,11 @@ const KYCUsersPage = () => {
             error: isCSVError,
           }}
           initialPageSize={10}
-          rowClickHandler={(row: any) => router.push(`/kyc/${row?.userId}`)}
+          rowClickHandler={(row: any) => {
+            if (getPermission(ModulesEnum.kyc)?.access_level == AccessLevelEnum?.full) {
+              router.push(`/kyc/${row?.userId}`)
+            }
+          }}
           pagination
           columnClassName="max-w-[250px]"
           loading={isUsersListLoading}
@@ -111,4 +119,4 @@ const KYCUsersPage = () => {
   );
 };
 
-export default KYCUsersPage;
+export default PermissionAccess(KYCUsersPage, ModulesEnum.kyc, AccessLevelEnum.read);

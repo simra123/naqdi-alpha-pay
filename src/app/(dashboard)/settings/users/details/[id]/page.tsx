@@ -7,14 +7,22 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import { useApi } from "@/hooks/useApi";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import { callApiHook } from "@/utils/apifuncs";
-import { deleteSubusersApi, getSubuserDetailsApi } from "@/services/auth";
+import {
+  deleteSubAdminApi,
+  deleteSubusersApi,
+  getSubAdminDetailsApi,
+  getSubuserDetailsApi,
+} from "@/services/auth";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
   const router = useRouter();
+  const user = useLocalStorage("user");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [userDetails, setUserDetails] = useState<null | any>(null);
@@ -36,7 +44,11 @@ const UserDetails = ({ params }) => {
 
   const fetchUserDetails = async () => {
     await callApiHook({
-      apiCall: callUserDetailsApi(getSubuserDetailsApi({ id: userID })),
+      apiCall: callUserDetailsApi(
+        user?.role == Role.USER
+          ? getSubuserDetailsApi({ id: userID })
+          : getSubAdminDetailsApi({ id: userID })
+      ),
       successCallBack: (response: any) => {
         setUserDetails(response);
       },
@@ -44,12 +56,15 @@ const UserDetails = ({ params }) => {
   };
 
   const deleteSubUser = async () => {
+    let deleteUser = {
+      child_id: +userID,
+      username: userDetails?.username,
+    };
     await callApiHook({
       apiCall: callUserDeleteApi(
-        deleteSubusersApi({
-          child_id: +userID,
-          username: userDetails?.username,
-        })
+        user?.role == Role.USER
+          ? deleteSubusersApi(deleteUser)
+          : deleteSubAdminApi(deleteUser)
       ),
       successCallBack(data) {
         setIsDeleteOpen(false);
