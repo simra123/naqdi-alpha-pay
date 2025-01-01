@@ -115,7 +115,7 @@ const IconSelectBox = ({
       </div>
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-4 top-0 flex h-full items-center text-gray-400" />
+          <Icon className="absolute left-4 top-0 flex !h-full items-center text-gray-400" />
         )}
 
         {/* Conditionally show an input that allows searching if searchable is true */}
