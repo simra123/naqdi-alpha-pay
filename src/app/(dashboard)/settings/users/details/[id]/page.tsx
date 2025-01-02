@@ -139,6 +139,7 @@ const UserDetails = ({ params }) => {
           <Details label="First Name" value={userDetails?.first_name} />
           <Details label="Last Name" value={userDetails?.last_name} />
           <Details label="Email" value={userDetails?.email} />
+          <Details label="Username" value={userDetails?.username} />
           <Details
             label="Status"
             value={userDetails?.verified ? "Accepted" : "Pending"}
