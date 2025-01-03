@@ -1,4 +1,3 @@
-import { CircularProgress } from "@mui/material";
 import React from "react";
 import Loader from "../Loader";
 
@@ -41,6 +40,7 @@ const LoaderButton = ({
 
     const variantClasses = {
       contained: "pink-gradient-button w-full",
+      error: "border-red-button border py-3 w-56 rounded-medium",
       outlined:
         "bg-transparent border-purple-100 border hover:bg-purple-10 transition-all text-purple-100 sm:p-3 py-[6px] px-[6px] sm:px-8 rounded-small sm:rounded-medium text-[13px] sm:text-input w-full",
       text: "bg-transparent text-purple-100 p-2",
@@ -50,11 +50,10 @@ const LoaderButton = ({
       error: "border-0 py-3 text-white !bg-red-button rounded-medium w-56",
       success: "border-0 py-3 text-white !bg-green-button rounded-medium w-56",
     };
+    console.log(colors[color]);
 
-    return `${disabledClasses} ${
-      loading
-        ? loadingClasses[color || variant]
-        : `${variantClasses[variant]} ${colors[color]}`
+    return `${disabledClasses} ${colors[color]} ${
+      loading ? loadingClasses[variant] : variantClasses[variant]
     } `;
   };
 
@@ -73,15 +72,15 @@ const LoaderButton = ({
           variant === "contained" ? (
             <Loader />
           ) : (
-            <CircularProgress
-              className={
-                color == "success"
-                  ? "text-green-button"
-                  : color == "error"
-                  ? "text-red-button"
-                  : "text-purple-100"
-              }
-              size={20}
+            <div
+              className={`loader-circle 
+                ${
+                  color == "success"
+                    ? "text-green-button"
+                    : color == "error"
+                    ? "text-red-button"
+                    : "text-purple-100"
+                }`}
             />
           )
         ) : (

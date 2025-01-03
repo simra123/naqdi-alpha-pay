@@ -7,8 +7,8 @@ EXPOSE 3000
 FROM base as builder
 WORKDIR /app
 COPY . .
-RUN npm i
-RUN npm run build
+RUN yarn
+RUN yarn build
 
 FROM base as production
 WORKDIR /app
@@ -25,4 +25,4 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 
 
-CMD npm start
+CMD yarn start

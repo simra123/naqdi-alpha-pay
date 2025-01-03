@@ -10,17 +10,21 @@
 }
 
 ::-webkit-scrollbar {
-  width: 8px; /* Width of the scrollbar */
+  width: 8px;
+  /* Width of the scrollbar */
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Color of the scrollbar track */
+  background: #f1f1f1;
+  /* Color of the scrollbar track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: black; /* Color of the scrollbar handle */
-  border-radius: 5px; /* Rounded corners */
+  background: black;
+  /* Color of the scrollbar handle */
+  border-radius: 5px;
+  /* Rounded corners */
 }
 
 .res-4-grid {
@@ -28,8 +32,9 @@
 }
 
 .res-3-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-2 items-center;
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-center;
 }
+
 .res-2-grid {
   @apply grid grid-cols-1 md:grid-cols-2 gap-4 items-center xl:w-[calc(100%-200px)] xl:ml-auto;
 }
@@ -49,6 +54,7 @@
   animation: l18 1s infinite;
   position: relative;
 }
+
 .loader::before {
   content: "";
   position: absolute;
@@ -64,6 +70,27 @@
     transform: rotate(0.5turn);
   }
 }
+
+.loader-circle {
+  width: 20px;
+  height: 20px;
+  border: 3px solid transparent;
+  border-top: 3px solid #8245c9;
+  /* Color of the loader */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 
 .grid-template-details {
   display: grid;
@@ -102,7 +129,8 @@ input[type="number"] {
 .custom-checkbox {
   position: relative;
   cursor: pointer;
-  user-select: none; /* Prevent text selection */
+  user-select: none;
+  /* Prevent text selection */
 }
 
 .custom-checkbox input[type="checkbox"] {
@@ -125,12 +153,12 @@ input[type="number"] {
 }
 
 /* On mouse-over, add a grey background color */
-.custom-checkbox:hover input[type="checkbox"] ~ .checkmark {
+.custom-checkbox:hover input[type="checkbox"]~.checkmark {
   background-color: #ccc;
 }
 
 /* When the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
+.custom-checkbox input[type="checkbox"]:checked~.checkmark {
   @apply bg-purple-100;
   border: none;
 }
@@ -143,7 +171,7 @@ input[type="number"] {
 }
 
 /* Show the checkmark when checked */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+.custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
   display: block;
 }
 

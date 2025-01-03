@@ -6,7 +6,7 @@ import {
   Key,
   KeyboardArrowLeft,
   KeyboardArrowRight,
-  PersonRounded,
+  Wallet,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
@@ -17,7 +17,6 @@ import {
   NeedHelpIcon,
   onBoardingIcon,
   PaymentsIcon,
-  PayoutsIcon,
   SettingsIcon,
   TransactionsIcon,
   WithdrawalIcon,
@@ -63,6 +62,12 @@ const nav_items: NavItem[] = [
     path: "/kyc",
     roles: [Role.ADMIN],
   },
+  // {
+  //   name: "Wallets",
+  //   icon: Wallet,
+  //   path: "/wallets",
+  //   roles: [Role.ADMIN],
+  // },
   {
     name: "Payments",
     icon: PaymentsIcon,
