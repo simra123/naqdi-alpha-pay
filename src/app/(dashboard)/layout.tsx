@@ -61,14 +61,14 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <div className="md:flex md:gap-8 min-h-screen bg-bluish-gray">
+      <div className="md:flex min-h-screen">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
-        <div className="children h-[inherit] w-full p-5 md:px-0 flex-1 overflow-hidden">
-          <div className=" md:pr-5">
+        <div className="children h-[inherit] w-full md:px-0 flex-1 overflow-hidden">
+          <div>
             <Header navHandler={toggleSidebar} />
           </div>
-          <div className="md:max-h-[calc(100vh-170px)] md:overflow-y-auto md:pr-5">
+          <div className="md:max-h-[calc(100vh-95px)] md:overflow-y-auto p-8">
             {children}
           </div>
         </div>

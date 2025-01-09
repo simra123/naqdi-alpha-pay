@@ -1,0 +1,43 @@
+.dashboard-layout {
+  display: grid;
+  grid-template-areas:
+    "wallets portfolio portfolio portfolio"
+    "history history history transactions";
+  grid-template-columns: 552px 1fr 1fr 412px;
+  grid-template-rows: auto auto;
+  gap: 24px;
+
+  // Wallets Section
+  .wallets {
+    grid-area: wallets;
+    @apply bg-purple-gradient;
+    @apply rounded-[50px];
+  }
+
+  // Portfolio Section
+  .portfolio {
+    grid-area: portfolio;
+  }
+
+  // Transactions Section
+  .transactions {
+    grid-area: transactions;
+  }
+
+  // History Section
+  .history {
+    grid-area: history;
+    background-color: #e5e7eb; // Example gray background
+  }
+
+  // Responsive Design
+  @media (max-width: 768px) {
+    grid-template-areas:
+      "wallets"
+      "portfolio"
+      "transactions"
+      "history";
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
