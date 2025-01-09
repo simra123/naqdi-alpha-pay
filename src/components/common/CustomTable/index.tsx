@@ -169,7 +169,7 @@ const CustomTable = ({
         `rounded-medium flex flex-col justify-between md:shadow-sm ${
           pagination
             ? "min-h-[calc(100vh-120px)] sm:min-h-[calc(100vh-240px)]"
-            : "pb-8 sm:pb-12"
+            : "pb-8 sm:pb-0"
         } `
       }
       ref={tableRef}
@@ -485,7 +485,7 @@ const Pagination = ({
 
       {/* Pages Navigation */}
       <div className="relative w-full">
-        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm shadow-sm sm:shadow-none sm:p-0">
+        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm sm:p-0">
           <IconButton
             className={
               currentPage === 1

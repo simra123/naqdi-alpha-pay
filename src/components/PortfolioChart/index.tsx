@@ -23,6 +23,11 @@ ChartJS.register(
 
 const PortfolioChart = () => {
   // State for selected interval
+
+  let greenColor = '#CFECE1'
+  let redColor = '#F7CAD8'
+  let purpleColor = '#643882'
+
   const [interval, setInterval] = useState<
     "daily" | "weekly" | "monthly" | "lifetime"
   >("monthly");
@@ -36,14 +41,14 @@ const PortfolioChart = () => {
           type: "line",
           label: "Balance",
           data: [10, 20, 15, 30, 20],
-          borderColor: "#7c3aed",
+          borderColor: purpleColor,
           tension: 0.4,
         },
         {
           type: "bar",
           label: "Received",
           data: [5, 15, 10, 20, 10],
-          backgroundColor: "#bbf7d0",
+          backgroundColor: greenColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -55,7 +60,7 @@ const PortfolioChart = () => {
           type: "bar",
           label: "Sent",
           data: [10, 5, 15, 10, 20],
-          backgroundColor: "#fecaca",
+          backgroundColor: redColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -72,14 +77,14 @@ const PortfolioChart = () => {
           type: "line",
           label: "Balance",
           data: [40, 55, 50, 60, 60, 60, 75],
-          borderColor: "#7c3aed",
+          borderColor: purpleColor,
           tension: 0.4,
         },
         {
           type: "bar",
           label: "Received",
           data: [50, 60, 40, 80, 70, 50, 90],
-          backgroundColor: "#bbf7d0",
+          backgroundColor: greenColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -91,7 +96,7 @@ const PortfolioChart = () => {
           type: "bar",
           label: "Sent",
           data: [30, 50, 60, 40, 50, 70, 60],
-          backgroundColor: "#fecaca",
+          backgroundColor: redColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -121,14 +126,14 @@ const PortfolioChart = () => {
           type: "line",
           label: "Balance",
           data: [25, 45, 35, 55, 65, 45, 75, 35, 55, 85, 65, 45],
-          borderColor: "#7c3aed",
+          borderColor: purpleColor,
           tension: 0.4,
         },
         {
           type: "bar",
           label: "Received",
           data: [30, 50, 40, 60, 70, 50, 80, 40, 60, 90, 70, 50],
-          backgroundColor: "#bbf7d0",
+          backgroundColor: greenColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -140,7 +145,7 @@ const PortfolioChart = () => {
           type: "bar",
           label: "Sent",
           data: [20, 40, 30, 50, 60, 40, 70, 30, 50, 80, 60, 40],
-          backgroundColor: "#fecaca",
+          backgroundColor: redColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -157,14 +162,14 @@ const PortfolioChart = () => {
           type: "line",
           label: "Balance",
           data: [400, 600, 700, 550, 800, 1000],
-          borderColor: "#7c3aed",
+          borderColor: purpleColor,
           tension: 0.4,
         },
         {
           type: "bar",
           label: "Received",
           data: [500, 700, 800, 600, 900, 1000],
-          backgroundColor: "#bbf7d0",
+          backgroundColor: greenColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -176,7 +181,7 @@ const PortfolioChart = () => {
           type: "bar",
           label: "Sent",
           data: [300, 400, 600, 500, 700, 800],
-          backgroundColor: "#fecaca",
+          backgroundColor: redColor,
           borderRadius: {
             topLeft: 5, // Top-left radius
             topRight: 5, // Top-right radius
@@ -236,9 +241,9 @@ const PortfolioChart = () => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="p-6 rounded-[28px] border border-purple-10">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Portfolio History</h2>
+        <h2 className="text-h4 font-semibold">Portfolio History</h2>
         <div className="flex gap-4">
           {["daily", "weekly", "monthly", "lifetime"].map((int) => (
             <button

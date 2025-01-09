@@ -16,3 +16,20 @@ export const getAllWalletBalancesApi = () => {
 export const getAllWalletsListByAdminApi = () => {
   return () => api.get(`wallet/wallet-list`);
 };
+
+export const getTotalPortfolioValueApi = () => {
+  return () => api.get(`dashboard/total-portfolio-amount`);
+};
+
+export const getProfitPercentageApi = () => {
+  return () => api.get(`dashboard/profit-percentage`);
+};
+
+export const getPortfolioActivityChartApi = ({
+  duration,
+}: {
+  duration?: string;
+}) => {
+  return () =>
+    api.get(`/dashboard/portfolio-activity`, { params: { duration } });
+};

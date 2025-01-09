@@ -5,6 +5,7 @@ import {
 } from "@/assets/Svgs";
 import React from "react";
 import { BorderedIconButton } from "../IconButton";
+import { formatCustomDate } from "@/utils/dates";
 
 type Props = {
   onClick: () => void;
@@ -32,14 +33,14 @@ const TransactionCard = ({
           {direction == "incoming" ? <ReciveIconGreen /> : <SendIconRed />}
         </div>
         <div>
-          <h5 className="text-h4 font-semibold leading-[28px]">
+          <h5 className="text-h4 font-semibold leading-[28px] capitalize">
             {currencyName}
           </h5>
-          <span className="text-subtitle">{date}</span>
+          <span className="text-subtitle">{formatCustomDate(date)}</span>
         </div>
       </div>
 
-      <span className="text-h4 font-semibold text-end">{amount}</span>
+      <span className="text-h4 font-semibold text-end overflow-hidden text-ellipsis">{amount}</span>
     </div>
   );
 };

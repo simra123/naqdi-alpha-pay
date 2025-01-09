@@ -132,9 +132,7 @@ const Transactions = () => {
   const getTransactions = async () => {
     if (user?.role == Role.USER) {
       await callApiHook({
-        apiCall: callTransactionsApi(
-          getAllTransactionsApi(selectedStatus == "all" ? "" : selectedStatus)
-        ),
+        apiCall: callTransactionsApi(getAllTransactionsApi({})),
         successCallBack: (response: any) => {
           const tableData = formatTransactions(response);
           setTransactions(tableData);
