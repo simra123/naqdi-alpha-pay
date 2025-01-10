@@ -23,11 +23,13 @@ import {
 } from "@/models/withdrawal";
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
+import { capitalize } from "@/utils/dataFormatters";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
   refreshHandler: () => void;
+  blockchain?: string;
 }
 
 interface FeeState {
@@ -47,6 +49,7 @@ const CreateWithdrawalModal = ({
   isOpen,
   toggleHandler,
   refreshHandler,
+  blockchain,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -103,7 +106,7 @@ const CreateWithdrawalModal = ({
               ? `${item?.unit} (${item?.standard})`
               : item?.unit,
             value: item?.standard
-              ? `${item?.unit} (${item?.standard})`
+              ? `${capitalize(item?.unit)} (${item?.standard})`
               : item?.unit,
             standard: item?.standard,
             unit: item?.unit,
@@ -111,6 +114,10 @@ const CreateWithdrawalModal = ({
           };
         });
         setBalance(withdraw_currency_options);
+        if (blockchain) {
+          setValues((pre) => ({ ...pre, blockchain }));
+        }
+        console.log(withdraw_currency_options);
       },
     });
   };
@@ -171,7 +178,7 @@ const CreateWithdrawalModal = ({
       setBalanceError(null);
       setWithdrawalError(null);
       _getUserBalance();
-      setCurrentStep(1)
+      setCurrentStep(1);
       setValues(initalFormValues); // Reset form values
     }
   }, [isOpen]);
@@ -195,8 +202,9 @@ const CreateWithdrawalModal = ({
             }
           >
             <IconSelectBox
-              wrapperClassName="!mb-2"
+              wrapperClassName="!mb-2 uppercase"
               label="Source Currency & Network"
+              inputContainerClassName="!uppercase"
               options={balance}
               name="blockchain"
               value={values.blockchain}

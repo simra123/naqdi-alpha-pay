@@ -3,7 +3,7 @@ import React from "react";
 
 interface IconButtonProps {
   children?: any;
-  onClick?: () => void;
+  onClick?: any;
   className?: string;
   disabled?: boolean;
 }
@@ -28,3 +28,22 @@ const IconButton = ({
 };
 
 export default IconButton;
+
+export const BorderedIconButton = ({
+  children,
+  onClick,
+  className,
+  disabled,
+}: IconButtonProps) => {
+  return (
+    <>
+      <button
+        className={`border rounded-full border-grey-100 flex items-center justify-center w-[45px] h-[45px] hover:bg-blackGrey-20 active:bg-blackGrey-30 transition-all ${className}`}
+        disabled={disabled}
+        onClick={onClick}
+      >
+        {children}
+      </button>
+    </>
+  );
+};

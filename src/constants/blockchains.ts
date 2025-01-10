@@ -16,6 +16,8 @@ export const unitName = {
   btc: "Bitcoin",
   eth: "Ethereum",
   trx: "Tron",
+  usdt: "Tether",
+  usdc: "USDC"
 };
 
 export const standardBlockchain = {

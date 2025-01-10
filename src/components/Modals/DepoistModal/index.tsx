@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import Modal from "../Modal";
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
@@ -23,8 +23,19 @@ interface Network {
   value: string;
   standard?: string;
 }
+interface DepositProps {
+  isOpen: boolean;
+  setIsOpen: any;
+  blockchain?: string;
+  standard?: string;
+}
 
-const DepositModal = ({ isOpen, setIsOpen }) => {
+const DepositModal = ({
+  isOpen,
+  setIsOpen,
+  blockchain,
+  standard,
+}: DepositProps) => {
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
     useApi();
   const [networks, setNeworks] = useState<Record<string, Network[]>>({});
@@ -37,17 +48,23 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
     standard: "",
   });
 
-  const createDepoistAddress = async () => {
+  const createDepoistAddress = async (
+    blockchain?: string,
+    standard?: string
+  ) => {
     const CoinData = {
-      blockchain: seletedOption?.blockchain,
+      blockchain: blockchain,
     };
     const TokenData = {
-      blockchain: seletedOption?.blockchain,
-      standard: seletedOption?.standard,
+      blockchain: blockchain,
+      standard: standard,
     };
+
+    console.log(CoinData, TokenData);
+
     await callApiHook({
       apiCall: callDeposistApi(
-        createDepoistAddressApi(seletedOption?.standard ? TokenData : CoinData)
+        createDepoistAddressApi(standard ? TokenData : CoinData)
       ),
       successCallBack: (response: any) => {
         setDepositAddress(response);
@@ -64,13 +81,25 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
   }, []);
 
   useEffect(() => {
+    if (isOpen && blockchain) {
+      createDepoistAddress(blockchain, standard);
+    } else {
+      cleanupModal;
+    }
+  }, [blockchain, standard, isOpen]);
+
+  useEffect(() => {
     if (isDepositError) {
       setDepositAddress(null);
     }
   }, [isDepositError]);
 
   const closeModal = () => {
-    setIsOpen(false);
+    setIsOpen();
+    cleanupModal();
+  };
+
+  const cleanupModal = () => {
     setSelectedOption({
       blockchain: "",
       network: "",
@@ -114,26 +143,31 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
+      <h2 className="text-xl font-bold mb-6">
+        {blockchain ? "Deposit Address" : "Create Depoist Address"}
+      </h2>
+      {!blockchain && (
+        <>
+          <IconSelectBox
+            label="Select a Blockchain"
+            options={blockchains}
+            name="blockchain"
+            value={seletedOption.blockchain}
+            placeholder="Select a Blockchain"
+            onChange={handleChange}
+          />
 
-      <IconSelectBox
-        label="Select a Blockchain"
-        options={blockchains}
-        name="blockchain"
-        value={seletedOption.blockchain}
-        placeholder="Select a Blockchain"
-        onChange={handleChange}
-      />
-
-      {networks_available[seletedOption.blockchain] && (
-        <IconSelectBox
-          options={filteredNets}
-          name="network"
-          value={seletedOption.network}
-          placeholder="Select a Standard"
-          label="Select a Standard"
-          onChange={handleChange}
-        />
+          {networks_available[seletedOption.blockchain] && (
+            <IconSelectBox
+              options={filteredNets}
+              name="network"
+              value={seletedOption.network}
+              placeholder="Select a Standard"
+              label="Select a Standard"
+              onChange={handleChange}
+            />
+          )}
+        </>
       )}
 
       <ErrorApiText error={isDepositError} />
@@ -161,15 +195,22 @@ const DepositModal = ({ isOpen, setIsOpen }) => {
         )}
       </LoadingApi>
 
-      <div className="flex flex-col justify-end mt-2">
-        <LoaderButton
-          type="submit"
-          className="mt-6"
-          content={`Create Deposit Address`}
-          variant="contained"
-          onClick={createDepoistAddress}
-        />
-      </div>
+      {!blockchain && (
+        <div className="flex flex-col justify-end mt-2">
+          <LoaderButton
+            type="submit"
+            className="mt-6"
+            content={`Create Deposit Address`}
+            variant="contained"
+            onClick={() =>
+              createDepoistAddress(
+                seletedOption?.blockchain,
+                seletedOption?.standard
+              )
+            }
+          />
+        </div>
+      )}
     </Modal>
   );
 };

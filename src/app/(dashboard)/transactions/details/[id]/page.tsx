@@ -154,7 +154,7 @@ const TransactionDetails = ({ params }) => {
         </div>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <PaymentIcon />
+          <PaymentIcon active={false} />
           <h5 className="text-purple-100 text-h5 font-semibold">Wallets</h5>
         </div>
         <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">

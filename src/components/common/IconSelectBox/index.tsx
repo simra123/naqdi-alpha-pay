@@ -176,8 +176,8 @@ const IconSelectBox = ({
                       : index === options?.length - 1 && "rounded-b-md"
                   } ${
                     value === option.value
-                      ? "bg-light-purple text-purple-100 font-medium"
-                      : "hover:bg-light-purple hover:text-black-100"
+                      ? "bg-purple-light-purple text-purple-100 font-medium"
+                      : "hover:bg-purple-light-purple hover:text-black-100"
                   }`}
                 >
                   {option?.label || option?.value}

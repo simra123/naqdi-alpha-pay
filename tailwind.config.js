@@ -13,7 +13,7 @@ module.exports = {
     extend: {
       backgroundImage: {
         "purple-gradient":
-          "linear-gradient(to top right, #140B37 0%, #260B42 53%, #74189D 100%)",
+          "linear-gradient(to right, #3E1753 0%, #643882 100%)",
         "light-purple-gradient":
           "linear-gradient(to right, #6D2BE1 0%,  #9F5DE9 100%)",
         "auth-bg-purple":
@@ -27,7 +27,6 @@ module.exports = {
         "light-blue": "#F1F6FD",
         "light-gray": "#F4F4F4",
         "dark-gray": "#3F4141",
-        "light-purple": "#E4D7F9",
         "light-gray-10": "#EAECF4",
         "light-gray-20": "#F7F9FF",
         disabled: "#F1F1F1",
@@ -39,6 +38,7 @@ module.exports = {
       },
       borderColor: {
         purple: "#3D1554",
+        "purple-10": "#EBE3FB",
         "purple-100": "rgba(119, 53, 227, 1)",
         gray: "#9D9D9D",
         "light-gray": "#D9D9D9",
@@ -46,6 +46,7 @@ module.exports = {
         "error-dark": "#B00020",
         "placeholder-gray": "#BEBEBE",
         "table-gray": "#DCDCE3",
+        "light-white": "##EEEEEE",
       },
       borderRadius: {
         large: "12px",
@@ -53,7 +54,8 @@ module.exports = {
         small: "4px",
       },
       fontFamily: {
-        sans: ["Barlow", "sans-serif"],
+        sans: ["var(--font-lato)"],
+        nunito: ["var(--font-nunito-sans)"],
       },
       fontSize: {
         h1: ["48px", "1.2"],
@@ -106,9 +108,9 @@ module.exports = {
 
       colors: {
         purple: {
-          10: "rgba(119, 53, 227, 0.1)", // 10% opacity
+          10: "#EBE3FB", // 10% opacity
           20: "rgba(119, 53, 227, 0.2)", // 20% opacity
-          30: "rgba(119, 53, 227, 0.3)", // 30% opacity
+          300: "#BF80B4",
           40: "rgba(119, 53, 227, 0.4)", // 40% opacity
           50: "rgba(119, 53, 227, 0.5)", // 50% opacity
           60: "rgba(119, 53, 227, 0.6)", // 60% opacity
@@ -116,12 +118,14 @@ module.exports = {
           80: "rgba(119, 53, 227, 0.8)", // 80% opacity
           90: "rgba(119, 53, 227, 0.9)", // 90% opacity
           100: "rgba(119, 53, 227, 1)", // 100% opacity (fully opaque)
+          500: "#3E1753",
           light: "#9C5AE9",
+          "light-purple": "#E4D7F9",
         },
         green: {
           10: "rgba(54, 187, 145, 0.1)",
           20: "rgba(54, 187, 145, 0.2)",
-          30: "rgba(54, 187, 145, 0.3)",
+          300: "#8AD4BA",
           40: "rgba(54, 187, 145, 0.4)",
           50: "rgba(54, 187, 145, 0.5)",
           60: "rgba(54, 187, 145, 0.6)",
@@ -160,10 +164,11 @@ module.exports = {
           placeholder: "#BEBEBE",
         },
         red: {
+          300: "#EC86A6",
           "error-dark": "#B00020",
           chip: "#AC0606",
           button: "#FF5659",
-          cancel: '#D32F2F'
+          cancel: "#D32F2F",
         },
         yellow: {
           light: "#AC8B06",
@@ -171,7 +176,7 @@ module.exports = {
           "chip-dull": "#f8f7f0",
           "chip-light": "#FFFCF1",
         },
-
+        orange: { 500: "#F59E55" },
         blue: {
           label: "#01579B",
           info: "#0172F5",
@@ -183,6 +188,9 @@ module.exports = {
           "caption-gray": "#959595",
           "title-gray": "#555659",
         },
+        grey: {
+          100: "#9094A4",
+        },
       },
     },
     screens: {
@@ -193,6 +201,7 @@ module.exports = {
       xl: "1280px", // Extra large breakpoint (default)
       "2xl": "1324px", // 2x large breakpoint (default)
       "3xl": "1536px", // 2x large breakpoint (default)
+      "3.5xl": "1650px", // 2x large breakpoint (default)
       "4xl": "1920px", // Custom extra large breakpoint
     },
   },
