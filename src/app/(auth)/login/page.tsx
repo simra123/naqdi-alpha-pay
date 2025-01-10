@@ -21,7 +21,6 @@ import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import useFormValidation from "@/hooks/useFormValidation";
 
-import { setUser } from "@/store/slices/userSlice";
 import { setNotification } from "@/store/slices/modal.Slice";
 
 const Login = () => {
