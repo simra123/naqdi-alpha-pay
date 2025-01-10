@@ -339,44 +339,47 @@ const Home = () => {
 
                 <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px]">
                   <LoadingApi loading={isPortfolioLoading}>
-                    {portfolio?.map((asset) => {
-                      let unit = asset?.unit;
-                      let tokenName = `${unit} (${asset?.standard})`;
-                      let coinName = unitName[unit?.toLowerCase()] || "Unknown";
-                      let currencyTicker =
-                        asset?.type == "coin" ? unit : tokenName;
-                      let currencyHistoryData = asset?.historyData?.map(
-                        (item) => item?.rate_open
-                      );
-                      let depoistBlockchain = asset?.standard
-                        ? unit
-                        : coinName?.toLowerCase();
-                      return (
-                        <PortfolioCard
-                          Balance={asset?.amount}
-                          IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
-                          ChartLineData={currencyHistoryData}
-                          CurrencyName={coinName}
-                          CurrencyTicker={currencyTicker}
-                          onClick={() =>
-                            handleAssetSelection(
-                              depoistBlockchain,
-                              asset?.historyData
-                            )
-                          }
-                          onRecieve={() =>
-                            handleDepoistAndCreateAddress(
-                              depoistBlockchain,
-                              asset?.standard
-                            )
-                          }
-                          onSend={() =>
-                            handleWithdrawAndSetBlockchain(currencyTicker)
-                          }
-                          onTransfer={() => {}}
-                        />
-                      );
-                    })}
+                    {portfolio?.length > 0
+                      ? portfolio?.map((asset) => {
+                          let unit = asset?.unit;
+                          let tokenName = `${unit} (${asset?.standard})`;
+                          let coinName =
+                            unitName[unit?.toLowerCase()] || "Unknown";
+                          let currencyTicker =
+                            asset?.type == "coin" ? unit : tokenName;
+                          let currencyHistoryData = asset?.historyData?.map(
+                            (item) => item?.rate_open
+                          );
+                          let depoistBlockchain = asset?.standard
+                            ? unit
+                            : coinName?.toLowerCase();
+                          return (
+                            <PortfolioCard
+                              Balance={asset?.amount}
+                              IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
+                              ChartLineData={currencyHistoryData}
+                              CurrencyName={coinName}
+                              CurrencyTicker={currencyTicker}
+                              onClick={() =>
+                                handleAssetSelection(
+                                  depoistBlockchain,
+                                  asset?.historyData
+                                )
+                              }
+                              onRecieve={() =>
+                                handleDepoistAndCreateAddress(
+                                  depoistBlockchain,
+                                  asset?.standard
+                                )
+                              }
+                              onSend={() =>
+                                handleWithdrawAndSetBlockchain(currencyTicker)
+                              }
+                              onTransfer={() => {}}
+                            />
+                          );
+                        })
+                      : "No Assets Found. Deposit Assets to see them here."}
                   </LoadingApi>
                   <ErrorApiText error={isPorfolioError} />
                 </div>
@@ -396,17 +399,21 @@ const Home = () => {
               </div>
               <div className="flex flex-col gap-4">
                 <LoadingApi loading={isLastTransactionsLoading}>
-                  {lastTransactions?.map((transaction) => (
-                    <TransactionCard
-                      currencyName={transaction?.wallet?.blockchain}
-                      date={transaction?.createdAt}
-                      direction={
-                        transaction?.withdrawal?.id ? "outgoing" : "incoming"
-                      }
-                      onClick={() => {}}
-                      amount={transaction?.amount}
-                    />
-                  ))}
+                  {lastTransactions?.length > 0
+                    ? lastTransactions?.map((transaction) => (
+                        <TransactionCard
+                          currencyName={transaction?.wallet?.blockchain}
+                          date={transaction?.createdAt}
+                          direction={
+                            transaction?.withdrawal?.id
+                              ? "outgoing"
+                              : "incoming"
+                          }
+                          onClick={() => {}}
+                          amount={transaction?.amount}
+                        />
+                      ))
+                    : "No Transactions Found"}
                 </LoadingApi>
                 <ErrorApiText error={isLastTransactionsError} />
               </div>
