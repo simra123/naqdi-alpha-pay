@@ -1,26 +1,11 @@
+'use client'
+
 import React, { useState } from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Chart as ChartJS, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
 import moment from "moment";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Tooltip,
-  Legend
-);
+ChartJS.register(...registerables);
 
 const PortfolioChart = ({ data }: { data?: any[] }) => {
   // State for selected interval
@@ -267,7 +252,9 @@ const PortfolioChart = ({ data }: { data?: any[] }) => {
         <h2 className="text-h4 font-semibold">Portfolio History</h2>
         <div className="flex gap-4">
           {data ? (
-            <button className={`px-4 py-2 bg-purple-500 text-white rounded-full`}>
+            <button
+              className={`px-4 py-2 bg-purple-500 text-white rounded-full`}
+            >
               Lifetime
             </button>
           ) : (
