@@ -282,12 +282,13 @@ const Home = () => {
       )}
       {user?.role == Role.USER && (
         <div className="dashboard-layout">
-          <div className="wallets min-h-[470px] py-[60px] px-8"   onClick={(e) => {
-                setSelectedAsset({ blockchain: null, data: null });
-              }}>
-            <div
-              className="flex flex-col justify-between h-full"
-            >
+          <div
+            className="wallets min-h-[470px] py-[60px] px-8"
+            onClick={(e) => {
+              setSelectedAsset({ blockchain: null, data: null });
+            }}
+          >
+            <div className="flex flex-col justify-between h-full">
               <div>
                 <h4 className="text-white font-bold text-h4 font-nunito text-center">
                   Crypto Wallets
@@ -353,7 +354,7 @@ const Home = () => {
                       return (
                         <PortfolioCard
                           Balance={asset?.amount}
-                          IconSrc={`/currencies/${coinName}.png`}
+                          IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
                           ChartLineData={currencyHistoryData}
                           CurrencyName={coinName}
                           CurrencyTicker={currencyTicker}
