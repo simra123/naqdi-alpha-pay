@@ -79,6 +79,15 @@ const Home = () => {
     initailLoading: true,
   });
   const [portfolioPercentage, setPortfolioPercentage] = useState(0);
+  const [hoveredButton, setHoveredButton] = useState("transfer"); // Default to "transfer"
+
+  const handleMouseEnter = (buttonName) => {
+    setHoveredButton(buttonName);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredButton("transfer"); // Reset to "transfer" when not hovering
+  };
   const [selectedAsset, setSelectedAsset] = useState<{
     blockchain: null | string;
     data?: null | any[];
@@ -312,20 +321,42 @@ const Home = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <BorderedIconButton
-                  className="w-[85px] h-[85px] bg-white !border-0"
+                  className={`px-7 transition-[width] h-[85px] bg-white !border-0 ${
+                    hoveredButton !== "receive" ? "w-[85px]" : "!w-[50%] gap-4"
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("receive")}
+                  // onMouseLeave={handleMouseLeave}
                   onClick={handleDepoist}
                 >
                   <ReciveIcon />
+                  {hoveredButton === "receive" && (
+                    <span className="font-nunito text-h3.5">Receive</span>
+                  )}
                 </BorderedIconButton>
                 <BorderedIconButton
-                  className="w-[85px] h-[85px] bg-white !border-0"
+                  className={`px-7 transition-[width] h-[85px] bg-white !border-0 ${
+                    hoveredButton !== "send" ? "w-[85px]" : "!w-[50%] gap-4"
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("send")}
+                  // onMouseLeave={handleMouseLeave}
                   onClick={handleWithdrawalToggler}
                 >
                   <SendIcon />
+                  {hoveredButton === "send" && (
+                    <span className="font-nunito text-h3.5">Send</span>
+                  )}
                 </BorderedIconButton>
-                <BorderedIconButton className="px-7 h-[85px] bg-white !border-0 w-auto gap-4">
+                <BorderedIconButton
+                  className={`px-7 transition-[width] h-[85px] bg-white !border-0 ${
+                    hoveredButton !== "transfer" ? "w-[85px]" : "!w-[50%] gap-4"
+                  }`}
+                  onMouseEnter={() => handleMouseEnter("transfer")}
+                  // onMouseLeave={handleMouseLeave}
+                >
                   <TransferIcon />
-                  <span className="font-nunito text-h3.5">Transfer</span>
+                  {hoveredButton === "transfer" && (
+                    <span className="font-nunito text-h3.5">Transfer</span>
+                  )}
                 </BorderedIconButton>
               </div>
             </div>
