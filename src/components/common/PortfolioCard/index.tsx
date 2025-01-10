@@ -6,6 +6,7 @@ import {
 import React from "react";
 import { BorderedIconButton } from "../IconButton";
 import SimpleLineChart from "@/components/SimpleLineChart";
+import Image from "next/image";
 
 type PortfolioProps = {
   IconSrc: string;
@@ -37,9 +38,11 @@ const PortfolioCard = ({
     >
       <div className="flex items-center justify-between flex-auto">
         <div className="flex items-center gap-2 w-[220px]">
-          <img
+          <Image
             src={IconSrc}
             alt="Currency"
+            height={63}
+            width={63}
             className="w-[63px] h-[63px] rounded-full"
           />
           <div className="text-ellipsis overflow-hidden">
