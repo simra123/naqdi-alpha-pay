@@ -676,20 +676,14 @@ export const CalenderGrayIcon = () => {
   );
 };
 
-export const onBoardingIcon: React.FC = ({
-  className,
-  fill,
-}: {
-  className?: string;
-  fill?: string;
-}) => {
+export const onBoardingIcon: React.FC = ({ active }: { active?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill={fill}
+      fill={active ? IconsActiveColor : "none"}
     >
       <path
         d="M19.75 0.5H22.25C22.9389 0.5 23.5 1.06114 23.5 1.75V22.25C23.5 22.9389 22.9389 23.5 22.25 23.5H19.75C19.0611 23.5 18.5 22.9389 18.5 22.25V1.75C18.5 1.06114 19.0611 0.5 19.75 0.5Z"
