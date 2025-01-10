@@ -10,6 +10,7 @@ import {
   Legend,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
+import moment from "moment";
 
 ChartJS.register(
   CategoryScale,
@@ -21,16 +22,36 @@ ChartJS.register(
   Legend
 );
 
-const PortfolioChart = () => {
+const PortfolioChart = ({ data }: { data?: any[] }) => {
   // State for selected interval
 
-  let greenColor = '#CFECE1'
-  let redColor = '#F7CAD8'
-  let purpleColor = '#643882'
+  let greenColor = "#CFECE1";
+  let redColor = "#F7CAD8";
+  let purpleColor = "#643882";
 
   const [interval, setInterval] = useState<
     "daily" | "weekly" | "monthly" | "lifetime"
   >("monthly");
+
+  // Format data
+  const formattedData = (data || []).map((item) => ({
+    label: moment(item?.time_period_start).format("MMM DD, YYYY"),
+    value: item?.rate_open,
+  }));
+
+  // Use the formatted data for the line chart
+  const assetChartData = {
+    labels: formattedData.map((item) => item.label),
+    datasets: [
+      {
+        type: "line",
+        label: "Rate Open",
+        data: formattedData.map((item) => item.value),
+        borderColor: purpleColor,
+        tension: 0.4,
+      },
+    ],
+  };
 
   // Data for each interval
   const chartData = {
@@ -235,7 +256,7 @@ const PortfolioChart = () => {
       y: {
         stacked: false,
         grid: { color: "#e5e7eb" },
-        ticks: { stepSize: 25 },
+        ticks: { stepSize: 0.1 },
       },
     },
   };
@@ -245,24 +266,36 @@ const PortfolioChart = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-h4 font-semibold">Portfolio History</h2>
         <div className="flex gap-4">
-          {["daily", "weekly", "monthly", "lifetime"].map((int) => (
-            <button
-              key={int}
-              onClick={() =>
-                setInterval(int as "daily" | "weekly" | "monthly" | "lifetime")
-              }
-              className={`px-4 py-2 rounded ${
-                interval === int
-                  ? "bg-purple-500 text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-            >
-              {int.charAt(0).toUpperCase() + int.slice(1)}
+          {data ? (
+            <button className={`px-4 py-2 bg-purple-500 text-white rounded-full`}>
+              Lifetime
             </button>
-          ))}
+          ) : (
+            ["daily", "weekly", "monthly", "lifetime"].map((int) => (
+              <button
+                key={int}
+                onClick={() =>
+                  setInterval(
+                    int as "daily" | "weekly" | "monthly" | "lifetime"
+                  )
+                }
+                className={`px-4 py-2  rounded-full ${
+                  interval === int
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {int.charAt(0).toUpperCase() + int.slice(1)}
+              </button>
+            ))
+          )}
         </div>
       </div>
-      <Chart data={chartData[interval] as any} type="line" options={options} />
+      <Chart
+        data={data ? assetChartData : (chartData[interval] as any)}
+        type="line"
+        options={options}
+      />
     </div>
   );
 };

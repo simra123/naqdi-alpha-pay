@@ -79,6 +79,13 @@ const Home = () => {
     initailLoading: true,
   });
   const [portfolioPercentage, setPortfolioPercentage] = useState(0);
+  const [selectedAsset, setSelectedAsset] = useState<{
+    blockchain: null | string;
+    data?: null | any[];
+  }>({
+    blockchain: null,
+    data: null,
+  });
   const [totalPortfolio, setTotalPorfolio] = useState(0);
   const [portfolio, setPortfolio] = useState([]);
   const [depoistData, setDepositData] = useState<{
@@ -123,6 +130,10 @@ const Home = () => {
   const handleWithdrawalToggler = () => {
     setOpenWithdrawal(!openWithdraw);
     setWithdrawData({ blockchain: null });
+  };
+
+  const handleAssetSelection = (blockchain: string, data?: any[]) => {
+    setSelectedAsset({ blockchain, data });
   };
 
   const getBalances = async () => {
@@ -187,6 +198,22 @@ const Home = () => {
     getBalances();
     user?.role == Role.USER && UserApiCalls();
   }, []);
+
+  // Default data (fallback)
+  const defaultData = [
+    {
+      time_period_start: "2025-01-02T00:00:00.0000000Z",
+      rate_open: 1.002051068643907,
+    },
+    {
+      time_period_start: "2024-12-23T00:00:00.0000000Z",
+      rate_open: 1.0008999219833519,
+    },
+    {
+      time_period_start: "2024-12-13T00:00:00.0000000Z",
+      rate_open: 0.9997079306641444,
+    },
+  ];
 
   return (
     <>
@@ -255,8 +282,12 @@ const Home = () => {
       )}
       {user?.role == Role.USER && (
         <div className="dashboard-layout">
-          <div className="wallets min-h-[470px] py-[60px] px-8">
-            <div className="flex flex-col justify-between h-full">
+          <div className="wallets min-h-[470px] py-[60px] px-8"   onClick={(e) => {
+                setSelectedAsset({ blockchain: null, data: null });
+              }}>
+            <div
+              className="flex flex-col justify-between h-full"
+            >
               <div>
                 <h4 className="text-white font-bold text-h4 font-nunito text-center">
                   Crypto Wallets
@@ -275,7 +306,10 @@ const Home = () => {
                   38.43% Last Week
                 </h6>
               </div>
-              <div className="flex justify-between px-8">
+              <div
+                className="flex justify-between px-8"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <BorderedIconButton
                   className="w-[85px] h-[85px] bg-white !border-0"
                   onClick={handleDepoist}
@@ -323,7 +357,12 @@ const Home = () => {
                           ChartLineData={currencyHistoryData}
                           CurrencyName={coinName}
                           CurrencyTicker={currencyTicker}
-                          onClick={() => {}}
+                          onClick={() =>
+                            handleAssetSelection(
+                              depoistBlockchain,
+                              asset?.historyData
+                            )
+                          }
                           onRecieve={() =>
                             handleDepoistAndCreateAddress(
                               depoistBlockchain,
@@ -344,7 +383,7 @@ const Home = () => {
             </div>
           </div>
           <div className="history">
-            <PortfolioChart />
+            <PortfolioChart data={selectedAsset?.data} />
           </div>
           <div className="transactions">
             <div className="border border-purple-10 py-[30px] px-5 rounded-[28px]">
