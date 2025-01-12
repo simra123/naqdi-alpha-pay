@@ -16,11 +16,15 @@ import {
   DashboardIcon,
   DoubleLeftIcon,
   DoubleRightIcon,
+  LogoutDoorIcon,
   LogoutIcon,
   NeedHelpIcon,
+  NotificationIcon,
   onBoardingIcon,
   PaymentsIcon,
   SettingsIcon,
+  SupportIcon,
+  ThemeChangeIcon,
   TransactionsIcon,
   WithdrawalIcon,
 } from "@/assets/Svgs";
@@ -32,6 +36,7 @@ import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
 import { FaUsers } from "react-icons/fa";
+import { BorderedIconButton } from "../IconButton";
 
 interface NavItem {
   name: string;
@@ -64,6 +69,7 @@ const nav_items: NavItem[] = [
     icon: FaUsers,
     path: "/users",
     roles: [Role.ADMIN],
+    module: ModulesEnum.merchant,
   },
   {
     name: "KYC Requests",
@@ -226,14 +232,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         className={`relative transition-all ${isCollapsed ? "w-32" : "w-64"}`}
       >
         <button
-          className={`absolute hidden md:flex ${ isCollapsed ? "-right-[21px]" : "right-0"} top-[104px] z-30 items-center justify-center bg-orange-500 h-[17px] w-[22px]  shadow-md`}
+          className={`absolute hidden md:flex ${
+            isCollapsed ? "-right-[21px]" : "right-0"
+          } top-[104px] z-30 items-center justify-center bg-orange-500 h-[17px] w-[22px]  shadow-md`}
           onClick={toggleSidebar}
         >
           {isCollapsed ? <DoubleRightIcon /> : <DoubleLeftIcon />}
         </button>
 
         <div
-          className={`p-6 pt-10 min-h-full w-full max-w-64 md:overflow-hidden flex flex-col border-r border-light-white  justify-between SidebarWrapper fixed top-0 left-0 z-50 md:static transform ${
+          className={`p-6 pt-10 min-h-full w-full max-w-64 md:overflow-hidden flex flex-col bg-white border-r border-light-white justify-between SidebarWrapper fixed top-0 left-0 z-50 md:static transform ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           } transition-all duration-300 ease-in-out md:translate-x-0`}
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the sidebar
@@ -349,32 +357,20 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
           </div>
 
-          {/* <div className="border-t-[1px] flex gap-3 flex-col border-placeholder-gray pt-7 pb-5 px-2">
-            {user?.role == Role.USER && (
-              <div
-                className={`flex gap-2 navLink items-center cursor-pointer ${
-                  isCollapsed && "justify-center"
-                }`}
-                onClick={() => router.push("/support")}
-              >
-                <div>
-                  <NeedHelpIcon className={"fill-white w-5 h-5"} />
-                </div>
-                {!isCollapsed && <span>Need Help?</span>}
-              </div>
-            )}
-            <div
-              className={`flex gap-2 navLink items-center cursor-pointer ${
-                isCollapsed && "justify-center"
-              }`}
-              onClick={logoutHandler}
-            >
-              <div>
-                <LogoutIcon className={"fill-white w-5 h-5"} />
-              </div>
-              {!isCollapsed && <span>Logout</span>}
-            </div>
-          </div> */}
+          <div className="items-center gap-2 md:hidden flex border-t border-light-purple pt-5">
+            <BorderedIconButton>
+              <SupportIcon />
+            </BorderedIconButton>
+            <BorderedIconButton>
+              <ThemeChangeIcon />
+            </BorderedIconButton>
+            <BorderedIconButton>
+              <NotificationIcon />
+            </BorderedIconButton>
+            <BorderedIconButton onClick={logoutHandler}>
+              <LogoutDoorIcon />
+            </BorderedIconButton>
+          </div>
         </div>
       </div>
     </div>
