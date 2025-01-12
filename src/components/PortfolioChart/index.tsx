@@ -38,6 +38,7 @@ const PortfolioChart = ({ data }: { data?: any[] }) => {
     ],
   };
 
+
   // Data for each interval
   const chartData = {
     daily: {
@@ -249,8 +250,8 @@ const PortfolioChart = ({ data }: { data?: any[] }) => {
   return (
     <div className="p-6 rounded-[28px] border border-purple-10">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-h4 font-semibold">Portfolio History</h2>
-        <div className="flex gap-4">
+        <h2 className="text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold">Portfolio History</h2>
+        <div className="flex gap-2 md:gap-4">
           {data ? (
             <button
               className={`px-4 py-2 bg-purple-500 text-white rounded-full`}
@@ -266,7 +267,7 @@ const PortfolioChart = ({ data }: { data?: any[] }) => {
                     int as "daily" | "weekly" | "monthly" | "lifetime"
                   )
                 }
-                className={`px-4 py-2  rounded-full ${
+                className={`px-4 py-2 text-subtitle md:text-base  rounded-full ${
                   interval === int
                     ? "bg-purple-500 text-white"
                     : "bg-gray-200 text-gray-800"

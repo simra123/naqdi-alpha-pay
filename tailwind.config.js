@@ -194,14 +194,17 @@ module.exports = {
       },
     },
     screens: {
+      xxs: "360px", // Custom extra small breakpoint
       xs: "480px", // Custom extra small breakpoint
       sm: "640px", // Small breakpoint (default)
       md: "768px", // Medium breakpoint (default)
       lg: "1050px", // Large breakpoint (default)
       xl: "1280px", // Extra large breakpoint (default)
       "2xl": "1324px", // 2x large breakpoint (default)
+      "2.5xl": "1470px", // 2x large breakpoint (default)
       "3xl": "1536px", // 2x large breakpoint (default)
       "3.5xl": "1650px", // 2x large breakpoint (default)
+      "3.75xl": "1780px", // 2x large breakpoint (default)
       "4xl": "1920px", // Custom extra large breakpoint
     },
   },

@@ -4,7 +4,6 @@
     "wallets portfolio portfolio portfolio"
     "history history history transactions";
   grid-template-columns: 552px 1fr 1fr 412px;
-  grid-template-rows: auto auto;
   gap: 24px;
 
   // Wallets Section
@@ -29,14 +28,24 @@
     grid-area: history;
   }
 
-  // Responsive Design
-  @media (max-width: 768px) {
+  @media (max-width: 1420px) {
+    display: grid;
     grid-template-areas:
-      "wallets"
-      "portfolio"
-      "transactions"
-      "history";
-    grid-template-columns: 1fr;
-    gap: 1rem;
+      "wallets wallets"
+      "portfolio transactions"
+      "history history";
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    gap: 22px;
+    .portfolio div div {
+      max-height: 100%;
+      .portfolio-body {
+        padding: 0;
+      }
+    }
+  }
+  @media (max-width: 980px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 }

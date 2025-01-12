@@ -13,8 +13,9 @@ import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 import Details from "@/components/common/Details";
 import { ContactMailOutlined, LocationOnOutlined } from "@mui/icons-material";
 import CustomTable from "@/components/common/CustomTable";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { unitName } from "@/constants/blockchains";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const BalanceColumns: TableColumns = [
   { field: "id", headerName: "ID" },
@@ -30,7 +31,7 @@ const BalanceColumns: TableColumns = [
   { field: "amount", headerName: "Balance" },
 ];
 
-const TransactionDetails = ({ params }) => {
+const UserDetails = ({ params }) => {
   const userId = params?.id;
   const [userDetails, setUserDetails]: any = useState({});
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
@@ -137,4 +138,8 @@ const TransactionDetails = ({ params }) => {
   );
 };
 
-export default TransactionDetails;
+export default PermissionAccess(
+  UserDetails,
+  ModulesEnum.merchant,
+  AccessLevelEnum.read
+);

@@ -1,6 +1,12 @@
 // components/SmoothLineChart.tsx
-const SmoothLineChart = ({ dataPoints }: { dataPoints: number[] }) => {
-  const width = 150; // Chart width
+const SmoothLineChart = ({
+  dataPoints,
+  className,
+}: {
+  dataPoints: number[];
+  className?: string;
+}) => {
+  const width = 112; // Chart width
   const height = 50; // Chart height
   const padding = 5; // Padding around the chart
 
@@ -38,7 +44,12 @@ const SmoothLineChart = ({ dataPoints }: { dataPoints: number[] }) => {
   }, "");
 
   return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+    <svg
+      width={width}
+      className={className}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+    >
       <path
         d={path}
         fill="none"
