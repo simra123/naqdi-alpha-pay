@@ -12,6 +12,7 @@ import {
 import IconField from "../IconField";
 import {
   LogoutDoorIcon,
+  MenuIcon,
   NotificationIcon,
   SearchbarIcon,
   SupportIcon,
@@ -59,21 +60,21 @@ const Header = ({ navHandler }) => {
   };
 
   return (
-    <div className="md:bg-white md:shadow-md py-2 md:px-7 rounded-small mb-[2px]">
+    <div className="md:bg-white md:shadow-md py-3 md:py-2 px-6 md:px-7 rounded-small mb-[2px]">
       <div className="flex items-center gap-6 justify-between">
-        {/* <div className="items-center gap-3 flex md:hidden">
+        <div className="items-center gap-3 flex md:hidden">
           <button
             onClick={navHandler}
-            className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-8 h-9 hover:bg-white hover:shadow-md p-1"
+            className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 flex items-center justify-center hover:bg-white hover:shadow-md p-1"
           >
-            <Menu />
+            <MenuIcon />
           </button>
-          <h5 className="text-h5 text-black-100 font-semibold">
+          {/* <h5 className="text-h5 text-black-100 font-semibold">
             {getHeaderName()}
-          </h5>
-        </div> */}
+          </h5> */}
+        </div>
 
-        <div className="flex gap-6 items-center">
+        <div className="gap-6 items-center">
           {/* <div className="icon">
             <Notifications />
           </div> */}
@@ -93,17 +94,6 @@ const Header = ({ navHandler }) => {
                 {capitalize(user?.user_type)}
               </span>
             </div>
-            <div className="icon ml-3">{/* <KeyboardArrowDown /> */}</div>
-          </div>
-
-          <div className="avatar flex md:hidden cursor-pointer gap-2 items-center  rounded-full ">
-            <div className="w-12 h-12">
-              <img
-                src="/avatar.jpg"
-                alt="Avatar"
-                className="rounded-full w-full border border-white"
-              />
-            </div>
           </div>
         </div>
         <div className="search">
@@ -118,7 +108,7 @@ const Header = ({ navHandler }) => {
           />
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="items-center gap-6 hidden md:flex">
           <BorderedIconButton>
             <SupportIcon />
           </BorderedIconButton>
@@ -131,6 +121,13 @@ const Header = ({ navHandler }) => {
           <BorderedIconButton onClick={logoutHandler}>
             <LogoutDoorIcon />
           </BorderedIconButton>
+        </div>
+        <div className="flex md:hidden">
+          <img
+            src="/avatar.png"
+            alt="Avatar"
+            className="rounded-full h-14 border border-white"
+          />
         </div>
       </div>
     </div>

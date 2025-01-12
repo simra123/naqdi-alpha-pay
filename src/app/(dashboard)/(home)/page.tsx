@@ -292,17 +292,17 @@ const Home = () => {
       {user?.role == Role.USER && (
         <div className="dashboard-layout">
           <div
-            className="wallets min-h-[470px] py-[60px] px-8"
+            className="wallets min-h-[310px] 2.5xl:min-h-[470px] py-[35px] 2.5xl:py-[60px] px-4 2.5xlpx-8"
             onClick={(e) => {
               setSelectedAsset({ blockchain: null, data: null });
             }}
           >
-            <div className="flex flex-col justify-between h-full">
+            <div className="flex flex-col justify-between h-full gap-8">
               <div>
                 <h4 className="text-white font-bold text-h4 font-nunito text-center">
                   Crypto Wallets
                 </h4>
-                <h3 className="text-white font-nunito text-center text-[92px] font-semibold overflow-hidden text-ellipsis leading-[110px]">
+                <h3 className="text-white font-nunito text-center text-[60px] 2.5xl:text-[92px] font-semibold overflow-hidden text-ellipsis leading-[110px]">
                   $
                   <CountUp
                     end={totalPortfolio}
@@ -312,50 +312,62 @@ const Home = () => {
                   />
                 </h3>
                 <ErrorApiText error={isTotalPortfolioError} />
-                <h6 className="text-purple-light-purple text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
+                <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
                   38.43% Last Week
                 </h6>
               </div>
               <div
-                className="flex justify-between px-8"
+                className="flex gap-4 justify-center 2.5xl:gap-0 2.5xl:justify-between xl:px-8"
                 onClick={(e) => e.stopPropagation()}
               >
                 <BorderedIconButton
-                  className={`px-7 transition-[width] h-[85px] bg-white !border-0 ${
-                    hoveredButton !== "receive" ? "w-[85px]" : "!w-[50%] gap-4"
+                  className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                    hoveredButton !== "receive"
+                      ? "w-[57px] 2.5xl:w-[85px]"
+                      : "!w-[50%] px-4 gap-4"
                   }`}
                   onMouseEnter={() => handleMouseEnter("receive")}
                   // onMouseLeave={handleMouseLeave}
                   onClick={handleDepoist}
                 >
-                  <ReciveIcon />
+                  <ReciveIcon className="w-4 2.5xl:w-[23px]" />
                   {hoveredButton === "receive" && (
-                    <span className="font-nunito text-h3.5">Receive</span>
+                    <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
+                      Receive
+                    </span>
                   )}
                 </BorderedIconButton>
                 <BorderedIconButton
-                  className={`px-7 transition-[width] h-[85px] bg-white !border-0 ${
-                    hoveredButton !== "send" ? "w-[85px]" : "!w-[50%] gap-4"
+                  className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                    hoveredButton !== "send"
+                      ? "w-[57px] 2.5xl:w-[85px]"
+                      : "!w-[50%] px-4 gap-4"
                   }`}
                   onMouseEnter={() => handleMouseEnter("send")}
                   // onMouseLeave={handleMouseLeave}
                   onClick={handleWithdrawalToggler}
                 >
-                  <SendIcon />
+                  <SendIcon className="w-4 2.5xl:w-[23px]" />
                   {hoveredButton === "send" && (
-                    <span className="font-nunito text-h3.5">Send</span>
+                    <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
+                      Send
+                    </span>
                   )}
                 </BorderedIconButton>
                 <BorderedIconButton
-                  className={`px-7 transition-[width] h-[85px] bg-white !border-0 ${
-                    hoveredButton !== "transfer" ? "w-[85px]" : "!w-[50%] gap-4"
+                  className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                    hoveredButton !== "transfer"
+                      ? "w-[57px] 2.5xl:w-[85px]"
+                      : "!w-[50%] px-4 gap-4"
                   }`}
                   onMouseEnter={() => handleMouseEnter("transfer")}
                   // onMouseLeave={handleMouseLeave}
                 >
-                  <TransferIcon />
+                  <TransferIcon className="w-4 2.5xl:w-[23px]" />
                   {hoveredButton === "transfer" && (
-                    <span className="font-nunito text-h3.5">Transfer</span>
+                    <span className="font-nunito text-button 2.5xl:text-h3.5  sm:inline hidden">
+                      Transfer
+                    </span>
                   )}
                 </BorderedIconButton>
               </div>
@@ -363,88 +375,98 @@ const Home = () => {
           </div>
           <div className="portfolio">
             <div className="flex flex-col flex-auto">
-              <div className="relative flex flex-col max-h-[470px]">
+              <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
                 {/* <header className="sticky top-0 z-10"> */}
-                <h3 className="text-h4 font-nunito mb-2">My Portfolio</h3>
+                <h3 className="text-p120 2xl:text-h4 font-nunito mb-2">
+                  My Portfolio
+                </h3>
                 {/* </header> */}
 
-                <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px]">
+                <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px] portfolio-body">
                   <LoadingApi loading={isPortfolioLoading}>
-                    {portfolio?.length > 0
-                      ? portfolio?.map((asset) => {
-                          let unit = asset?.unit;
-                          let tokenName = `${unit} (${asset?.standard})`;
-                          let coinName =
-                            unitName[unit?.toLowerCase()] || "Unknown";
-                          let currencyTicker =
-                            asset?.type == "coin" ? unit : tokenName;
-                          let currencyHistoryData = asset?.historyData?.map(
-                            (item) => item?.rate_open
-                          );
-                          let depoistBlockchain = asset?.standard
-                            ? unit
-                            : coinName?.toLowerCase();
-                          return (
-                            <PortfolioCard
-                              Balance={asset?.amount}
-                              IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
-                              ChartLineData={currencyHistoryData}
-                              CurrencyName={coinName}
-                              CurrencyTicker={currencyTicker}
-                              onClick={() =>
-                                handleAssetSelection(
-                                  depoistBlockchain,
-                                  asset?.historyData
-                                )
-                              }
-                              onRecieve={() =>
-                                handleDepoistAndCreateAddress(
-                                  depoistBlockchain,
-                                  asset?.standard
-                                )
-                              }
-                              onSend={() =>
-                                handleWithdrawAndSetBlockchain(currencyTicker)
-                              }
-                              onTransfer={() => {}}
-                            />
-                          );
-                        })
-                      : "No Assets Found. Deposit Assets to see them here."}
+                    {portfolio?.length > 0 ? (
+                      portfolio?.map((asset) => {
+                        let unit = asset?.unit;
+                        let tokenName = `${unit} (${asset?.standard})`;
+                        let coinName =
+                          unitName[unit?.toLowerCase()] || "Unknown";
+                        let currencyTicker =
+                          asset?.type == "coin" ? unit : tokenName;
+                        let currencyHistoryData = asset?.historyData?.map(
+                          (item) => item?.rate_open
+                        );
+                        let depoistBlockchain = asset?.standard
+                          ? unit
+                          : coinName?.toLowerCase();
+                        return (
+                          <PortfolioCard
+                            Balance={asset?.amount}
+                            IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
+                            ChartLineData={currencyHistoryData}
+                            CurrencyName={coinName}
+                            CurrencyTicker={currencyTicker}
+                            onClick={() =>
+                              handleAssetSelection(
+                                depoistBlockchain,
+                                asset?.historyData
+                              )
+                            }
+                            onRecieve={() =>
+                              handleDepoistAndCreateAddress(
+                                depoistBlockchain,
+                                asset?.standard
+                              )
+                            }
+                            onSend={() =>
+                              handleWithdrawAndSetBlockchain(currencyTicker)
+                            }
+                            onTransfer={() => {}}
+                          />
+                        );
+                      })
+                    ) : !isPorfolioError ? (
+                      "No Assets Found. Deposit Assets to see them here."
+                    ) : (
+                      <></>
+                    )}
                   </LoadingApi>
                   <ErrorApiText error={isPorfolioError} />
                 </div>
               </div>
             </div>
           </div>
-          <div className="history">
+          <div className="history xs:block hidden">
             <PortfolioChart data={selectedAsset?.data} />
           </div>
           <div className="transactions">
-            <div className="border border-purple-10 py-[30px] px-5 rounded-[28px]">
+            <div className="xss:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">
               <div className="flex items-end justify-between mb-2">
-                <h3 className="text-h4 font-nunito">Last Transactions</h3>
+                <h3 className="text-p120 2xl:text-h4 font-nunito">
+                  Last Transactions
+                </h3>
                 <Link className="text-caption" href={"/transactions"}>
                   View All
                 </Link>
               </div>
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3 2xl:gap-4">
                 <LoadingApi loading={isLastTransactionsLoading}>
-                  {lastTransactions?.length > 0
-                    ? lastTransactions?.map((transaction) => (
-                        <TransactionCard
-                          currencyName={transaction?.wallet?.blockchain}
-                          date={transaction?.createdAt}
-                          direction={
-                            transaction?.withdrawal?.id
-                              ? "outgoing"
-                              : "incoming"
-                          }
-                          onClick={() => {}}
-                          amount={transaction?.amount}
-                        />
-                      ))
-                    : "No Transactions Found"}
+                  {lastTransactions?.length > 0 ? (
+                    lastTransactions?.map((transaction) => (
+                      <TransactionCard
+                        currencyName={transaction?.wallet?.blockchain}
+                        date={transaction?.createdAt}
+                        direction={
+                          transaction?.withdrawal?.id ? "outgoing" : "incoming"
+                        }
+                        onClick={() => {}}
+                        amount={transaction?.amount}
+                      />
+                    ))
+                  ) : !isLastTransactionsError ? (
+                    "No Transactions Found"
+                  ) : (
+                    <></>
+                  )}
                 </LoadingApi>
                 <ErrorApiText error={isLastTransactionsError} />
               </div>
