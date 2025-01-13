@@ -7,7 +7,10 @@ import { useApi } from "@/hooks/useApi";
 import { networks_available } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import { createWithdrawalApi } from "@/services/withdrawal";
+import {
+  createWithdrawalApi,
+  getWithdrawableCurrenciesListApi,
+} from "@/services/withdrawal";
 import { setNotification } from "@/store/slices/modal.Slice";
 import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
@@ -98,7 +101,7 @@ const CreateWithdrawalModal = ({
 
   const _getUserBalance = async () => {
     await callApiHook({
-      apiCall: callBalanceApi(getAllWalletBalancesApi()),
+      apiCall: callBalanceApi(getWithdrawableCurrenciesListApi()),
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {
           return {
