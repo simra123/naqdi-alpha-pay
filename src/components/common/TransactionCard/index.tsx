@@ -44,7 +44,7 @@ const TransactionCard = ({
         </div>
       </div>
 
-      <span className="text-base md:text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold text-end overflow-hidden text-ellipsis">
+      <span className="text-base md:text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold text-end overflow-hidden text-ellipsis max-w-24">
         {amount}
       </span>
     </div>

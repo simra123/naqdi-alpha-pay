@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
@@ -66,7 +66,11 @@ const Support = () => {
   const router = useRouter();
   const [ticketsList, setTicketsList] = useState([]);
 
-  const [isListLoading, isListError, callListApi] = useApi({initailLoading:true});
+  const [isListLoading, isListError, callListApi] = useApi({
+    initailLoading: true,
+  });
+
+  notFound();
 
   const getListHandler = async () => {
     await callApiHook({

@@ -72,11 +72,11 @@ const Support = () => {
       successCallBack: (response: any) => {
         dispatch(
           setNotification({
-            message: "Ticket Created Successfully",
+            message: "Your request has been sent Successfully",
             status: "success",
           })
         );
-        router.push("/support");
+        router.push("/");
       },
     });
   };
