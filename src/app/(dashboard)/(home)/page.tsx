@@ -25,7 +25,10 @@ import LoaderButton from "@/components/common/LoaderButton";
 import PortfolioCard from "@/components/common/PortfolioCard";
 import TransactionCard from "@/components/common/TransactionCard";
 import PortfolioChart from "@/components/PortfolioChart";
-import { getAllTransactionsApi } from "@/services/transaction";
+import {
+  getAllTransactionsApi,
+  getRecentTransactionsApi,
+} from "@/services/transaction";
 import LoadingApi from "@/components/common/LoadindApi";
 import CountUp from "react-countup";
 import DepositModal from "@/components/Modals/DepoistModal";
@@ -163,11 +166,9 @@ const Home = () => {
   };
   const getLastTransactions = async () => {
     await callApiHook({
-      apiCall: callLastTransactionsApi(
-        getAllTransactionsApi({ count: 1, limit: 5 })
-      ),
+      apiCall: callLastTransactionsApi(getRecentTransactionsApi()),
       successCallBack: (response: any) => {
-        setLastTransactions(response);
+        setLastTransactions(response?.recentTransactions);
       },
     });
   };
@@ -207,22 +208,6 @@ const Home = () => {
     getBalances();
     user?.role == Role.USER && UserApiCalls();
   }, []);
-
-  // Default data (fallback)
-  const defaultData = [
-    {
-      time_period_start: "2025-01-02T00:00:00.0000000Z",
-      rate_open: 1.002051068643907,
-    },
-    {
-      time_period_start: "2024-12-23T00:00:00.0000000Z",
-      rate_open: 1.0008999219833519,
-    },
-    {
-      time_period_start: "2024-12-13T00:00:00.0000000Z",
-      rate_open: 0.9997079306641444,
-    },
-  ];
 
   return (
     <>
@@ -439,7 +424,7 @@ const Home = () => {
             <PortfolioChart data={selectedAsset?.data} />
           </div>
           <div className="transactions">
-            <div className="xss:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">
+            <div className="xxs:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">
               <div className="flex items-end justify-between mb-2">
                 <h3 className="text-p120 2xl:text-h4 font-nunito">
                   Last Transactions

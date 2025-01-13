@@ -23,6 +23,7 @@ import Cookies from "js-cookie";
 import { resetSteps } from "@/store/slices/onboarding.slice";
 import { setUser } from "@/store/slices/userSlice";
 import { useDispatch } from "react-redux";
+import Link from "next/link";
 
 const Header = ({ navHandler }) => {
   const user = useLocalStorage("user");
@@ -109,9 +110,11 @@ const Header = ({ navHandler }) => {
         </div>
 
         <div className="items-center gap-6 hidden md:flex">
-          <BorderedIconButton>
-            <SupportIcon />
-          </BorderedIconButton>
+          <Link href="/support/create">
+            <BorderedIconButton>
+              <SupportIcon />
+            </BorderedIconButton>
+          </Link>
           <BorderedIconButton>
             <ThemeChangeIcon />
           </BorderedIconButton>
