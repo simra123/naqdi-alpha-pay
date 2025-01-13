@@ -290,7 +290,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                               className={` ${
                                 pathname === path || name == openSubNav
                                   ? "!fill-purple-500 w-6 h-6"
-                                  : "fill-white w-5 h-5"
+                                  : "w-5 h-5"
                               }`}
                               active={pathname === path || name == openSubNav}
                             />

@@ -82,7 +82,7 @@ const IconField = ({
             } border-[1.5px] ${error
               ? "border-error-dark"
               : "border-grey-100 focus:border-purple"
-            } border-grey-100 focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
+            } border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
         />
         {isPasswordField && (
           <div
