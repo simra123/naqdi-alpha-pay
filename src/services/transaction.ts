@@ -37,3 +37,7 @@ export const getWithdrawalTransactionDetailsByAdminApi = (data: {
 }) => {
   return () => api.post(`wallet/withdrawtransaction-details`, data);
 };
+
+export const getRecentTransactionsApi = () => {
+  return () => api.get(`wallet/recent-transactions`);
+};
