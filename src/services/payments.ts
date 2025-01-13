@@ -2,6 +2,17 @@
 
 import api from "@/config/api";
 
+export const createPaymentDepositApi = (data: {
+  requested_currency: string;
+  requested_amount: string;
+  payment_currency: string;
+  payment_currency_standard: string;
+  passthrough: string;
+  notes?: string;
+}) => {
+  return () => api.post(`v1/create-deposit-payment`, data);
+};
+
 export const getAllPaymentsApi = () => {
   return () => api.get(`v1/client/payments`);
 };

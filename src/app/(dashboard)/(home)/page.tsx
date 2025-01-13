@@ -176,7 +176,7 @@ const Home = () => {
     await callApiHook({
       apiCall: callPotfolioPercentageApi(getProfitPercentageApi()),
       successCallBack: (response: any) => {
-        setPortfolioPercentage(response);
+        setPortfolioPercentage(response?.profitPercentage);
       },
     });
   };
@@ -298,7 +298,7 @@ const Home = () => {
                 </h3>
                 <ErrorApiText error={isTotalPortfolioError} />
                 <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
-                  38.43% Last Week
+                  {portfolioPercentage}% Last Week
                 </h6>
               </div>
               <div
@@ -438,7 +438,10 @@ const Home = () => {
                   {lastTransactions?.length > 0 ? (
                     lastTransactions?.map((transaction) => (
                       <TransactionCard
-                        currencyName={transaction?.wallet?.blockchain}
+                        currencyName={
+                          transaction?.wallet?.blockchain ||
+                          transaction?.clientWallet?.blockchain
+                        }
                         date={transaction?.createdAt}
                         direction={
                           transaction?.withdrawal?.id ? "outgoing" : "incoming"

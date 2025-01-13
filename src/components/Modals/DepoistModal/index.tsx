@@ -17,6 +17,9 @@ import {
 import IconSelectBox from "../../common/IconSelectBox";
 import LoaderButton from "../../common/LoaderButton";
 import Details from "@/components/common/Details";
+import { createPaymentDepositApi } from "@/services/payments";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import IconField from "@/components/common/IconField";
 
 interface Network {
   label: string;
@@ -36,6 +39,7 @@ const DepositModal = ({
   blockchain,
   standard,
 }: DepositProps) => {
+  const user = useLocalStorage("user");
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
     useApi();
   const [networks, setNeworks] = useState<Record<string, Network[]>>({});
@@ -46,6 +50,7 @@ const DepositModal = ({
     network: "",
     blockchain: "",
     standard: "",
+    amount: "",
   });
 
   const createDepoistAddress = async (
@@ -64,7 +69,18 @@ const DepositModal = ({
 
     await callApiHook({
       apiCall: callDeposistApi(
-        createDepoistAddressApi(standard ? TokenData : CoinData)
+        createPaymentDepositApi({
+          passthrough: JSON.stringify({
+            userid: user?.id,
+            username: user.username,
+            paymentType: "Self",
+          }),
+          requested_currency: "USD",
+          payment_currency: blockchain,
+          payment_currency_standard: standard,
+          requested_amount: seletedOption.amount,
+          notes: "Merchant Created This Payment Deposit",
+        })
       ),
       successCallBack: (response: any) => {
         setDepositAddress(response);
@@ -80,13 +96,13 @@ const DepositModal = ({
     );
   }, []);
 
-  useEffect(() => {
-    if (isOpen && blockchain) {
-      createDepoistAddress(blockchain, standard);
-    } else {
-      cleanupModal;
-    }
-  }, [blockchain, standard, isOpen]);
+  // useEffect(() => {
+  //   if (isOpen && blockchain) {
+  //     createDepoistAddress(blockchain, standard);
+  //   } else {
+  //     cleanupModal;
+  //   }
+  // }, [blockchain, standard, isOpen]);
 
   useEffect(() => {
     if (isDepositError) {
@@ -104,6 +120,7 @@ const DepositModal = ({
       blockchain: "",
       network: "",
       standard: "",
+      amount: "",
     });
     setDepositAddress(null);
     setDepoistError(null);
@@ -115,6 +132,7 @@ const DepositModal = ({
     if (name === "blockchain") {
       setFilteredNets(networks[value]);
       setSelectedOption((prev) => ({
+        ...prev,
         blockchain: value,
         network: "",
         standard: "", // Reset standard when blockchain changes
@@ -127,6 +145,11 @@ const DepositModal = ({
         ...prev,
         [name]: value,
         standard: standard || "", // Set standard if available, otherwise reset
+      }));
+    } else {
+      setSelectedOption((prev) => ({
+        ...prev,
+        [name]: value,
       }));
     }
   };
@@ -143,32 +166,35 @@ const DepositModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="text-xl font-bold mb-6">
-        {blockchain ? "Deposit Address" : "Create Depoist Address"}
-      </h2>
-      {!blockchain && (
-        <>
-          <IconSelectBox
-            label="Select a Blockchain"
-            options={blockchains}
-            name="blockchain"
-            value={seletedOption.blockchain}
-            placeholder="Select a Blockchain"
-            onChange={handleChange}
-          />
+      <h2 className="text-xl font-bold mb-6">Create Depoist Address</h2>
 
-          {networks_available[seletedOption.blockchain] && (
-            <IconSelectBox
-              options={filteredNets}
-              name="network"
-              value={seletedOption.network}
-              placeholder="Select a Standard"
-              label="Select a Standard"
-              onChange={handleChange}
-            />
-          )}
-        </>
+      <IconSelectBox
+        label="Select a Blockchain"
+        options={blockchains}
+        name="blockchain"
+        value={seletedOption.blockchain}
+        placeholder="Select a Blockchain"
+        onChange={handleChange}
+      />
+
+      {networks_available[seletedOption.blockchain] && (
+        <IconSelectBox
+          options={filteredNets}
+          name="network"
+          value={seletedOption.network}
+          placeholder="Select a Standard"
+          label="Select a Standard"
+          onChange={handleChange}
+        />
       )}
+
+      <IconField
+        label="Amount"
+        name="amount"
+        value={seletedOption.amount}
+        placeholder="Enter amount to deposit"
+        onChange={handleChange}
+      />
 
       <ErrorApiText error={isDepositError} />
 
