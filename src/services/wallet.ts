@@ -27,9 +27,11 @@ export const getProfitPercentageApi = () => {
 
 export const getPortfolioActivityChartApi = ({
   duration,
+  unit
 }: {
-  duration?: string;
+  duration: string;
+  unit: string
 }) => {
   return () =>
-    api.get(`/dashboard/portfolio-activity`, { params: { duration } });
+    api.get(`/dashboard/portfolio-activity`, { params: { duration, unit } });
 };
