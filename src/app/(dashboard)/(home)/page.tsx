@@ -91,14 +91,9 @@ const Home = () => {
   const handleMouseLeave = () => {
     setHoveredButton("transfer"); // Reset to "transfer" when not hovering
   };
-  const [selectedAsset, setSelectedAsset] = useState<{
-    blockchain: null | string;
-    data?: null | any[];
-  }>({
-    blockchain: null,
-    data: null,
-  });
   const [totalPortfolio, setTotalPorfolio] = useState(0);
+  const [chartUnit, setCharUnit] = useState("ALL");
+  const [interval, setInterval] = useState("monthly");
   const [portfolio, setPortfolio] = useState([]);
   const [depoistData, setDepositData] = useState<{
     blockchain?: null | string;
@@ -144,8 +139,8 @@ const Home = () => {
     setWithdrawData({ blockchain: null });
   };
 
-  const handleAssetSelection = (blockchain: string, data?: any[]) => {
-    setSelectedAsset({ blockchain, data });
+  const handleAssetSelection = (blockchainUnit) => {
+    setCharUnit(blockchainUnit);
   };
 
   const getBalances = async () => {
@@ -279,7 +274,7 @@ const Home = () => {
           <div
             className="wallets min-h-[310px] 2.5xl:min-h-[470px] py-[35px] 2.5xl:py-[60px] px-4 2.5xlpx-8"
             onClick={(e) => {
-              setSelectedAsset({ blockchain: null, data: null });
+              handleAssetSelection("ALL");
             }}
           >
             <div className="flex flex-col justify-between h-full gap-8">
@@ -391,10 +386,7 @@ const Home = () => {
                             CurrencyName={coinName}
                             CurrencyTicker={currencyTicker}
                             onClick={() =>
-                              handleAssetSelection(
-                                depoistBlockchain,
-                                asset?.historyData
-                              )
+                              handleAssetSelection(unit?.toUpperCase())
                             }
                             onRecieve={() =>
                               handleDepoistAndCreateAddress(
@@ -421,7 +413,11 @@ const Home = () => {
             </div>
           </div>
           <div className="history xs:block hidden">
-            <PortfolioChart data={selectedAsset?.data} />
+            <PortfolioChart
+              interval={interval}
+              setInterval={setInterval}
+              unit={chartUnit}
+            />
           </div>
           <div className="transactions">
             <div className="xxs:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">

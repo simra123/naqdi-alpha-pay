@@ -17,7 +17,7 @@ export const unitName = {
   eth: "Ethereum",
   trx: "Tron",
   usdt: "Tether",
-  usdc: "USDC"
+  usdc: "USDC",
 };
 
 export const standardBlockchain = {
@@ -43,7 +43,7 @@ export const production_networks = {
 
   ethereum: [{ label: "Mainnet", value: "mainnet" }],
   tron: [{ label: "Mainnet", value: "mainnet" }],
-  USDT: [
+  usdt: [
     // {
     //   label: "Bitcoin(Omni Layer)",
     //   value: "Bitcoin",
@@ -52,24 +52,24 @@ export const production_networks = {
 
     {
       label: "Ethereum(ERC-20)",
-      value: "Ethereum",
+      value: "ethereum",
       standard: STANDARD.ETHEREUM,
     },
 
-    { label: "Tron(TRC-20)", value: `Tron`, standard: STANDARD.TRON },
+    { label: "Tron(TRC-20)", value: `tron`, standard: STANDARD.TRON },
   ],
-  USDC: [{ label: "Ethereum", value: "Ethereum", standard: STANDARD.ETHEREUM }],
+  usdc: [{ label: "Ethereum", value: "ethereum", standard: STANDARD.ETHEREUM }],
   // Btc: [{ label: "Bitcoin", value: "Bitcoin" }],
 
-  Eth: [{ label: "Ethereum", value: "Ethereum" }],
-  Tron: [{ label: "Tron", value: "Tron" }],
+  eth: [{ label: "Ethereum", value: "ethereum" }],
+  trx: [{ label: "Tron", value: "tron" }],
 };
 
 export const testnet_networks = {
   // bitcoin: [{ label: "Bitcoin", value: "Bitcoin" }],
-  ethereum: [{ label: "Ethereum", value: "Ethereum" }],
-  tron: [{ label: "Tron", value: "Tron" }],
-  USDT: [
+  ethereum: [{ label: "Ethereum", value: "ethereum" }],
+  tron: [{ label: "Tron", value: "tron" }],
+  usdt: [
     // {
     //   label: "BTC (Testnet)",
     //   value: "Bitcoin",
@@ -77,32 +77,35 @@ export const testnet_networks = {
     // },
     {
       label: "Sepolia (ERC-20)",
-      value: "Ethereum",
+      value: "ethereum",
       standard: STANDARD.ETHEREUM,
     },
 
     {
       label: "Nile (TRC-20)",
-      value: `Tron`,
+      value: `tron`,
       standard: STANDARD.TRON,
     },
   ],
-  USDC: [
+  usdc: [
     {
       label: "Sepolia (ERC-20)",
-      value: "Ethereum",
+      value: "ethereum",
       standard: STANDARD.ETHEREUM,
     },
   ],
   // Btc: [{ label: "Bitcoin", value: "Bitcoin" }],
 
-  Eth: [{ label: "Ethereum", value: "Ethereum" }],
-  Tron: [{ label: "Tron", value: "Tron" }],
+  eth: [{ label: "Ethereum", value: "ethereum" }],
+  trx: [{ label: "Tron", value: "tron" }],
 };
 
 export const blockchain_units = {
   ethereum: "Eth",
-  tron: "TRX",
+  tron: "Trx",
+  bitcoin: "Btc",
+  usdt: "USDT",
+  usdc: "USDC",
 };
 
 export const networks_available = {
