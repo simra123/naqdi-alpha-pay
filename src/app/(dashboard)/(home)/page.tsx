@@ -195,7 +195,7 @@ const Home = () => {
 
   const UserApiCalls = () => {
     getTotalPortfolioValue();
-    getPortfolioPLPercentage();
+    // getPortfolioPLPercentage();
     getLastTransactions();
   };
 
@@ -292,9 +292,9 @@ const Home = () => {
                   />
                 </h3>
                 <ErrorApiText error={isTotalPortfolioError} />
-                <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
+                {/* <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
                   {portfolioPercentage}% Last Week
-                </h6>
+                </h6> */}
               </div>
               <div
                 className="flex gap-4 justify-center 2.5xl:gap-0 2.5xl:justify-between xl:px-8"
