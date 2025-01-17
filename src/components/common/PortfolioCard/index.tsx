@@ -53,7 +53,10 @@ const PortfolioCard = ({
           </div>
         </div>
         <div className="chart-data hidden xxs:block">
-          <SimpleLineChart dataPoints={ChartLineData} className="3.75xl:w-[150px] 2.5xl:w-[120px] w-[60px] xs:w-[80px]" />
+          <SimpleLineChart
+            dataPoints={ChartLineData}
+            className="3.75xl:w-[150px] 2.5xl:w-[120px] w-[60px] xs:w-[80px]"
+          />
         </div>
 
         <div className="balance flex flex-col text-end w-[100px] md:w-[130px]">
@@ -64,7 +67,10 @@ const PortfolioCard = ({
         </div>
       </div>
 
-      <div className="gap-3 3.75xl:gap-6 2.5xl:flex hidden">
+      <div
+        className="gap-3 3.75xl:gap-6 2.5xl:flex hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="hidden 2.5xl:block">
           <BorderedIconButton
             className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-green-300 active:!bg-green-300 bg-opacity-20 hover:!bg-green-200 !border-0"
