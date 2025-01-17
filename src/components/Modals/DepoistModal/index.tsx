@@ -175,12 +175,6 @@ const DepositModal = ({
     }
   };
 
-  const getValidValue = (str) => {
-    let index = str.indexOf("(");
-    let result = index !== -1 ? str.substring(0, index) : str;
-    return result;
-  };
-
   const filteredNetworks = (blockchain, network) => {
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };

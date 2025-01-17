@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
-import humanizeString from "humanize-string";
 
 interface Props {
   label?: string | any;
@@ -148,7 +147,7 @@ const IconSelectBox = ({
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
           >
             {value ? (
-              humanizeString(value)
+              value
             ) : (
               <span className="text-blackGrey-placeholder">{placeholder}</span>
             )}
