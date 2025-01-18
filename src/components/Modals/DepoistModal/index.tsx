@@ -182,7 +182,7 @@ const DepositModal = ({
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <h2 className="text-xl font-bold mb-6">
-        {!depositAddress ? "Create Depoist Address" : "Deposit Details"}
+        {!depositAddress ? "Create Deposit Address" : "Deposit Details"}
       </h2>
       {!depositAddress && (
         <>
