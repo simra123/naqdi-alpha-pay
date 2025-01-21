@@ -147,6 +147,7 @@ const IconSelectBox = ({
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
           >
             {value ? (
+              filteredOptions?.find((item) => item?.value == value)?.label ||
               value
             ) : (
               <span className="text-blackGrey-placeholder">{placeholder}</span>

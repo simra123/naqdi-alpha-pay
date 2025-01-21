@@ -4,7 +4,7 @@ import Modal from "../Modal";
 import IconSelectBox from "../../common/IconSelectBox";
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
-import { networks_available } from "@/constants/blockchains";
+import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
 import {
@@ -26,7 +26,7 @@ import {
 } from "@/models/withdrawal";
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
-import { capitalize } from "@/utils/dataFormatters";
+import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
 
 interface Props {
   isOpen: boolean;
@@ -107,7 +107,7 @@ const CreateWithdrawalModal = ({
           return {
             label: item?.standard
               ? `${item?.unit} (${item?.standard})`
-              : item?.unit,
+              : unitName[item?.unit?.toLowerCase()],
             value: item?.standard
               ? `${capitalize(item?.unit)} (${item?.standard})`
               : item?.unit,
@@ -205,9 +205,8 @@ const CreateWithdrawalModal = ({
             }
           >
             <IconSelectBox
-              wrapperClassName="!mb-2 uppercase"
-              label="Source Currency & Network"
-              inputContainerClassName="!uppercase"
+              wrapperClassName="!mb-2"
+              label="Source Currency"
               options={balance}
               name="blockchain"
               value={values.blockchain}
@@ -232,7 +231,7 @@ const CreateWithdrawalModal = ({
 
             <IconField
               value={values.amount}
-              label="Source Amount"
+              label="Withdrawal Amount"
               onChange={handleChange}
               name="amount"
               type="number"
@@ -247,6 +246,7 @@ const CreateWithdrawalModal = ({
               placeholder="Wallet Address"
               onChange={handleChange}
               name="recipient_address"
+              onBlur={validateField}
               error={errors.recipient_address}
             />
 
@@ -287,7 +287,21 @@ const CreateWithdrawalModal = ({
                   Blockchain
                 </p>
                 <p className="text-black-100 font-medium">
-                  {values?.blockchain}
+                  {formattedBlockchainName(values?.blockchain)
+                    ?.standardBlockchain
+                    ? capitalize(
+                        formattedBlockchainName(values?.blockchain)
+                          ?.standardBlockchain
+                      )
+                    : formattedBlockchainName(values?.blockchain)?.name}
+                </p>
+              </div>
+              <div>
+                <p className="font-bold text-caption text-custom-title-gray">
+                  Currency
+                </p>
+                <p className="text-black-100 font-medium">
+                  {formattedBlockchainName(values?.blockchain)?.ticker}
                 </p>
               </div>
               <div>
