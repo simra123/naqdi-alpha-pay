@@ -36,6 +36,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { Sync } from "@mui/icons-material";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import Link from "next/link";
+import { removeBrackets } from "@/utils/dataFormatters";
 
 const adminColumns: TableColumns = [
   {

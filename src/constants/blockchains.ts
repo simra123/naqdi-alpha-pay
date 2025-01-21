@@ -1,5 +1,5 @@
 export enum STANDARD {
-  // BITCOIN = "Omni-layer",
+  BITCOIN = "Omni-layer",
   ETHEREUM = "ERC-20",
   TRON = "TRC-20",
 }
@@ -21,21 +21,27 @@ export const unitName = {
 };
 
 export const standardBlockchain = {
-  "TRC-20": "tron",
-  "ERC-20": "ethereum",
+  [STANDARD.TRON]: "tron",
+  [STANDARD.ETHEREUM]: "ethereum",
+};
+
+export const tickerByStandard = {
+  [STANDARD.TRON]: "trx",
+  [STANDARD.ETHEREUM]: "eth",
+  [STANDARD.BITCOIN]: "btc",
 };
 
 export const blockchain_standards = {
   // bitcoin: "Omni-layer",
   // Btc: "Omni-layer",
   // BTC: "Omni-layer",
-  ethereum: "ERC-20",
-  Eth: "ERC-20",
-  ETH: "ERC-20",
-  tron: "TRC-20",
-  Tron: "TRC-20",
-  TRON: "TRC-20",
-  TRX: "TRC-20",
+  ethereum: STANDARD.ETHEREUM,
+  Eth: STANDARD.ETHEREUM,
+  ETH: STANDARD.ETHEREUM,
+  tron: STANDARD.TRON,
+  Tron: STANDARD.TRON,
+  TRON: STANDARD.TRON,
+  TRX: STANDARD.TRON,
 };
 
 export const production_networks = {

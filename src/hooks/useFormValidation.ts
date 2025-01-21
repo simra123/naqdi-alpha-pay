@@ -12,7 +12,6 @@ const useFormValidation = (
   const handleChange = (event) => {
     const { name, value, type, files, checked } = event.target;
 
-
     if (type == "file") {
       const nameSplit = name.split(`.`);
       if (nameSplit?.length > 1) {
@@ -55,7 +54,7 @@ const useFormValidation = (
     try {
       const schema = Yup.reach(validationSchema, name);
       if (schema instanceof Yup.Schema) {
-        await schema.validate(value);
+        await schema.validate(value, { context: { parent: values } });
       }
       setErrors((prevErrors) => ({ ...prevErrors, [name]: undefined }));
     } catch (error) {
@@ -70,7 +69,10 @@ const useFormValidation = (
   ) => {
     event.preventDefault();
     try {
-      await validationSchema.validate(values, { abortEarly: false });
+      await validationSchema.validate(values, {
+        abortEarly: false,
+        context: { parent: values },
+      });
       setErrors({});
       callback();
     } catch (validationErrors) {
