@@ -75,6 +75,7 @@ const nav_items: NavItem[] = [
     name: "KYC Requests",
     icon: Assignment,
     path: "/kyc",
+    module: ModulesEnum.kyc,
     roles: [Role.ADMIN],
   },
   // {
