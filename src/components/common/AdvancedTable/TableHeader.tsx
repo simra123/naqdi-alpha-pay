@@ -36,7 +36,7 @@ const TableHeader = React.forwardRef(
         <tr ref={ref} className="bg-table-header">
           {selectable && (
             <th
-              className="py-3 px-2 text-left z-10 bg-table-header"
+              className="py-3 c text-left z-10 bg-table-header"
               style={{ left: 0 }}
             >
               <label className="custom-checkbox">
@@ -62,7 +62,7 @@ const TableHeader = React.forwardRef(
                   left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
                   maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
                 }}
-                className={`py-3 px-2 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis ${
+                className={`py-3 pl-2 pr-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis ${
                   column.sticky ? "sticky bg-table-header z-10" : ""
                 } `}
                 onClick={() => column.sortable && onSort(column?.field)}

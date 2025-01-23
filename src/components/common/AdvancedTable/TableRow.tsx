@@ -37,7 +37,7 @@ const TableRow: React.FC<TableRowProps> = ({
       className="bg-white border-b hover:bg-gray-50 cursor-pointer"
     >
       {selectable && (
-        <td className="py-4 px-2">
+        <td className="py-4 pl-2 pr-6">
           <label className="custom-checkbox">
             <input type="checkbox" onChange={() => onRowSelection(row)} />
             <span className="checkmark !static block"></span>
@@ -59,7 +59,7 @@ const TableRow: React.FC<TableRowProps> = ({
             }}
             className={`${
               column.sticky ? "sticky bg-white z-10 bg-opacity-95" : ""
-            } py-4 px-2 font-semibold ${columnClassName} text-ellipsis overflow-hidden whitespace-nowrap`}
+            } py-4 pl-2 pr-6 font-semibold ${columnClassName} text-ellipsis overflow-hidden whitespace-nowrap`}
           >
             {column.dataValidator ? (
               <CopyButtonColumn
@@ -131,7 +131,7 @@ const CopyButtonColumn = ({
       {copyable && (
         <button
           onClick={copyToClipboard(value)}
-          className="bg-transparent flex items-center justify-center border-0 outline-0 text-[14px] hover:bg-purple-100 active:bg-purple-200 transition-all w-8 h-8 rounded-full p-1"
+          className="bg-transparent flex items-center justify-center border-0 outline-0 text-[14px] hover:text-white hover:bg-purple-100 active:bg-purple-200 transition-all min-w-8 h-8 rounded-full p-1"
         >
           <MdCopyAll className="text-[16px]" />
         </button>

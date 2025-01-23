@@ -36,12 +36,12 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "createdAt",
     headerName: "Created At",
-    sticky: true,
     id: 2,
   },
   {
     field: "updatedAt",
     headerName: "Updated At",
+    sticky: true,
     id: 3,
   },
 
@@ -64,13 +64,13 @@ const paymentsList_table_columns: TableColumns = [
     field: "blockchain",
     headerName: "Blockchain",
     id: 4,
-    sticky: true,
+    // sticky: true,
   },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
     id: 6,
-    sticky: true,
+    // sticky: true,
   },
   {
     field: "amountToPay",
