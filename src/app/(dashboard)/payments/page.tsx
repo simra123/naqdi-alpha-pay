@@ -30,10 +30,12 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "payment_uuid",
     headerName: "ID",
+    sticky: true,
   },
   {
     field: "createdAt",
     headerName: "Created At",
+    sticky: true,
   },
   {
     field: "updatedAt",
@@ -56,6 +58,7 @@ const paymentsList_table_columns: TableColumns = [
         address: row?.recieverAddress,
       });
     },
+    maxWidth: 400,
   },
   {
     field: "requestedPaymentAmount",
@@ -165,6 +168,7 @@ const Payments = () => {
           onSearch={() => {}}
           onSort={() => {}}
           selectable={false}
+          pagination
         />
 
         <ErrorApiText error={isPaymentError} />

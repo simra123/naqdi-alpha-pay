@@ -7,6 +7,7 @@ interface tableColumns {
   type?: any;
   dataValidator?: (value: string, row?: object) => any;
   copyable?: boolean;
+  maxWidth?: number;
   link?: (row?: object) => any;
 }
 
