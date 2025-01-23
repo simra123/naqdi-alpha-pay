@@ -37,6 +37,7 @@ import { Sync } from "@mui/icons-material";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import Link from "next/link";
 import { removeBrackets } from "@/utils/dataFormatters";
+import { roundToPrecision } from "@/utils/math";
 
 const adminColumns: TableColumns = [
   {
@@ -381,7 +382,7 @@ const Home = () => {
                           : coinName?.toLowerCase();
                         return (
                           <PortfolioCard
-                            Balance={asset?.amount}
+                            Balance={roundToPrecision(asset?.totalAmount,4)}
                             IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
                             ChartLineData={currencyHistoryData}
                             CurrencyName={coinName}

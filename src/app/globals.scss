@@ -17,12 +17,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAF4F4;
+  background: #faf4f4;
   /* Color of the scrollbar track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E7DFDF;
+  background: #e7dfdf;
   /* Color of the scrollbar handle */
   border-radius: 5px;
   /* Rounded corners */
@@ -76,7 +76,8 @@
   width: 20px;
   height: 20px;
   border: 3px solid transparent;
-  border-top: 3px solid #8245c9;
+  border-top: 3px solid;
+  @apply border-purple;
   /* Color of the loader */
   border-radius: 50%;
   animation: spin 1s linear infinite;
