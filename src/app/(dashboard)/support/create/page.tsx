@@ -168,7 +168,7 @@ const Support = () => {
                 className="border w-[470px] max-w-full justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
                 onClick={() => front?.current?.click()}
               >
-                <Add className="text-purple-100" />
+                <Add className="text-purple-500" />
                 <span className="text-blackGrey-placeholder text-input">
                   Drop Files Here Or Click To Upload
                 </span>

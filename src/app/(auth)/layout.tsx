@@ -34,7 +34,7 @@ const Authlayout = ({ children }) => {
         <div className="w-full lg:w-1/2 py-20 px-6 bg-bluish-gray">
           <section className="content max-w-[500px] m-auto">
             <div className="logo-wrapper">
-              <h4 className="text-h4 text-purple-100 font-bold">Alphaspay</h4>
+              <h4 className="text-h4 text-purple-500 font-bold">Alphaspay</h4>
             </div>
             {children}
           </section>

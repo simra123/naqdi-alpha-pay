@@ -123,7 +123,7 @@ const page = () => {
             contact us at{" "}
             <a
               href={`mailto:info@alphaspay.com`}
-              className="text-purple-100 underline"
+              className="text-purple-500 underline"
             >
               info@alphaspay.com
             </a>

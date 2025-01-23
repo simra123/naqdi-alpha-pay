@@ -104,7 +104,7 @@ const KYCUserID = ({ params }) => {
       </h3>
       <ErrorApiText error={isUserDetailsError}>
         {userDetails?.kyc_approved && (
-          <div className="rounded-medium flex flex-col  bg-white p-6 sm:p-10 shadow-sm">
+          <div className="flex flex-col">
             <div>
               <p className="font-semibold text-button">Set a Fee ( % )</p>
               <div className="flex items-start gap-6 xl:gap-0 justify-between xl:items-center mt-4 flex-wrap">
@@ -131,7 +131,7 @@ const KYCUserID = ({ params }) => {
           </div>
         )}
 
-        <div className="rounded-medium flex flex-col mt-8 bg-white p-6 sm:p-10 shadow-sm">
+        <div className="flex flex-col mt-8">
           <p className="font-semibold text-button">KYC Details</p>
 
           <div className="py-6">

@@ -491,7 +491,7 @@ const StatusFilter = ({
                 : index == statusList?.length - 1 && "rounded-b-md !border-b-0"
             } ${
               values?.status === option.value
-                ? "bg-purple-light-purple text-purple-100 font-medium"
+                ? "bg-purple-light-purple text-purple-500 font-medium"
                 : "hover:bg-purple-light-purple hover:text-black-100"
             }`}
           >

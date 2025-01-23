@@ -67,10 +67,10 @@ const Account = () => {
           variant="contained"
         />
       </div>
-      <div className="rounded-medium flex flex-col bg-white p-6 sm:p-10 shadow-sm">
+      <div className="flex flex-col">
         <div className="flex items-center gap-2 border-b border-light-gray pb-4">
           <FolderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="ID" value={user?.id} />
@@ -84,8 +84,8 @@ const Account = () => {
         </div>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <ContactMailOutlined className="text-purple-100" />
-          <h5 className="text-purple-100 text-h5 font-semibold">Contacts</h5>
+          <ContactMailOutlined className="text-purple-500" />
+          <h5 className="text-purple-500 text-h5 font-semibold">Contacts</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="Email" value={user?.email} />
@@ -96,8 +96,8 @@ const Account = () => {
 
         <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
           <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-            <LocationOnOutlined className="text-purple-100" />
-            <h5 className="text-purple-100 text-h5 font-semibold">
+            <LocationOnOutlined className="text-purple-500" />
+            <h5 className="text-purple-500 text-h5 font-semibold">
               Addressess
             </h5>
           </div>
@@ -118,7 +118,7 @@ const Account = () => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <StatusIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
         </div>
         <div className="res-2-grid py-6">
           <div className="flex gap-4 items-center">
