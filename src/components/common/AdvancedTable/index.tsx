@@ -41,15 +41,41 @@ const AdvancedTable = ({
   const [pageSize, setPageSize] = useState(10);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [columnWidths, setColumnWidths] = useState<number[]>([]);
+  const [stickyOffsets, setStickyOffsets] = useState<{ [key: string]: number }>(
+    {}
+  );
 
   useEffect(() => {
     if (headerRef.current) {
       const widths = Array.from(headerRef.current.children).map(
-        (cell) => (cell as HTMLElement).offsetWidth
+        (cell) => (cell as HTMLElement).getBoundingClientRect().width
       );
       setColumnWidths(widths);
+
+      const offsets: { [key: string]: number } = {};
+      let cumulativeOffset = 0;
+
+      // Iterate through columns and calculate offsets for sticky columns
+      columns.forEach((column, index) => {
+        if (column.sticky) {
+          // Use the exact width from getBoundingClientRect()
+          const columnWidth = widths[index];
+
+          // Set the left position for the sticky column
+          offsets[column.id] = cumulativeOffset;
+
+          // Update the cumulative offset for the next sticky column
+          cumulativeOffset += index == 0 ? columnWidth : columnWidth - 1;
+        } else {
+          offsets[column.id] = null; // Non-sticky columns have no offset
+        }
+      });
+
+      setStickyOffsets(offsets);
     }
   }, [headerRef, columns, rows]);
+
+  console.log({ columnWidths, stickyOffsets });
 
   const handleRowSelection = (row: any) => {
     const updatedSelection = selectedRows.includes(row)
@@ -99,7 +125,7 @@ const AdvancedTable = ({
         </div>
 
         <div
-          className={`overflow-x-auto ${
+          className={`overflow-x-auto pr-96 ${
             pagination && "min-h-[calc(100vh-350px)]"
           } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
         >
@@ -109,6 +135,7 @@ const AdvancedTable = ({
               columns={columns}
               ref={headerRef}
               columnWidths={columnWidths}
+              stickyOffsets={stickyOffsets}
               selectable={selectable}
               selectAll={selectable && selectedRows.length === rows.length}
               onSelectAll={handleSelectAll}
@@ -121,6 +148,7 @@ const AdvancedTable = ({
               {rows.map((row, index) => (
                 <TableRow
                   key={index}
+                  stickyOffsets={stickyOffsets}
                   columnWidths={columnWidths}
                   row={row}
                   columns={columns}

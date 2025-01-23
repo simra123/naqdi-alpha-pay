@@ -1,4 +1,5 @@
 interface tableColumns {
+  id?: number;
   field: string;
   headerName: string;
   sortable?: boolean;

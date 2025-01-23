@@ -12,7 +12,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   <input
     type="text"
     placeholder={placeholder}
-    className="w-full mt-2 p-2 border rounded-md"
+    className="w-full p-2 border-0 outline-none focus:border-b text-sm border-purple"
     onChange={onChange}
   />
 );

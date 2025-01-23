@@ -31,19 +31,18 @@ const paymentsList_table_columns: TableColumns = [
     field: "payment_uuid",
     headerName: "ID",
     sticky: true,
+    id: 1,
   },
   {
     field: "createdAt",
     headerName: "Created At",
     sticky: true,
+    id: 2,
   },
   {
     field: "updatedAt",
     headerName: "Updated At",
-  },
-  {
-    field: "blockchain",
-    headerName: "Blockchain",
+    id: 3,
   },
 
   {
@@ -58,23 +57,35 @@ const paymentsList_table_columns: TableColumns = [
         address: row?.recieverAddress,
       });
     },
-    maxWidth: 400,
+    maxWidth: 250,
+    id: 5,
+  },
+  {
+    field: "blockchain",
+    headerName: "Blockchain",
+    id: 4,
+    sticky: true,
   },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
+    id: 6,
+    sticky: true,
   },
   {
     field: "amountToPay",
     headerName: "Amount to Pay",
+    id: 7,
   },
   {
     field: "amountPaid",
     headerName: "Amount Paid",
+    id: 8,
   },
   {
     field: "paid",
     headerName: "Paid",
+    id: 9,
   },
   {
     field: "status",
@@ -83,6 +94,7 @@ const paymentsList_table_columns: TableColumns = [
     dataValidator: (value) => {
       return <Chip status={value} />;
     },
+    id: 10,
   },
 ];
 

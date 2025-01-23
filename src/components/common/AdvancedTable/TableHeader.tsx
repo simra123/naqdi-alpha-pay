@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, ForwardedRef } from "react";
 import { TableColumns } from "@/constants/types";
 import { SortingIcon } from "@/assets/Svgs";
+import SearchInput from "./SearchInput";
 
 interface TableHeaderProps {
   columns: TableColumns;
@@ -11,6 +12,7 @@ interface TableHeaderProps {
   onSearch: (field: string, value: string) => void;
   columnClassName?: string;
   columnWidths: number[];
+  stickyOffsets: { [key: string]: number };
 }
 
 const TableHeader = React.forwardRef(
@@ -24,16 +26,17 @@ const TableHeader = React.forwardRef(
       onSearch,
       columnClassName,
       columnWidths,
+      stickyOffsets
     }: TableHeaderProps,
     ref: ForwardedRef<HTMLTableRowElement>
   ) => {
     return (
-      <thead className="font-mediu">
+      <thead className="font-medium">
         {/* Header Row */}
         <tr ref={ref} className="bg-table-header">
           {selectable && (
             <th
-              className="py-3 px-4 text-left sticky left-0 z-10 bg-table-header"
+              className="py-3 px-2 text-left z-10 bg-table-header"
               style={{ left: 0 }}
             >
               <label className="custom-checkbox">
@@ -55,9 +58,11 @@ const TableHeader = React.forwardRef(
               <th
                 key={column.field}
                 style={{
-                  left: column.sticky ? `${leftOffset}px` : undefined,
+                  // left: column.sticky ? `${leftOffset}px` : undefined,
+                  left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
+                  maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
                 }}
-                className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis ${
+                className={`py-3 px-2 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis ${
                   column.sticky ? "sticky bg-table-header z-10" : ""
                 } `}
                 onClick={() => column.sortable && onSort(column?.field)}
@@ -77,13 +82,7 @@ const TableHeader = React.forwardRef(
         </tr>
 
         {/* Search Input Row */}
-        <tr>
-          {selectable && (
-            <th
-              className="py-3 px-4 sticky left-0 z-10 bg-table-header"
-              style={{ left: 0 }}
-            />
-          )}
+        <tr className="border-b">
           {columns.map((column, columnIndex) => {
             const leftOffset = columnWidths
               .slice(0, columnIndex)
@@ -93,16 +92,16 @@ const TableHeader = React.forwardRef(
               <th
                 key={column.field}
                 style={{
-                  left: column.sticky ? `${leftOffset}px` : undefined,
+                  // left: column.sticky ? `${leftOffset}px` : undefined,
+                   left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
+                   maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
                 }}
                 className={`${
-                  column.sticky ? "sticky left-0 z-10 bg-table-header" : ""
+                  column.sticky ? "sticky z-10 bg-table-header" : ""
                 }`}
               >
                 <div>
-                  <input
-                    type="text"
-                    className="w-full border rounded px-2 py-1 text-sm"
+                  <SearchInput
                     placeholder={`Search ${column.headerName}`}
                     onChange={(e) => onSearch(column.field, e.target.value)}
                   />

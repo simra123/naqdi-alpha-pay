@@ -11,7 +11,8 @@ interface TableRowProps {
   onRowClick?: (row: any) => void;
   columnClassName?: string;
   index?: any;
-  columnWidths: number[]
+  columnWidths: number[];
+  stickyOffsets: { [key: string]: number };
 }
 
 const TableRow: React.FC<TableRowProps> = ({
@@ -23,7 +24,8 @@ const TableRow: React.FC<TableRowProps> = ({
   columnClassName,
   onRowClick,
   index,
-  columnWidths
+  columnWidths,
+  stickyOffsets
 }) => {
 
 
@@ -35,7 +37,7 @@ const TableRow: React.FC<TableRowProps> = ({
       className="bg-white border-b hover:bg-gray-50 cursor-pointer"
     >
       {selectable && (
-        <td className="py-4 px-4">
+        <td className="py-4 px-2">
           <label className="custom-checkbox">
             <input type="checkbox" onChange={() => onRowSelection(row)} />
             <span className="checkmark !static block"></span>
@@ -51,11 +53,13 @@ const TableRow: React.FC<TableRowProps> = ({
           <td
             key={column.field}
             style={{
-              left: column.sticky ? `${leftOffset}px` : undefined,
+              // left: column.sticky ? `${leftOffset}px` : undefined,
+               left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
+               maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
             }}
             className={`${
-              column.sticky ? "sticky bg-white z-10" : ""
-            } py-4 px-6 font-semibold ${columnClassName} text-ellipsis overflow-hidden whitespace-nowrap`}
+              column.sticky ? "sticky bg-white z-10 bg-opacity-95" : ""
+            } py-4 px-2 font-semibold ${columnClassName} text-ellipsis overflow-hidden whitespace-nowrap`}
           >
             {column.dataValidator ? (
               <CopyButtonColumn
