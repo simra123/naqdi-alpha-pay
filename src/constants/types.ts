@@ -2,6 +2,9 @@ interface tableColumns {
   field: string;
   headerName: string;
   sortable?: boolean;
+  sticky?: boolean;
+  searchable?: boolean;
+  type?: any;
   dataValidator?: (value: string, row?: object) => any;
   copyable?: boolean;
   link?: (row?: object) => any;
