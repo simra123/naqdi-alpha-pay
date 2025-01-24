@@ -48,8 +48,8 @@ const FilterDropdown = ({ column, rows, setCurrentRows, columnsList }) => {
                   : ""
               } ${
                 col?.field === col.headerName
-                  ? "bg-light-purple text-purple-100"
-                  : "hover:bg-light-purple hover:text-black-100"
+                  ? "bg-purple-light-purple text-purple-100"
+                  : "hover:bg-purple-light-purple hover:text-black-100"
               }`}
             >
               <div className="flex items-center gap-2">

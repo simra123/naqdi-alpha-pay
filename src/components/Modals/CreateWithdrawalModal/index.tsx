@@ -4,10 +4,13 @@ import Modal from "../Modal";
 import IconSelectBox from "../../common/IconSelectBox";
 import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
-import { networks_available } from "@/constants/blockchains";
+import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import { createWithdrawalApi } from "@/services/withdrawal";
+import {
+  createWithdrawalApi,
+  getWithdrawableCurrenciesListApi,
+} from "@/services/withdrawal";
 import { setNotification } from "@/store/slices/modal.Slice";
 import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
@@ -23,11 +26,13 @@ import {
 } from "@/models/withdrawal";
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
+import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
   refreshHandler: () => void;
+  blockchain?: string;
 }
 
 interface FeeState {
@@ -47,6 +52,7 @@ const CreateWithdrawalModal = ({
   isOpen,
   toggleHandler,
   refreshHandler,
+  blockchain,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -95,22 +101,25 @@ const CreateWithdrawalModal = ({
 
   const _getUserBalance = async () => {
     await callApiHook({
-      apiCall: callBalanceApi(getAllWalletBalancesApi()),
+      apiCall: callBalanceApi(getWithdrawableCurrenciesListApi()),
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {
           return {
             label: item?.standard
               ? `${item?.unit} (${item?.standard})`
-              : item?.unit,
+              : unitName[item?.unit?.toLowerCase()],
             value: item?.standard
-              ? `${item?.unit} (${item?.standard})`
+              ? `${capitalize(item?.unit)} (${item?.standard})`
               : item?.unit,
             standard: item?.standard,
             unit: item?.unit,
-            amount: item?.amount,
+            amount: roundToPrecision(item?.totalAmount, 4),
           };
         });
         setBalance(withdraw_currency_options);
+        if (blockchain) {
+          setValues((pre) => ({ ...pre, blockchain }));
+        }
       },
     });
   };
@@ -171,7 +180,7 @@ const CreateWithdrawalModal = ({
       setBalanceError(null);
       setWithdrawalError(null);
       _getUserBalance();
-      setCurrentStep(1)
+      setCurrentStep(1);
       setValues(initalFormValues); // Reset form values
     }
   }, [isOpen]);
@@ -196,7 +205,7 @@ const CreateWithdrawalModal = ({
           >
             <IconSelectBox
               wrapperClassName="!mb-2"
-              label="Source Currency & Network"
+              label="Source Currency"
               options={balance}
               name="blockchain"
               value={values.blockchain}
@@ -221,7 +230,7 @@ const CreateWithdrawalModal = ({
 
             <IconField
               value={values.amount}
-              label="Source Amount"
+              label="Withdrawal Amount"
               onChange={handleChange}
               name="amount"
               type="number"
@@ -236,6 +245,7 @@ const CreateWithdrawalModal = ({
               placeholder="Wallet Address"
               onChange={handleChange}
               name="recipient_address"
+              onBlur={validateField}
               error={errors.recipient_address}
             />
 
@@ -276,7 +286,21 @@ const CreateWithdrawalModal = ({
                   Blockchain
                 </p>
                 <p className="text-black-100 font-medium">
-                  {values?.blockchain}
+                  {formattedBlockchainName(values?.blockchain)
+                    ?.standardBlockchain
+                    ? capitalize(
+                        formattedBlockchainName(values?.blockchain)
+                          ?.standardBlockchain
+                      )
+                    : formattedBlockchainName(values?.blockchain)?.name}
+                </p>
+              </div>
+              <div>
+                <p className="font-bold text-caption text-custom-title-gray">
+                  Currency
+                </p>
+                <p className="text-black-100 font-medium">
+                  {formattedBlockchainName(values?.blockchain)?.ticker}
                 </p>
               </div>
               <div>

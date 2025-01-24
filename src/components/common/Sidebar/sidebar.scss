@@ -1,15 +1,17 @@
 .SidebarWrapper {
   .navLink {
-    padding: 10px 22px;
+    padding: 14px 22px;
+    @apply text-p120;
     * {
-      @apply text-white;
+      @apply text-black-100;
       @apply font-bold;
     }
     &.active {
-      @apply bg-white;
-      @apply rounded-medium;
+      padding: 14px 22px;
+      @apply bg-[#F5F5F5];
+      @apply rounded-[20px];
       * {
-        @apply text-purple-100;
+        @apply text-purple-500;
         @apply font-bold;
       }
     }

@@ -19,8 +19,9 @@ import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -131,9 +132,7 @@ const Transactions = () => {
   const getTransactions = async () => {
     if (user?.role == Role.USER) {
       await callApiHook({
-        apiCall: callTransactionsApi(
-          getAllTransactionsApi(selectedStatus == "all" ? "" : selectedStatus)
-        ),
+        apiCall: callTransactionsApi(getAllTransactionsApi({})),
         successCallBack: (response: any) => {
           const tableData = formatTransactions(response);
           setTransactions(tableData);
@@ -200,4 +199,8 @@ const Transactions = () => {
   );
 };
 
-export default Transactions;
+export default PermissionAccess(
+  Transactions,
+  ModulesEnum.transaction,
+  AccessLevelEnum.read
+);

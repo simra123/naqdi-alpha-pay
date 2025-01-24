@@ -18,9 +18,10 @@ import { capitalize } from "@/utils/dataFormatters";
 import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
 import DateField from "@/components/common/DateField";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { roundToPrecision } from "@/utils/math";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -181,7 +182,11 @@ const Payments = () => {
   );
 };
 
-export default Payments;
+export default PermissionAccess(
+  Payments,
+  ModulesEnum.payment,
+  AccessLevelEnum.read
+);
 
 interface FilterProps {
   date?: boolean;
@@ -486,8 +491,8 @@ const StatusFilter = ({
                 : index == statusList?.length - 1 && "rounded-b-md !border-b-0"
             } ${
               values?.status === option.value
-                ? "bg-light-purple text-purple-100 font-medium"
-                : "hover:bg-light-purple hover:text-black-100"
+                ? "bg-purple-light-purple text-purple-100 font-medium"
+                : "hover:bg-purple-light-purple hover:text-black-100"
             }`}
           >
             {option?.label}
