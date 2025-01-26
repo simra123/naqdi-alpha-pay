@@ -1638,3 +1638,22 @@ export const SortingIcon = ({ sortBy }: { sortBy: "asc" | "des" }) => {
     </svg>
   );
 };
+
+export const FilterIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="21"
+      height="23"
+      viewBox="0 0 21 23"
+      fill="none"
+    >
+      <path
+        d="M1 1H20L13.6667 12.3077V17.1538L8.91667 22V12.3077L1 1Z"
+        stroke="black"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};

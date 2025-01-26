@@ -35,6 +35,7 @@ module.exports = {
         "chip-red": "#FEDBDB",
         "chip-green": "#f2f7f4",
         "chip-blue": "#f2f4f7",
+        "disabled-white": "#DEE2E6",
       },
       borderColor: {
         purple: "#3D1554",
