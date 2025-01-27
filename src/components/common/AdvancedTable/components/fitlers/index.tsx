@@ -3,6 +3,7 @@ import clsx from "clsx";
 import Modal from "@/components/Modals/Modal";
 import ListSorting from "./ListSorting";
 import ColumnFiltering from "./ColumnFiltering";
+import LoaderButton from "@/components/common/LoaderButton";
 
 type Props = {
   isOpen: boolean;
@@ -26,8 +27,14 @@ const AdvancedTableFilters = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="!w-[1200px]">
-      FiltersModal
+    <Modal isOpen={isOpen} onClose={onClose} className="!w-[1200px] !p-0">
+      <div className="heading pr-12 py-6 max-w-[calc(100%-48px)] border-b ml-auto">
+        <h4 className="font-semibold text-p120 border-r inline-block pr-8">
+          {filterType == FilterTypesEnum.Filter
+            ? "Advanced Filter"
+            : "List Layout"}
+        </h4>
+      </div>
       <div className="absolute -left-16 top-7 flex flex-col items-end">
         <button
           className={clsx(
@@ -54,9 +61,30 @@ const AdvancedTableFilters = ({ isOpen, onClose }: Props) => {
           List
         </button>
       </div>
-      <div>
+
+      <div className="max-h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden px-12 py-6">
         {filterType == FilterTypesEnum.Sorting && <ListSorting />}
         {filterType == FilterTypesEnum.Filter && <ColumnFiltering />}
+      </div>
+      <div className="footer flex items-center justify-center gap-6 border-t-2 py-5 border-dashed">
+        <button className="bg-blackGrey-30 w-28 rounded-[10px] py-[10px]">
+          Cancel
+        </button>
+        <div className="w-28">
+          <LoaderButton
+            content={"Apply"}
+            variant="contained"
+            className="!text-base !py-[10px]"
+          />
+        </div>
+        <span className="text-grey-100">or</span>
+        <div className="w-28">
+          <LoaderButton
+            content={"Save to Filter"}
+            variant="text"
+            className="!text-base !py-[10px] hover:bg-gray-100 rounded-[10px]"
+          />
+        </div>
       </div>
     </Modal>
   );

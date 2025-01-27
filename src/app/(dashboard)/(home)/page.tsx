@@ -375,7 +375,7 @@ const Home = () => {
                         let currencyTicker =
                           asset?.type == "coin" ? unit : tokenName;
                         let currencyHistoryData = asset?.historyData?.map(
-                          (item) => item?.rate_open
+                          (item) => item?.rate_close
                         );
                         let depoistBlockchain = asset?.standard
                           ? unit

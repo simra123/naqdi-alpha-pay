@@ -4,7 +4,6 @@ import {
   MouseSensor,
   TouchSensor,
   closestCenter,
-  useDroppable,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -14,9 +13,18 @@ import {
   arrayMove,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import { BsPinAngle } from "react-icons/bs";
 import { CSS } from "@dnd-kit/utilities";
 import { clsx } from "clsx";
 import tableResponse from "@/constants/tables";
+import Checkbox from "@/components/common/CheckBox";
+import { DragIcon, PinnedIcon } from "@/assets/Svgs";
+import IconButton from "@/components/common/IconButton";
+import { MdClose } from "react-icons/md";
 
 type Item = {
   id: number;
@@ -25,9 +33,14 @@ type Item = {
   isSticky: boolean;
 };
 
+type Group = {
+  id: number;
+  name: string;
+  meta: Item[];
+};
+
 type Props = {};
 
-// Memoized Sortable Item
 const SortableItem = React.memo(
   ({
     item,
@@ -35,8 +48,8 @@ const SortableItem = React.memo(
     handleClose,
   }: {
     item: Item;
-    handlePinToggle: (id: number) => void;
-    handleClose: (id: number) => void;
+    handlePinToggle: (itemId: number) => void;
+    handleClose: (itemId: number) => void;
   }) => {
     const {
       attributes,
@@ -52,40 +65,60 @@ const SortableItem = React.memo(
     const style = {
       transform: CSS.Transform.toString(transform),
       transition,
-      opacity: isDragging ? 0.5 : 1, // Make the item transparent while dragging
+      opacity: isDragging ? 0.5 : 1,
     };
 
     return (
       <div
         ref={setNodeRef}
         style={style}
-        {...attributes}
-        {...listeners}
-        className="flex items-center justify-between p-2 bg-white border rounded mb-2 shadow-sm"
+        className={clsx(
+          "flex items-center justify-between p-2 bg-white border rounded mb-2 shadow-sm group"
+        )}
       >
-        <span className="text-caption">{item.label}</span>
-        <div className="flex items-center gap-2">
-          <button
-            className={clsx(
-              "p-1 rounded",
-              item.isSticky ? "bg-purple-500 text-white" : "bg-gray-200"
-            )}
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePinToggle(item.id);
-            }}
+        <div
+          className="flex items-center gap-3 flex-1"
+          {...listeners}
+          {...attributes}
+        >
+          <div
+            className={
+              item.isSticky
+                ? "opacity-100"
+                : "opacity-0 group-hover:opacity-100"
+            }
           >
-            {item.isSticky ? "Pinned" : "Pin"}
-          </button>
-          <button
-            className="p-1 bg-red-500 text-white rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClose(item.id);
-            }}
-          >
-            Close
-          </button>
+            <DragIcon />
+          </div>
+          <span className="text-caption">{item.label}</span>
+        </div>
+        <div
+          className={clsx(
+            "flex items-center gap-2 transition-opacity",
+            item.isSticky ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+          )}
+        >
+          <div className="flex items-center gap-1">
+            <IconButton
+              className={clsx("p-1 hover:bg-purple-20")}
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePinToggle(item.id);
+              }}
+            >
+              {item.isSticky ? <PinnedIcon /> : <BsPinAngle />}
+            </IconButton>
+            <div className="bg-gray-300 w-[1px] h-5"></div>
+            <IconButton
+              className="p-1 hover:bg-red-200"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClose(item.id);
+              }}
+            >
+              <MdClose />
+            </IconButton>
+          </div>
         </div>
       </div>
     );
@@ -93,122 +126,146 @@ const SortableItem = React.memo(
 );
 
 const ListSorting = (props: Props) => {
-  const [items, setItems] = useState<Item[]>(
-    tableResponse.listConfig.groups[0].meta.map((item: any) => ({
-      ...item,
-      isSelected: true,
-      isSticky: false,
+  const [groups, setGroups] = useState<Group[]>(
+    tableResponse.listConfig.groups.map((group: any) => ({
+      ...group,
+      meta: group.meta.map((item: any) => ({
+        ...item,
+        isSelected: false,
+        isSticky: false,
+      })),
     }))
   );
 
-  const handleCheckboxChange = useCallback((id: number) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, isSelected: !item.isSelected } : item
+  const handleCheckboxChange = useCallback(
+    (groupId: number, itemId: number) => {
+      setGroups((prevGroups) =>
+        prevGroups.map((group) =>
+          group.id === groupId
+            ? {
+                ...group,
+                meta: group.meta.map((item) =>
+                  item.id === itemId
+                    ? { ...item, isSelected: !item.isSelected }
+                    : item
+                ),
+              }
+            : group
+        )
+      );
+    },
+    []
+  );
+
+  const handlePinToggle = useCallback((groupId: number, itemId: number) => {
+    setGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              meta: group.meta.map((item) =>
+                item.id === itemId
+                  ? { ...item, isSticky: !item.isSticky }
+                  : item
+              ),
+            }
+          : group
       )
     );
   }, []);
 
-  const handlePinToggle = useCallback((id: number) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, isSticky: !item.isSticky } : item
-      )
-    );
-  }, []);
-
-  const handleClose = useCallback((id: number) => {
-    setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, isSelected: false } : item
+  const handleClose = useCallback((groupId: number, itemId: number) => {
+    setGroups((prevGroups) =>
+      prevGroups.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              meta: group.meta.map((item) =>
+                item.id === itemId ? { ...item, isSelected: false } : item
+              ),
+            }
+          : group
       )
     );
   }, []);
 
   const handleDragEnd = useCallback(({ active, over }: any) => {
-    setItems((prevItems) => {
-      const activeIndex = prevItems.findIndex((item) => item.id === active.id);
-
-      if (!over) {
-        return prevItems.map((item, index) =>
-          index === activeIndex ? { ...item, isSelected: false } : item
-        );
-      }
-
-      const overIndex = prevItems.findIndex((item) => item.id === over.id);
-
-      return arrayMove(prevItems, activeIndex, overIndex);
-    });
+    setGroups((prevGroups) =>
+      prevGroups.map((group) => ({
+        ...group,
+        meta: arrayMove(
+          group.meta,
+          group.meta.findIndex((item) => item.id === active.id),
+          group.meta.findIndex((item) => item.id === over.id)
+        ),
+      }))
+    );
   }, []);
 
-  const selectedItems = useMemo(
-    () => items.filter((item) => item.isSelected),
-    [items]
-  );
-
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 5,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 5,
-      },
-    })
-  );
-
   return (
-    <div className="flex justify-between gap-8">
-      {/* Left: Checkbox List */}
-      <div className="flex-1">
-        <h3 className="text-lg font-bold mb-4">General</h3>
-        <div className="flex gap-y-6 flex-wrap">
-          {items.map((item) => (
-            <div key={item.id} className="flex w-full lg:w-1/2 items-baseline gap-2 mb-2">
-              <input
-                type="checkbox"
-                checked={item.isSelected}
-                onChange={() => handleCheckboxChange(item.id)}
-              />
-              <span className="text-caption">{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Right: Drag and Drop */}
-      <div className="w-[320px]">
-        <h3 className="text-lg font-bold mb-4">Sort order (drag & drop)</h3>
-        <DndContext
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-          sensors={sensors}
-        >
-          <SortableContext
-            items={selectedItems.map((item) => item.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div className={clsx("p-4 border rounded min-h-[200px]")}>
-              {selectedItems.length > 0 ? (
-                selectedItems.map((item) => (
-                  <SortableItem
-                    key={item.id}
-                    item={item}
-                    handlePinToggle={handlePinToggle}
-                    handleClose={handleClose}
+    <div className="flex flex-col gap-8">
+      {groups.map((group) => (
+        <div key={group.id} className="flex justify-between gap-8">
+          {/* Left: Checkbox List */}
+          <div className="flex-1">
+            <h3 className="text-caption font-semibold text-grey-100 pb-4 border-b border-light-gray">
+              {group.name}
+            </h3>
+            <div className="flex gap-y-6 flex-wrap mt-4">
+              {group.meta.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex w-full lg:w-1/2 items-baseline gap-2 mb-2"
+                >
+                  <Checkbox
+                    checked={item.isSelected}
+                    onChange={() => handleCheckboxChange(group.id, item.id)}
+                    label={item.label}
                   />
-                ))
-              ) : (
-                <p className="text-gray-500">Drag items here</p>
-              )}
+                </div>
+              ))}
             </div>
-          </SortableContext>
-        </DndContext>
-      </div>
+          </div>
+
+          {/* Right: Drag and Drop */}
+          <div className="w-[320px]">
+            <h3 className="text-caption font-semibold mb-4 text-grey-100">
+              Sort order (drag & drop)
+            </h3>
+            <DndContext
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+            >
+              <SortableContext
+                items={group.meta
+                  .filter((item) => item.isSelected)
+                  .map((item) => item.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className={clsx("p-4 border rounded min-h-[200px]")}>
+                  {group.meta.filter((item) => item.isSelected).length > 0 ? (
+                    group.meta
+                      .filter((item) => item.isSelected)
+                      .map((item) => (
+                        <SortableItem
+                          key={item.id}
+                          item={item}
+                          handlePinToggle={(id) =>
+                            handlePinToggle(group.id, id)
+                          }
+                          handleClose={(id) => handleClose(group.id, id)}
+                        />
+                      ))
+                  ) : (
+                    <p className="text-gray-500">Drag items here</p>
+                  )}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

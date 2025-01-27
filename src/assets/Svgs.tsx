@@ -1657,3 +1657,54 @@ export const FilterIcon = () => {
     </svg>
   );
 };
+
+export const DragIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="17"
+      height="18"
+      viewBox="0 0 17 18"
+      fill="none"
+    >
+      <rect y="14.5" width="3" height="3" fill="#7735E3" />
+      <rect y="7.5" width="3" height="3" fill="#7735E3" />
+      <rect y="0.5" width="3" height="3" fill="#7735E3" />
+      <rect x="7" y="14.5" width="3" height="3" fill="#7735E3" />
+      <rect x="7" y="7.5" width="3" height="3" fill="#7735E3" />
+      <rect x="7" y="0.5" width="3" height="3" fill="#7735E3" />
+      <rect x="14" y="0.5" width="3" height="3" fill="#7735E3" />
+      <rect x="14" y="14.5" width="3" height="3" fill="#7735E3" />
+      <rect x="14" y="7.5" width="3" height="3" fill="#7735E3" />
+    </svg>
+  );
+};
+
+export const PinnedIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="22"
+      viewBox="0 0 24 22"
+      fill="none"
+    >
+      <path
+        d="M14.9364 14.9529C14.6913 15.4658 14.3559 15.9471 13.931 16.372L11.3689 13.8098L9.19027 11.6313L6.62891 9.0699C7.05379 8.64501 7.53508 8.30886 8.04796 8.06445"
+        stroke="black"
+        stroke-miterlimit="10"
+      />
+      <path
+        d="M15.3773 13.5307C15.4931 12.8035 15.4518 12.056 15.2548 11.3423L19.9338 8.00714L14.9931 3.06641L11.6571 7.74544C10.9435 7.54842 10.1959 7.50705 9.46875 7.62211"
+        stroke="black"
+        stroke-miterlimit="10"
+      />
+      <path
+        d="M11 13.562L5.4716 17.9395C5.20038 18.1401 4.86015 17.7999 5.06019 17.5282L9.43794 12L11 13.562Z"
+        stroke="black"
+        stroke-miterlimit="10"
+      />
+      <path d="M19 17L5 3" stroke="black" stroke-miterlimit="10" />
+    </svg>
+  );
+};
