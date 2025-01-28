@@ -57,7 +57,7 @@ const Login = () => {
         })
       ),
       successCallBack: async (response) => {
-        console.log(response, "IN LOGIN API RESPONSE");
+
         if (response?.data?.user?.userDetails?.mfa) {
           setHasMFA(true);
           setUserResponse(response);
@@ -71,8 +71,6 @@ const Login = () => {
 
   const verifyHandler = async () => {
 
-    console.log(userResponse, 'VerifyHandler'
-    )
 
     const verify = userResponse?.data?.user?.role == Role.USER
       ? verifyMFAForUserApi

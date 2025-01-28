@@ -25,7 +25,6 @@ const Integrations = () => {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isWebhookOpen, setIsWebhookOpen] = useState(false);
 
-  console.log(user);
 
   const [
     iswebhookDetailsLoading,
@@ -118,7 +117,7 @@ const Integrations = () => {
         callListApi();
       },
     });
-    console.log(`Revoke action triggered for ID: ${data.id}`);
+
   };
 
   const toggleCreateModal = () => {

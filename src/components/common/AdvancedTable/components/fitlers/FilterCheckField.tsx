@@ -23,20 +23,24 @@ const FilterCheckField = ({ item, handleChangeWithGroup, group }: Props) => {
         label={item.label}
       />
       {item?.isSelected && (
-        <div className="w-[80%]">
+        <>
+        <div className="w-[70%]">
           <IconSelectBox
             options={columnFilterOperations}
             placeholder="Select Filter Type"
             value={filterType}
             onChange={({ target: { value } }) => setFilterType(value)}
-          />
+            />
+            </div>
+            <div className="w-[80%]">
           {filterType && (
             <IconField
-              onChange={(event) => console.log(event.target.value)}
-              placeholder="Enter Filter Value"
+            onChange={(event) => console.log(event.target.value)}
+            placeholder="Enter Filter Value"
             />
           )}
         </div>
+          </>
       )}
     </>
   );

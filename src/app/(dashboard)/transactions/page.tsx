@@ -185,7 +185,6 @@ const Transactions = () => {
         }}
         initialPageSize={10}
         rowClickHandler={(row: any) => {
-          console.log(row);
           router.push(
             `/transactions/details/${row?.id}?type=${row?.transactionType}`
           );

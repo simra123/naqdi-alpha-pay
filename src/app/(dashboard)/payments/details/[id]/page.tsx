@@ -119,7 +119,7 @@ const PaymentDetails = ({ params }) => {
     await callApiHook({
       apiCall: callPaymentApi(paymentDetailCall(paymentId)),
       successCallBack: (response: any) => {
-        console.log("Payment details api response", response);
+
 
         const transactionsList = response?.paymentTransaction?.map((item) => ({
           id: item?.id,
@@ -184,7 +184,6 @@ const PaymentDetails = ({ params }) => {
     getPayment();
   }, []);
 
-  console.log(payment, "Payment details");
 
   return (
     <>

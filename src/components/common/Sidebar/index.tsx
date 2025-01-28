@@ -161,7 +161,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   const getCurrentNav = useCallback(() => {
     let CurrentNav = [];
-    console.log(user);
+
 
     if (
       user?.role == Role.ADMIN ||

@@ -29,7 +29,7 @@ const page = () => {
     await callApiHook({
       apiCall: callResendApi(resendEmailApi({ email: email || values?.email })),
       successCallBack: () => {
-        console.log("Email Send");
+
       },
     });
   };
@@ -39,7 +39,7 @@ const page = () => {
   };
 
   const onSubmitError = () => {
-    console.log("ERORO ");
+
   };
 
   return (

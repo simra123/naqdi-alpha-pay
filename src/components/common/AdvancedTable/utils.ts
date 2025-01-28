@@ -94,7 +94,6 @@ export const getPaginationPages = (
   const pages: (number | string)[] = [];
 
   if (totalPages <= totalPageNumbers) {
-    console.log("Show all pages if total pages fit within the range");
     // Show all pages if total pages fit within the range
     for (let i = 1; i <= totalPages; i++) {
       pages.push(i);

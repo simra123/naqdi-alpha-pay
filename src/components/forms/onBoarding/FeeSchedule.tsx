@@ -28,7 +28,7 @@ const FeeSchedule = () => {
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response: any) => {
         setUser(response);
-        console.log(localUser.userDetails?.fees, response?.userDetails?.fees);
+
         // if (
         //   localUser &&
         //   localUser.userDetails?.fees != response?.userDetails?.fees

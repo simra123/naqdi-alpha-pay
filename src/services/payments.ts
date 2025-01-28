@@ -9,8 +9,12 @@ export const createPaymentDepositApi = (data: {
   payment_currency_standard: string;
   passthrough: string;
   notes?: string;
+  customer_email: string;
+  customer_name: string;
+  customer_phone_number?: string;
+  email_notification?: boolean;
 }) => {
-  return () => api.post(`v1/create-deposit-payment`, data);
+  return () => api.post(`v1/create-manual-payment`, data);
 };
 
 export const getAllPaymentsApi = () => {

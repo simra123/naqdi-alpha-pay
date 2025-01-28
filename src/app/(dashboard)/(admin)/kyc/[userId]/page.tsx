@@ -54,7 +54,7 @@ const KYCUserID = ({ params }) => {
     });
   };
 
-  console.log({ userDetails });
+
 
   const handleSubmit = (status) => async () => {
     await callApiHook({

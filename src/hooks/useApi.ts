@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const useApi = ({ initailLoading, notify }: Props = {}) => {
-  console.log({ initailLoading, notify });
+
 
   const dispatch = useDispatch();
   const router = useRouter();

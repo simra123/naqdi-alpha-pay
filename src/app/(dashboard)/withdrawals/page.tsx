@@ -56,7 +56,6 @@ const withdrawalsList_table_columns: TableColumns = [
         blockchain = standardBlockchain[standard];
       }
 
-      console.log(blockchain);
 
       return showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,

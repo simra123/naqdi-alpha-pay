@@ -415,7 +415,7 @@ const getPaginationPages = (
   const pages: (number | string)[] = [];
 
   if (totalPages <= totalPageNumbers) {
-    console.log("Show all pages if total pages fit within the range");
+
     // Show all pages if total pages fit within the range
     for (let i = 1; i <= totalPages; i++) {
       pages.push(i);
@@ -429,12 +429,6 @@ const getPaginationPages = (
   const showLeftEllipsis = leftSiblingIndex > 2;
   const showRightEllipsis = rightSiblingIndex < totalPages - 1;
 
-  console.log({
-    leftSiblingIndex,
-    rightSiblingIndex,
-    showLeftEllipsis,
-    showRightEllipsis,
-  });
 
   if (showLeftEllipsis) {
     pages.push("..."); // Left ellipsis
@@ -475,7 +469,7 @@ const Pagination = ({
     [currentPage, pageSize, totalPages]
   );
 
-  console.log({ pages });
+
   return (
     <div className="flex justify-center sm:justify-between items-center mt-4 relative">
       {/* Pages Indicator */}

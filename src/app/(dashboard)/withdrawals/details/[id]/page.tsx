@@ -224,7 +224,7 @@ const WithdrawalDetails = ({ params }) => {
     setConfirmModal(!confirmModal);
   };
 
-  console.log(selectedWallets, "Selected Walelts");
+
 
   return (
     <LoadingApi loading={isWithdrawalDetailsLoading}>

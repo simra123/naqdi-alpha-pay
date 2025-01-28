@@ -89,7 +89,7 @@ const CreateWithdrawalModal = ({
   } = useFormValidation(initalFormValues, currentSchema);
 
   useEffect(() => {
-    console.log("updating schema");
+    
     if (currentStep == 1) {
       const maxAmount = getCurrentAssetAmount(values?.blockchain);
       setCurrentSchema(getWithdrawalSchema(+maxAmount || 0));
@@ -120,8 +120,7 @@ const CreateWithdrawalModal = ({
         if (blockchain) {
           setValues((pre) => ({ ...pre, blockchain }));
         }
-        console.log(withdraw_currency_options);
-      },
+              },
     });
   };
 
@@ -144,12 +143,11 @@ const CreateWithdrawalModal = ({
       standard: currentAsset?.standard || null,
     };
 
-    console.log(withdraw_request_payload, "before removing null standard");
 
     if (withdraw_request_payload.standard == null) {
       delete withdraw_request_payload.standard;
     }
-    console.log(withdraw_request_payload, "After removing null standard");
+
 
     await callApiHook({
       apiCall: callWithdrawalApi(createWithdrawalApi(withdraw_request_payload)),
@@ -170,7 +168,7 @@ const CreateWithdrawalModal = ({
       apiCall: callFeeApi(getFeesApi(amount)),
       successCallBack: (response) => {
         setFee(response);
-        console.log("Setting Fee ", response);
+
       },
     });
   };
@@ -186,7 +184,7 @@ const CreateWithdrawalModal = ({
     }
   }, [isOpen]);
 
-  console.log(errors);
+
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>

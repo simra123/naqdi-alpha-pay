@@ -50,7 +50,7 @@ const LoaderButton = ({
       error: "border-0 py-3 text-white !bg-red-button !bg-none",
       success: "border-0 py-3 text-white !bg-green-button rounded-medium w-56",
     };
-    console.log(colors[color]);
+
 
     return `${disabledClasses} ${colors[color]} ${
       loading ? loadingClasses[variant] : variantClasses[variant]

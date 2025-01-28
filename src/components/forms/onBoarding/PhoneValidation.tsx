@@ -80,7 +80,7 @@ const PhoneValidation = () => {
   };
   const onSubmitError = () => {
     window.scrollTo(0, 300);
-    console.log("Form Not submitted successfully!");
+
   };
 
   return (

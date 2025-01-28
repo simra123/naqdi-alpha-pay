@@ -15,7 +15,7 @@ export const isValidBitcoinAddress = (address) => {
 };
 
 export const validateCryptoAddress = (address, blockchain) => {
-  console.log({ blockchain, address });
+
   switch (blockchain.toLowerCase()) {
     case "eth":
       return isValidEthereumAddress(address);

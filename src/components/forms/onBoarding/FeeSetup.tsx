@@ -62,7 +62,7 @@ const FeeSetup = () => {
         })
       ),
       successCallBack: (response: any) => {
-        console.log("MOVING TO NEXG STEP");
+
 
         dispatch(
           setStep({

@@ -30,14 +30,21 @@ const useFormValidation = (
       }
     } else if (type == "checkbox") {
       const nameSplit = name.split(`.`);
-
-      setValues({
-        ...values,
-        [nameSplit[0]]: {
-          ...values[nameSplit[0]],
-          [nameSplit[1]]: checked,
-        },
-      });
+      if (nameSplit?.length > 1) {
+        setValues({
+          ...values,
+          [nameSplit[0]]: {
+            ...values[nameSplit[0]],
+            [nameSplit[1]]: checked,
+          },
+        });
+      } else {
+        console.log("Changing single check values", name, checked);
+        setValues({
+          ...values,
+          [name]: checked,
+        });
+      }
     } else {
       setValues({
         ...values,

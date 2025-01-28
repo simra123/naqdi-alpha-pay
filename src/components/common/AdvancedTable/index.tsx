@@ -74,7 +74,7 @@ const AdvancedTable = ({
     }
   }, [headerRef, columns, rows]);
 
-  console.log({ columnWidths, stickyOffsets });
+
 
   const handleRowSelection = (row: any) => {
     const updatedSelection = selectedRows.includes(row)

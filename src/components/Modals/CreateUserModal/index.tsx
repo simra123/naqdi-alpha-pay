@@ -91,7 +91,7 @@ const CreateUserModal = ({
 
   const [isCreateUserLoading, isCreateUserError, callCreateUserApi] = useApi();
 
-  console.log({ selectedPermissions, userPermissions });
+
 
   const {
     errors,
@@ -180,7 +180,7 @@ const CreateUserModal = ({
           }
         );
     }
-    console.log(requestBody);
+
     await callApiHook({
       apiCall: callCreateUserApi(
         user?.role == Role.USER
