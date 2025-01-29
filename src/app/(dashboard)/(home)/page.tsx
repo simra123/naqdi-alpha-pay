@@ -437,8 +437,7 @@ const Home = () => {
                     lastTransactions?.map((transaction) => (
                       <TransactionCard
                         currencyName={
-                          transaction?.wallet?.blockchain ||
-                          transaction?.clientWallet?.blockchain
+                          unitName[transaction?.unit?.toLowerCase()]
                         }
                         date={transaction?.createdAt}
                         direction={
