@@ -18,6 +18,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
+import EditableField from "@/components/common/IconField/EditableField";
 
 const Account = () => {
   const localUser = useLocalStorage("user");
@@ -145,7 +146,22 @@ const Account = () => {
             <>
               <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
                 <Details label="KYC" value={user?.userDetails?.kyc_status} />
-                <Details label="Fees" value={user?.userDetails?.fees + "%"} />
+                <Details
+                  label="Admin Fees"
+                  value={user?.userDetails?.fees + "%"}
+                />
+                <Details
+                  label="Client Fees"
+                  value={
+                    <EditableField
+                      onCancel={() => {}}
+                      onEdit={() => {}}
+                      inputClassName="py-2 max-w-[140px]"
+                      onChange={(event) => {}}
+                      value={2}
+                    />
+                  }
+                />
               </RenderRoleBased>
             </>
           )}
