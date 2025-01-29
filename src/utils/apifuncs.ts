@@ -57,26 +57,20 @@ export const sendPaymentInvoiceWhatsapp = ({
   phone_number,
 }) => {
   let MessageContent = `
-  Hi ${client_name}! 
+Hi ${client_name}!   
+
+This is to inform you that a payment has been initiated for you from Alpha’s Pay. Following are the details: 
+
+Coin: ${currency} 
+Network: ${network} 
+Amount: ${amount}
+Wallet Address: ${address} 
   
-  This is to inform you that a payment has been initiated for you from Alpha’s Pay. Following are the details: 
+In case of any query contact at support@alphaspay.com. 
   
-  Coin: ${currency} 
-  
-  Network: ${network} 
-  
-  Amount: ${amount}
-  
-  Wallet Address: ${address} 
-  
-  
-  In case of any query contact  
-  
-  
-  Regards, 
-  
-  Alpha’s Pay Team. 
-  `;
+Regards, 
+Alpha’s Pay Team. 
+`;
 
   let whatsappLink = `https://wa.me/${phone_number}?text=${encodeURIComponent(
     MessageContent
