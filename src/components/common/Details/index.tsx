@@ -4,7 +4,7 @@ import { ContentCopy } from "@mui/icons-material";
 import React, { useState } from "react";
 
 type Props = {
-  value: string;
+  value: any;
   label?: string;
   copyable?: boolean;
   link?: string;

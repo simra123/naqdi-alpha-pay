@@ -17,7 +17,7 @@ const IconButton = ({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-center w-[35px] h-[35px] p-2 rounded-full transition-colors ${
+      className={`flex items-center justify-center min-w-[35px] h-[35px] p-2 rounded-full transition-colors ${
         !disabled && "hover:bg-gray-300 active:bg-gray-400"
       }  ${className} `}
       disabled={disabled}
