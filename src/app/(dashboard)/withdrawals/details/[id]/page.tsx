@@ -31,10 +31,11 @@ import {
 import CustomTable from "@/components/common/CustomTable";
 import ReasonModal from "@/components/Modals/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
+import { getPermission } from "@/utils/cookies";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -97,7 +98,7 @@ const transactionsList_table_columns: TableColumns = [
 ];
 
 const WithdrawalDetails = ({ params }) => {
-  let isMounted = true
+  let isMounted = true;
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
   const router = useRouter();
@@ -189,7 +190,7 @@ const WithdrawalDetails = ({ params }) => {
         )
       ),
       successCallBack: (response: any) => {
-        setTotalWallets(response?.totalItems)
+        setTotalWallets(response?.totalItems);
         setWallets((wals) => [...wals, ...response?.wallets]);
         setCurrentWalletsPage((page) => page + 1);
       },
@@ -197,14 +198,12 @@ const WithdrawalDetails = ({ params }) => {
   };
 
   useEffect(() => {
-
     if (isMounted) {
-
       getWithdrawalDetails();
       if (user?.role == Role.ADMIN) {
         getWithdrawalWallets();
       }
-      isMounted = false
+      isMounted = false;
     }
     return () => {
       isMounted = false; // Cleanup when component unmounts
@@ -256,10 +255,11 @@ const WithdrawalDetails = ({ params }) => {
 
           <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
-            label={`${withdrawalDetails?.unit} ${withdrawalDetails?.standard
-              ? `(${withdrawalDetails?.standard})`
-              : ""
-              } Wallet Address`}
+            label={`${withdrawalDetails?.unit} ${
+              withdrawalDetails?.standard
+                ? `(${withdrawalDetails?.standard})`
+                : ""
+            } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
             copyable
             link={showExplorerDetailsByChain({
@@ -291,7 +291,7 @@ const WithdrawalDetails = ({ params }) => {
           />
         </div>
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <PaymentIcon active={false}/>
+          <PaymentIcon active={false} />
           <h5 className="text-purple-100 text-h5 font-semibold">Withdrawals</h5>
         </div>
 
@@ -309,8 +309,10 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Net Amount"
-            value={`${roundToPrecision(withdrawalDetails?.requested_amount, 10)} ${withdrawalDetails?.unit
-              }`}
+            value={`${roundToPrecision(
+              withdrawalDetails?.requested_amount,
+              10
+            )} ${withdrawalDetails?.unit}`}
           />
         </div>
 
@@ -381,91 +383,96 @@ const WithdrawalDetails = ({ params }) => {
             />
           </div>
         </div>
-
         <div className="mt-8"></div>
-        {withdrawalDetails?.status == "pending" && (
-          <>
-            {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
-            <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
-              <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-                Withdraw
-              </h3>
 
-              <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
-                <button
-                  className={`w-full  ${withdrawalType == Withdrawal_Type.MANUAL
-                    ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                    : "font-medium text-custom-title-gray"
+        {withdrawalDetails?.status == "pending" &&
+          getPermission(ModulesEnum.withdrawal)?.access_level ==
+            AccessLevelEnum.full && (
+            <>
+              {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
+              <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
+                <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+                  Withdraw
+                </h3>
+
+                <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
+                  <button
+                    className={`w-full  ${
+                      withdrawalType == Withdrawal_Type.MANUAL
+                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                        : "font-medium text-custom-title-gray"
                     }`}
-                  onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
-                >
-                  Manual
-                </button>
-                <button
-                  className={`w-full  ${withdrawalType != Withdrawal_Type.MANUAL
-                    ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                    : "font-medium text-custom-title-gray"
+                    onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
+                  >
+                    Manual
+                  </button>
+                  <button
+                    className={`w-full  ${
+                      withdrawalType != Withdrawal_Type.MANUAL
+                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                        : "font-medium text-custom-title-gray"
                     }`}
-                  onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
-                >
-                  Automatic
-                </button>
-              </div>
+                    onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                  >
+                    Automatic
+                  </button>
+                </div>
 
-              <CustomTable
-                tableWrapper={false}
-                initialPageSize={10000}
-                columns={availableWallets_table_columns}
-                rows={wallets}
-                selectable={withdrawalType == Withdrawal_Type.MANUAL}
-                selectedRows={selectedWallets}
-                setSelectedRows={setSelectedWallets}
-                actions={true}
-              />
+                <CustomTable
+                  tableWrapper={false}
+                  initialPageSize={10000}
+                  columns={availableWallets_table_columns}
+                  rows={wallets}
+                  selectable={withdrawalType == Withdrawal_Type.MANUAL}
+                  selectedRows={selectedWallets}
+                  setSelectedRows={setSelectedWallets}
+                  actions={true}
+                />
 
-              {Withdrawal_Type.MANUAL == withdrawalType && wallets?.length < totalWallets && (
-                <>
-                  <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
-                    <LoaderButton
-                      content={"Load More Wallets"}
-                      variant="contained"
-                      loading={isWithdrawalWalletsLoading}
-                      onClick={getWithdrawalWallets}
-                    />
-                  </div>
+                {Withdrawal_Type.MANUAL == withdrawalType &&
+                  wallets?.length < totalWallets && (
+                    <>
+                      <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
+                        <LoaderButton
+                          content={"Load More Wallets"}
+                          variant="contained"
+                          loading={isWithdrawalWalletsLoading}
+                          onClick={getWithdrawalWallets}
+                        />
+                      </div>
+                      <LoaderButton
+                        content={<FiRefreshCw />}
+                        variant="outlined"
+                        className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
+                        loading={isWithdrawalWalletsLoading}
+                        onClick={getWithdrawalWallets}
+                      />
+                    </>
+                  )}
+
+                <ErrorApiText error={isApproveWithdrawalError} />
+
+                <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
                   <LoaderButton
-                    content={<FiRefreshCw />}
-                    variant="outlined"
-                    className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
-                    loading={isWithdrawalWalletsLoading}
-                    onClick={getWithdrawalWallets}
+                    content={"Reject"}
+                    color="error"
+                    onClick={rejectModalToggler}
+                    variant="error"
                   />
-                </>
-              )}
 
-              <ErrorApiText error={isApproveWithdrawalError} />
-
-              <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
-                <LoaderButton
-                  content={"Reject"}
-                  color="error"
-                  onClick={rejectModalToggler}
-                  variant="error"
-                />
-
-                <LoaderButton
-                  variant="text"
-                  color="success"
-                  onClick={toggleConfirmModal}
-                  content={"Approve"}
-                />
+                  <LoaderButton
+                    variant="text"
+                    color="success"
+                    onClick={toggleConfirmModal}
+                    content={"Approve"}
+                  />
+                </div>
               </div>
-            </div>
-            {/* </LoadingApi> */}
+              {/* </LoadingApi> */}
 
-            <ErrorApiText error={isWithdrawalWalletsError} />
-          </>
-        )}
+              <ErrorApiText error={isWithdrawalWalletsError} />
+            </>
+          )}
       </RenderRoleBased>
 
       {withdrawalDetails?.status == "confirm" && (
