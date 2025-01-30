@@ -38,6 +38,7 @@ import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import Link from "next/link";
 import { removeBrackets } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
+import { getPermission } from "@/utils/cookies";
 
 const adminColumns: TableColumns = [
   {
@@ -59,6 +60,11 @@ const columns: TableColumns = [
 
 const Home = () => {
   const user = useLocalStorage("user");
+  const isWalletHasFullAccess =
+    getPermission(ModulesEnum.wallet)?.access_level == AccessLevelEnum.full;
+  const isTransactionHasMinumumAccess =
+    getPermission(ModulesEnum.transaction)?.access_level !=
+    AccessLevelEnum.none;
   const [isPortfolioLoading, isPorfolioError, callPortfolioApi] = useApi({
     initailLoading: true,
   });
@@ -198,7 +204,9 @@ const Home = () => {
   const UserApiCalls = () => {
     getTotalPortfolioValue();
     // getPortfolioPLPercentage();
-    getLastTransactions();
+    if (isTransactionHasMinumumAccess) {
+      getLastTransactions();
+    }
   };
 
   useEffect(() => {
@@ -249,21 +257,6 @@ const Home = () => {
                     onClick={getBalances}
                     variant="text"
                   />
-                  {user?.role == Role.USER && (
-                    <>
-                      {PermissionAccess(
-                        LoaderButton,
-                        ModulesEnum.wallet,
-                        AccessLevelEnum.full
-                      )({
-                        content: "Deposit Crypto",
-                        className: "px-4",
-                        variant: "outlined",
-                        onClick: handleDepoist,
-                      })}
-                      ,
-                    </>
-                  )}
                 </div>
               </div>
             }
@@ -272,192 +265,221 @@ const Home = () => {
         </>
       )}
       {user?.role == Role.USER && (
-        <div className="dashboard-layout">
+        <>
           <div
-            className="wallets min-h-[310px] 2.5xl:min-h-[470px] py-[35px] 2.5xl:py-[60px] px-4 2.5xlpx-8"
-            onClick={(e) => {
-              handleAssetSelection("ALL");
-            }}
+            className={
+              isTransactionHasMinumumAccess
+                ? "dashboard-layout"
+                : "dashboard-layout-without-transactions"
+            }
           >
-            <div className="flex flex-col justify-between h-full gap-8">
-              <div>
-                <h4 className="text-white font-bold text-h4 font-nunito text-center">
-                  Crypto Wallets
-                </h4>
-                <h3 className="text-white font-nunito text-center text-[60px] 2.5xl:text-[92px] font-semibold overflow-hidden text-ellipsis leading-[110px]">
-                  $
-                  <CountUp
-                    end={totalPortfolio}
-                    separator=","
-                    decimal="."
-                    decimals={2}
-                  />
-                </h3>
-                <ErrorApiText error={isTotalPortfolioError} />
-                {/* <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
+            <div
+              className="wallets min-h-[310px] 2.5xl:min-h-[470px] py-[35px] 2.5xl:py-[60px] px-4 2.5xlpx-8"
+              onClick={(e) => {
+                handleAssetSelection("ALL");
+              }}
+            >
+              <div className="flex flex-col justify-between h-full gap-8">
+                <div>
+                  <h4 className="text-white font-bold text-h4 font-nunito text-center">
+                    Crypto Wallets
+                  </h4>
+                  <h3 className="text-white font-nunito text-center text-[60px] 2.5xl:text-[92px] font-semibold overflow-hidden text-ellipsis leading-[110px]">
+                    $
+                    <CountUp
+                      end={totalPortfolio}
+                      separator=","
+                      decimal="."
+                      decimals={2}
+                    />
+                  </h3>
+                  <ErrorApiText error={isTotalPortfolioError} />
+                  {/* <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
                   {portfolioPercentage}% Last Week
-                </h6> */}
-              </div>
-              <div
-                className="flex gap-4 justify-center 2.5xl:gap-0 2.5xl:justify-between xl:px-8"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <BorderedIconButton
-                  className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
-                    hoveredButton !== "receive"
-                      ? "w-[57px] 2.5xl:w-[85px]"
-                      : "!w-[50%] px-4 gap-4"
-                  }`}
-                  onMouseEnter={() => handleMouseEnter("receive")}
-                  // onMouseLeave={handleMouseLeave}
-                  onClick={handleDepoist}
+                  </h6> */}
+                </div>
+                <div
+                  className="flex gap-4 justify-center 2.5xl:gap-0 2.5xl:justify-between xl:px-8"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <ReciveIcon className="w-4 2.5xl:w-[23px]" />
-                  {hoveredButton === "receive" && (
-                    <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
-                      Receive
-                    </span>
-                  )}
-                </BorderedIconButton>
-                <BorderedIconButton
-                  className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
-                    hoveredButton !== "send"
-                      ? "w-[57px] 2.5xl:w-[85px]"
-                      : "!w-[50%] px-4 gap-4"
-                  }`}
-                  onMouseEnter={() => handleMouseEnter("send")}
-                  // onMouseLeave={handleMouseLeave}
-                  onClick={handleWithdrawalToggler}
-                >
-                  <SendIcon className="w-4 2.5xl:w-[23px]" />
-                  {hoveredButton === "send" && (
-                    <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
-                      Send
-                    </span>
-                  )}
-                </BorderedIconButton>
-                <BorderedIconButton
-                  className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
-                    hoveredButton !== "transfer"
-                      ? "w-[57px] 2.5xl:w-[85px]"
-                      : "!w-[50%] px-4 gap-4"
-                  }`}
-                  onMouseEnter={() => handleMouseEnter("transfer")}
-                  // onMouseLeave={handleMouseLeave}
-                >
-                  <TransferIcon className="w-4 2.5xl:w-[23px]" />
-                  {hoveredButton === "transfer" && (
-                    <span className="font-nunito text-button 2.5xl:text-h3.5  sm:inline hidden">
-                      Transfer
-                    </span>
-                  )}
-                </BorderedIconButton>
-              </div>
-            </div>
-          </div>
-          <div className="portfolio">
-            <div className="flex flex-col flex-auto">
-              <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
-                {/* <header className="sticky top-0 z-10"> */}
-                <h3 className="text-p120 2xl:text-h4 font-nunito mb-2">
-                  My Portfolio
-                </h3>
-                {/* </header> */}
-
-                <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px] portfolio-body">
-                  <LoadingApi loading={isPortfolioLoading}>
-                    {portfolio?.length > 0 ? (
-                      portfolio?.map((asset) => {
-                        let unit = asset?.unit;
-                        let tokenName = `${unit} (${asset?.standard})`;
-                        let coinName =
-                          unitName[unit?.toLowerCase()] || "Unknown";
-                        let currencyTicker =
-                          asset?.type == "coin" ? unit : tokenName;
-                        let currencyHistoryData = asset?.historyData?.map(
-                          (item) => item?.rate_open
-                        );
-                        let depoistBlockchain = asset?.standard
-                          ? unit
-                          : coinName?.toLowerCase();
-                        return (
-                          <PortfolioCard
-                            Balance={roundToPrecision(asset?.totalAmount, 4)}
-                            IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
-                            ChartLineData={currencyHistoryData}
-                            CurrencyName={coinName}
-                            CurrencyTicker={currencyTicker}
-                            onClick={() =>
-                              handleAssetSelection(unit?.toUpperCase())
-                            }
-                            onRecieve={() =>
-                              handleDepoistAndCreateAddress(
-                                depoistBlockchain,
-                                asset?.standard
-                              )
-                            }
-                            onSend={() =>
-                              handleWithdrawAndSetBlockchain(currencyTicker)
-                            }
-                            onTransfer={() => {}}
-                          />
-                        );
-                      })
-                    ) : !isPorfolioError ? (
-                      "No Assets Found. Deposit Assets to see them here."
-                    ) : (
-                      <></>
+                  <BorderedIconButton
+                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                      hoveredButton !== "receive"
+                        ? "w-[57px] 2.5xl:w-[85px]"
+                        : "!w-[50%] px-4 gap-4"
+                    }`}
+                    onMouseEnter={() => handleMouseEnter("receive")}
+                    tooltip={
+                      !isWalletHasFullAccess &&
+                      "You don't have sufficient permissions to initate a Deposit."
+                    }
+                    tooltipId="r-b"
+                    onClick={isWalletHasFullAccess && handleDepoist}
+                    disabled={!isWalletHasFullAccess}
+                  >
+                    <ReciveIcon className="w-4 2.5xl:w-[23px]" />
+                    {hoveredButton === "receive" && (
+                      <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
+                        Receive
+                      </span>
                     )}
-                  </LoadingApi>
-                  <ErrorApiText error={isPorfolioError} />
+                  </BorderedIconButton>
+                  <BorderedIconButton
+                    tooltipId="s-b"
+                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                      hoveredButton !== "send"
+                        ? "w-[57px] 2.5xl:w-[85px]"
+                        : "!w-[50%] px-4 gap-4"
+                    }`}
+                    disabled={!isWalletHasFullAccess}
+                    onMouseEnter={() => handleMouseEnter("send")}
+                    tooltip={
+                      !isWalletHasFullAccess &&
+                      "You don't have sufficient permissions to initate a Withdrawal."
+                    }
+                    onClick={isWalletHasFullAccess && handleWithdrawalToggler}
+                  >
+                    <SendIcon className="w-4 2.5xl:w-[23px]" />
+                    {hoveredButton === "send" && (
+                      <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
+                        Send
+                      </span>
+                    )}
+                  </BorderedIconButton>
+                  <BorderedIconButton
+                    tooltipId="t-b"
+                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                      hoveredButton !== "transfer"
+                        ? "w-[57px] 2.5xl:w-[85px]"
+                        : "!w-[50%] px-4 gap-4"
+                    }`}
+                    onMouseEnter={() => handleMouseEnter("transfer")}
+                    disabled={!isWalletHasFullAccess}
+                    tooltip={
+                      !isWalletHasFullAccess &&
+                      "You don't have sufficient permissions to initate a Transfer."
+                    }
+                  >
+                    <TransferIcon className="w-4 2.5xl:w-[23px]" />
+                    {hoveredButton === "transfer" && (
+                      <span className="font-nunito text-button 2.5xl:text-h3.5  sm:inline hidden">
+                        Transfer
+                      </span>
+                    )}
+                  </BorderedIconButton>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="history xs:block hidden">
-            <PortfolioChart
-              interval={interval}
-              setInterval={setInterval}
-              unit={chartUnit}
-            />
-          </div>
-          <div className="transactions">
-            <div className="xxs:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">
-              <div className="flex items-end justify-between mb-2">
-                <h3 className="text-p120 2xl:text-h4 font-nunito">
-                  Last Transactions
-                </h3>
-                <Link className="text-caption" href={"/transactions"}>
-                  View All
-                </Link>
-              </div>
-              <div className="flex flex-col gap-3 2xl:gap-4">
-                <LoadingApi loading={isLastTransactionsLoading}>
-                  {lastTransactions?.length > 0 ? (
-                    lastTransactions?.map((transaction) => (
-                      <TransactionCard
-                        currencyName={
-                          unitName[transaction?.unit?.toLowerCase()]
-                        }
-                        date={transaction?.createdAt}
-                        direction={
-                          transaction?.withdrawal?.id ? "outgoing" : "incoming"
-                        }
-                        onClick={() => {}}
-                        amount={transaction?.amount}
-                      />
-                    ))
-                  ) : !isLastTransactionsError ? (
-                    "No Transactions Found"
-                  ) : (
-                    <></>
-                  )}
-                </LoadingApi>
-                <ErrorApiText error={isLastTransactionsError} />
+            <div className="portfolio">
+              <div className="flex flex-col flex-auto">
+                <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
+                  {/* <header className="sticky top-0 z-10"> */}
+                  <h3 className="text-p120 2xl:text-h4 font-nunito mb-2">
+                    My Portfolio
+                  </h3>
+                  {/* </header> */}
+
+                  <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px] portfolio-body">
+                    <LoadingApi loading={isPortfolioLoading}>
+                      {portfolio?.length > 0 ? (
+                        portfolio?.map((asset) => {
+                          let unit = asset?.unit;
+                          let tokenName = `${unit} (${asset?.standard})`;
+                          let coinName =
+                            unitName[unit?.toLowerCase()] || "Unknown";
+                          let currencyTicker =
+                            asset?.type == "coin" ? unit : tokenName;
+                          let currencyHistoryData = asset?.historyData?.map(
+                            (item) => item?.rate_open
+                          );
+                          let depoistBlockchain = asset?.standard
+                            ? unit
+                            : coinName?.toLowerCase();
+                          return (
+                            <PortfolioCard
+                              Balance={roundToPrecision(asset?.totalAmount, 4)}
+                              IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
+                              ChartLineData={currencyHistoryData}
+                              CurrencyName={coinName}
+                              isWalletHasFullAccess={isWalletHasFullAccess}
+                              CurrencyTicker={currencyTicker}
+                              onClick={() =>
+                                handleAssetSelection(unit?.toUpperCase())
+                              }
+                              onRecieve={() =>
+                                handleDepoistAndCreateAddress(
+                                  depoistBlockchain,
+                                  asset?.standard
+                                )
+                              }
+                              onSend={() =>
+                                handleWithdrawAndSetBlockchain(currencyTicker)
+                              }
+                              onTransfer={() => {}}
+                            />
+                          );
+                        })
+                      ) : !isPorfolioError ? (
+                        "No Assets Found. Deposit Assets to see them here."
+                      ) : (
+                        <></>
+                      )}
+                    </LoadingApi>
+                    <ErrorApiText error={isPorfolioError} />
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div className="history xs:block hidden">
+              <PortfolioChart
+                interval={interval}
+                setInterval={setInterval}
+                unit={chartUnit}
+              />
+            </div>
+            {isTransactionHasMinumumAccess && (
+              <div className="transactions">
+                <div className="xxs:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">
+                  <div className="flex items-end justify-between mb-2">
+                    <h3 className="text-p120 2xl:text-h4 font-nunito">
+                      Last Transactions
+                    </h3>
+                    <Link className="text-caption" href={"/transactions"}>
+                      View All
+                    </Link>
+                  </div>
+                  <div className="flex flex-col gap-3 2xl:gap-4">
+                    <LoadingApi loading={isLastTransactionsLoading}>
+                      {lastTransactions?.length > 0 ? (
+                        lastTransactions?.map((transaction) => (
+                          <TransactionCard
+                            currencyName={
+                              unitName[transaction?.unit?.toLowerCase()]
+                            }
+                            date={transaction?.createdAt}
+                            direction={
+                              transaction?.withdrawal?.id
+                                ? "outgoing"
+                                : "incoming"
+                            }
+                            onClick={() => {}}
+                            amount={transaction?.amount}
+                          />
+                        ))
+                      ) : !isLastTransactionsError ? (
+                        "No Transactions Found"
+                      ) : (
+                        <></>
+                      )}
+                    </LoadingApi>
+                    <ErrorApiText error={isLastTransactionsError} />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        </>
       )}
     </>
   );

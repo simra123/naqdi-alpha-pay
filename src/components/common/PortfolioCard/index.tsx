@@ -14,6 +14,7 @@ type PortfolioProps = {
   CurrencyTicker: string;
   ChartLineData: any;
   Balance: number;
+  isWalletHasFullAccess: boolean;
   onSend: () => void;
   onRecieve: () => void;
   onTransfer: () => void;
@@ -26,6 +27,7 @@ const PortfolioCard = ({
   CurrencyName,
   CurrencyTicker,
   IconSrc,
+  isWalletHasFullAccess,
   onRecieve,
   onSend,
   onTransfer,
@@ -73,24 +75,45 @@ const PortfolioCard = ({
       >
         <div className="hidden 2.5xl:block">
           <BorderedIconButton
-            className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-green-300 active:!bg-green-300 bg-opacity-20 hover:!bg-green-200 !border-0"
-            onClick={onRecieve}
+            tooltipId="recieve-card-button"
+            className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-green-300 bg-opacity-20  !border-0"
+            disabled={!isWalletHasFullAccess}
+            tooltip={
+              !isWalletHasFullAccess &&
+              "You don't have sufficient permissions to initate a deposit."
+            }
+            hoveredClasses={`hover:!bg-green-200 active:!bg-green-300`}
+            onClick={isWalletHasFullAccess && onRecieve}
           >
             <ReciveIconGreen />
           </BorderedIconButton>
         </div>
         <div className="hidden 3xl:block">
           <BorderedIconButton
-            className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-red-300 active:!bg-red-300 bg-opacity-20 hover:!bg-red-200 !border-0"
-            onClick={onSend}
+            tooltipId="send-card-button"
+            disabled={!isWalletHasFullAccess}
+            tooltip={
+              !isWalletHasFullAccess &&
+              "You don't have sufficient permissions to initate a withdrawal."
+            }
+            className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-red-300 bg-opacity-20  !border-0"
+            hoveredClasses={`hover:!bg-red-200 active:!bg-red-300`}
+            onClick={isWalletHasFullAccess && onSend}
           >
             <SendIconRed />
           </BorderedIconButton>
         </div>
         <div className="hidden 3.5xl:block">
           <BorderedIconButton
-            className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-purple-300 active:!bg-purple-300 bg-opacity-20 hover:!bg-purple-200 !border-0"
-            onClick={onTransfer}
+            tooltipId="transfer-card-button"
+            disabled={!isWalletHasFullAccess}
+            className="w-[55px] h-[55px] 3.75xl:w-[75px] 3.75xl:h-[75px] bg-purple-300  bg-opacity-20  !border-0"
+            tooltip={
+              !isWalletHasFullAccess &&
+              "You don't have sufficient permissions to initate a transfer."
+            }
+            hoveredClasses={`hover:!bg-purple-200 active:!bg-purple-300`}
+            onClick={isWalletHasFullAccess && onTransfer}
           >
             <TransferIconPurple />
           </BorderedIconButton>
