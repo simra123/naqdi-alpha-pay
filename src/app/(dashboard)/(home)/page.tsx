@@ -382,7 +382,7 @@ const Home = () => {
                           : coinName?.toLowerCase();
                         return (
                           <PortfolioCard
-                            Balance={roundToPrecision(asset?.totalAmount, 4)}
+                            Balance={asset?.totalAmount}
                             IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
                             ChartLineData={currencyHistoryData}
                             CurrencyName={coinName}
