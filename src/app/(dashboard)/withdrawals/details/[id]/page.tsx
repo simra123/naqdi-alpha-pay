@@ -37,7 +37,7 @@ import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
 import { getPermission } from "@/utils/cookies";
 import { Tooltip } from "react-tooltip";
-import useUpdateEffect from "@/hooks/useUpdateEffect";
+import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -203,11 +203,11 @@ const WithdrawalDetails = ({ params }) => {
     getWithdrawalDetails();
   }, []);
 
-  useUpdateEffect(() => {
+  useFirstRenderEffect(() => {
     if (user?.role == Role.ADMIN) {
       getWithdrawalWallets();
     }
-  }, []);
+  });
 
   const handleWithdrawalType = (type: Withdrawal_Type) => () => {
     setWithdrawalType(type);
