@@ -37,6 +37,7 @@ import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
 import { getPermission } from "@/utils/cookies";
 import { Tooltip } from "react-tooltip";
+import useUpdateEffect from "@/hooks/useUpdateEffect";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -199,16 +200,13 @@ const WithdrawalDetails = ({ params }) => {
   };
 
   useEffect(() => {
-    if (isMounted) {
-      getWithdrawalDetails();
-      if (user?.role == Role.ADMIN) {
-        getWithdrawalWallets();
-      }
-      isMounted = false;
+    getWithdrawalDetails();
+  }, []);
+
+  useUpdateEffect(() => {
+    if (user?.role == Role.ADMIN) {
+      getWithdrawalWallets();
     }
-    return () => {
-      isMounted = false; // Cleanup when component unmounts
-    };
   }, []);
 
   const handleWithdrawalType = (type: Withdrawal_Type) => () => {
