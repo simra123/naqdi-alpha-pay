@@ -35,6 +35,7 @@ import { TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
+import { Tooltip } from "react-tooltip";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -97,7 +98,7 @@ const transactionsList_table_columns: TableColumns = [
 ];
 
 const WithdrawalDetails = ({ params }) => {
-  let isMounted = true
+  let isMounted = true;
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
   const router = useRouter();
@@ -189,7 +190,7 @@ const WithdrawalDetails = ({ params }) => {
         )
       ),
       successCallBack: (response: any) => {
-        setTotalWallets(response?.totalItems)
+        setTotalWallets(response?.totalItems);
         setWallets((wals) => [...wals, ...response?.wallets]);
         setCurrentWalletsPage((page) => page + 1);
       },
@@ -197,14 +198,12 @@ const WithdrawalDetails = ({ params }) => {
   };
 
   useEffect(() => {
-
     if (isMounted) {
-
       getWithdrawalDetails();
       if (user?.role == Role.ADMIN) {
         getWithdrawalWallets();
       }
-      isMounted = false
+      isMounted = false;
     }
     return () => {
       isMounted = false; // Cleanup when component unmounts
@@ -256,10 +255,11 @@ const WithdrawalDetails = ({ params }) => {
 
           <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
-            label={`${withdrawalDetails?.unit} ${withdrawalDetails?.standard
-              ? `(${withdrawalDetails?.standard})`
-              : ""
-              } Wallet Address`}
+            label={`${withdrawalDetails?.unit} ${
+              withdrawalDetails?.standard
+                ? `(${withdrawalDetails?.standard})`
+                : ""
+            } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
             copyable
             link={showExplorerDetailsByChain({
@@ -291,7 +291,7 @@ const WithdrawalDetails = ({ params }) => {
           />
         </div>
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <PaymentIcon active={false}/>
+          <PaymentIcon active={false} />
           <h5 className="text-purple-100 text-h5 font-semibold">Withdrawals</h5>
         </div>
 
@@ -309,8 +309,10 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Net Amount"
-            value={`${roundToPrecision(withdrawalDetails?.requested_amount, 10)} ${withdrawalDetails?.unit
-              }`}
+            value={`${roundToPrecision(
+              withdrawalDetails?.requested_amount,
+              10
+            )} ${withdrawalDetails?.unit}`}
           />
         </div>
 
@@ -393,23 +395,32 @@ const WithdrawalDetails = ({ params }) => {
 
               <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
                 <button
-                  className={`w-full  ${withdrawalType == Withdrawal_Type.MANUAL
-                    ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                    : "font-medium text-custom-title-gray"
-                    }`}
+                  className={`w-full  ${
+                    withdrawalType == Withdrawal_Type.MANUAL
+                      ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                      : "font-medium text-custom-title-gray"
+                  }`}
                   onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
                 >
                   Manual
                 </button>
                 <button
-                  className={`w-full  ${withdrawalType != Withdrawal_Type.MANUAL
-                    ? "bg-purple-100 p-3 font-bold text-white rounded-large"
-                    : "font-medium text-custom-title-gray"
-                    }`}
-                  onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                  id="disabled-auto-withdrawal"
+                  className={`w-full rounded-large  ${
+                    withdrawalType != Withdrawal_Type.MANUAL
+                      ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                      : "font-medium text-custom-title-gray"
+                  }`}
+                  // onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                  disabled
                 >
                   Automatic
                 </button>
+                <Tooltip
+                  content="We are not providing automatic withdrawals at the moment."
+                  className="!bg-purple-500"
+                  anchorSelect="#disabled-auto-withdrawal"
+                />
               </div>
 
               <CustomTable
@@ -423,25 +434,26 @@ const WithdrawalDetails = ({ params }) => {
                 actions={true}
               />
 
-              {Withdrawal_Type.MANUAL == withdrawalType && wallets?.length < totalWallets && (
-                <>
-                  <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
+              {Withdrawal_Type.MANUAL == withdrawalType &&
+                wallets?.length < totalWallets && (
+                  <>
+                    <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
+                      <LoaderButton
+                        content={"Load More Wallets"}
+                        variant="contained"
+                        loading={isWithdrawalWalletsLoading}
+                        onClick={getWithdrawalWallets}
+                      />
+                    </div>
                     <LoaderButton
-                      content={"Load More Wallets"}
-                      variant="contained"
+                      content={<FiRefreshCw />}
+                      variant="outlined"
+                      className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
                       loading={isWithdrawalWalletsLoading}
                       onClick={getWithdrawalWallets}
                     />
-                  </div>
-                  <LoaderButton
-                    content={<FiRefreshCw />}
-                    variant="outlined"
-                    className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
-                    loading={isWithdrawalWalletsLoading}
-                    onClick={getWithdrawalWallets}
-                  />
-                </>
-              )}
+                  </>
+                )}
 
               <ErrorApiText error={isApproveWithdrawalError} />
 
