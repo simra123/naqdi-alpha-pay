@@ -150,7 +150,7 @@ const Account = () => {
                   label="Admin Fees"
                   value={user?.userDetails?.fees + "%"}
                 />
-                <Details
+                {/* <Details
                   label="Client Fees"
                   value={
                     <EditableField
@@ -161,7 +161,7 @@ const Account = () => {
                       value={2}
                     />
                   }
-                />
+                /> */}
               </RenderRoleBased>
             </>
           )}

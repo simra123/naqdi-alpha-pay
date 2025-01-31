@@ -36,6 +36,7 @@ import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
 import { getPermission } from "@/utils/cookies";
+import { Tooltip } from "react-tooltip";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -407,15 +408,22 @@ const WithdrawalDetails = ({ params }) => {
                     Manual
                   </button>
                   <button
-                    className={`w-full  ${
+                    id="disabled-auto-withdrawal"
+                    className={`w-full rounded-large  ${
                       withdrawalType != Withdrawal_Type.MANUAL
                         ? "bg-purple-100 p-3 font-bold text-white rounded-large"
                         : "font-medium text-custom-title-gray"
                     }`}
-                    onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                    // onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
+                    disabled
                   >
                     Automatic
                   </button>
+                  <Tooltip
+                    content="We are not providing automatic withdrawals at the moment."
+                    className="!bg-purple-500"
+                    anchorSelect="#disabled-auto-withdrawal"
+                  />
                 </div>
 
                 <CustomTable
