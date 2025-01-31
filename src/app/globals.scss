@@ -17,12 +17,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #FAF4F4;
+  background: #faf4f4;
   /* Color of the scrollbar track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E7DFDF;
+  background: #e7dfdf;
   /* Color of the scrollbar handle */
   border-radius: 5px;
   /* Rounded corners */
@@ -217,6 +217,10 @@ input[type="number"] {
   border-radius: 50%;
   display: none;
   position: absolute;
+}
+
+button:disabled {
+  @apply bg-gray-300 !important;
 }
 
 .custom-radio input[type="radio"]:checked::before {
