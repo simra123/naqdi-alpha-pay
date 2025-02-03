@@ -19,18 +19,48 @@ import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
 import EditableField from "@/components/common/IconField/EditableField";
+import useFormValidation from "@/hooks/useFormValidation";
+import { clientFeeSchema } from "@/models/clientFee";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { getClientFeeApi, setClientFeeApi } from "@/services/user";
+import { useDispatch } from "react-redux";
+import { setNotification } from "@/store/slices/modal.Slice";
+import LoadingApi from "@/components/common/LoadindApi";
+
+let initalFormValues = {
+  clientFee: 0,
+};
 
 const Account = () => {
+  const dispatch = useDispatch();
   const localUser = useLocalStorage("user");
   const [isMFaVerified, setIsMfaVerified] = useState(false);
+  const [isFeeEditing, setIsFeeEditing] = useState(false);
+  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [isQROpen, setQROpen] = useState(false);
+  const [initFeeVal, setInitFeeVal] = useState(5);
+
+  const [isClientFeeLoading, isClientFeeError, callClientFeeApi] = useApi();
+  const [isGetClientFeeLoading, isGetClientFeeError, callGetClientFeeApi] =
+    useApi({ initailLoading: true });
 
   const user =
     localUser?.role == Role.ADMIN
       ? localUser
       : useSelector((state: any) => state?.user?.data);
 
-  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
-  const [isQROpen, setQROpen] = useState(false);
+  // Initialize useFormValidation
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    values,
+    setValues,
+    validateField,
+    setErrors,
+  } = useFormValidation(initalFormValues, clientFeeSchema);
 
   const changePasswordModalToggler = () => {
     setChangePasswordOpen(!isChangePasswordOpen);
@@ -40,11 +70,49 @@ const Account = () => {
     setQROpen(!isQROpen);
   };
 
+  const setClientFeeHandler = async () => {
+    setIsFeeEditing(false);
+    await callApiHook({
+      apiCall: callClientFeeApi(setClientFeeApi({ amount: values?.clientFee })),
+      successCallBack: (response) => {
+        console.log("Setting Client Fee ", response);
+        SetFeeValues(values?.amount);
+        dispatch(
+          setNotification({
+            status: "success",
+            message: "Client Fee has been updated successfully.",
+          })
+        );
+      },
+    });
+  };
+
+  const getClientFeeHandler = async () => {
+    await callApiHook({
+      apiCall: callGetClientFeeApi(getClientFeeApi()),
+      successCallBack: (response) => {
+        console.log("Getting Client Fee ", response);
+        SetFeeValues(response?.fee);
+      },
+    });
+  };
+
+  const SetFeeValues = (fee) => {
+    setValues({ clientFee: fee });
+    setInitFeeVal(fee);
+  };
+
   useEffect(() => {
     if (user?.role == Role.ADMIN && user?.userDetails?.mfa) {
       setIsMfaVerified(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user?.role == Role.USER) {
+      getClientFeeHandler();
+    }
+  }, []);
 
   return (
     <>
@@ -150,18 +218,38 @@ const Account = () => {
                   label="Admin Fees"
                   value={user?.userDetails?.fees + "%"}
                 />
-                {/* <Details
-                  label="Client Fees"
-                  value={
-                    <EditableField
-                      onCancel={() => {}}
-                      onEdit={() => {}}
-                      inputClassName="py-2 max-w-[140px]"
-                      onChange={(event) => {}}
-                      value={2}
-                    />
+                <form
+                  onSubmit={(e) =>
+                    handleSubmit(e, setClientFeeHandler, () =>
+                      console.log("Something went wrong")
+                    )
                   }
-                /> */}
+                >
+                  <Details
+                    label="Client Fees"
+                    value={
+                      <LoadingApi
+                        loading={isClientFeeLoading || isGetClientFeeLoading}
+                      >
+                        <EditableField
+                          onCancel={(initalValue) =>
+                            setValues({ clientFee: initalValue })
+                          }
+                          inputClassName="py-2 max-w-[140px]"
+                          onChange={handleChange}
+                          value={values?.clientFee}
+                          initalValue={initFeeVal}
+                          type={"number"}
+                          name="clientFee"
+                          error={errors?.clientFee}
+                          isEditing={isFeeEditing}
+                          setIsEditing={setIsFeeEditing}
+                        />
+                      </LoadingApi>
+                    }
+                  />
+                </form>
+                <ErrorApiText error={isClientFeeError || isGetClientFeeError} />
               </RenderRoleBased>
             </>
           )}
