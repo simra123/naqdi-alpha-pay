@@ -279,7 +279,7 @@ const KYCUserID = ({ params }) => {
           <ErrorApiText error={isKYCSubmitError} />
 
           <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
-            {userDetails?.kyc_status == "pending" ? (
+            {!userDetails?.kyc_approved && (
               <>
                 <LoaderButton
                   content={"Reject"}
@@ -294,26 +294,6 @@ const KYCUserID = ({ params }) => {
                   onClick={handleSubmit(statuses.APPROVED)}
                   content={"Approve"}
                 />
-              </>
-            ) : (
-              <>
-                {userDetails?.kyc_approved && (
-                  <LoaderButton
-                    content={"Reject"}
-                    color="error"
-                    onClick={toggleRejectHandler}
-                    variant="text"
-                  />
-                )}
-
-                {!userDetails?.kyc_approved && (
-                  <LoaderButton
-                    variant="text"
-                    color="success"
-                    onClick={handleSubmit(statuses.APPROVED)}
-                    content={"Approve"}
-                  />
-                )}
               </>
             )}
           </div>
