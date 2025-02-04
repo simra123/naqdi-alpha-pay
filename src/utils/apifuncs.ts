@@ -1,3 +1,5 @@
+import { ModulesEnum } from "@/constants/types";
+
 const errorsArray = [400, 401, 404, 500];
 
 interface callApi {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Link from "next/link";
 import {
   AccountBalance,
@@ -6,6 +6,7 @@ import {
   Key,
   KeyboardArrowLeft,
   KeyboardArrowRight,
+  PersonRounded,
   Wallet,
 } from "@mui/icons-material";
 import { usePathname, useRouter } from "next/navigation";
@@ -13,11 +14,17 @@ import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import {
   DashboardIcon,
+  DoubleLeftIcon,
+  DoubleRightIcon,
+  LogoutDoorIcon,
   LogoutIcon,
   NeedHelpIcon,
+  NotificationIcon,
   onBoardingIcon,
   PaymentsIcon,
   SettingsIcon,
+  SupportIcon,
+  ThemeChangeIcon,
   TransactionsIcon,
   WithdrawalIcon,
 } from "@/assets/Svgs";
@@ -25,12 +32,18 @@ import "./sidebar.scss";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { setUser } from "@/store/slices/userSlice";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
+import { STEPS } from "@/constants/onboarding";
+import { FaUsers } from "react-icons/fa";
+import { BorderedIconButton } from "../IconButton";
 
 interface NavItem {
   name: string;
   icon: any;
   path: string;
   roles: any[];
+  module?: ModulesEnum;
   sub_nav?: NavItem[];
 }
 
@@ -49,17 +62,20 @@ const nav_items: NavItem[] = [
     icon: DashboardIcon,
     path: "/",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.wallet,
   },
   {
-    name: "Users",
-    icon: Assignment,
+    name: "Merchants",
+    icon: FaUsers,
     path: "/users",
     roles: [Role.ADMIN],
+    module: ModulesEnum.merchant,
   },
   {
     name: "KYC Requests",
     icon: Assignment,
     path: "/kyc",
+    module: ModulesEnum.kyc,
     roles: [Role.ADMIN],
   },
   // {
@@ -73,18 +89,21 @@ const nav_items: NavItem[] = [
     icon: PaymentsIcon,
     path: "/payments",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.payment,
   },
   {
     name: "Transactions",
     icon: TransactionsIcon,
     path: "/transactions",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.transaction,
   },
   {
     name: "Withdrawals",
     icon: WithdrawalIcon,
     path: "/withdrawals",
     roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.withdrawal,
   },
   // {
   //   name: "Payouts",
@@ -104,17 +123,19 @@ const nav_items: NavItem[] = [
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
-      // {
-      //   name: "Users",
-      //   icon: PersonRounded,
-      //   path: "/settings/users",
-      //   roles: [Role.USER],
-      // },
+      {
+        name: "Users",
+        icon: PersonRounded,
+        path: "/settings/users",
+        roles: [Role.USER, Role.ADMIN],
+        module: ModulesEnum.user,
+      },
       {
         name: "Integrations",
         icon: Key,
         path: "/settings/integrations",
         roles: [Role.USER],
+        module: ModulesEnum.integration,
       },
     ],
   },
@@ -137,15 +158,43 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);
-  let CurrentNav =
-    user?.role == Role.ADMIN
-      ? nav_items
-      : user?.userDetails && user?.userDetails?.fees
-      ? nav_items
-      : boarding_nav_items;
 
-  console.log({ CurrentNav , user });
+  const getCurrentNav = useCallback(() => {
+    let CurrentNav = [];
+    console.log(user);
 
+    if (
+      user?.role == Role.ADMIN ||
+      (user?.parentUser && user?.userDetails?.mfa) ||
+      (!user?.parentUser && user?.userDetails && user?.userDetails?.fees)
+    ) {
+      return nav_items;
+    } else {
+      return boarding_nav_items;
+    }
+
+    return CurrentNav;
+  }, [user]);
+
+  // Check if the user has at least read access for a specific module
+  const hasAccess = useCallback(
+    (module: ModulesEnum | undefined) => {
+      if (!module) return true; // No module specified, render item
+
+      const permissions = user?.permissions || [];
+      const modulePermission = permissions.find(
+        (perm: any) => perm.permission.module === module
+      );
+
+      // Check if user has at least read access
+      return (
+        modulePermission &&
+        (modulePermission.permission.access_level == AccessLevelEnum.read ||
+          modulePermission.permission.access_level == AccessLevelEnum.full)
+      );
+    },
+    [user]
+  );
   // Function to toggle sub-navigation
   const toggleSubNav = (name: string, subnav: any) => {
     if (subnav) {
@@ -161,8 +210,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const logoutHandler = () => {
     Cookies.remove("token");
     Cookies.remove("user");
-    dispatch(setUser(null));
     router.replace("/login");
+    dispatch(resetSteps({}));
+    dispatch(setUser(null));
   };
 
   // Close sidebar if clicked outside
@@ -171,7 +221,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   };
 
   return (
-    <div className="md:pl-5 flex items-center">
+    <div className="flex">
       {isOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -180,36 +230,44 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       )}
 
       <div
-        className={`relative transition-all ${isCollapsed ? "w-20" : "w-64"}`}
+        className={`relative transition-all ${isCollapsed ? "w-32" : "w-64"}`}
       >
         <button
-          className="absolute hidden md:flex aspect-square w-10 h-10 p-2 -right-5 top-16 z-30 items-center justify-center bg-pink-gradient-vertical rounded-full shadow-md"
+          className={`absolute hidden md:flex ${
+            isCollapsed ? "-right-[21px]" : "right-0"
+          } top-[104px] z-30 items-center justify-center bg-orange-500 h-[17px] w-[22px]  shadow-md`}
           onClick={toggleSidebar}
         >
-          {isCollapsed ? (
-            <KeyboardArrowRight className="text-[24px] text-white" />
-          ) : (
-            <KeyboardArrowLeft className="text-[24px] text-white" />
-          )}
+          {isCollapsed ? <DoubleRightIcon /> : <DoubleLeftIcon />}
         </button>
 
         <div
-          className={`py-5 min-h-full w-full max-w-64 md:min-h-[calc(100vh-40px)] md:max-h-[calc(100vh-40px)] md:overflow-hidden bg-pink-gradient-vertical md:rounded-large flex flex-col  justify-between SidebarWrapper fixed top-0 left-0 z-50 md:static transform ${
+          className={`p-6 pt-10 min-h-full w-full max-w-64 md:overflow-hidden flex flex-col bg-white border-r border-light-white justify-between SidebarWrapper fixed top-0 left-0 z-50 md:static transform ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           } transition-all duration-300 ease-in-out md:translate-x-0`}
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the sidebar
         >
           <div className="flex flex-col gap-3">
-            <div className="logo mt-6 mb-12 p-2">
+            <div className="logo mb-12 ">
               <h3 className="text-center text-white text-p120 font-bold">
-                {isCollapsed ? "A" : "ALPHASPAY"}
+                {!isCollapsed ? (
+                  <img src="/logo-new.png" className="w-[160px]" alt="Logo" />
+                ) : (
+                  <img
+                    src="/logo-small.png"
+                    className="w-[60px] m-auto"
+                    alt="Logo"
+                  />
+                )}
               </h3>
             </div>
             <div className="max-h-[calc(100vh-350px)] overflow-y-auto sidebar-scrollbar">
-              <div className="p-2 flex flex-col gap-3">
-                {CurrentNav.map(
-                  ({ icon: Icon, name, path, sub_nav, roles }) =>
-                    roles.includes(user?.role) && (
+              <div className=" flex flex-col gap-3">
+                {getCurrentNav().map(
+                  ({ icon: Icon, name, path, sub_nav, roles, module }) =>
+                    roles &&
+                    roles.includes(user?.role) &&
+                    hasAccess(module) && (
                       <div
                         className={`flex flex-col gap-2 ${
                           (pathname === path || name == openSubNav) &&
@@ -219,8 +277,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                       >
                         <Link
                           href={path}
-                          className={`flex gap-2 navLink items-center transition-all ${
-                            isCollapsed && "justify-center"
+                          className={`flex gap-3 navLink items-center transition-all ${
+                            isCollapsed &&
+                            "justify-center h-[58px] w-[68px] m-auto"
                           } ${
                             (pathname === path || name == openSubNav) &&
                             "active"
@@ -231,14 +290,23 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                             <Icon
                               className={` ${
                                 pathname === path || name == openSubNav
-                                  ? "!fill-purple-100 w-6 h-6"
-                                  : "fill-white w-5 h-5"
+                                  ? "!fill-purple-500 w-6 h-6"
+                                  : "w-5 h-5"
                               }`}
+                              active={pathname === path || name == openSubNav}
                             />
                           </div>
                           {!isCollapsed &&
                             (path ? (
-                              <span>{name}</span>
+                              <span
+                                className={
+                                  pathname === path || name == openSubNav
+                                    ? "font-bold"
+                                    : "font-semibold"
+                                }
+                              >
+                                {name}
+                              </span>
                             ) : (
                               <span className="cursor-pointer">{name}</span>
                             ))}
@@ -251,15 +319,18 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                               } pb-3`}
                             >
                               {sub_nav.map(
-                                ({ icon: Icon, name, path, roles }) =>
-                                  roles.includes(user?.role) && (
+                                ({ icon: Icon, name, path, roles, module }) =>
+                                  roles &&
+                                  roles.includes(user?.role) &&
+                                  hasAccess(module) && (
                                     <Link
                                       href={path}
-                                      className={`flex gap-2  items-center font-medium ${
+                                      className={`flex gap-2  items-center font-medium text-p120 text-purple-500 ${
                                         isCollapsed && "justify-center"
                                       } ${
-                                        pathname === path &&
-                                        "text-purple-100 font-semibold text-[17px]"
+                                        pathname === path
+                                          ? "font-semibold"
+                                          : "font-bold"
                                       }`}
                                       key={name}
                                     >
@@ -268,7 +339,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                                           <Icon
                                             className={` ${
                                               pathname === path
-                                                ? "!fill-purple-100 w-6 h-6"
+                                                ? "!fill-purple-500 w-6 h-6"
                                                 : "fill-black-100 w-5 h-5"
                                             }`}
                                           />
@@ -287,31 +358,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
           </div>
 
-          <div className="border-t-[1px] flex gap-3 flex-col border-placeholder-gray pt-7 pb-5 px-2">
-            {user?.role == Role.USER && (
-              <div
-                className={`flex gap-2 navLink items-center cursor-pointer ${
-                  isCollapsed && "justify-center"
-                }`}
-                onClick={() => router.push("/support")}
-              >
-                <div>
-                  <NeedHelpIcon className={"fill-white w-5 h-5"} />
-                </div>
-                {!isCollapsed && <span>Need Help?</span>}
-              </div>
-            )}
-            <div
-              className={`flex gap-2 navLink items-center cursor-pointer ${
-                isCollapsed && "justify-center"
-              }`}
-              onClick={logoutHandler}
-            >
-              <div>
-                <LogoutIcon className={"fill-white w-5 h-5"} />
-              </div>
-              {!isCollapsed && <span>Logout</span>}
-            </div>
+          <div className="items-center gap-2 md:hidden flex border-t border-light-purple pt-5">
+            <BorderedIconButton>
+              <SupportIcon />
+            </BorderedIconButton>
+            <BorderedIconButton>
+              <ThemeChangeIcon />
+            </BorderedIconButton>
+            <BorderedIconButton>
+              <NotificationIcon />
+            </BorderedIconButton>
+            <BorderedIconButton onClick={logoutHandler}>
+              <LogoutDoorIcon />
+            </BorderedIconButton>
           </div>
         </div>
       </div>

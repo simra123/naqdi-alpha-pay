@@ -1,5 +1,5 @@
-import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
 import React, { useState, useRef, useEffect } from "react";
+import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
 
 interface Props {
   label?: string | any;
@@ -146,7 +146,10 @@ const IconSelectBox = ({
                 : "border-light-gray focus:border-purple-100"
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
           >
-            {value || (
+            {value ? (
+              filteredOptions?.find((item) => item?.value == value)?.label ||
+              value
+            ) : (
               <span className="text-blackGrey-placeholder">{placeholder}</span>
             )}
           </div>
@@ -173,8 +176,8 @@ const IconSelectBox = ({
                       : index === options?.length - 1 && "rounded-b-md"
                   } ${
                     value === option.value
-                      ? "bg-light-purple text-purple-100 font-medium"
-                      : "hover:bg-light-purple hover:text-black-100"
+                      ? "bg-purple-light-purple text-purple-100 font-medium"
+                      : "hover:bg-purple-light-purple hover:text-black-100"
                   }`}
                 >
                   {option?.label || option?.value}

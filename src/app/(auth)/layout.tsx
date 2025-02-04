@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import useAuth from "@/hooks/useAuth";
 import { usePathname, useRouter } from "next/navigation";
@@ -19,10 +19,10 @@ const Authlayout = ({ children }) => {
     if (pathname.includes("email-verification-required")) {
       logOut();
     } else {
-      console.log("layout is running and sendinng to / ", {
-        pathname,
-        isAuthenticated,
-      });
+      // console.log("layout is running and sendinng to / ", {
+      //   pathname,
+      //   isAuthenticated,
+      // });
       return router.push("/");
     }
   }

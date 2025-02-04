@@ -11,13 +11,12 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { formatUsers } from "@/utils/dataFormatters";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { Role } from "@/constants/roles";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
-
-
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const usersList_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
@@ -41,7 +40,9 @@ const usersList_table_columns: TableColumns = [
 const Users = () => {
   const router = useRouter();
   const [users, setUsers] = useState([]);
-  const [isUsersLoading, isUsersError, callUsersApi] = useApi({initailLoading:true});
+  const [isUsersLoading, isUsersError, callUsersApi] = useApi({
+    initailLoading: true,
+  });
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getAllUsersAdmin = async () => {
@@ -98,4 +99,8 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default PermissionAccess(
+  Users,
+  ModulesEnum.merchant,
+  AccessLevelEnum.read
+);

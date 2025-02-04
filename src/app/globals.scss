@@ -6,6 +6,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  @apply font-sans;
   font-optical-sizing: auto;
 }
 
@@ -16,12 +17,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #faf4f4;
   /* Color of the scrollbar track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: black;
+  background: #e7dfdf;
   /* Color of the scrollbar handle */
   border-radius: 5px;
   /* Rounded corners */
@@ -91,7 +92,6 @@
   }
 }
 
-
 .grid-template-details {
   display: grid;
   max-width: 800px;
@@ -153,12 +153,12 @@ input[type="number"] {
 }
 
 /* On mouse-over, add a grey background color */
-.custom-checkbox:hover input[type="checkbox"]~.checkmark {
+.custom-checkbox:hover input[type="checkbox"] ~ .checkmark {
   background-color: #ccc;
 }
 
 /* When the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked~.checkmark {
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
   @apply bg-purple-100;
   border: none;
 }
@@ -171,7 +171,7 @@ input[type="number"] {
 }
 
 /* Show the checkmark when checked */
-.custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
   display: block;
 }
 
@@ -196,8 +196,8 @@ input[type="number"] {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
   border: 1.5px solid;
   @apply border-purple-100;
   border-radius: 50%;
@@ -217,6 +217,10 @@ input[type="number"] {
   border-radius: 50%;
   display: none;
   position: absolute;
+}
+
+button:disabled {
+  @apply bg-gray-300 !important;
 }
 
 .custom-radio input[type="radio"]:checked::before {

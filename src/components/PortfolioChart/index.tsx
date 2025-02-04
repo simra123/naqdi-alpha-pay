@@ -1,0 +1,312 @@
+"use client";
+
+import React, { useCallback, useEffect, useState } from "react";
+import { Chart as ChartJS, registerables } from "chart.js";
+import { Chart } from "react-chartjs-2";
+import moment from "moment";
+import { callApiHook } from "@/utils/apifuncs";
+import { getPortfolioActivityChartApi } from "@/services/wallet";
+import { useApi } from "@/hooks/useApi";
+import ErrorApiText from "../common/ErrorApiText";
+import LoadingApi from "../common/LoadindApi";
+import { unitName } from "@/constants/blockchains";
+import Image from "next/image";
+import IconSelectBox from "../common/IconSelectBox";
+
+// Custom plugin for the vertical dashed line
+const crosshairLinePlugin = {
+  id: "crosshairLine",
+  beforeDraw: (chart) => {
+    const { ctx, tooltip, chartArea } = chart;
+
+    if (tooltip && tooltip.opacity) {
+      const x = tooltip.caretX;
+
+      ctx.save();
+      ctx.strokeStyle = "#D1D1D1"; // Dashed line color
+      ctx.lineWidth = 1; // Line width
+      ctx.setLineDash([5, 5]); // Dash pattern (5px dash, 5px gap)
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top); // Start at the top of the chart
+      ctx.lineTo(x, chartArea.bottom); // Draw to the bottom
+      ctx.stroke();
+      ctx.restore();
+    }
+  },
+};
+
+ChartJS.register(...registerables, crosshairLinePlugin);
+
+const makeChartData = (data: {
+  sent: [];
+  received: [];
+  balances: [];
+  labels: [];
+}) => {
+  let greenColor = "#CFECE1";
+  let redColor = "#F7CAD8";
+  let purpleColor = "#643882";
+
+  let borderRadius = {
+    topLeft: 5, // Top-left radius
+    topRight: 5, // Top-right radius
+    bottomLeft: 0,
+    bottomRight: 0,
+  };
+  return {
+    labels: data?.labels,
+    datasets: [
+      {
+        type: "line",
+        label: "Balance",
+        data: data?.balances,
+        borderColor: purpleColor,
+        tension: 0.4,
+        pointRadius: 5, // Size of the point
+        hoverRadius: 12,
+        hoverBorderWidth: 3,
+        pointBackgroundColor: '#fff', // Point color
+        pointBorderColor: purpleColor, // Point border color
+        pointBorderWidth: 2, // Border width of the point
+      },
+      {
+        type: "bar",
+        label: "Received",
+        data: data?.received,
+        backgroundColor: greenColor,
+        borderRadius,
+      },
+      {
+        type: "bar",
+        label: "Sent",
+        data: data?.sent,
+        backgroundColor: redColor,
+        borderRadius,
+      },
+    ],
+  };
+};
+
+const PortfolioChart = ({
+  interval,
+  setInterval,
+  unit,
+}: {
+  interval: string;
+  setInterval: any;
+  unit: string;
+}) => {
+  // State for selected interval
+
+  const [chartData, setChartData] = useState<{}>({});
+  const [
+    isPortfolioActivityLoading,
+    isPortfolioActivityError,
+    callPortfolioActivityApi,
+  ] = useApi({
+    initailLoading: true,
+  });
+
+  useEffect(() => {
+    getChartData();
+  }, [interval, unit]);
+
+  const getChartData = useCallback(async () => {
+    await callApiHook({
+      apiCall: callPortfolioActivityApi(
+        getPortfolioActivityChartApi({ duration: interval, unit })
+      ),
+      successCallBack: (response: any) => {
+        setChartData(makeChartData(response));
+      },
+    });
+  }, [unit, interval]);
+
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setInterval(value);
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+        position: "bottom" as const,
+        padding: 30,
+        labels: {
+          usePointStyle: true, // This will use small circle icons for the legend
+          // pointStyle: "circle", // Specify the point style as circle
+          pointStyleWidth: 10, // Control the size of the point
+          boxHeight: 7,
+          generateLabels: function (chart) {
+            // Get the default legend labels
+            const labels =
+              ChartJS.defaults.plugins.legend.labels.generateLabels(chart);
+
+            // Move 'Balance' label to the last position
+            const balanceLabel = labels.find(
+              (label) => label.text === "Balance"
+            );
+            if (balanceLabel) {
+              // Remove it from the original position
+              labels.splice(labels.indexOf(balanceLabel), 1);
+              // Add it to the end
+              labels.push(balanceLabel);
+            }
+
+            return labels;
+          },
+        },
+      },
+      crosshairLine: {
+        lineColor: "#D9CCEE", // Dashed line color
+        lineWidth: 2, // Line width
+        dashPattern: [5, 5], // Dash pattern (5px dash, 5px gap)
+      },
+      tooltip: {
+        // mode: "index" as const,
+        // intersect: false,
+        enabled: false, // Disable default tooltip
+        external: (context) => {
+          let tooltipEl = document.getElementById("custom-tooltip");
+
+          // Create the tooltip element if it doesn't exist
+          if (!tooltipEl) {
+            tooltipEl = document.createElement("div");
+            tooltipEl.id = "custom-tooltip";
+            tooltipEl.style.position = "absolute";
+            tooltipEl.style.background = "#EBD1F1"; // Light purple background
+            tooltipEl.style.color = "#1F243B"; // Black-grey text
+            tooltipEl.style.borderRadius = "12px"; // Rounded corners
+            tooltipEl.style.padding = "8px 12px"; // Padding for content
+            tooltipEl.style.pointerEvents = "none";
+            tooltipEl.style.fontSize = "12px";
+            tooltipEl.style.fontFamily = "'Inter', sans-serif"; // Consistent font
+            tooltipEl.style.boxShadow = "0px 2px 4px rgba(0, 0, 0, 0.1)"; // Subtle shadow
+            tooltipEl.style.zIndex = "100";
+            tooltipEl.style.textAlign = "center"; // Center-align text
+            tooltipEl.style.opacity = "0"; // Initially hidden
+            tooltipEl.style.minWidth = "112px"
+            tooltipEl.style.minHeight = "45px"
+
+            document.body.appendChild(tooltipEl);
+          }
+
+          const tooltip = context.tooltip;
+
+          // Hide the tooltip if it's not visible
+          if (!tooltip || tooltip.opacity === 0) {
+            tooltipEl.style.opacity = "0";
+            return;
+          }
+
+          // Get chart position in the viewport
+          const chartRect = context.chart.canvas.getBoundingClientRect();
+
+          // Update tooltip position and style
+          tooltipEl.style.opacity = "1";
+          tooltipEl.style.left = `${chartRect.left + tooltip.caretX}px`;
+          tooltipEl.style.top = `${chartRect.top + tooltip.caretY - 15}px`;
+          tooltipEl.style.transform = "translate(-50%, -100%)"; // Adjust position above the caret
+
+          // Add content to the tooltip
+          if (tooltip.body && tooltip.body.length) {
+            tooltipEl.innerHTML = `
+             <div style="font-size: 12px; color: #000;">
+              ${tooltip.dataPoints[0].label} <!-- Display the label for the current index -->
+              </div>
+              <div style="font-weight: 600; font-size: 18px;">
+                ${tooltip.dataPoints[0].raw.toLocaleString()} <!-- Format the number -->
+              </div>
+                <span class="tooltip-arrow" 
+                 style="position: absolute; 
+                 width: 0; 
+                 height: 0; 
+                 border-left: 6px solid transparent; 
+                 border-right: 6px solid transparent; 
+                 border-top: 6px solid #EBD1F1; 
+                 bottom: -6px; 
+                 left: 50%; 
+                 transform: translateX(-50%);">
+                </span>
+            `;
+            // Append the arrow again after overwriting the content
+            const arrowEl = document.getElementById("custom-tooltip-arrow");
+            if (arrowEl) tooltipEl.appendChild(arrowEl);
+          }
+        },
+      },
+    },
+
+    scales: {
+      x: {
+        stacked: false,
+        grid: { display: false },
+      },
+      y: {
+        stacked: false,
+        grid: { color: "#e5e7eb" },
+        ticks: { stepSize: 0.1 },
+      },
+    },
+  };
+
+  return (
+    <div className="p-6 rounded-[28px] border border-purple-10">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          <Image
+            src={
+              unitName[unit?.toLowerCase()]
+                ? `/currencies/${unitName[
+                    unit?.toLowerCase()
+                  ]?.toLowerCase()}.png`
+                : `/avatar.png`
+            }
+            alt="Currency"
+            height={50}
+            width={50}
+            className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] rounded-full"
+          />
+          <h2 className="text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold leading-4">
+            {unitName[unit?.toLowerCase()] || "Portfolio"} History
+          </h2>
+        </div>
+        <div className="hidden gap-2 md:gap-4 lg:flex ">
+          {["daily", "weekly", "monthly", "lifetime"].map((int) => (
+            <button
+              key={int}
+              onClick={() => setInterval(int)}
+              className={`px-4 py-2 text-subtitle lg:text-base  rounded-full ${
+                interval === int
+                  ? "bg-purple-500 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {int.charAt(0).toUpperCase() + int.slice(1)}
+            </button>
+          ))}
+        </div>
+        <div className="block lg:hidden w-32">
+          <IconSelectBox
+            options={[
+              { label: "Daily", value: "daily" },
+              { label: "Weekly", value: "weekly" },
+              { label: "Monthly", value: "monthly" },
+              { label: "Lifetime", value: "lifetime" },
+            ]}
+            onChange={handleChange}
+            value={interval}
+          />
+        </div>
+      </div>
+      <LoadingApi loading={isPortfolioActivityLoading}>
+        <Chart data={chartData as any} type="line" options={options} />
+      </LoadingApi>
+      <ErrorApiText error={isPortfolioActivityError} />
+    </div>
+  );
+};
+
+export default PortfolioChart;

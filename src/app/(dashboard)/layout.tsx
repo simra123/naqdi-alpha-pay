@@ -38,6 +38,7 @@ const DashboardLayout = ({ children }) => {
       await callApiHook({
         apiCall: callUserDetailsApi(userDetailsApi()),
         successCallBack: (response) => {
+          console.log(response, "IN User Details APi In Layout for dashboard");
           updatedOnboardingCookies(response?.userDetails);
           dispatch(setUser(response));
           dispatch(validateSteps(response));
@@ -47,7 +48,6 @@ const DashboardLayout = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("dashoboard layout is running");
     getUserDetails();
   }, []);
 
@@ -61,14 +61,14 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <div className="md:flex md:gap-8 min-h-screen bg-bluish-gray">
+      <div className="md:flex min-h-screen">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
-        <div className="children h-[inherit] w-full p-5 md:px-0 flex-1 overflow-hidden">
-          <div className=" md:pr-5">
+        <div className="children h-[inherit] w-full md:px-0 flex-1 overflow-hidden">
+          <div>
             <Header navHandler={toggleSidebar} />
           </div>
-          <div className="md:max-h-[calc(100vh-170px)] md:overflow-y-auto md:pr-5">
+          <div className="md:max-h-[calc(100vh-95px)] md:overflow-y-auto p-2 xxs:p-6 md:p-8">
             {children}
           </div>
         </div>

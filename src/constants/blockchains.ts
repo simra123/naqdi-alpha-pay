@@ -1,5 +1,5 @@
 export enum STANDARD {
-  // BITCOIN = "Omni-layer",
+  BITCOIN = "Omni-layer",
   ETHEREUM = "ERC-20",
   TRON = "TRC-20",
 }
@@ -16,24 +16,32 @@ export const unitName = {
   btc: "Bitcoin",
   eth: "Ethereum",
   trx: "Tron",
+  usdt: "Tether",
+  usdc: "USDC",
 };
 
 export const standardBlockchain = {
-  "TRC-20": "tron",
-  "ERC-20": "ethereum",
+  [STANDARD.TRON]: "tron",
+  [STANDARD.ETHEREUM]: "ethereum",
+};
+
+export const tickerByStandard = {
+  [STANDARD.TRON]: "trx",
+  [STANDARD.ETHEREUM]: "eth",
+  [STANDARD.BITCOIN]: "btc",
 };
 
 export const blockchain_standards = {
   // bitcoin: "Omni-layer",
   // Btc: "Omni-layer",
   // BTC: "Omni-layer",
-  ethereum: "ERC-20",
-  Eth: "ERC-20",
-  ETH: "ERC-20",
-  tron: "TRC-20",
-  Tron: "TRC-20",
-  TRON: "TRC-20",
-  TRX: "TRC-20",
+  ethereum: STANDARD.ETHEREUM,
+  Eth: STANDARD.ETHEREUM,
+  ETH: STANDARD.ETHEREUM,
+  tron: STANDARD.TRON,
+  Tron: STANDARD.TRON,
+  TRON: STANDARD.TRON,
+  TRX: STANDARD.TRON,
 };
 
 export const production_networks = {
@@ -41,7 +49,7 @@ export const production_networks = {
 
   ethereum: [{ label: "Mainnet", value: "mainnet" }],
   tron: [{ label: "Mainnet", value: "mainnet" }],
-  USDT: [
+  usdt: [
     // {
     //   label: "Bitcoin(Omni Layer)",
     //   value: "Bitcoin",
@@ -50,24 +58,24 @@ export const production_networks = {
 
     {
       label: "Ethereum(ERC-20)",
-      value: "Ethereum",
+      value: "ethereum",
       standard: STANDARD.ETHEREUM,
     },
 
-    { label: "Tron(TRC-20)", value: `Tron`, standard: STANDARD.TRON },
+    { label: "Tron(TRC-20)", value: `tron`, standard: STANDARD.TRON },
   ],
-  USDC: [{ label: "Ethereum", value: "Ethereum", standard: STANDARD.ETHEREUM }],
+  usdc: [{ label: "Ethereum", value: "ethereum", standard: STANDARD.ETHEREUM }],
   // Btc: [{ label: "Bitcoin", value: "Bitcoin" }],
 
-  Eth: [{ label: "Ethereum", value: "Ethereum" }],
-  Tron: [{ label: "Tron", value: "Tron" }],
+  eth: [{ label: "Ethereum", value: "ethereum" }],
+  trx: [{ label: "Tron", value: "tron" }],
 };
 
 export const testnet_networks = {
   // bitcoin: [{ label: "Bitcoin", value: "Bitcoin" }],
-  ethereum: [{ label: "Ethereum", value: "Ethereum" }],
-  tron: [{ label: "Tron", value: "Tron" }],
-  USDT: [
+  ethereum: [{ label: "Ethereum", value: "ethereum" }],
+  tron: [{ label: "Tron", value: "tron" }],
+  usdt: [
     // {
     //   label: "BTC (Testnet)",
     //   value: "Bitcoin",
@@ -75,32 +83,35 @@ export const testnet_networks = {
     // },
     {
       label: "Sepolia (ERC-20)",
-      value: "Ethereum",
+      value: "ethereum",
       standard: STANDARD.ETHEREUM,
     },
 
     {
       label: "Nile (TRC-20)",
-      value: `Tron`,
+      value: `tron`,
       standard: STANDARD.TRON,
     },
   ],
-  USDC: [
+  usdc: [
     {
       label: "Sepolia (ERC-20)",
-      value: "Ethereum",
+      value: "ethereum",
       standard: STANDARD.ETHEREUM,
     },
   ],
   // Btc: [{ label: "Bitcoin", value: "Bitcoin" }],
 
-  Eth: [{ label: "Ethereum", value: "Ethereum" }],
-  Tron: [{ label: "Tron", value: "Tron" }],
+  eth: [{ label: "Ethereum", value: "ethereum" }],
+  trx: [{ label: "Tron", value: "tron" }],
 };
 
 export const blockchain_units = {
   ethereum: "Eth",
-  tron: "TRX",
+  tron: "Trx",
+  bitcoin: "Btc",
+  usdt: "USDT",
+  usdc: "USDC",
 };
 
 export const networks_available = {

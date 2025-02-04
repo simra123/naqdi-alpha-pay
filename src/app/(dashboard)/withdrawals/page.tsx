@@ -22,12 +22,13 @@ import Chip from "@/components/common/Chip";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { Add } from "@mui/icons-material";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import {
   blockchain_standards,
   standardBlockchain,
 } from "@/constants/blockchains";
+import PermissionAccess from "@/middleware/PermissionAccess";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
@@ -133,12 +134,16 @@ const Withdrawals = () => {
         </h3>
 
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-          <LoaderButton
-            content={"New Withdrawal"}
-            className="px-16"
-            variant="contained"
-            onClick={toggleCreateModal}
-          />
+          {PermissionAccess(
+            LoaderButton,
+            ModulesEnum.withdrawal,
+            AccessLevelEnum.full
+          )({
+            content: "New Withdrawal",
+            className: "px-16",
+            variant: "contained",
+            onClick: toggleCreateModal,
+          })}
         </RenderRoleBased>
       </div>
 
@@ -166,4 +171,8 @@ const Withdrawals = () => {
   );
 };
 
-export default Withdrawals;
+export default PermissionAccess(
+  Withdrawals,
+  ModulesEnum.withdrawal,
+  AccessLevelEnum.read
+);

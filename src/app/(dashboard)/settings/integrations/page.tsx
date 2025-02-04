@@ -14,7 +14,8 @@ import CustomTable from "@/components/common/CustomTable";
 import CreateApiKeyModal from "@/components/Modals/CreateApiKeyModal";
 import WebhookURLModal from "@/components/Modals/WebhookURLModal";
 import { useSelector } from "react-redux";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import PermissionAccess from "@/middleware/PermissionAccess";
 import IconField from "@/components/common/IconField";
 
 const Integrations = () => {
@@ -168,7 +169,7 @@ const Integrations = () => {
                   <h4 className="text-button sm:text-button font-semibold w-16">
                     Secret
                   </h4>
-                  <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => console.log('hello')} disabled value={webhookURL?.secret} />
+                  <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1 text-ellipsis" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => console.log('hello')} disabled value={webhookURL?.secret} />
 
                 </>)}
 
@@ -176,11 +177,17 @@ const Integrations = () => {
             </LoadingApi>
             <ErrorApiText error={iswebhookDetailsError} />
           </div>
-          <LoaderButton
-            content={"Update URL"}
-            variant="outlined"
-            onClick={toggleWebhookModal}
-          />
+          <>
+            {PermissionAccess(
+              LoaderButton,
+              ModulesEnum.integration,
+              AccessLevelEnum.full
+            )({
+              content: "Update URL",
+              variant: "outlined",
+              onClick: toggleWebhookModal,
+            })}
+          </>
         </div>
       </div>
 
@@ -194,12 +201,18 @@ const Integrations = () => {
                 API Keys
               </h2>
 
-              <LoaderButton
-                variant="outlined"
-                content={"New API Key"}
-                className="w-48"
-                onClick={toggleCreateModal}
-              />
+              <>
+                {PermissionAccess(
+                  LoaderButton,
+                  ModulesEnum.integration,
+                  AccessLevelEnum.full
+                )({
+                  variant: "outlined",
+                  content: "New API Key",
+                  className: "w-48",
+                  onClick: toggleCreateModal,
+                })}
+              </>
             </div>
           }
           columns={columns}
@@ -215,4 +228,8 @@ const Integrations = () => {
   );
 };
 
-export default Integrations;
+export default PermissionAccess(
+  Integrations,
+  ModulesEnum?.integration,
+  AccessLevelEnum?.read
+);

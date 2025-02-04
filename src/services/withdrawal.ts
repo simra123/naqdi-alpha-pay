@@ -18,6 +18,10 @@ export const getAdminWithdrawalsListApi = () => {
   return () => api.get(`wallet/withdrawals`);
 };
 
+export const getWithdrawableCurrenciesListApi = () => {
+  return () => api.get(`wallet/withdrawal/balance`);
+};
+
 export const getUserWithdrawalsListApi = () => {
   return () => api.get(`wallet/user-withdrawals`);
 };

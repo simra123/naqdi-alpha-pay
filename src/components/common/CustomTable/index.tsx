@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import FilterDropdown from "./FilterDropdown";
 import {
   ArrowUpward,
@@ -11,7 +11,7 @@ import {
   FirstPage,
   Add,
 } from "@mui/icons-material"; // Import MUI icons
-import { MdCopyAll } from 'react-icons/md'
+import { MdCopyAll } from "react-icons/md";
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
 import IconButton from "../IconButton";
@@ -76,7 +76,7 @@ const CustomTable = ({
     if (selectable) {
       setSelectAll(
         currentRows?.length > 0 &&
-        currentRows.every((row) => selectedRows.includes(row))
+          currentRows.every((row) => selectedRows.includes(row))
       );
     }
   }, [currentRows, selectedRows, selectable]);
@@ -113,26 +113,26 @@ const CustomTable = ({
   useEffect(() => {
     const filteredRows = searchQuery
       ? rows.filter((row) =>
-        columns.some((column) =>
-          row[column.field]
-            ?.toString()
-            ?.toLowerCase()
-            ?.includes(searchQuery?.toLowerCase()?.trim())
+          columns.some((column) =>
+            row[column.field]
+              ?.toString()
+              ?.toLowerCase()
+              ?.includes(searchQuery?.toLowerCase()?.trim())
+          )
         )
-      )
       : rows;
 
     const sortedRows = sortConfig
       ? filteredRows.sort((a, b) => {
-        if (sortConfig.direction === "ascending") {
-          if (a[sortConfig.key] < b[sortConfig.key]) return -1;
-          if (a[sortConfig.key] > b[sortConfig.key]) return 1;
-        } else if (sortConfig.direction === "descending") {
-          if (a[sortConfig.key] < b[sortConfig.key]) return 1;
-          if (a[sortConfig.key] > b[sortConfig.key]) return -1;
-        }
-        return 0;
-      })
+          if (sortConfig.direction === "ascending") {
+            if (a[sortConfig.key] < b[sortConfig.key]) return -1;
+            if (a[sortConfig.key] > b[sortConfig.key]) return 1;
+          } else if (sortConfig.direction === "descending") {
+            if (a[sortConfig.key] < b[sortConfig.key]) return 1;
+            if (a[sortConfig.key] > b[sortConfig.key]) return -1;
+          }
+          return 0;
+        })
       : filteredRows;
 
     setCurrentRows(
@@ -166,9 +166,10 @@ const CustomTable = ({
     <div
       className={
         tableWrapper &&
-        `rounded-medium flex flex-col justify-between md:shadow-sm sm:bg-white sm:p-6 md:p-10 ${pagination
-          ? "min-h-[calc(100vh-120px)] sm:min-h-[calc(100vh-240px)]"
-          : "pb-8 sm:pb-12"
+        `rounded-medium flex flex-col justify-between md:shadow-sm ${
+          pagination
+            ? "min-h-[calc(100vh-120px)] sm:min-h-[calc(100vh-240px)]"
+            : "pb-8 sm:pb-0"
         } `
       }
       ref={tableRef}
@@ -230,8 +231,9 @@ const CustomTable = ({
           actions
         )}
         <div
-          className={`overflow-x-auto ${pagination && "min-h-[calc(100vh-350px)]"
-            } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
+          className={`overflow-x-auto ${
+            pagination && "min-h-[calc(100vh-350px)]"
+          } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
         >
           <table className="w-full text-caption sm:text-p16">
             {/* Table Headers Below */}
@@ -300,8 +302,9 @@ const CustomTable = ({
                   {columns.map((column) => (
                     <td
                       key={column.field}
-                      className={`${column.dataValidator ? "py-4" : "py-6"
-                        } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                      className={`${
+                        column.dataValidator ? "py-4" : "py-6"
+                      } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     >
                       {column.dataValidator ? (
                         <CopyButtonColumn
@@ -400,6 +403,63 @@ const CopyButtonColumn = ({
   );
 };
 
+const getPaginationPages = (
+  currentPage: number,
+  totalPages: number,
+  siblingCount: number = 1
+): (number | string)[] => {
+  // Ensure totalPages and currentPage are valid
+  if (totalPages <= 0 || currentPage < 1 || currentPage > totalPages) return [];
+
+  const totalPageNumbers = siblingCount * 2 + 3; // 5 includes current, first, last, and 2 ellipses
+  const pages: (number | string)[] = [];
+
+  if (totalPages <= totalPageNumbers) {
+    console.log("Show all pages if total pages fit within the range");
+    // Show all pages if total pages fit within the range
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+  const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+  const showLeftEllipsis = leftSiblingIndex > 2;
+  const showRightEllipsis = rightSiblingIndex < totalPages - 1;
+
+  console.log({
+    leftSiblingIndex,
+    rightSiblingIndex,
+    showLeftEllipsis,
+    showRightEllipsis,
+  });
+
+  if (showLeftEllipsis) {
+    pages.push("..."); // Left ellipsis
+  }
+
+  // Add middle pages
+  for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+    pages.push(i);
+  }
+
+  if (showRightEllipsis) {
+    pages.push("..."); // Right ellipsis
+  }
+  if (!pages?.includes(1)) {
+    pages?.unshift(1);
+  }
+
+  // Add the last page
+  if (!pages?.includes(totalPages)) {
+    pages.push(totalPages);
+  }
+
+  return pages;
+};
+
 const Pagination = ({
   currentPage,
   totalPages,
@@ -409,15 +469,23 @@ const Pagination = ({
   createHandler,
 }) => {
   const user = useLocalStorage("user");
+
+  const pages = useMemo(
+    () => getPaginationPages(currentPage, totalPages),
+    [currentPage, pageSize, totalPages]
+  );
+
+  console.log({ pages });
   return (
     <div className="flex justify-center sm:justify-between items-center mt-4 relative">
       {/* Pages Indicator */}
-      <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${(currentPage - 1) * pageSize + 1
-        } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
+      <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${
+        (currentPage - 1) * pageSize + 1
+      } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
 
       {/* Pages Navigation */}
       <div className="relative w-full">
-        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm shadow-sm sm:shadow-none sm:p-0">
+        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm sm:p-0">
           <IconButton
             className={
               currentPage === 1
@@ -440,18 +508,22 @@ const Pagination = ({
           >
             <NavigateBefore />
           </IconButton>
-          {Array.from({ length: totalPages }, (_, i) => (
-            <IconButton
-              key={i + 1}
-              className={
-                currentPage === i + 1 &&
-                "text-black-100 font-bold bg-light-gray"
-              }
-              onClick={() => onChangePage(i + 1)}
-            >
-              {i + 1}
-            </IconButton>
-          ))}
+          {pages.map((item) =>
+            item == "..." ? (
+              <span>...</span>
+            ) : (
+              <IconButton
+                key={item}
+                className={
+                  currentPage === item &&
+                  "text-black-100 font-bold bg-light-gray"
+                }
+                onClick={() => onChangePage(item)}
+              >
+                {item}
+              </IconButton>
+            )
+          )}
           <IconButton
             className={
               currentPage === totalPages

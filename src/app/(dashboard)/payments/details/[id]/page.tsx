@@ -236,7 +236,7 @@ const PaymentDetails = ({ params }) => {
             </div>
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-              <PaymentIcon />
+              <PaymentIcon active={false} />
               <h5 className="text-purple-100 text-h5 font-semibold">
                 Payments
               </h5>

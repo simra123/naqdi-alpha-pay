@@ -1,11 +1,36 @@
 import moment from "moment";
 import { roundToPrecision } from "./math";
+import {
+  standardBlockchain,
+  tickerByStandard,
+  unitName,
+} from "@/constants/blockchains";
 
 export const capitalize = (value) => {
   if (typeof value == "number") {
     return value;
   }
   return value ? value?.charAt(0).toUpperCase() + value.slice(1) : "";
+};
+
+export const removeBrackets = (value) => {
+  return value.replace(/^\((.*?)\)$/, "$1").trim();
+};
+
+export const formattedBlockchainName = (value) => {
+  let [ticker, standard] = value?.split(" ");
+  let blockchain;
+
+  if (standard) {
+    standard = removeBrackets(standard);
+    blockchain = tickerByStandard[standard];
+  }
+  return {
+    name: unitName[ticker?.toLowerCase()],
+    ticker: ticker,
+    standard: standard,
+    standardBlockchain: standardBlockchain[standard],
+  };
 };
 
 export const formatBalanceForUser = (balance: []) => {
