@@ -6,8 +6,9 @@ import { CancelIcon } from "@/assets/Svgs";
 import { IoMdCheckmark, IoMdClose } from "react-icons/io";
 
 type Props = {
-  onEdit: () => void;
-  onCancel?: () => void;
+  onEdit?: () => void;
+  onBlur?: (event: any) => void;
+  onCancel?: (initailValue?: any) => void;
   onChange: (event: any) => void;
   value: any;
   disabled?: boolean;
@@ -15,6 +16,10 @@ type Props = {
   inputClassName?: string;
   name?: string;
   type?: any;
+  isEditing: boolean;
+  setIsEditing: (editState: boolean) => void;
+  initalValue?: any;
+  inputProps?: {};
 };
 
 const EditableField = ({
@@ -22,61 +27,75 @@ const EditableField = ({
   onCancel,
   onChange,
   value,
-  disabled,
   error,
   inputClassName,
   name,
   type,
+  isEditing,
+  setIsEditing,
+  onBlur,
+  initalValue,
+  inputProps,
 }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   return (
-    <div
-      className="flex items-center gap-2"
-      onMouseOver={() => setIsHovered(true)}
-      onMouseOut={() => {
-        setIsHovered(false);
-      }}
-    >
-      <IconField
-        wrapperClassName="!mb-0"
-        onChange={onChange}
-        value={value}
-        disabled={isEditing ? false : true}
-        error={error}
-        inputClassName={inputClassName}
-        name={name}
-        type={type}
-      />
-      {isHovered && (
-        <>
-          {!isEditing && (
-            <IconButton
-              onClick={() => setIsEditing(true)}
-              className="bg-purple-10 hover:bg-purple-200 active:bg-purple-300"
-            >
-              <GoPencil />
-            </IconButton>
-          )}
-          {isEditing && (
-            <>
+    <>
+      <div
+        className="flex items-center gap-2"
+        onMouseOver={() => setIsHovered(true)}
+        onMouseOut={() => {
+          setIsHovered(false);
+        }}
+      >
+        <IconField
+          wrapperClassName="!mb-0"
+          onChange={onChange}
+          value={value}
+          disabled={!isEditing}
+          onBlur={onBlur}
+          inputProps={inputProps}
+          inputClassName={inputClassName}
+          name={name}
+          type={type}
+        />
+
+        {isHovered && (
+          <>
+            {!isEditing && (
               <IconButton
-                onClick={onEdit}
-                className="bg-green-40 hover:bg-green-200 active:bg-green-300"
+                onClick={() => setIsEditing(true)}
+                className="bg-purple-10 hover:bg-purple-200 active:bg-purple-300"
               >
-                <IoMdCheckmark className="text-green-button" />
+                <GoPencil />
               </IconButton>
-              <IconButton
-                onClick={() => setIsEditing(false)}
-                className="bg-red-300 hover:bg-red-200 active:bg-red-300"
-              >
-                <IoMdClose className="text-red-error-dark" />
-              </IconButton>
-            </>
-          )}
-        </>
+            )}
+            {isEditing && (
+              <>
+                <IconButton
+                  type="submit"
+                  onClick={onEdit}
+                  className="bg-green-40 hover:bg-green-200 active:bg-green-300"
+                >
+                  <IoMdCheckmark className="text-green-button" />
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    setIsEditing(false);
+                    onCancel(initalValue);
+                  }}
+                  className="bg-red-300 hover:bg-red-200 active:bg-red-300"
+                >
+                  <IoMdClose className="text-red-error-dark" />
+                </IconButton>
+              </>
+            )}
+          </>
+        )}
+      </div>
+      {error && (
+        <p className="text-red-error-dark text-subtitle mt-2 ml-2">{error}</p>
       )}
-    </div>
+    </>
   );
 };
 
