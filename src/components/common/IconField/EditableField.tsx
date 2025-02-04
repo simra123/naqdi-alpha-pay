@@ -19,6 +19,7 @@ type Props = {
   isEditing: boolean;
   setIsEditing: (editState: boolean) => void;
   initalValue?: any;
+  inputProps?: {};
 };
 
 const EditableField = ({
@@ -34,6 +35,7 @@ const EditableField = ({
   setIsEditing,
   onBlur,
   initalValue,
+  inputProps,
 }: Props) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
@@ -51,6 +53,7 @@ const EditableField = ({
           value={value}
           disabled={!isEditing}
           onBlur={onBlur}
+          inputProps={inputProps}
           inputClassName={inputClassName}
           name={name}
           type={type}

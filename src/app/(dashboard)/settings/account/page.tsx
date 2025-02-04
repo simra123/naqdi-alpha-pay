@@ -76,7 +76,7 @@ const Account = () => {
       apiCall: callClientFeeApi(setClientFeeApi({ amount: values?.clientFee })),
       successCallBack: (response) => {
         console.log("Setting Client Fee ", response);
-        SetFeeValues(values?.amount);
+        SetFeeValues(values?.clientFee);
         dispatch(
           setNotification({
             status: "success",
@@ -189,7 +189,7 @@ const Account = () => {
           <StatusIcon />
           <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
         </div>
-        <div className="res-2-grid py-6">
+        <div className="res-2-grid !items-baseline py-6">
           <div className="flex gap-4 items-center">
             <Details
               label="MFA"
@@ -227,6 +227,7 @@ const Account = () => {
                 >
                   <Details
                     label="Client Fees"
+                    className={!isClientFeeLoading && "items-baseline"}
                     value={
                       <LoadingApi
                         loading={isClientFeeLoading || isGetClientFeeLoading}
@@ -239,7 +240,10 @@ const Account = () => {
                           onChange={handleChange}
                           value={values?.clientFee}
                           initalValue={initFeeVal}
-                          type={"number"}
+                          type="number"
+                          inputProps={{
+                            step: "0.01",
+                          }}
                           name="clientFee"
                           error={errors?.clientFee}
                           isEditing={isFeeEditing}
