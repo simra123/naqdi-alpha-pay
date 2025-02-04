@@ -55,7 +55,7 @@ export const BorderedIconButton = ({
     <>
       <button
         id={tooltipId}
-        className={`border rounded-full border-grey-100 flex items-center justify-center w-[45px] h-[45px] ${
+        className={`border disabled rounded-full border-grey-100 flex items-center justify-center w-[45px] h-[45px] ${
           disabled
             ? "hover:!bg-gray-300 active:!bg-gray-300"
             : hoveredClasses || "hover:bg-blackGrey-20 active:bg-blackGrey-30"
@@ -68,7 +68,11 @@ export const BorderedIconButton = ({
         {children}
       </button>
       {tooltip && disabled && (
-        <Tooltip content={tooltip} anchorSelect={"#" + tooltipId} className="z-30 !bg-red-500 max-w-64 xs:max-w-max" />
+        <Tooltip
+          content={tooltip}
+          anchorSelect={"#" + tooltipId}
+          className="z-30 !bg-red-500 max-w-64 xs:max-w-max"
+        />
       )}
     </>
   );
