@@ -7,6 +7,7 @@ interface IconButtonProps {
   onClick?: any;
   className?: string;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const IconButton = ({
@@ -14,10 +15,12 @@ const IconButton = ({
   onClick,
   className,
   disabled,
+  type,
 }: IconButtonProps) => {
   return (
     <button
       onClick={onClick}
+      type={type || "button"}
       className={`flex items-center justify-center min-w-[35px] h-[35px] p-2 rounded-full transition-colors ${
         !disabled && "hover:bg-gray-300 active:bg-gray-400"
       }  ${className} `}
