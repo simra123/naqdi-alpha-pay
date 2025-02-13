@@ -7,6 +7,7 @@ import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import {
   getAllPaymentsApi,
   getAllPaymentsByAdminApi,
+  getClientPaymentsListApi,
 } from "@/services/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import LoadingApi from "@/components/common/LoadindApi";
@@ -101,7 +102,7 @@ const paymentsList_table_columns: TableColumns = [
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
-  const [paymentsList, setPaymentsList] = useState([]);
+  const [paymentsList, setPaymentsList] = useState({ result: [], listConfig: {views: {}} });
 
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
@@ -111,42 +112,44 @@ const Payments = () => {
   const getPayments = async () => {
     // if (user?.role == Role.USER) {
 
-    let paymentCall =
-      user?.role == Role.USER ? getAllPaymentsApi : getAllPaymentsByAdminApi;
+    let paymentCall = () => {
+
+      return user?.role == Role.USER ? getClientPaymentsListApi({}, { limit: 10, page: 1 }) : getAllPaymentsByAdminApi();
+    }
 
     await callApiHook({
       apiCall: callPaymentApi(paymentCall()),
       successCallBack: (response: any) => {
-        const tableData = response.map((item) => {
-          return {
-            id: item?.id,
-            payment_uuid: item?.payment_uuid,
-            blockchain: item?.wallet?.blockchain,
-            createdAt: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
-            updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
-            senderAddress: item?.paymentTransaction?.sender_address,
-            recieverAddress: item?.wallet?.address,
-            requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
-            amountToPay: `${roundToPrecision(
-              item?.payment_currency_amount,
-              6
-            )} ${item?.payment_currency}`,
-            amountPaid:
-              roundToPrecision(
-                item?.paymentTransaction?.reduce((acc, transaction) => {
-                  return acc + parseFloat(transaction.transaction_amount);
-                }, 0),
-                6
-              ) +
-              " " +
-              item?.payment_currency,
-            paid: unpaidStatuses.some((status) => status == item?.status)
-              ? "No"
-              : "Yes",
-            status: item?.status,
-          };
-        });
-        setPaymentsList(tableData);
+        // const tableData = response.map((item) => {
+        //   return {
+        //     id: item?.id,
+        //     payment_uuid: item?.payment_uuid,
+        //     blockchain: item?.wallet?.blockchain,
+        //     createdAt: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
+        //     updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
+        //     senderAddress: item?.paymentTransaction?.sender_address,
+        //     recieverAddress: item?.wallet?.address,
+        //     requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
+        //     amountToPay: `${roundToPrecision(
+        //       item?.payment_currency_amount,
+        //       6
+        //     )} ${item?.payment_currency}`,
+        //     amountPaid:
+        //       roundToPrecision(
+        //         item?.paymentTransaction?.reduce((acc, transaction) => {
+        //           return acc + parseFloat(transaction.transaction_amount);
+        //         }, 0),
+        //         6
+        //       ) +
+        //       " " +
+        //       item?.payment_currency,
+        //     paid: unpaidStatuses.some((status) => status == item?.status)
+        //       ? "No"
+        //       : "Yes",
+        //     status: item?.status,
+        //   };
+        // });
+        setPaymentsList(response);
       },
     });
     // }
@@ -154,7 +157,7 @@ const Payments = () => {
 
   const ExportCSVHandler = async () => {
     await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(paymentsList)),
+      apiCall: callCSVApi(generateCSVApi(paymentsList?.result)),
       successCallBack: (response: any) => {
         downloadCSV(response, "payments.csv");
       },
@@ -175,10 +178,10 @@ const Payments = () => {
 
       <div>
         <AdvancedTable
-          columns={paymentsList_table_columns}
-          rows={paymentsList}
-          onSearch={() => {}}
-          onSort={() => {}}
+          columns={paymentsList?.listConfig?.views[0]?.columns || []}
+          rows={paymentsList?.result}
+          onSearch={() => { }}
+          onSort={() => { }}
           selectable={false}
           pagination
         />
