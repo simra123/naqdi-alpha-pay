@@ -153,12 +153,12 @@ input[type="number"] {
 }
 
 /* On mouse-over, add a grey background color */
-.custom-checkbox:hover input[type="checkbox"] ~ .checkmark {
+.custom-checkbox:hover input[type="checkbox"]~.checkmark {
   background-color: #ccc;
 }
 
 /* When the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
+.custom-checkbox input[type="checkbox"]:checked~.checkmark {
   @apply bg-purple-100;
   border: none;
 }
@@ -171,7 +171,7 @@ input[type="number"] {
 }
 
 /* Show the checkmark when checked */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+.custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
   display: block;
 }
 
@@ -220,7 +220,10 @@ input[type="number"] {
 }
 
 button:disabled {
-  @apply bg-gray-300 !important;
+  &.disabled {
+
+    @apply bg-gray-300 !important;
+  }
 }
 
 .custom-radio input[type="radio"]:checked::before {

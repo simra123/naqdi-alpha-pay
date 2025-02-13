@@ -49,3 +49,57 @@
     gap: 20px;
   }
 }
+
+
+
+.dashboard-layout-without-transactions {
+  display: grid;
+  grid-template-areas:
+    "wallets portfolio portfolio portfolio"
+    "history history history history";
+  grid-template-columns: 552px 1fr 1fr 412px;
+  gap: 24px;
+
+  // Wallets Section
+  .wallets {
+    grid-area: wallets;
+    @apply bg-purple-gradient;
+    @apply rounded-[50px];
+  }
+
+  // Portfolio Section
+  .portfolio {
+    grid-area: portfolio;
+  }
+
+  // Transactions Section
+  .transactions {
+    grid-area: transactions;
+  }
+
+  // History Section
+  .history {
+    grid-area: history;
+  }
+
+  @media (max-width: 1420px) {
+    display: grid;
+    grid-template-areas:
+      "wallets wallets"
+      "portfolio portfolio"
+      "history history";
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    gap: 22px;
+    .portfolio div div {
+      max-height: 100%;
+      .portfolio-body {
+        padding: 0;
+      }
+    }
+  }
+  @media (max-width: 1100px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
