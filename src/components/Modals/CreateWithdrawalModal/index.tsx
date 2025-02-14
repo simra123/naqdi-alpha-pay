@@ -113,14 +113,14 @@ const CreateWithdrawalModal = ({
               : item?.unit,
             standard: item?.standard,
             unit: item?.unit,
-            amount: item?.amount,
+            amount: roundToPrecision(item?.totalAmount, 4),
           };
         });
         setBalance(withdraw_currency_options);
         if (blockchain) {
           setValues((pre) => ({ ...pre, blockchain }));
         }
-              },
+      },
     });
   };
 

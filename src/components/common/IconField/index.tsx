@@ -18,6 +18,7 @@ interface Props {
   inputClassName?: string;
   iconClassName?: string;
   disabled?: boolean;
+  inputProps?: {}
 }
 
 const IconField = ({
@@ -36,6 +37,7 @@ const IconField = ({
   inputClassName,
   iconClassName,
   disabled,
+  inputProps
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPasswordField = type === "password";
@@ -75,6 +77,7 @@ const IconField = ({
           onChange={onChange}
           onBlur={onBlur}
           name={name}
+          {...inputProps}
           disabled={disabled}
           value={value}
           placeholder={placeholder}

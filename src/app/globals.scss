@@ -220,6 +220,12 @@ input[type="number"] {
   position: absolute;
 }
 
+button:disabled {
+  &.disabled {
+    @apply bg-gray-300 !important;
+  }
+}
+
 .custom-radio input[type="radio"]:checked::before {
   display: block;
 }

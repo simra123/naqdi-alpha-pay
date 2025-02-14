@@ -5,6 +5,7 @@ import IconSelectBox from "@/components/common/IconSelectBox";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
 import { Add, Mail } from "@mui/icons-material";
+import { MdClose } from "react-icons/md";
 import { getUrlOrObjectUrl } from "@/utils/getImageSrcType";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -54,6 +55,16 @@ const Support = () => {
     }
   };
 
+  const handleRemoveFile = (index) => {
+    setSupportData((pre) => {
+      const updatedAttachments = pre.attachments.filter((_, i) => i !== index);
+      return {
+        ...pre,
+        attachments: updatedAttachments.length > 0 ? updatedAttachments : null,
+      };
+    });
+  };
+
   const createTicketHandler = async () => {
     const formdata = new FormData();
 
@@ -83,7 +94,7 @@ const Support = () => {
 
   return (
     <>
-      <div className="rounded-medium flex flex-col  bg-white p-10 shadow-sm">
+      <div className="rounded-medium flex flex-col">
         <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-12">
           Need Help
         </h3>
@@ -145,7 +156,7 @@ const Support = () => {
         </div> */}
       </div>
 
-      <div className="rounded-medium flex flex-col mt-10 bg-white p-10 shadow-sm">
+      <div className="rounded-medium flex flex-col mt-10">
         <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-12">
           Upload Attachments
         </h3>
@@ -161,7 +172,7 @@ const Support = () => {
             accept="image/*"
           />
           <p className="my-2 font-semibold text-input text-black-100">Images</p>
-          {!supportData?.attachments ? (
+          {!supportData?.attachments   ? (
             <div className="flex flex-col gap-3 items-start justify-center mb-2">
               <button
                 type="button"
@@ -176,7 +187,7 @@ const Support = () => {
             </div>
           ) : (
             <div className="flex gap-6 flex-wrap">
-              {supportData?.attachments?.map((item) => (
+              {/* {supportData?.attachments?.map((item) => (
                 <div className="text-center flex flex-col gap-2 w-[320px]">
                   <img
                     src={getUrlOrObjectUrl(item)}
@@ -186,6 +197,25 @@ const Support = () => {
                   <span className="text-caption text-custom-title-gray font-medium">
                     {item?.name}
                   </span>
+                </div>
+              ))} */}
+              {supportData?.attachments?.map((item, index) => (
+                <div
+                  key={index}
+                  className="relative text-center flex flex-col gap-2 w-[320px]"
+                >
+                  <img
+                    src={getUrlOrObjectUrl(item)}
+                    alt="attachment"
+                    className="max-w-full object-contain"
+                  />
+                  <span className="text-caption font-medium">{item.name}</span>
+                  <button
+                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                    onClick={() => handleRemoveFile(index)}
+                  >
+                    <MdClose />
+                  </button>
                 </div>
               ))}
             </div>

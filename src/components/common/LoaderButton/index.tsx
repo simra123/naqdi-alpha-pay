@@ -47,7 +47,7 @@ const LoaderButton = ({
     };
 
     const colors = {
-      error: "border-0 py-3 text-white !bg-red-button !bg-none",
+      error: "border-0 py-3 text-white !bg-red-button rounded-medium w-56 !bg-none",
       success: "border-0 py-3 text-white !bg-green-button rounded-medium w-56",
     };
 

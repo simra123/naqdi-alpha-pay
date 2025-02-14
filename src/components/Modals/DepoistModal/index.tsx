@@ -111,6 +111,18 @@ const DepositModal = ({
           amount: response?.payment_amount,
         });
         setDepositAddress(response);
+        if (values?.whatsapp_notification && values?.client_phone_number) {
+          sendPaymentInvoiceWhatsapp({
+            address: response?.address,
+            client_name: values?.client_name,
+            currency: response?.payment_currency,
+            network:
+              values?.network ||
+              blockchain_standards[response?.payment_currency],
+            phone_number: values?.client_phone_number,
+            amount: response?.payment_amount,
+          });
+        }
       },
     });
   };

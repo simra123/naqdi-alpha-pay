@@ -4,13 +4,14 @@ import { ContentCopy } from "@mui/icons-material";
 import React, { useState } from "react";
 
 type Props = {
-  value: string;
+  value: any;
   label?: string;
   copyable?: boolean;
   link?: string;
+  className?: string;
 };
 
-const Details = ({ label, value, copyable, link }: Props) => {
+const Details = ({ label, value, copyable, link, className }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = (text: string) => async () => {
@@ -26,7 +27,9 @@ const Details = ({ label, value, copyable, link }: Props) => {
   };
 
   return (
-    <div className="flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis">
+    <div
+      className={`flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis ${className}`}
+    >
       {label && (
         <span className="text-custom-caption-gray font-medium">{label}:</span>
       )}
