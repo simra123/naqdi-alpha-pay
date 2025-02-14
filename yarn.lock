@@ -306,15 +306,7 @@
   dependencies:
     "@floating-ui/utils" "^0.2.9"
 
-"@floating-ui/dom@^1.0.0":
-  version "1.6.13"
-  resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.6.13.tgz#a8a938532aea27a95121ec16e667a7cbe8c59e34"
-  integrity sha512-umqzocjDgNRGTuO7Q8CU32dkHkECqI8ZdMZ5Swb6QAM0t5rnlrN3lGo1hdpscRd3WS8T6DKYK4ephgIH9iRh3w==
-  dependencies:
-    "@floating-ui/core" "^1.6.0"
-    "@floating-ui/utils" "^0.2.9"
-
-"@floating-ui/dom@^1.6.1":
+"@floating-ui/dom@^1.0.0", "@floating-ui/dom@^1.6.1":
   version "1.6.13"
   resolved "https://registry.yarnpkg.com/@floating-ui/dom/-/dom-1.6.13.tgz#a8a938532aea27a95121ec16e667a7cbe8c59e34"
   integrity sha512-umqzocjDgNRGTuO7Q8CU32dkHkECqI8ZdMZ5Swb6QAM0t5rnlrN3lGo1hdpscRd3WS8T6DKYK4ephgIH9iRh3w==
@@ -337,11 +329,6 @@
     "@floating-ui/react-dom" "^2.1.2"
     "@floating-ui/utils" "^0.2.9"
     tabbable "^6.0.0"
-
-"@floating-ui/utils@^0.2.9":
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.9.tgz#50dea3616bc8191fb8e112283b49eaff03e78429"
-  integrity sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==
 
 "@floating-ui/utils@^0.2.9":
   version "0.2.9"
@@ -2035,13 +2022,6 @@ chokidar@^4.0.0:
   integrity sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==
   dependencies:
     readdirp "^4.0.1"
-
-citty@^0.1.5, citty@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/citty/-/citty-0.1.6.tgz#0f7904da1ed4625e1a9ea7e0fa780981aab7c5e4"
-  integrity sha512-tskPPKEs8D2KPafUypv2gxwJP8h/OaJmC82QQGGDQcHvXX43xF2VDACcJVmZ0EuSxkpO9Kc4MlrA3q0+FG58AQ==
-  dependencies:
-    consola "^3.2.3"
 
 classnames@^2.2.6, classnames@^2.3.0:
   version "2.5.1"
@@ -3840,16 +3820,6 @@ minimist@^1.2.0, minimist@^1.2.6:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
   integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
-
-mlly@^1.7.1, mlly@^1.7.2:
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/mlly/-/mlly-1.7.3.tgz#d86c0fcd8ad8e16395eb764a5f4b831590cee48c"
-  integrity sha512-xUsx5n/mN0uQf4V548PKQ+YShA4/IW0KI1dZhrNrPCLG+xizETbHTkOa1f8/xut9JRPp8kQuMnz0oqwkTiLo/A==
-  dependencies:
-    acorn "^8.14.0"
-    pathe "^1.1.2"
-    pkg-types "^1.2.1"
-    ufo "^1.5.4"
 
 moment-timezone@^0.5.47:
   version "0.5.47"
