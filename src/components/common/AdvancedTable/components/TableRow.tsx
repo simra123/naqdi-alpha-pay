@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TableColumns } from "@/constants/types";
 import { MdCopyAll } from "react-icons/md";
+import { ListData } from "../types";
 
 interface TableRowProps {
   row: any;
-  columns: TableColumns;
+  columns: ListData;
   selectable?: boolean;
   isSelected?: boolean;
   onRowSelection: (row: any) => void;
@@ -31,7 +32,6 @@ const TableRow: React.FC<TableRowProps> = ({
 
   return (
     <tr
-
       key={index}
       onClick={() => onRowClick && onRowClick(row)}
       className="bg-white border-b hover:bg-gray-50 cursor-pointer"
@@ -49,37 +49,38 @@ const TableRow: React.FC<TableRowProps> = ({
           .slice(0, columnIndex)
           .reduce((acc, width) => acc + width, 0);
 
+        // Function to dynamically access nested object values
+        const getNestedValue = (obj: any, path: string) => {
+          return path.split('.').reduce((acc, key) => (acc && acc[key] ? acc[key] : undefined), obj);
+        };
+
+        const value = getNestedValue(row, column.listColumnsMeta.name);
+
         return (
           <td
-            key={column.field}
+            key={column.id}
             style={{
-              // left: column.sticky ? `${leftOffset}px` : undefined,
-               left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
-               maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
+              left: column.isSticky ? `${stickyOffsets[column.id]}px` : undefined,
+              maxWidth: 300,
             }}
-            className={`${
-              column.sticky ? "sticky bg-white z-10 bg-opacity-95" : ""
-            } py-4 pl-2 pr-6 font-semibold ${columnClassName} text-ellipsis overflow-hidden whitespace-nowrap`}
+            className={`${column.isSticky ? "sticky bg-white z-10 bg-opacity-95" : ""} 
+          py-4 pl-2 pr-6 font-semibold ${columnClassName} 
+          text-ellipsis overflow-hidden whitespace-nowrap`}
           >
-            {column.dataValidator ? (
+            {value ? (
               <CopyButtonColumn
-                value={column.dataValidator(row[column.field], row)}
+                value={column.dataValidator ? column.dataValidator(value, row) : value}
                 copyable={column.copyable}
                 link={column?.link ? column?.link(row) : null}
               />
-            ) : row[column.field] ? (
-              <CopyButtonColumn
-                value={row[column.field]}
-                copyable={column.copyable}
-                link={column?.link ? column?.link(row) : null}
-              />
-            ) : (
+            ) :
               "_"
-            )}
+            }
           </td>
         );
       })}
     </tr>
+
   );
 };
 

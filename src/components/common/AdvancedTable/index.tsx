@@ -1,43 +1,70 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  ChangeEvent,
+  KeyboardEvent,
+} from "react";
 import TableHeader from "./components/TableHeader";
 import TableRow from "./components/TableRow";
 import { TableColumns } from "@/constants/types";
 
 import TablePagination from "./components/TablePagination";
 import TableActions from "./components/TableActions";
+import { ListData } from "./types";
+import LoadingApi from "../LoadindApi";
+import Loader from "../Loader";
 
 interface AdvancedTableProps {
-  columns: TableColumns;
+  columns: ListData;
   rows: any[];
   selectable?: boolean;
   selectedRows?: any[];
-  setSelectedRows?: () => void;
-  onSort: (headerName: string) => void;
-  onSearch: (field: string, searchValue: string) => void;
   onFilterOpen?: boolean;
-  onFilterClose?: () => void;
-  onHandleFilter?: () => void;
   pagination?: boolean;
   searchValues?: void;
-  onDateChange?: () => void;
-  onDateEnter?: () => void;
   dateRanges?: any;
   setDateRanges?: any;
+  listConfig?: any;
+  totalItems: number;
+  limit?: number;
+  currentPage?: number;
+  sortData: [];
+  filtersData: [];
+  loading?: boolean;
+  setSelectedRows?: () => void;
+  onSort: (sortData: any) => void;
+  onSearch: (column: any, event: ChangeEvent<HTMLInputElement>) => void;
+  onSearchKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
+  onFilterClose?: () => void;
+  onHandleFilter?: () => void;
+  onDateChange?: () => void;
+  onDateEnter?: () => void;
   onRowClick?: () => void;
+  onLimitChange?: (limit: number) => void;
+  onPageChange?: (page: number) => void;
 }
 
 const AdvancedTable = ({
   columns,
   rows,
   selectable,
+  pagination,
+  listConfig,
+  totalItems,
+  currentPage,
+  limit,
+  sortData,
+  filtersData,
+  loading,
   onSort,
   onSearch,
-  pagination,
+  onSearchKeyDown,
+  onLimitChange,
+  onPageChange,
 }: AdvancedTableProps) => {
   const headerRef = useRef<HTMLTableRowElement>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [columnWidths, setColumnWidths] = useState<number[]>([]);
   const [stickyOffsets, setStickyOffsets] = useState<{ [key: string]: number }>(
@@ -45,36 +72,36 @@ const AdvancedTable = ({
   );
 
   useEffect(() => {
-    if (headerRef.current) {
-      const widths = Array.from(headerRef.current.children).map(
-        (cell) => (cell as HTMLElement).getBoundingClientRect().width
-      );
-      setColumnWidths(widths);
+    if (columns) {
+      if (headerRef.current) {
+        const widths = Array.from(headerRef.current.children).map(
+          (cell) => (cell as HTMLElement).getBoundingClientRect().width
+        );
+        setColumnWidths(widths);
 
-      const offsets: { [key: string]: number } = {};
-      let cumulativeOffset = 0;
+        const offsets: { [key: string]: number } = {};
+        let cumulativeOffset = 0;
 
-      // Iterate through columns and calculate offsets for sticky columns
-      columns.forEach((column, index) => {
-        if (column.sticky) {
-          // Use the exact width from getBoundingClientRect()
-          const columnWidth = widths[index];
+        // Iterate through columns and calculate offsets for sticky columns
+        columns.forEach((column, index) => {
+          if (column.isSticky) {
+            // Use the exact width from getBoundingClientRect()
+            const columnWidth = widths[index];
 
-          // Set the left position for the sticky column
-          offsets[column.id] = cumulativeOffset;
+            // Set the left position for the sticky column
+            offsets[column.id] = cumulativeOffset;
 
-          // Update the cumulative offset for the next sticky column
-          cumulativeOffset += index == 0 ? columnWidth : columnWidth - 1;
-        } else {
-          offsets[column.id] = null; // Non-sticky columns have no offset
-        }
-      });
+            // Update the cumulative offset for the next sticky column
+            cumulativeOffset += index == 0 ? columnWidth : columnWidth - 1;
+          } else {
+            offsets[column.id] = null; // Non-sticky columns have no offset
+          }
+        });
 
-      setStickyOffsets(offsets);
+        setStickyOffsets(offsets);
+      }
     }
   }, [headerRef, columns, rows]);
-
-
 
   const handleRowSelection = (row: any) => {
     const updatedSelection = selectedRows.includes(row)
@@ -104,6 +131,7 @@ const AdvancedTable = ({
           onFilterClick={() => {}}
           onRefresh={() => {}}
           onSearch={() => {}}
+          listConfig={listConfig}
         />
 
         <div
@@ -115,6 +143,8 @@ const AdvancedTable = ({
             {/* Render Table Header */}
             <TableHeader
               columns={columns}
+              sortData={sortData}
+              filtersData={filtersData}
               ref={headerRef}
               columnWidths={columnWidths}
               stickyOffsets={stickyOffsets}
@@ -123,34 +153,49 @@ const AdvancedTable = ({
               onSelectAll={handleSelectAll}
               onSort={onSort}
               onSearch={onSearch}
+              onSearchKeyDown={onSearchKeyDown}
             />
 
             {/* Render Table Rows */}
             <tbody>
-              {rows.map((row, index) => (
-                <TableRow
-                  key={index}
-                  stickyOffsets={stickyOffsets}
-                  columnWidths={columnWidths}
-                  row={row}
-                  columns={columns}
-                  selectable={selectable}
-                  isSelected={selectedRows.includes(row)}
-                  onRowSelection={handleRowSelection}
-                />
-              ))}
+              {loading ? (
+                <tr>
+                  <td colSpan={columns?.length} className="text-center py-4">
+                    Loading...
+                  </td>
+                </tr>
+              ) : rows?.length >= 1 ? (
+                rows?.map((row, index) => (
+                  <TableRow
+                    key={index}
+                    stickyOffsets={stickyOffsets}
+                    columnWidths={columnWidths}
+                    row={row}
+                    columns={columns}
+                    selectable={selectable}
+                    isSelected={selectedRows.includes(row)}
+                    onRowSelection={handleRowSelection}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={columns?.length} className="text-center py-4">
+                    No Rows Found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
-      {pagination && (
+      {!loading && pagination && (
         <TablePagination
           currentPage={currentPage}
-          totalPages={2}
-          onChangePage={() => {}}
-          pageSize={pageSize}
+          totalPages={Math.ceil(totalItems / limit)}
+          onChangePage={onPageChange}
+          limit={limit}
+          onLimitChange={onLimitChange}
           createHandler={() => {}}
-          setPageSize={setPageSize}
         />
       )}
     </div>

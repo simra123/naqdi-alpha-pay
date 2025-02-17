@@ -20,7 +20,6 @@ import {
 import { BsPinAngle } from "react-icons/bs";
 import { CSS } from "@dnd-kit/utilities";
 import { clsx } from "clsx";
-import tableResponse from "@/constants/tables";
 import Checkbox from "@/components/common/CheckBox";
 import { DragIcon, PinnedIcon } from "@/assets/Svgs";
 import IconButton from "@/components/common/IconButton";
@@ -39,7 +38,9 @@ type Group = {
   meta: Item[];
 };
 
-type Props = {};
+type Props = {
+  listConfig?: any
+};
 
 const SortableItem = React.memo(
   ({
@@ -125,14 +126,14 @@ const SortableItem = React.memo(
   }
 );
 
-const ListSorting = (props: Props) => {
+const ListSorting = ({ listConfig }: Props) => {
   const [groups, setGroups] = useState<Group[]>(
-    tableResponse.listConfig.groups.map((group: any) => ({
+    listConfig?.groups?.map((group: any) => ({
       ...group,
-      meta: group.meta.map((item: any) => ({
+      meta: group?.meta?.map((item: any) => ({
         ...item,
-        isSelected: false,
-        isSticky: false,
+        // isSelected: false,
+        // isSticky: false,
       })),
     }))
   );
@@ -143,13 +144,13 @@ const ListSorting = (props: Props) => {
         prevGroups.map((group) =>
           group.id === groupId
             ? {
-                ...group,
-                meta: group.meta.map((item) =>
-                  item.id === itemId
-                    ? { ...item, isSelected: !item.isSelected }
-                    : item
-                ),
-              }
+              ...group,
+              meta: group.meta.map((item) =>
+                item.id === itemId
+                  ? { ...item, isSelected: !item.isSelected }
+                  : item
+              ),
+            }
             : group
         )
       );
@@ -162,13 +163,13 @@ const ListSorting = (props: Props) => {
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              meta: group.meta.map((item) =>
-                item.id === itemId
-                  ? { ...item, isSticky: !item.isSticky }
-                  : item
-              ),
-            }
+            ...group,
+            meta: group.meta.map((item) =>
+              item.id === itemId
+                ? { ...item, isSticky: !item.isSticky }
+                : item
+            ),
+          }
           : group
       )
     );
@@ -179,11 +180,11 @@ const ListSorting = (props: Props) => {
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-              ...group,
-              meta: group.meta.map((item) =>
-                item.id === itemId ? { ...item, isSelected: false } : item
-              ),
-            }
+            ...group,
+            meta: group.meta.map((item) =>
+              item.id === itemId ? { ...item, isSelected: false } : item
+            ),
+          }
           : group
       )
     );
@@ -204,7 +205,7 @@ const ListSorting = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-8">
-      {groups.map((group) => (
+      {groups?.map((group) => (
         <div key={group.id} className="flex justify-between gap-8">
           {/* Left: Checkbox List */}
           <div className="flex-1">

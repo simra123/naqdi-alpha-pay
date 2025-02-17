@@ -8,6 +8,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  listConfig: any
 };
 
 type FilterType = FilterTypesEnum.Filter | FilterTypesEnum.Sorting;
@@ -17,7 +18,7 @@ enum FilterTypesEnum {
   Filter = "columns_filters",
 }
 
-const AdvancedTableFilters = ({ isOpen, onClose }: Props) => {
+const AdvancedTableFilters = ({ isOpen, onClose, listConfig }: Props) => {
   const [filterType, setFilterType] = useState<FilterType>(
     FilterTypesEnum.Filter
   );
@@ -63,8 +64,8 @@ const AdvancedTableFilters = ({ isOpen, onClose }: Props) => {
       </div>
 
       <div className="max-h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden px-12 py-6">
-        {filterType == FilterTypesEnum.Sorting && <ListSorting />}
-        {filterType == FilterTypesEnum.Filter && <ColumnFiltering />}
+        {filterType == FilterTypesEnum.Filter && <ColumnFiltering listConfig={listConfig} />}
+        {filterType == FilterTypesEnum.Sorting && <ListSorting listConfig={listConfig} />}
       </div>
       <div className="footer flex items-center justify-center gap-6 border-t-2 py-5 border-dashed">
         <button className="bg-blackGrey-30 w-28 rounded-[10px] py-[10px]">

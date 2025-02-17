@@ -10,6 +10,7 @@ type Props = {
   onRefresh?: () => void;
   onSearch?: () => void;
   onFilterClick?: () => void;
+  listConfig?: any
 };
 
 const TableActions = ({
@@ -18,11 +19,17 @@ const TableActions = ({
   onPdfExport,
   onRefresh,
   onSearch,
+  listConfig
 }: Props) => {
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+
+  console.log({listConfig})
+
   return (
     <div className="flex items-center justify-between mb-6">
       <AdvancedTableFilters
+        listConfig={listConfig}
         isOpen={isFilterOpen}
         onClose={() => setIsFilterOpen(false)}
       />

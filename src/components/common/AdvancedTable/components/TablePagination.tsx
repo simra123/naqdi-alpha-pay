@@ -17,8 +17,8 @@ type Props = {
   currentPage: number;
   totalPages: number;
   onChangePage: (page: number | string) => void;
-  pageSize: number;
-  setPageSize: any;
+  limit: number;
+  onLimitChange: any;
   createHandler: () => void;
 };
 
@@ -26,46 +26,48 @@ const TablePagination = ({
   currentPage,
   totalPages,
   onChangePage,
-  pageSize,
-  setPageSize,
+  limit,
+  onLimitChange,
   createHandler,
 }: Props) => {
   const user = useLocalStorage("user");
 
   const pages = useMemo(
     () => getPaginationPages(currentPage, totalPages),
-    [currentPage, pageSize, totalPages]
+    [currentPage, limit, totalPages]
   );
+
+  console.log({ currentPage, limit, totalPages, pages });
 
   return (
     <div className="flex justify-center sm:justify-between items-center mt-4 relative">
       {/* Pages Indicator */}
       <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${
-        (currentPage - 1) * pageSize + 1
-      } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
+        (currentPage - 1) * limit + 1
+      } - ${currentPage * limit} of ${totalPages * limit}`}</span>
 
       {/* Pages Navigation */}
       <div className="relative w-full">
         <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm sm:p-0">
           <IconButton
             className={
-              currentPage === 1
+              currentPage === 1 || totalPages == 0
                 ? "text-gray-400 cursor-not-allowed"
                 : "hover:bg-blue-500 hover:text-white"
             }
             onClick={() => onChangePage(1)}
-            disabled={currentPage === 1}
+            disabled={currentPage === 1 || totalPages == 0}
           >
             <FirstPage />
           </IconButton>
           <IconButton
             className={
-              currentPage === 1
+              currentPage === 1 || totalPages == 0
                 ? "text-gray-400 cursor-not-allowed"
                 : "hover:bg-blue-500 hover:text-white"
             }
             onClick={() => onChangePage(currentPage - 1)}
-            disabled={currentPage === 1}
+            disabled={currentPage === 1 || totalPages == 0}
           >
             <NavigateBefore />
           </IconButton>
@@ -87,23 +89,23 @@ const TablePagination = ({
           )}
           <IconButton
             className={
-              currentPage === totalPages
+              currentPage === totalPages || totalPages == 0
                 ? "text-gray-400 cursor-not-allowed"
                 : "hover:bg-blue-500 hover:text-white"
             }
             onClick={() => onChangePage(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages == 0}
           >
             <NavigateNext />
           </IconButton>
           <IconButton
             className={
-              currentPage === totalPages
+              currentPage === totalPages || totalPages == 0
                 ? "text-gray-400 cursor-not-allowed"
                 : "hover:bg-blue-500 hover:text-white"
             }
             onClick={() => onChangePage(totalPages)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages == 0}
           >
             <LastPage />
           </IconButton>
@@ -128,10 +130,9 @@ const TablePagination = ({
         </label>
         <select
           id="page-size"
-          value={pageSize}
+          value={limit}
           onChange={(e) => {
-            setPageSize(parseInt(e.target.value));
-            onChangePage(1);
+            onLimitChange(parseInt(e.target.value));
           }}
           className="p-1 border-b cursor-pointer outline-none"
         >

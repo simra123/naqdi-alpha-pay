@@ -13,6 +13,59 @@ interface MetaData {
   type?: string;
 }
 
+type ListColumnsMeta = {
+  id: number;
+  name: string;
+  label: string;
+  type: "DATE" | "STRING"; // You can add more types if needed
+  isFilterAble: boolean;
+  isSortable: boolean;
+  listId: number;
+  created_at: string | null;
+  updated_at: string | null;
+  deleted_at: string | null;
+};
+
+type ListItem = {
+  id: number;
+  sequence: number;
+  isSticky: boolean;
+  listColumnsMetaId: number;
+  listViewFilterId: number;
+  created_at: string | null;
+  updated_at: string | null;
+  dataValidator?: (value: any, row: any) => any;
+  link?: (row: any) => any;
+  copyable?: boolean;
+  deleted_at: string | null;
+  listColumnsMeta: ListColumnsMeta;
+};
+
+export type ListData = ListItem[];
+
+
+type ListConfig = {
+  id: number;
+  name: string;
+  appName: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  groups: any[];
+  views: any[];
+  filters: any[];
+  sort: any[];
+};
+
+export type ListApiResponse = {
+  result: any[];
+  total: number;
+  listConfig: ListConfig;
+};
+
+
+
+
 export interface FilterSortState {
   sort: { sortOrder: string; listColumnMeta: { name: string } }[];
   filters: {

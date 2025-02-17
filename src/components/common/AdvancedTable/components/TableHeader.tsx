@@ -1,18 +1,32 @@
-import React, { useEffect, useRef, useState, ForwardedRef } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  ForwardedRef,
+  useCallback,
+  ChangeEvent,
+  KeyboardEvent,
+} from "react";
 import { TableColumns } from "@/constants/types";
 import { SortingIcon } from "@/assets/Svgs";
 import SearchInput from "./SearchInput";
+import { getSortState, sortBySequence } from "../utils";
+import { ListData } from "../types";
+import DateField from "../../DateField";
 
 interface TableHeaderProps {
-  columns: TableColumns;
+  columns: ListData;
   selectable?: boolean;
   selectAll?: boolean;
   onSelectAll?: () => void;
-  onSort: (field: string) => void;
-  onSearch: (field: string, value: string) => void;
+  onSort: (id: any) => void;
+  onSearch: (column: any, event: ChangeEvent<HTMLInputElement>) => void;
   columnClassName?: string;
   columnWidths: number[];
   stickyOffsets: { [key: string]: number };
+  sortData: any[];
+  filtersData: any[];
+  onSearchKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const TableHeader = React.forwardRef(
@@ -26,10 +40,18 @@ const TableHeader = React.forwardRef(
       onSearch,
       columnClassName,
       columnWidths,
-      stickyOffsets
+      stickyOffsets,
+      sortData,
+      filtersData,
+      onSearchKeyDown,
     }: TableHeaderProps,
     ref: ForwardedRef<HTMLTableRowElement>
   ) => {
+    const sortedColumns = useCallback(() => {
+      return sortBySequence(columns);
+    }, [columns]);
+    console.log({ sortedColumns });
+
     return (
       <thead className="font-medium">
         {/* Header Row */}
@@ -49,31 +71,39 @@ const TableHeader = React.forwardRef(
               </label>
             </th>
           )}
-          {columns.map((column, columnIndex) => {
-            const leftOffset = columnWidths
-              .slice(0, columnIndex)
-              .reduce((acc, width) => acc + width, 0);
+          {columns?.map((column, columnIndex) => {
+            // const leftOffset = columnWidths
+            //   .slice(0, columnIndex)
+            //   .reduce((acc, width) => acc + width, 0);
 
             return (
               <th
-                key={column.field}
+                key={column.id}
                 style={{
-                  // left: column.sticky ? `${leftOffset}px` : undefined,
-                  left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
-                  maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
+                  left: column.isSticky
+                    ? `${stickyOffsets[column.id]}px`
+                    : undefined,
+                  maxWidth: 300,
                 }}
                 className={`py-3 pl-2 pr-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis ${
-                  column.sticky ? "sticky bg-table-header z-10" : ""
+                  column.isSticky ? "sticky bg-table-header z-10" : ""
                 } `}
-                onClick={() => column.sortable && onSort(column?.field)}
+                onClick={() =>
+                  column.listColumnsMeta.isSortable && onSort(column)
+                }
               >
                 <div className="flex items-center">
                   <span className="text-nowrap text-ellipsis overflow-hidden">
-                    {column.headerName}
+                    {column.listColumnsMeta.label}
                   </span>
 
                   <div className="ml-6">
-                    <SortingIcon sortBy="des" />
+                    <SortingIcon
+                      sortBy={
+                        getSortState(column.listColumnsMeta.name, sortData) ||
+                        "ASC"
+                      }
+                    />
                   </div>
                 </div>
               </th>
@@ -83,28 +113,40 @@ const TableHeader = React.forwardRef(
 
         {/* Search Input Row */}
         <tr className="border-b">
-          {columns.map((column, columnIndex) => {
-            const leftOffset = columnWidths
-              .slice(0, columnIndex)
-              .reduce((acc, width) => acc + width, 0);
+          {columns?.map((column, columnIndex) => {
+            // const leftOffset = columnWidths
+            //   .slice(0, columnIndex)
+            //   .reduce((acc, width) => acc + width, 0);
 
             return (
               <th
-                key={column.field}
+                key={column.id}
                 style={{
-                  // left: column.sticky ? `${leftOffset}px` : undefined,
-                   left: column.sticky ? `${stickyOffsets[column.id]}px` : undefined,
-                   maxWidth: column?.maxWidth ? `${column.maxWidth}px` : undefined
+                  left: column.isSticky
+                    ? `${stickyOffsets[column.id]}px`
+                    : undefined,
+                  maxWidth: 300,
                 }}
                 className={`${
-                  column.sticky ? "sticky z-10 bg-table-header" : ""
+                  column.isSticky ? "sticky z-10 bg-table-header" : ""
                 }`}
               >
                 <div>
-                  <SearchInput
-                    placeholder={`Search ${column.headerName}`}
-                    onChange={(e) => onSearch(column.field, e.target.value)}
-                  />
+                  {column.listColumnsMeta.type == "DATE" ? (
+                    <DateField
+                      value=""
+                      date=""
+                      handleChange={(date) => console.log(date)}
+                      name=""
+                      className="focus:border-b border-purple"
+                    />
+                  ) : (
+                    <SearchInput
+                      placeholder={`Search ${column.listColumnsMeta.label}`}
+                      onChange={(event) => onSearch(column, event)}
+                      onKeyDown={onSearchKeyDown}
+                    />
+                  )}
                 </div>
               </th>
             );

@@ -1,3 +1,5 @@
+import { ListData } from "./types";
+
 interface ListConfig {
   views: any[];
   groups: any[];
@@ -44,6 +46,79 @@ export const getColumnNames = (
       return null;
     })
     .filter((name) => name !== null);
+};
+
+// Assuming the state array is called "columnsState"
+export const updateColumnSortState = (newColumn, colsArray) => {
+  const { name } = newColumn.listColumnsMeta;
+  const existingColumnIndex = colsArray.findIndex(
+    (column) => column.listColumnMeta.name === name
+  );
+
+  if (existingColumnIndex === -1) {
+    // Column doesn't exist, push a new one with default "ASC"
+    colsArray.push({
+      sortOrder: "DESC",
+      listColumnMeta: {
+        name: newColumn.listColumnsMeta.name,
+      },
+    });
+  } else {
+    // Column exists, toggle the sort order
+    const existingColumn = colsArray[existingColumnIndex];
+    existingColumn.sortOrder =
+      existingColumn.sortOrder === "ASC" ? "DESC" : "ASC";
+  }
+
+  // Optionally, return the updated state if needed
+  return [...colsArray];
+};
+
+export const updateFilterState = (
+  newColumn: any,
+  values: string[],
+  filtersArray: any[],
+  operator = "EQUALS"
+) => {
+  const { name } = newColumn.listColumnsMeta;
+  const existingColumnIndex = filtersArray.findIndex(
+    (column) => column.listColumnMeta.name === name
+  );
+
+  // If the value is an empty string, remove the corresponding column from the filtersArray
+  if (values[0] === "") {
+    if (existingColumnIndex !== -1) {
+      // Remove the column from the state if it exists
+      filtersArray.splice(existingColumnIndex, 1);
+    }
+  } else {
+    // Create the formatted object
+    const formattedColumn = {
+      operator,
+      values: values,
+      listColumnMeta: {
+        name: newColumn.listColumnsMeta.name,
+      },
+    };
+
+    if (existingColumnIndex === -1) {
+      // Column doesn't exist, push the new formatted object
+      filtersArray.push(formattedColumn);
+    } else {
+      // Column exists, update the existing one (if needed)
+      filtersArray[existingColumnIndex] = formattedColumn;
+    }
+  }
+
+  // Optionally, return the updated state
+  return [...filtersArray];
+};
+
+export const getSortState = (columnName: string, sortColsArray: any[]) => {
+  const sortedColumn = sortColsArray.find(
+    (item) => item?.listColumnMeta?.name == columnName
+  );
+  return sortedColumn?.sortOrder;
 };
 
 export const formatClientHeader = (header: string): string => {
@@ -136,4 +211,8 @@ export const getPaginationPages = (
   }
 
   return pages;
+};
+
+export const sortBySequence = (array: ListData) => {
+  return array.sort((a, b) => a.sequence - b.sequence);
 };

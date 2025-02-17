@@ -5,7 +5,6 @@ import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import {
-  getAllPaymentsApi,
   getAllPaymentsByAdminApi,
   getClientPaymentsListApi,
 } from "@/services/payments";
@@ -14,16 +13,16 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 import { generateCSVApi } from "@/services/common";
-import CustomTable from "@/components/common/CustomTable";
-import { capitalize } from "@/utils/dataFormatters";
-import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
-import DateField from "@/components/common/DateField";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-import { roundToPrecision } from "@/utils/math";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
+import { ListApiResponse } from "@/components/common/AdvancedTable/types";
+import {
+  updateColumnSortState,
+  updateFilterState,
+} from "@/components/common/AdvancedTable/utils";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -102,53 +101,94 @@ const paymentsList_table_columns: TableColumns = [
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
-  const [paymentsList, setPaymentsList] = useState({ result: [], listConfig: {views: {}} });
+  const [paymentsList, setPaymentsList] = useState<ListApiResponse>(null);
+  const [sortData, setSortData] = useState<[] | any>([]);
+  const [filtersData, setFilterData] = useState<[] | any>([]);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTop = () => {
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
   });
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
-  const getPayments = async () => {
+  const getPayments = async ({
+    pageValue,
+    limitValue,
+    sort,
+    filters,
+  }: {
+    pageValue?: number;
+    limitValue?: number;
+    sort?: any;
+    filters?: any;
+  }) => {
     // if (user?.role == Role.USER) {
 
     let paymentCall = () => {
-
-      return user?.role == Role.USER ? getClientPaymentsListApi({}, { limit: 10, page: 1 }) : getAllPaymentsByAdminApi();
-    }
+      return user?.role == Role.USER
+        ? getClientPaymentsListApi(
+            { sort, filters },
+            { limit: limitValue, page: pageValue }
+          )
+        : getAllPaymentsByAdminApi();
+    };
 
     await callApiHook({
       apiCall: callPaymentApi(paymentCall()),
       successCallBack: (response: any) => {
-        // const tableData = response.map((item) => {
-        //   return {
-        //     id: item?.id,
-        //     payment_uuid: item?.payment_uuid,
-        //     blockchain: item?.wallet?.blockchain,
-        //     createdAt: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
-        //     updatedAt: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
-        //     senderAddress: item?.paymentTransaction?.sender_address,
-        //     recieverAddress: item?.wallet?.address,
-        //     requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
-        //     amountToPay: `${roundToPrecision(
-        //       item?.payment_currency_amount,
-        //       6
-        //     )} ${item?.payment_currency}`,
-        //     amountPaid:
-        //       roundToPrecision(
-        //         item?.paymentTransaction?.reduce((acc, transaction) => {
-        //           return acc + parseFloat(transaction.transaction_amount);
-        //         }, 0),
-        //         6
-        //       ) +
-        //       " " +
-        //       item?.payment_currency,
-        //     paid: unpaidStatuses.some((status) => status == item?.status)
-        //       ? "No"
-        //       : "Yes",
-        //     status: item?.status,
-        //   };
-        // });
+        const modifiedColumns = response?.listConfig.views[0].columns.map(
+          (column) => {
+            if (column.listColumnsMeta.name === "wallet.address") {
+              return {
+                ...column,
+                copyable: true,
+                link: (row: {
+                  wallet: { blockchain: string; address: string };
+                }) => {
+                  console.log({ row, message: "Inside mod cols loops" });
+                  return showExplorerDetailsByChain({
+                    env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+                    blockchain: row?.wallet?.blockchain,
+                    type: "address",
+                    address: row?.wallet.address,
+                  });
+                },
+              };
+            }
+
+            if (
+              ["created_at", "updated_at"].includes(column.listColumnsMeta.name)
+            ) {
+              return {
+                ...column,
+                dataValidator: (value: string) =>
+                  moment(value).format("DD-MM-YYYY : HH:MM:A"),
+              };
+            }
+
+            if (column.listColumnsMeta.name === "status") {
+              return {
+                ...column,
+                dataValidator: (value: string) => <Chip status={value} />,
+              };
+            }
+
+            return column;
+          }
+        );
+
+        response.listConfig.views[0].columns = modifiedColumns;
+
+        console.log({ modifiedColumns });
+
         setPaymentsList(response);
       },
     });
@@ -165,12 +205,15 @@ const Payments = () => {
   };
 
   useEffect(() => {
-    getPayments();
+    getPayments({ limitValue: limit, pageValue: page });
   }, []);
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3
+        className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden"
+        ref={tableContainerRef}
+      >
         Payments
       </h3>
 
@@ -178,12 +221,74 @@ const Payments = () => {
 
       <div>
         <AdvancedTable
-          columns={paymentsList?.listConfig?.views[0]?.columns || []}
+          columns={paymentsList?.listConfig?.views[0]?.columns}
           rows={paymentsList?.result}
-          onSearch={() => { }}
-          onSort={() => { }}
+          listConfig={paymentsList?.listConfig}
           selectable={false}
           pagination
+          loading={isPaymentLoading}
+          totalItems={paymentsList?.total}
+          currentPage={page}
+          limit={limit}
+          sortData={sortData}
+          filtersData={filtersData}
+          onSearch={(column, event) => {
+            const { value } = event.target;
+
+            // Update the filter state
+            let filteredColsData = updateFilterState(
+              column,
+              [value],
+              filtersData
+            );
+
+            setFilterData(filteredColsData);
+            console.log(column, value, filteredColsData);
+          }}
+          onSearchKeyDown={(event) => {
+            console.log(event.key);
+            if (event.key == "Enter") {
+              getPayments({
+                sort: sortData,
+                filters: filtersData,
+                limitValue: limit,
+                pageValue: page,
+              });
+            }
+          }}
+          onSort={(sortValues) => {
+            const colsToSort = updateColumnSortState(sortValues, sortData);
+            setSortData(colsToSort);
+            console.log({ colsToSort });
+            getPayments({
+              sort: colsToSort,
+              filters: filtersData,
+              limitValue: limit,
+              pageValue: page,
+            });
+          }}
+          onPageChange={(page) => {
+            setPage(page);
+            getPayments({
+              sort: sortData,
+              filters: filtersData,
+              limitValue: limit,
+              pageValue: page,
+            });
+            scrollToTop();
+          }}
+          onLimitChange={(limit) => {
+            setLimit(limit);
+            setPage(1);
+            getPayments({
+              sort: sortData,
+              filters: filtersData,
+              limitValue: limit,
+              pageValue: page,
+            });
+
+            scrollToTop();
+          }}
         />
 
         <ErrorApiText error={isPaymentError} />
