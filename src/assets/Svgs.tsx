@@ -1708,3 +1708,18 @@ export const PinnedIcon = () => {
     </svg>
   );
 };
+
+export const RangeIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="16"
+      viewBox="0 0 18 16"
+      fill="none"
+    >
+      <path d="M0 5H17L14 1" stroke="black" />
+      <path d="M18 11H1L4 15" stroke="black" />
+    </svg>
+  );
+};

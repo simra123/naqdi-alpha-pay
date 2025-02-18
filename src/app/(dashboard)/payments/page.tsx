@@ -257,7 +257,7 @@ const Payments = () => {
               limitValue: limit,
               sort: sortData,
             });
-            setFilterOpen(false);
+            // setFilterOpen(false);
           }}
           onViewsApply={(viewData) => {
             console.log({ viewData });

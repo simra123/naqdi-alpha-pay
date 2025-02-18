@@ -4,7 +4,7 @@ import Modal from "@/components/Modals/Modal";
 import ListSorting from "./ListSorting";
 import ColumnFiltering from "./ColumnFiltering";
 import LoaderButton from "@/components/common/LoaderButton";
-import { formatFilterDataFromGroups } from "../../utils";
+import { formatFilterDataFromGroups, updateMetaItemInGroup } from "../../utils";
 
 type Props = {
   filterOpen: boolean;
@@ -39,6 +39,14 @@ const AdvancedTableFilters = ({
   const [filterType, setFilterType] = useState<FilterType>(
     FilterTypesEnum.Filter
   );
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: null,
+      endDate: null,
+      key: "selection",
+      color: "#6D2BE1",
+    },
+  ]);
   const [groups, setGroups] = useState([]);
   const [listViews, setListViews] = useState([]);
 
@@ -48,8 +56,22 @@ const AdvancedTableFilters = ({
 
   const ApplyHandler = () => {
     if (filterType == FilterTypesEnum.Filter) {
-      console.log({ groups });
-      const filteredColumnsData = formatFilterDataFromGroups(groups);
+      const updatedGroupWithDate = updateMetaItemInGroup(
+        groups,
+        ["created_at"],
+        {
+          listColumnMeta: { name: "created_at" },
+          operator: "BETWEEN",
+          values: [dateRange[0].startDate, dateRange[0].endDate],
+          isSelected:
+            dateRange[0].startDate && dateRange[0].endDate ? true : false,
+        }
+      );
+      setGroups(updatedGroupWithDate);
+      const filteredColumnsData =
+        formatFilterDataFromGroups(updatedGroupWithDate);
+      console.log({ updatedGroupWithDate });
+
       onFiltersApply(filteredColumnsData);
     } else {
       const columns = listViews[0]?.meta?.filter((item) => item?.isSelected);
@@ -97,13 +119,16 @@ const AdvancedTableFilters = ({
         </button>
       </div>
 
-      <div className="max-h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden px-12 py-6">
+      <div className="max-h-[calc(100vh-300px)] min-h-[60vh] overflow-y-auto overflow-x-hidden px-12 py-6">
         {filterType == FilterTypesEnum.Filter && (
           <ColumnFiltering
             listConfig={listConfig}
             filterData={filterData}
             groups={groups}
             setGroups={setGroups}
+            onFiltersApply={onFiltersApply}
+            dateRange={dateRange}
+            setDateRange={setDateRange}
           />
         )}
         {filterType == FilterTypesEnum.Sorting && (

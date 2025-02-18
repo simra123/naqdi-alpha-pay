@@ -41,8 +41,8 @@ export default function DateField({
         placeholderText="MM/DD/YYYY"
         dateFormat="MM/dd/yyyy"
         className={`w-full text-[14px] py-2 px-4 focus:outline-none ${className}`}
-        calendarClassName="custom-calendar z-30"
-        popperClassName="!z-[100]"
+        calendarClassName="custom-calendar z-10000"
+        popperClassName="!z-[10000]"
         // We are using a React Portal here to render the popper outside of the table
         popperContainer={(props) => {
           return ReactDOM.createPortal(

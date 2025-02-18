@@ -149,6 +149,29 @@ export const formatListViewsFromGroups = (data, views) => {
   ); // Flatten meta arrays from all groups
 };
 
+export const updateMetaItemInGroup = (
+  groups: any[],
+  metaNames: string[],
+  newProperties: {
+    operator: any;
+    values: any[];
+    listColumnMeta: { name: string };
+    isSelected?: boolean;
+  }
+) => {
+  return groups.map((group) => {
+    return {
+      ...group,
+      meta: group.meta.map((metaItem) => {
+        if (metaNames.includes(metaItem.name)) {
+          return { ...metaItem, ...newProperties };
+        }
+        return metaItem;
+      }),
+    };
+  });
+};
+
 export const getSortState = (columnName: string, sortColsArray: any[]) => {
   const sortedColumn = sortColsArray.find(
     (item) => item?.listColumnMeta?.name == columnName
