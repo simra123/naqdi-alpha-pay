@@ -99,8 +99,19 @@ const Payments = () => {
             ) {
               return {
                 ...column,
-                dataValidator: (value: string) =>
-                  moment(value).format("DD-MM-YYYY : HH:MM:A"),
+                dataValidator: (value: string) => {
+                  let date: string | string[] =
+                    moment(value).format("DD-MM-YYYY_HH:MM a");
+                  let [day, time] = date.split("_");
+                  return (
+                    <div className="flex flex-col gap-1">
+                      <span className="text-caption">{day}</span>
+                      <span className="text-subtitle text-custom-title-gray">
+                        {time}
+                      </span>
+                    </div>
+                  );
+                },
               };
             }
 
@@ -178,7 +189,8 @@ const Payments = () => {
             let filteredColsData = updateFilterState(
               column,
               [value],
-              filtersData
+              filtersData,
+              type == "date" ? "GREATER_THAN" : "CONTAINS"
             );
 
             setFilterData(filteredColsData);
@@ -252,6 +264,7 @@ const Payments = () => {
             setColumns(viewData);
             let newConfig = replaceColumns(listConfig, viewData);
             setListConfig(newConfig);
+            setFilterOpen(false);
           }}
         />
 
