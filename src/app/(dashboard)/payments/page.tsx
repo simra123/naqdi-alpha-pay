@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
@@ -20,92 +20,22 @@ import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import {
+  replaceColumns,
   updateColumnSortState,
   updateFilterState,
 } from "@/components/common/AdvancedTable/utils";
-
-const unpaidStatuses = ["Pending", "Cancel", "New"];
-
-const paymentsList_table_columns: TableColumns = [
-  {
-    field: "payment_uuid",
-    headerName: "ID",
-    sticky: true,
-    id: 1,
-  },
-  {
-    field: "createdAt",
-    headerName: "Created At",
-    id: 2,
-  },
-  {
-    field: "updatedAt",
-    headerName: "Updated At",
-    sticky: true,
-    id: 3,
-  },
-
-  {
-    field: "recieverAddress",
-    headerName: "Reciever Wallet Address",
-    copyable: true,
-    link: (row: { blockchain: string; recieverAddress: string }) => {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
-        type: "address",
-        address: row?.recieverAddress,
-      });
-    },
-    maxWidth: 250,
-    id: 5,
-  },
-  {
-    field: "blockchain",
-    headerName: "Blockchain",
-    id: 4,
-    // sticky: true,
-  },
-  {
-    field: "requestedPaymentAmount",
-    headerName: "Requested Payment Amount",
-    id: 6,
-    // sticky: true,
-  },
-  {
-    field: "amountToPay",
-    headerName: "Amount to Pay",
-    id: 7,
-  },
-  {
-    field: "amountPaid",
-    headerName: "Amount Paid",
-    id: 8,
-  },
-  {
-    field: "paid",
-    headerName: "Paid",
-    id: 9,
-  },
-  {
-    field: "status",
-    headerName: "Status",
-
-    dataValidator: (value) => {
-      return <Chip status={value} />;
-    },
-    id: 10,
-  },
-];
 
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const [paymentsList, setPaymentsList] = useState<ListApiResponse>(null);
+  const [columns, setColumns] = useState([]);
+  const [listConfig, setListConfig] = useState(null);
   const [sortData, setSortData] = useState<[] | any>([]);
   const [filtersData, setFilterData] = useState<[] | any>([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(1);
+  const [filterOpen, setFilterOpen] = useState(false);
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToTop = () => {
@@ -189,6 +119,10 @@ const Payments = () => {
 
         console.log({ modifiedColumns });
 
+        setColumns(modifiedColumns);
+
+        setListConfig(response.listConfig);
+
         setPaymentsList(response);
       },
     });
@@ -208,6 +142,8 @@ const Payments = () => {
     getPayments({ limitValue: limit, pageValue: page });
   }, []);
 
+  console.log({ colsState: columns });
+
   return (
     <>
       <h3
@@ -221,9 +157,10 @@ const Payments = () => {
 
       <div>
         <AdvancedTable
-          columns={paymentsList?.listConfig?.views[0]?.columns}
+          columns={columns}
+          setColumns={setColumns}
           rows={paymentsList?.result}
-          listConfig={paymentsList?.listConfig}
+          listConfig={listConfig}
           selectable={false}
           pagination
           loading={isPaymentLoading}
@@ -232,8 +169,10 @@ const Payments = () => {
           limit={limit}
           sortData={sortData}
           filtersData={filtersData}
+          filterOpen={filterOpen}
+          setFilterOpen={setFilterOpen}
           onSearch={(column, event) => {
-            const { value } = event.target;
+            const { value, type } = event.target;
 
             // Update the filter state
             let filteredColsData = updateFilterState(
@@ -243,6 +182,14 @@ const Payments = () => {
             );
 
             setFilterData(filteredColsData);
+            if (type == "date") {
+              getPayments({
+                sort: sortData,
+                filters: filteredColsData,
+                limitValue: limit,
+                pageValue: 1,
+              });
+            }
             console.log(column, value, filteredColsData);
           }}
           onSearchKeyDown={(event) => {
@@ -252,7 +199,7 @@ const Payments = () => {
                 sort: sortData,
                 filters: filtersData,
                 limitValue: limit,
-                pageValue: page,
+                pageValue: 1,
               });
             }
           }}
@@ -284,10 +231,27 @@ const Payments = () => {
               sort: sortData,
               filters: filtersData,
               limitValue: limit,
-              pageValue: page,
+              pageValue: 1,
             });
 
             scrollToTop();
+          }}
+          onFiltersApply={(filtersData) => {
+            console.log({ filtersData });
+            setFilterData(filtersData);
+            getPayments({
+              pageValue: page,
+              filters: filtersData,
+              limitValue: limit,
+              sort: sortData,
+            });
+            setFilterOpen(false);
+          }}
+          onViewsApply={(viewData) => {
+            console.log({ viewData });
+            setColumns(viewData);
+            let newConfig = replaceColumns(listConfig, viewData);
+            setListConfig(newConfig);
           }}
         />
 

@@ -4,11 +4,18 @@ import Modal from "@/components/Modals/Modal";
 import ListSorting from "./ListSorting";
 import ColumnFiltering from "./ColumnFiltering";
 import LoaderButton from "@/components/common/LoaderButton";
+import { formatFilterDataFromGroups } from "../../utils";
 
 type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-  listConfig: any
+  filterOpen: boolean;
+  setFilterOpen: any;
+  listConfig: any;
+  filterData: any;
+  sortData: any;
+  setColumns: any;
+  columns: any;
+  onFiltersApply: (date: any) => void;
+  onViewsApply: (date: any) => void;
 };
 
 type FilterType = FilterTypesEnum.Filter | FilterTypesEnum.Sorting;
@@ -18,17 +25,44 @@ enum FilterTypesEnum {
   Filter = "columns_filters",
 }
 
-const AdvancedTableFilters = ({ isOpen, onClose, listConfig }: Props) => {
+const AdvancedTableFilters = ({
+  filterOpen,
+  setFilterOpen,
+  listConfig,
+  filterData,
+  sortData,
+  columns,
+  setColumns,
+  onFiltersApply,
+  onViewsApply,
+}: Props) => {
   const [filterType, setFilterType] = useState<FilterType>(
     FilterTypesEnum.Filter
   );
+  const [groups, setGroups] = useState([]);
+  const [listViews, setListViews] = useState([]);
 
   const handleFilterChange = (type: FilterType) => {
     setFilterType(type);
   };
 
+  const ApplyHandler = () => {
+    if (filterType == FilterTypesEnum.Filter) {
+      console.log({ groups });
+      const filteredColumnsData = formatFilterDataFromGroups(groups);
+      onFiltersApply(filteredColumnsData);
+    } else {
+      const columns = listViews[0]?.meta?.filter((item) => item?.isSelected);
+      onViewsApply(columns);
+    }
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} className="!w-[1200px] !p-0">
+    <Modal
+      isOpen={filterOpen}
+      onClose={() => setFilterOpen(false)}
+      className="!w-[1200px] !p-0"
+    >
       <div className="heading pr-12 py-6 max-w-[calc(100%-48px)] border-b ml-auto">
         <h4 className="font-semibold text-p120 border-r inline-block pr-8">
           {filterType == FilterTypesEnum.Filter
@@ -64,11 +98,30 @@ const AdvancedTableFilters = ({ isOpen, onClose, listConfig }: Props) => {
       </div>
 
       <div className="max-h-[calc(100vh-300px)] overflow-y-auto overflow-x-hidden px-12 py-6">
-        {filterType == FilterTypesEnum.Filter && <ColumnFiltering listConfig={listConfig} />}
-        {filterType == FilterTypesEnum.Sorting && <ListSorting listConfig={listConfig} />}
+        {filterType == FilterTypesEnum.Filter && (
+          <ColumnFiltering
+            listConfig={listConfig}
+            filterData={filterData}
+            groups={groups}
+            setGroups={setGroups}
+          />
+        )}
+        {filterType == FilterTypesEnum.Sorting && (
+          <ListSorting
+            listConfig={listConfig}
+            sortData={sortData}
+            listViews={listViews}
+            setColumns={setColumns}
+            columns={columns}
+            setListViews={setListViews}
+          />
+        )}
       </div>
       <div className="footer flex items-center justify-center gap-6 border-t-2 py-5 border-dashed">
-        <button className="bg-blackGrey-30 w-28 rounded-[10px] py-[10px]">
+        <button
+          className="bg-blackGrey-30 w-28 rounded-[10px] py-[10px]"
+          onClick={() => setFilterOpen(false)}
+        >
           Cancel
         </button>
         <div className="w-28">
@@ -76,16 +129,17 @@ const AdvancedTableFilters = ({ isOpen, onClose, listConfig }: Props) => {
             content={"Apply"}
             variant="contained"
             className="!text-base !py-[10px]"
+            onClick={ApplyHandler}
           />
         </div>
-        <span className="text-grey-100">or</span>
+        {/* <span className="text-grey-100">or</span>
         <div className="w-28">
           <LoaderButton
             content={"Save to Filter"}
             variant="text"
             className="!text-base !py-[10px] hover:bg-gray-100 rounded-[10px]"
           />
-        </div>
+        </div> */}
       </div>
     </Modal>
   );

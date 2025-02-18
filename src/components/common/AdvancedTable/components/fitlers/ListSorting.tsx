@@ -1,12 +1,5 @@
-import React, { useState, useMemo, useCallback } from "react";
-import {
-  DndContext,
-  MouseSensor,
-  TouchSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
   useSortable,
@@ -39,7 +32,12 @@ type Group = {
 };
 
 type Props = {
-  listConfig?: any
+  listConfig?: any;
+  sortData?: any;
+  listViews?: any;
+  setListViews?: any;
+  columns: any;
+  setColumns: any;
 };
 
 const SortableItem = React.memo(
@@ -126,86 +124,148 @@ const SortableItem = React.memo(
   }
 );
 
-const ListSorting = ({ listConfig }: Props) => {
-  const [groups, setGroups] = useState<Group[]>(
-    listConfig?.groups?.map((group: any) => ({
-      ...group,
-      meta: group?.meta?.map((item: any) => ({
-        ...item,
-        // isSelected: false,
-        // isSticky: false,
-      })),
-    }))
-  );
+const ListSorting = ({
+  listConfig,
+  sortData,
+  listViews,
+  setListViews,
+  columns,
+  setColumns,
+}: Props) => {
+  useEffect(() => {
+    if (listConfig) {
+      const updatedListView = listConfig.groups.map((group) => ({
+        ...group,
+        meta: group.meta
+          .map((meta) => {
+            const effectiveCols =
+              listConfig?.views[0]?.localColumns || listConfig.views[0].columns;
+            const columnAvailable = effectiveCols.find(
+              (column) => column?.listColumnsMeta?.name === meta?.name
+            );
 
-  const handleCheckboxChange = useCallback(
-    (groupId: number, itemId: number) => {
-      setGroups((prevGroups) =>
-        prevGroups.map((group) =>
-          group.id === groupId
-            ? {
-              ...group,
-              meta: group.meta.map((item) =>
-                item.id === itemId
-                  ? { ...item, isSelected: !item.isSelected }
-                  : item
-              ),
-            }
-            : group
-        )
-      );
-    },
-    []
-  );
+            return {
+              ...meta,
+              ...columnAvailable,
+              isSelected: Boolean(columnAvailable),
+              isSticky: columnAvailable?.isSticky, // Merge other properties from the filter state
+              sequence: columnAvailable?.sequence || group?.meta?.length,
+            };
+          })
+          .sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0)), // Sort by sequence in ascending order
+      }));
 
-  const handlePinToggle = useCallback((groupId: number, itemId: number) => {
-    setGroups((prevGroups) =>
+      console.log({ updatedListView });
+
+      setListViews(updatedListView);
+    }
+  }, [listConfig, sortData]);
+
+  // const handleCheckboxChange = (groupId: number, itemId: number) => {
+  //   setListViews((prevGroups) =>
+  //     prevGroups.map((group) =>
+  //       group.id === groupId
+  //         ? {
+  //             ...group,
+  //             meta: group.meta.map((item) =>
+  //               item.id === itemId
+  //                 ? { ...item, isSelected: !item.isSelected }
+  //                 : item
+  //             ),
+  //           }
+  //         : group
+  //     )
+  //   );
+  // };
+
+  const handleCheckboxChange = (groupId: number, itemId: number) => {
+    setListViews((prevGroups) =>
       prevGroups.map((group) =>
         group.id === groupId
           ? {
-            ...group,
-            meta: group.meta.map((item) =>
-              item.id === itemId
-                ? { ...item, isSticky: !item.isSticky }
-                : item
-            ),
-          }
+              ...group,
+              meta: group.meta.map((item) => {
+                if (item.id === itemId) {
+                  const effectiveCols =
+                    listConfig.views[0].columns ||
+                    listConfig?.views[0]?.localColumns;
+                  // Find the respective column from the effective columns
+                  const column = effectiveCols.find(
+                    (col) => col?.listColumnsMeta?.name === item.name
+                  );
+
+                  return {
+                    ...item,
+                    isSelected: !item.isSelected,
+                    ...column, // Add the column data (such as sequence, sticky, etc.)
+                  };
+                }
+                return item;
+              }),
+            }
+          : group
+      )
+    );
+  };
+
+  const handlePinToggle = useCallback((groupId: number, itemId: number) => {
+    setListViews((prevGroups) =>
+      prevGroups.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              meta: group.meta.map((item) =>
+                item.id === itemId
+                  ? { ...item, isSticky: !item.isSticky }
+                  : item
+              ),
+            }
           : group
       )
     );
   }, []);
 
-  const handleClose = useCallback((groupId: number, itemId: number) => {
-    setGroups((prevGroups) =>
-      prevGroups.map((group) =>
-        group.id === groupId
-          ? {
+  const handleClose = (groupId: number, itemId: number) => {
+    let updatedView = listViews.map((group) =>
+      group.id === groupId
+        ? {
             ...group,
             meta: group.meta.map((item) =>
               item.id === itemId ? { ...item, isSelected: false } : item
             ),
           }
-          : group
-      )
+        : group
     );
-  }, []);
 
-  const handleDragEnd = useCallback(({ active, over }: any) => {
-    setGroups((prevGroups) =>
-      prevGroups.map((group) => ({
-        ...group,
-        meta: arrayMove(
-          group.meta,
-          group.meta.findIndex((item) => item.id === active.id),
-          group.meta.findIndex((item) => item.id === over.id)
-        ),
-      }))
+    setListViews(updatedView);
+  };
+
+  const handleDragEnd = ({ active, over }: any) => {
+    setListViews((prevGroups) =>
+      prevGroups.map((group) => {
+        const oldIndex = group.meta.findIndex((item) => item.id === active.id);
+        const newIndex = group.meta.findIndex((item) => item.id === over.id);
+
+        // Move the item
+        const updatedMeta = arrayMove(group.meta, oldIndex, newIndex);
+
+        // Update the sequence field
+        const reindexedMeta = updatedMeta.map((item: any, index) => ({
+          ...item,
+          sequence: index + 1, // Start sequence from 1
+        }));
+
+        return {
+          ...group,
+          meta: reindexedMeta,
+        };
+      })
     );
-  }, []);
+  };
 
   return (
     <div className="flex flex-col gap-8">
-      {groups?.map((group) => (
+      {listViews?.map((group) => (
         <div key={group.id} className="flex justify-between gap-8">
           {/* Left: Checkbox List */}
           <div className="flex-1">

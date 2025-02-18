@@ -21,9 +21,9 @@ interface AdvancedTableProps {
   rows: any[];
   selectable?: boolean;
   selectedRows?: any[];
-  onFilterOpen?: boolean;
+  filterOpen: boolean;
+  setFilterOpen: any;
   pagination?: boolean;
-  searchValues?: void;
   dateRanges?: any;
   setDateRanges?: any;
   listConfig?: any;
@@ -33,17 +33,19 @@ interface AdvancedTableProps {
   sortData: [];
   filtersData: [];
   loading?: boolean;
+  setColumns?: any;
   setSelectedRows?: () => void;
   onSort: (sortData: any) => void;
-  onSearch: (column: any, event: ChangeEvent<HTMLInputElement>) => void;
+  onSearch: (column: any, event: ChangeEvent<HTMLInputElement> | any) => void;
   onSearchKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
-  onFilterClose?: () => void;
   onHandleFilter?: () => void;
   onDateChange?: () => void;
   onDateEnter?: () => void;
   onRowClick?: () => void;
   onLimitChange?: (limit: number) => void;
   onPageChange?: (page: number) => void;
+  onFiltersApply?: (fitlersData: any) => void;
+  onViewsApply?: (viewData: any) => void;
 }
 
 const AdvancedTable = ({
@@ -58,11 +60,16 @@ const AdvancedTable = ({
   sortData,
   filtersData,
   loading,
+  filterOpen,
+  setFilterOpen,
+  setColumns,
   onSort,
   onSearch,
   onSearchKeyDown,
   onLimitChange,
   onPageChange,
+  onFiltersApply,
+  onViewsApply,
 }: AdvancedTableProps) => {
   const headerRef = useRef<HTMLTableRowElement>(null);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
@@ -70,6 +77,8 @@ const AdvancedTable = ({
   const [stickyOffsets, setStickyOffsets] = useState<{ [key: string]: number }>(
     {}
   );
+
+  console.log({ columns });
 
   useEffect(() => {
     if (columns) {
@@ -131,7 +140,15 @@ const AdvancedTable = ({
           onFilterClick={() => {}}
           onRefresh={() => {}}
           onSearch={() => {}}
+          filterOpen={filterOpen}
+          columns={columns}
+          setColumns={setColumns}
+          setFilterOpen={setFilterOpen}
           listConfig={listConfig}
+          onFiltersApply={onFiltersApply}
+          onViewsApply={onViewsApply}
+          filtersData={filtersData}
+          sortData={sortData}
         />
 
         <div

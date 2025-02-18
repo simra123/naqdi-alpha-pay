@@ -5,33 +5,52 @@ import { FilterIcon, SearchbarIcon } from "@/assets/Svgs";
 import AdvancedTableFilters from "./fitlers";
 
 type Props = {
+  listConfig?: any;
+  filtersData?: any;
+  sortData?: any;
+  filterOpen: boolean;
+  setFilterOpen: any;
+  setColumns?:any;
+  columns?:any;
   onPdfExport?: () => void;
   onCsvExport?: () => void;
   onRefresh?: () => void;
   onSearch?: () => void;
   onFilterClick?: () => void;
-  listConfig?: any
+  onFiltersApply?: (filterData: any) => void;
+  onViewsApply?: (viewsData: any) => void;
 };
 
 const TableActions = ({
+  filtersData,
+  sortData,
+  listConfig,
+  filterOpen,
+  setFilterOpen,
+  columns,
+  setColumns,
   onCsvExport,
   onFilterClick,
   onPdfExport,
   onRefresh,
   onSearch,
-  listConfig
+  onFiltersApply,
+  onViewsApply,
 }: Props) => {
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-
-
-  console.log({listConfig})
+  console.log({ listConfig });
 
   return (
     <div className="flex items-center justify-between mb-6">
       <AdvancedTableFilters
         listConfig={listConfig}
-        isOpen={isFilterOpen}
-        onClose={() => setIsFilterOpen(false)}
+        filterData={filtersData}
+        columns={columns}
+        setColumns={setColumns}
+        sortData={sortData}
+        filterOpen={filterOpen}
+        setFilterOpen={setFilterOpen}
+        onFiltersApply={onFiltersApply}
+        onViewsApply={onViewsApply}
       />
       <div className="left-actions flex items-center gap-3">
         <LoaderButton
@@ -61,7 +80,7 @@ const TableActions = ({
         <button
           className="bg-none bg-transparent outline-0 border rounded-xl transition-all hover:bg-gray-100 p-1 w-11 h-11 flex items-center justify-center"
           //   onClick={onFilterClick}
-          onClick={() => setIsFilterOpen(!isFilterOpen)}
+          onClick={() => setFilterOpen(!filterOpen)}
         >
           <FilterIcon />
         </button>

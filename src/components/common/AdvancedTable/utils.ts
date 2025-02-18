@@ -78,7 +78,7 @@ export const updateFilterState = (
   newColumn: any,
   values: string[],
   filtersArray: any[],
-  operator = "EQUALS"
+  operator = "CONTAINS"
 ) => {
   const { name } = newColumn.listColumnsMeta;
   const existingColumnIndex = filtersArray.findIndex(
@@ -86,7 +86,7 @@ export const updateFilterState = (
   );
 
   // If the value is an empty string, remove the corresponding column from the filtersArray
-  if (values[0] === "") {
+  if (!values[0]) {
     if (existingColumnIndex !== -1) {
       // Remove the column from the state if it exists
       filtersArray.splice(existingColumnIndex, 1);
@@ -114,11 +114,54 @@ export const updateFilterState = (
   return [...filtersArray];
 };
 
+export const formatFilterDataFromGroups = (data) => {
+  return data
+    .flatMap((group) => group.meta) // Flatten the meta arrays from all groups
+    .filter(
+      (item) =>
+        item.isSelected &&
+        item.operator &&
+        Array.isArray(item.values) &&
+        item.values.length > 0 &&
+        item.values.every((value) => value !== null && value !== "")
+    )
+    .map(({ operator, listColumnMeta, values }) => ({
+      operator,
+      listColumnMeta: { name: listColumnMeta.name },
+      values,
+    }));
+};
+
+export const formatListViewsFromGroups = (data, views) => {
+  return data.flatMap((group) =>
+    group.meta.map((metaItem) => {
+      // Find matching column meta
+      const matchedColumn = views.columns.find(
+        (col) => col.listColumnMeta?.name === metaItem.name
+      );
+
+      return {
+        ...metaItem,
+        isSticky: matchedColumn ? matchedColumn.isSticky : undefined,
+        isSelectable: Boolean(matchedColumn), // True if matched, false otherwise
+      };
+    })
+  ); // Flatten meta arrays from all groups
+};
+
 export const getSortState = (columnName: string, sortColsArray: any[]) => {
   const sortedColumn = sortColsArray.find(
     (item) => item?.listColumnMeta?.name == columnName
   );
   return sortedColumn?.sortOrder;
+};
+
+export const getFilterState = (columnName: string, filterColsArray: any[]) => {
+  const filterState = filterColsArray.find(
+    (item) => item?.listColumnMeta?.name == columnName
+  );
+  console.log({ filterState });
+  return filterState;
 };
 
 export const formatClientHeader = (header: string): string => {
@@ -213,6 +256,17 @@ export const getPaginationPages = (
   return pages;
 };
 
-export const sortBySequence = (array: ListData) => {
+export const sortBySequence = (array: ListData): any => {
   return array.sort((a, b) => a.sequence - b.sequence);
+};
+
+export const replaceColumns = (data, newColumns) => {
+  // Ensure the data structure contains views and columns
+  if (data && data.views && data.views[0]) {
+    // Replace the columns array in the first view
+    data.views[0].localColumns = newColumns;
+  } else {
+    console.error("Invalid data structure");
+  }
+  return data;
 };

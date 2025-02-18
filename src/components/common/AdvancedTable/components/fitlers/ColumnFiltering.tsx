@@ -1,24 +1,45 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { determineType, filterCriteria } from "../../types";
-import IconSelectBox from "@/components/common/IconSelectBox";
 import FilterCheckField from "./FilterCheckField";
+import { getFilterState } from "../../utils";
 
-type Props = { listConfig: any };
+type Props = { listConfig: any; filterData: any; groups: any; setGroups: any };
 
-const ColumnFiltering = ({ listConfig }: Props) => {
-
-  console.log({
-    listConfig
-  })
-
-  const [groups, setGroups] = useState([]);
-
+const ColumnFiltering = ({
+  listConfig,
+  filterData,
+  groups,
+  setGroups,
+}: Props) => {
   useEffect(() => {
+    console.log(
+      "________________________Setting Groups___________________________"
+    );
     if (listConfig) {
+      const updatedGroups = listConfig.groups.map((group) => ({
+        ...group,
+        meta: group.meta.map((meta) => {
+          const matchedFilter = filterData.find(
+            (filter) => filter.listColumnMeta.name === meta.name
+          );
 
-      setGroups(listConfig?.groups)
+          if (matchedFilter) {
+            return {
+              ...meta,
+              isSelected: true,
+              ...matchedFilter, // Merge other properties from the filter state
+            };
+          }
+
+          return meta;
+        }),
+      }));
+
+      console.log({ updatedGroups });
+      setGroups(updatedGroups);
     }
-  }, [listConfig])
+  }, [listConfig, filterData]);
+
+  console.log({ groups });
 
   const handleCheckboxChange = useCallback(
     (groupId: number, itemId: number) => {
@@ -26,13 +47,17 @@ const ColumnFiltering = ({ listConfig }: Props) => {
         prevGroups.map((group) =>
           group.id === groupId
             ? {
-              ...group,
-              meta: group.meta.map((item) =>
-                item.id === itemId
-                  ? { ...item, isSelected: !item.isSelected }
-                  : item
-              ),
-            }
+                ...group,
+                meta: group.meta.map((item) =>
+                  item.id === itemId
+                    ? {
+                        ...item,
+                        isSelected: !item.isSelected,
+                        listColumnMeta: { name: item.name },
+                      }
+                    : item
+                ),
+              }
             : group
         )
       );
@@ -54,7 +79,6 @@ const ColumnFiltering = ({ listConfig }: Props) => {
               </h3>
               <div className="flex gap-y-6 flex-wrap mt-4 w-full">
                 {group.meta.map((item) => {
-
                   return (
                     <div
                       key={item.id}
@@ -62,12 +86,12 @@ const ColumnFiltering = ({ listConfig }: Props) => {
                     >
                       <FilterCheckField
                         group={group}
+                        setGroups={setGroups}
                         handleChangeWithGroup={() =>
                           handleCheckboxChange(group.id, item.id)
                         }
                         item={item}
                       />
-
                     </div>
                   );
                 })}

@@ -10,7 +10,7 @@ import React, {
 import { TableColumns } from "@/constants/types";
 import { SortingIcon } from "@/assets/Svgs";
 import SearchInput from "./SearchInput";
-import { getSortState, sortBySequence } from "../utils";
+import { getFilterState, getSortState, sortBySequence } from "../utils";
 import { ListData } from "../types";
 import DateField from "../../DateField";
 
@@ -20,7 +20,7 @@ interface TableHeaderProps {
   selectAll?: boolean;
   onSelectAll?: () => void;
   onSort: (id: any) => void;
-  onSearch: (column: any, event: ChangeEvent<HTMLInputElement>) => void;
+  onSearch: (column: any, event: ChangeEvent<HTMLInputElement> | any) => void;
   columnClassName?: string;
   columnWidths: number[];
   stickyOffsets: { [key: string]: number };
@@ -47,9 +47,7 @@ const TableHeader = React.forwardRef(
     }: TableHeaderProps,
     ref: ForwardedRef<HTMLTableRowElement>
   ) => {
-    const sortedColumns = useCallback(() => {
-      return sortBySequence(columns);
-    }, [columns]);
+    const sortedColumns = sortBySequence(columns || []);
     console.log({ sortedColumns });
 
     return (
@@ -71,7 +69,7 @@ const TableHeader = React.forwardRef(
               </label>
             </th>
           )}
-          {columns?.map((column, columnIndex) => {
+          {sortedColumns?.map((column, columnIndex) => {
             // const leftOffset = columnWidths
             //   .slice(0, columnIndex)
             //   .reduce((acc, width) => acc + width, 0);
@@ -113,7 +111,7 @@ const TableHeader = React.forwardRef(
 
         {/* Search Input Row */}
         <tr className="border-b">
-          {columns?.map((column, columnIndex) => {
+          {sortedColumns?.map((column, columnIndex) => {
             // const leftOffset = columnWidths
             //   .slice(0, columnIndex)
             //   .reduce((acc, width) => acc + width, 0);
@@ -134,16 +132,30 @@ const TableHeader = React.forwardRef(
                 <div>
                   {column.listColumnsMeta.type == "DATE" ? (
                     <DateField
-                      value=""
-                      date=""
-                      handleChange={(date) => console.log(date)}
-                      name=""
+                      value={
+                        getFilterState(column.listColumnsMeta.name, filtersData)
+                          ?.values[0]
+                      }
+                      date={
+                        getFilterState(column.listColumnsMeta.name, filtersData)
+                          ?.values[0]
+                      }
+                      handleChange={(date) =>
+                        onSearch(column, {
+                          target: { value: date, type: "date" },
+                        })
+                      }
+                      name={column.listColumnsMeta.name}
                       className="focus:border-b border-purple"
                     />
                   ) : (
                     <SearchInput
                       placeholder={`Search ${column.listColumnsMeta.label}`}
                       onChange={(event) => onSearch(column, event)}
+                      value={
+                        getFilterState(column.listColumnsMeta.name, filtersData)
+                          ?.values[0] || ""
+                      }
                       onKeyDown={onSearchKeyDown}
                     />
                   )}
