@@ -15,38 +15,28 @@ import TableActions from "./components/TableActions";
 import { ListData } from "./types";
 import LoadingApi from "../LoadindApi";
 import Loader from "../Loader";
+import {
+  replaceColumns,
+  updateColumnSortState,
+  updateFilterState,
+} from "./utils";
+import { callApiHook, downloadCSV } from "@/utils/apifuncs";
+import { useApi } from "@/hooks/useApi";
+import { generateCSVApi } from "@/services/common";
 
 interface AdvancedTableProps {
   columns: ListData;
+  setColumns: any;
   rows: any[];
   selectable?: boolean;
-  selectedRows?: any[];
-  filterOpen: boolean;
-  setFilterOpen: any;
   pagination?: boolean;
-  dateRanges?: any;
-  setDateRanges?: any;
-  listConfig?: any;
+  listConfig: any;
   totalItems: number;
-  limit?: number;
-  currentPage?: number;
-  sortData: [];
-  filtersData: [];
   loading?: boolean;
-  setColumns?: any;
-  setSelectedRows?: () => void;
-  onClearFilters?: () => void;
-  onSort: (sortData: any) => void;
-  onSearch: (column: any, event: ChangeEvent<HTMLInputElement> | any) => void;
-  onSearchKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
-  onHandleFilter?: () => void;
-  onDateChange?: () => void;
-  onDateEnter?: () => void;
-  onRowClick?: () => void;
-  onLimitChange?: (limit: number) => void;
-  onPageChange?: (page: number) => void;
-  onFiltersApply?: (fitlersData: any) => void;
-  onViewsApply?: (viewData: any) => void;
+  setListConfig: (config: any) => void;
+  fetchData: (payload: any) => void;
+  onRowClick?: (row: any) => void;
+  tableName?: string;
 }
 
 const AdvancedTable = ({
@@ -56,31 +46,138 @@ const AdvancedTable = ({
   pagination,
   listConfig,
   totalItems,
-  currentPage,
-  limit,
-  sortData,
-  filtersData,
   loading,
-  filterOpen,
-  setFilterOpen,
   setColumns,
-  onClearFilters,
-  onSort,
-  onSearch,
-  onSearchKeyDown,
-  onLimitChange,
-  onPageChange,
-  onFiltersApply,
-  onViewsApply,
+  tableName,
+  fetchData,
+  setListConfig,
+  onRowClick,
 }: AdvancedTableProps) => {
   const headerRef = useRef<HTMLTableRowElement>(null);
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [columnWidths, setColumnWidths] = useState<number[]>([]);
+  const [filterOpen, setFilterOpen] = useState<boolean>(false);
+  const [limit, setLimit] = useState(10);
+  const [sortData, setSortData] = useState<[] | any>([]);
+  const [filtersData, setFilterData] = useState<[] | any>([]);
+  const [page, setPage] = useState(1);
   const [stickyOffsets, setStickyOffsets] = useState<{ [key: string]: number }>(
     {}
   );
 
-  console.log({ columns });
+  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+
+  const onSearch = (column, event) => {
+    const { value, type } = event.target;
+
+    // Update the filter state
+    let filteredColsData = updateFilterState(
+      column,
+      [value],
+      filtersData,
+      type == "date" ? "GREATER_THAN" : "CONTAINS"
+    );
+
+    setFilterData(filteredColsData);
+    if (type == "date") {
+      fetchData({
+        sort: sortData,
+        filters: filteredColsData,
+        limitValue: limit,
+        pageValue: 1,
+      });
+    }
+    console.log(column, value, filteredColsData);
+  };
+
+  const onFiltersApply = (filtersData, closeAfter?: boolean) => {
+    console.log({ filtersData });
+    setFilterData(filtersData);
+    setPage(1);
+    fetchData({
+      pageValue: 1,
+      filters: filtersData,
+      limitValue: limit,
+      sort: sortData,
+    });
+    if (closeAfter) {
+      setFilterOpen(false);
+    }
+  };
+
+  const onPageChange = (page) => {
+    setPage(page);
+    fetchData({
+      sort: sortData,
+      filters: filtersData,
+      limitValue: limit,
+      pageValue: page,
+    });
+  };
+
+  const onViewsApply = (viewData) => {
+    console.log({ viewData });
+    setColumns(viewData);
+    let newConfig = replaceColumns(listConfig, viewData);
+    setListConfig(newConfig);
+    setFilterOpen(false);
+  };
+
+  const onSearchKeyDown = (event) => {
+    console.log(event.key);
+    if (event.key == "Enter") {
+      fetchData({
+        sort: sortData,
+        filters: filtersData,
+        limitValue: limit,
+        pageValue: 1,
+      });
+    }
+  };
+
+  const onSort = (sortValues) => {
+    const colsToSort = updateColumnSortState(sortValues, sortData);
+    setSortData(colsToSort);
+    console.log({ colsToSort });
+    fetchData({
+      sort: colsToSort,
+      filters: filtersData,
+      limitValue: limit,
+      pageValue: page,
+    });
+  };
+
+  const onLimitChange = (limit) => {
+    setLimit(limit);
+    setPage(1);
+    fetchData({
+      sort: sortData,
+      filters: filtersData,
+      limitValue: limit,
+      pageValue: 1,
+    });
+  };
+
+  const onClearFilters = () => {
+    setFilterData([]);
+    setSortData([]);
+    setPage(1);
+    fetchData({
+      filters: [],
+      sort: [],
+      limitValue: 10,
+      pageValue: 1,
+    });
+  };
+
+  const ExportCSVHandler = async () => {
+    await callApiHook({
+      apiCall: callCSVApi(generateCSVApi(rows)),
+      successCallBack: (response: any) => {
+        downloadCSV(response, tableName ? `${tableName}.csv` : "data.csv");
+      },
+    });
+  };
 
   useEffect(() => {
     if (columns) {
@@ -137,10 +234,11 @@ const AdvancedTable = ({
         {/* Table Actions defined here */}
 
         <TableActions
-          onCsvExport={() => {}}
-          onPdfExport={() => {}}
+          onCsvExport={{
+            handler: ExportCSVHandler,
+            loading: isCSVLoading,
+          }}
           onClearFilters={onClearFilters}
-          onRefresh={() => {}}
           filterOpen={filterOpen}
           columns={columns}
           setColumns={setColumns}
@@ -190,6 +288,7 @@ const AdvancedTable = ({
                     columnWidths={columnWidths}
                     row={row}
                     columns={columns}
+                    onRowClick={onRowClick}
                     selectable={selectable}
                     isSelected={selectedRows.includes(row)}
                     onRowSelection={handleRowSelection}
@@ -208,7 +307,7 @@ const AdvancedTable = ({
       </div>
       {!loading && pagination && (
         <TablePagination
-          currentPage={currentPage}
+          currentPage={page}
           totalPages={Math.ceil(totalItems / limit)}
           onChangePage={onPageChange}
           limit={limit}

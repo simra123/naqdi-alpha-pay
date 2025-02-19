@@ -14,7 +14,7 @@ type Props = {
   sortData: any;
   setColumns: any;
   columns: any;
-  onFiltersApply: (date: any) => void;
+  onFiltersApply: (date: any, closeAfter?: boolean) => void;
   onViewsApply: (date: any) => void;
 };
 
@@ -70,7 +70,7 @@ const AdvancedTableFilters = ({
         formatFilterDataFromGroups(updatedGroupWithDate);
       console.log({ updatedGroupWithDate });
 
-      onFiltersApply(filteredColumnsData);
+      onFiltersApply(filteredColumnsData, true);
     } else {
       const columns = listViews[0]?.meta?.filter((item) => item?.isSelected);
       onViewsApply(columns);

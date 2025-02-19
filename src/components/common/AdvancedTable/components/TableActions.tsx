@@ -13,10 +13,14 @@ type Props = {
   setColumns?: any;
   columns?: any;
   onPdfExport?: () => void;
-  onCsvExport?: () => void;
+  onCsvExport?: {
+    handler?: () => void;
+    loading?: boolean;
+    error?: any;
+  };
   onRefresh?: () => void;
   onClearFilters?: () => void;
-  onFiltersApply?: (filterData: any) => void;
+  onFiltersApply?: (filterData: any, closeAfter?: boolean) => void;
   onViewsApply?: (viewsData: any) => void;
 };
 
@@ -51,16 +55,19 @@ const TableActions = ({
         onViewsApply={onViewsApply}
       />
       <div className="left-actions flex items-center gap-3">
-        <LoaderButton
-          content={"Export PDF"}
-          variant={"outlined"}
-          onClick={onPdfExport}
-        />
+        {onPdfExport && (
+          <LoaderButton
+            content={"Export PDF"}
+            variant={"outlined"}
+            onClick={onPdfExport}
+          />
+        )}
 
         <LoaderButton
           content={"Export CSV"}
           variant={"outlined"}
-          onClick={onCsvExport}
+          onClick={onCsvExport.handler}
+          loading={onCsvExport.loading}
         />
       </div>
       <div className="right-actions flex items-center gap-3">

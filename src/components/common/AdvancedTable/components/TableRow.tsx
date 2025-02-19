@@ -26,10 +26,8 @@ const TableRow: React.FC<TableRowProps> = ({
   onRowClick,
   index,
   columnWidths,
-  stickyOffsets
+  stickyOffsets,
 }) => {
-
-
   return (
     <tr
       key={index}
@@ -51,7 +49,12 @@ const TableRow: React.FC<TableRowProps> = ({
 
         // Function to dynamically access nested object values
         const getNestedValue = (obj: any, path: string) => {
-          return path.split('.').reduce((acc, key) => (acc && acc[key] ? acc[key] : undefined), obj);
+          return path
+            .split(".")
+            .reduce(
+              (acc, key) => (acc && acc[key] ? acc[key] : undefined),
+              obj
+            );
         };
 
         const value = getNestedValue(row, column.listColumnsMeta.name);
@@ -60,27 +63,34 @@ const TableRow: React.FC<TableRowProps> = ({
           <td
             key={column.id}
             style={{
-              left: column.isSticky ? `${stickyOffsets[column.id]}px` : undefined,
+              left: column.isSticky
+                ? `${stickyOffsets[column.id]}px`
+                : undefined,
               maxWidth: 300,
             }}
-            className={`${column.isSticky ? "sticky bg-white z-10 bg-opacity-95" : ""} 
+            className={`${
+              column.isSticky ? "sticky bg-white z-10 bg-opacity-95" : ""
+            } 
           py-4 pl-2 pr-6 font-semibold ${columnClassName} 
           text-ellipsis overflow-hidden whitespace-nowrap`}
           >
             {value ? (
               <CopyButtonColumn
-                value={column.dataValidator ? column.dataValidator(value, row) : value}
+                value={
+                  column.dataValidator
+                    ? column.dataValidator(value, row)
+                    : value
+                }
                 copyable={column.copyable}
                 link={column?.link ? column?.link(row) : null}
               />
-            ) :
+            ) : (
               "_"
-            }
+            )}
           </td>
         );
       })}
     </tr>
-
   );
 };
 
