@@ -109,7 +109,7 @@ const PayoutDetails = ({ params }) => {
       <LoadingApi loading={isPayoutDetailsLoading}>
         <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
           <FolderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="ID" value={payout?.payout_uuid} />
@@ -121,7 +121,7 @@ const PayoutDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <CalenderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -137,7 +137,7 @@ const PayoutDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <PaymentIcon active={false} />
-          <h5 className="text-purple-100 text-h5 font-semibold">Payouts</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Payouts</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -157,7 +157,7 @@ const PayoutDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <StatusIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
         </div>
 
         <div className="res-2-grid py-6">

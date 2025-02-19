@@ -53,7 +53,7 @@ const GasPaymentModal = ({
   let blockchainUnit;
   if (isOpen) {
     blockchainUnit = blockchain_units[blockchain?.toLowerCase()];
-    console.log({ walletAddress, walletType, blockchain, blockchainUnit });
+
   }
 
   const {

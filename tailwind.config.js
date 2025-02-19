@@ -35,6 +35,8 @@ module.exports = {
         "chip-red": "#FEDBDB",
         "chip-green": "#f2f7f4",
         "chip-blue": "#f2f4f7",
+        "disabled-white": "#DEE2E6",
+        "white-100": "#F6F6F7",
       },
       borderColor: {
         purple: "#3D1554",
@@ -47,6 +49,7 @@ module.exports = {
         "placeholder-gray": "#BEBEBE",
         "table-gray": "#DCDCE3",
         "light-white": "##EEEEEE",
+        "disabled-white": "#DEE2E6",
       },
       borderRadius: {
         large: "12px",
@@ -183,6 +186,7 @@ module.exports = {
           chip: "#294A82",
           "table-button-text": "#0661AC",
           "table-button": "rgba(6, 97, 172, 0.1)",
+          greyish: "#33364B",
         },
         custom: {
           "caption-gray": "#959595",

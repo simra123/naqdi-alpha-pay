@@ -17,7 +17,12 @@ const Checkbox = ({ checked, onChange, label, name }: CheckboxProps) => {
         onChange={onChange}
         className="hidden peer"
       />
-      <div className="w-5 h-5 rounded border-2 border-purple-600 flex items-center justify-center bg-white peer-checked:bg-purple-600 peer-checked:border-0 peer-checked:rounded-md">
+      <div
+        className={`w-5 h-5 rounded border-2 border-purple-600 flex items-center justify-center bg-white ${
+          checked &&
+          "peer-checked:bg-purple-600 peer-checked:border-0 peer-checked:rounded-md"
+        }`}
+      >
         <svg
           className={`w-4 h-4 text-white ${checked ? "block" : "hidden"}`}
           fill="none"

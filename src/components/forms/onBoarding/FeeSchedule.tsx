@@ -28,7 +28,7 @@ const FeeSchedule = () => {
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response: any) => {
         setUser(response);
-        console.log(localUser.userDetails?.fees, response?.userDetails?.fees);
+
         // if (
         //   localUser &&
         //   localUser.userDetails?.fees != response?.userDetails?.fees
@@ -99,7 +99,7 @@ export default FeeSchedule;
 export const FeeCard = ({ schedule }) => {
   return (
     <div
-      className={`p-5 gap-6 shadow-md border w-[360px] max-w-full rounded-large border-purple-100 cursor-pointer transition-all text-purple-100`}
+      className={`p-5 gap-6 shadow-md border w-[360px] max-w-full rounded-large border-purple-100 cursor-pointer transition-all text-purple-500`}
     >
       <div className="text-center">
         <span className="font-semibold text-h4">{schedule?.value} %</span>

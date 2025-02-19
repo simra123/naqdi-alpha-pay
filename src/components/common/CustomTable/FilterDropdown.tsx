@@ -48,7 +48,7 @@ const FilterDropdown = ({ column, rows, setCurrentRows, columnsList }) => {
                   : ""
               } ${
                 col?.field === col.headerName
-                  ? "bg-purple-light-purple text-purple-100"
+                  ? "bg-purple-light-purple text-purple-500"
                   : "hover:bg-purple-light-purple hover:text-black-100"
               }`}
             >

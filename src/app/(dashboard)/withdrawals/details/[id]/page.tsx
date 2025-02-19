@@ -222,7 +222,7 @@ const WithdrawalDetails = ({ params }) => {
     setConfirmModal(!confirmModal);
   };
 
-  console.log(selectedWallets, "Selected Walelts");
+
 
   return (
     <LoadingApi loading={isWithdrawalDetailsLoading}>
@@ -231,7 +231,7 @@ const WithdrawalDetails = ({ params }) => {
         toggleHandler={rejectModalToggler}
         withdrawId={withdraw_id}
       />
-      <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
+      <div className="rounded-medium flex flex-col">
         <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
           Withdrawal Details
         </h3>
@@ -247,7 +247,7 @@ const WithdrawalDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
           <FolderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
@@ -272,7 +272,7 @@ const WithdrawalDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <CalenderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -290,8 +290,8 @@ const WithdrawalDetails = ({ params }) => {
           />
         </div>
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <PaymentIcon active={false} />
-          <h5 className="text-purple-100 text-h5 font-semibold">Withdrawals</h5>
+          <PaymentIcon active={false}/>
+          <h5 className="text-purple-500 text-h5 font-semibold">Withdrawals</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -317,7 +317,7 @@ const WithdrawalDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <StatusIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -352,7 +352,7 @@ const WithdrawalDetails = ({ params }) => {
 
           <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
             <FolderIcon />
-            <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+            <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details
@@ -367,8 +367,8 @@ const WithdrawalDetails = ({ params }) => {
           </div>
 
           <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
-            <ContactMailOutlined className="text-purple-100" />
-            <h5 className="text-purple-100 text-h5 font-semibold">Contact</h5>
+            <ContactMailOutlined className="text-purple-500" />
+            <h5 className="text-purple-500 text-h5 font-semibold">Contact</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details

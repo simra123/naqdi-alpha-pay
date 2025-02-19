@@ -31,7 +31,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
     await callApiHook({
       apiCall: callQRCodeApi(generateMFAForAdminApi()),
       successCallBack: (response: any) => {
-        console.log("I am response from admin api response ", response);
+
         setQRCode(response);
       },
     });
@@ -45,7 +45,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
     await callApiHook({
       apiCall: callVerificationApi(verifyMFAForAdminApi({ token: otp })),
       successCallBack: (response: any) => {
-        console.log("I am response from admin mfa verification API ", response);
+
         setIsMfaVerified(true);
         updateMfaInCookie(true);
         setIsOpen(false);

@@ -12,8 +12,8 @@ const Loader = ({
   return (
     <div className={`w-full text-center  ${wrapperClassName}`}>
       {bg ? (
-        <div className={`w-16 p-2 rounded-full bg-pink-gradient`}>
-          <div className={`loader mx-auto `}></div>
+        <div className={`w-16 p-2 rounded-full bg-purple-gradient`}>
+          <div className={`loader mx-auto`}></div>
         </div>
       ) : (
         <div className={`loader mx-auto ${className}`}></div>
