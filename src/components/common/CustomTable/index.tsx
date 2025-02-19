@@ -208,23 +208,6 @@ const CustomTable = ({
               <button className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
                 <Search />
               </button>
-              <div className="relative filterBtn">
-                <button
-                  onClick={() => setFiltersOpen(!filtersOpen)}
-                  className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3"
-                >
-                  <Tune />
-                </button>
-
-                {Filters && (
-                  <Filters
-                    data={rows}
-                    setData={setCurrentRows}
-                    isOpen={filtersOpen}
-                    setIsOpen={setFiltersOpen}
-                  />
-                )}
-              </div>
             </div>
           </div>
         ) : (
@@ -415,7 +398,6 @@ const getPaginationPages = (
   const pages: (number | string)[] = [];
 
   if (totalPages <= totalPageNumbers) {
-    console.log("Show all pages if total pages fit within the range");
     // Show all pages if total pages fit within the range
     for (let i = 1; i <= totalPages; i++) {
       pages.push(i);
@@ -428,13 +410,6 @@ const getPaginationPages = (
 
   const showLeftEllipsis = leftSiblingIndex > 2;
   const showRightEllipsis = rightSiblingIndex < totalPages - 1;
-
-  console.log({
-    leftSiblingIndex,
-    rightSiblingIndex,
-    showLeftEllipsis,
-    showRightEllipsis,
-  });
 
   if (showLeftEllipsis) {
     pages.push("..."); // Left ellipsis
@@ -475,7 +450,6 @@ const Pagination = ({
     [currentPage, pageSize, totalPages]
   );
 
-  console.log({ pages });
   return (
     <div className="flex justify-center sm:justify-between items-center mt-4 relative">
       {/* Pages Indicator */}

@@ -1,5 +1,6 @@
 import React from "react";
 import Loader from "../Loader";
+import { Tooltip } from "react-tooltip";
 
 type buttonVariants = "contained" | "outlined" | "text" | "error" | "success";
 type buttonColors = "success" | "error";
@@ -13,6 +14,8 @@ interface Props {
   disabled?: boolean;
   type?: "reset" | "submit";
   className?: string;
+  tooltip?: string;
+  tooltipId?: any;
 }
 
 const LoaderButton = ({
@@ -24,10 +27,12 @@ const LoaderButton = ({
   type,
   color,
   className,
+  tooltipId,
+  tooltip,
 }: Props) => {
   const getVariantClasses = (variant: buttonVariants, loading: boolean) => {
     const disabledClasses = disabled
-      ? "!bg-disabled !bg-none !text-purple-100 font-medium"
+      ? "!bg-disabled !bg-none !text-purple-500 font-medium"
       : "";
 
     const loadingClasses = {
@@ -42,15 +47,15 @@ const LoaderButton = ({
       contained: "pink-gradient-button w-full",
       error: "border-red-button border py-3 w-56 rounded-medium",
       outlined:
-        "bg-transparent border-purple-100 border hover:bg-purple-10 transition-all text-purple-100 sm:p-3 py-[6px] px-[6px] sm:px-8 rounded-small sm:rounded-medium text-[13px] sm:text-input w-full",
-      text: "bg-transparent text-purple-100 p-2",
+        "bg-transparent border-purple-100 border hover:bg-purple-10 transition-all text-purple-500 sm:p-3 py-[6px] px-[6px] sm:px-8 rounded-small sm:rounded-medium text-[13px] sm:text-input w-full",
+      text: "bg-transparent text-purple-500 p-2",
     };
 
     const colors = {
-      error: "border-0 py-3 text-white !bg-red-button rounded-medium w-56 !bg-none",
+      error:
+        "border-0 py-3 text-white !bg-red-button rounded-medium w-56 !bg-none",
       success: "border-0 py-3 text-white !bg-green-button rounded-medium w-56",
     };
-    console.log(colors[color]);
 
     return `${disabledClasses} ${colors[color]} ${
       loading ? loadingClasses[variant] : variantClasses[variant]
@@ -67,6 +72,7 @@ const LoaderButton = ({
         onClick={onClick}
         disabled={disabled || loading}
         type={type}
+        id={tooltipId}
       >
         {loading ? (
           variant === "contained" ? (
@@ -79,7 +85,7 @@ const LoaderButton = ({
                     ? "text-green-button"
                     : color == "error"
                     ? "text-red-button"
-                    : "text-purple-100"
+                    : "text-purple-500"
                 }`}
             />
           )
@@ -87,6 +93,13 @@ const LoaderButton = ({
           content
         )}
       </button>
+      {tooltip && disabled && (
+        <Tooltip
+          content={tooltip}
+          anchorSelect={"#" + tooltipId}
+          className="z-30 !bg-red-500 max-w-64 xs:max-w-max"
+        />
+      )}
     </div>
   );
 };

@@ -30,11 +30,6 @@ export const onBoardingSlice = createSlice({
     setStep(state, action) {
       const { previous_step, current_step } = action.payload;
 
-      console.log({
-        previous_step,
-        current_step,
-        message: "In step change method",
-      });
 
       if (previous_step) {
         state.disabled_steps[previous_step] = false;
@@ -48,10 +43,7 @@ export const onBoardingSlice = createSlice({
       const details = action?.payload?.userDetails;
 
       if (details) {
-        console.log(
-          action.payload.userDetails,
-          "In Reduxb validate steps method"
-        );
+
 
         const stepsState = [
           {
@@ -89,9 +81,9 @@ export const onBoardingSlice = createSlice({
           const current_step = stepsState[i];
           const next_step = stepsState[i + 1];
 
-          console.log({ previous_step, current_step, next_step });
+
           if (current_step.condition) {
-            console.log("Found a staisfying condition");
+
             state.disabled_steps[current_step.name] = false;
             state.disabled_steps[next_step.name] = false;
             state.previous_step = previous_step?.name || null;

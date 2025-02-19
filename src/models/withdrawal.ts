@@ -62,6 +62,5 @@ export const otpSchema = () => {
   });
 };
 
-console.log({ contextTest });
 
 export const emptySchema = Yup.object().shape({});

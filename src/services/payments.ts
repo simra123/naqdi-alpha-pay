@@ -21,6 +21,10 @@ export const getAllPaymentsApi = () => {
   return () => api.get(`v1/client/payments`);
 };
 
+export const getClientPaymentsListApi = (data?: {}, params?: { limit: number, page: number }) => {
+  return () => api.post(`v1/payment-list`, data, { params });
+};
+
 export const getAllPaymentsByAdminApi = () => {
   return () => api.get(`v1/admin/payments-by-admin`);
 };

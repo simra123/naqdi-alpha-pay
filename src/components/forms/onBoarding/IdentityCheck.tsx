@@ -201,7 +201,7 @@ const IdentityCheck = () => {
                           className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
                           onClick={() => front?.current?.click()}
                         >
-                          <Add className="text-purple-100" />
+                          <Add className="text-purple-500" />
                           <span className="text-blackGrey-placeholder text-input">
                             {" "}
                             Drop Files Here Or Click To Upload{" "}
@@ -242,7 +242,7 @@ const IdentityCheck = () => {
                           className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
                           onClick={() => back?.current?.click()}
                         >
-                          <Add className="text-purple-100" />
+                          <Add className="text-purple-500" />
                           <span className="text-blackGrey-placeholder text-input">
                             {" "}
                             Drop Files Here Or Click To Upload{" "}
@@ -314,7 +314,7 @@ export const DocumentFormatCard = ({
       onClick={handleFormatChange(format)}
       className={`p-5 items-center max-w-full w-[360px] flex gap-4 rounded-[14px] shadow-md border cursor-pointer transition-all ${
         value == format
-          ? `text-purple-100 border-purple-100`
+          ? `text-purple-500 border-purple-100`
           : "#AFAFAF  border-light-gray"
       }`}
     >

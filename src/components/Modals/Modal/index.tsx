@@ -28,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div
       className={clsx(
-        "fixed inset-0 flex items-center justify-center transition-opacity z-[9999] w-full min-h-full bg-[rgba(0,0,0,0.6)] overflow-auto duration-500",
+        "fixed inset-0 flex items-center justify-center transition-opacity z-[9999] w-full min-h-full bg-[rgba(0,0,0,0.6)] overflow-y-auto duration-500 overflow-x-hidden",
         { "opacity-0 pointer-events-none": !isOpen },
         { "opacity-100 pointer-events-auto": isOpen }
       )}
