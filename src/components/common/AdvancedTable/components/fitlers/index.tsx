@@ -56,17 +56,15 @@ const AdvancedTableFilters = ({
 
   const ApplyHandler = () => {
     if (filterType == FilterTypesEnum.Filter) {
-      const updatedGroupWithDate = updateMetaItemInGroup(
-        groups,
-        ["created_at"],
-        {
-          listColumnMeta: { name: "created_at" },
-          operator: "BETWEEN",
-          values: [dateRange[0].startDate, dateRange[0].endDate],
-          isSelected:
-            dateRange[0].startDate && dateRange[0].endDate ? true : false,
-        }
-      );
+      const updatedGroupWithDate =
+        dateRange[0].startDate && dateRange[0].endDate
+          ? updateMetaItemInGroup(groups, ["created_at"], {
+              listColumnMeta: { name: "created_at" },
+              operator: "BETWEEN",
+              values: [dateRange[0].startDate, dateRange[0].endDate],
+              isSelected: true,
+            })
+          : groups;
       setGroups(updatedGroupWithDate);
       const filteredColumnsData =
         formatFilterDataFromGroups(updatedGroupWithDate);

@@ -266,6 +266,16 @@ const Payments = () => {
             setListConfig(newConfig);
             setFilterOpen(false);
           }}
+          onClearFilters={() => {
+            setFilterData([]);
+            setSortData([]);
+            getPayments({
+              filters: [],
+              sort: [],
+              limitValue: 10,
+              pageValue: 1,
+            });
+          }}
         />
 
         <ErrorApiText error={isPaymentError} />

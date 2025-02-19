@@ -10,6 +10,7 @@ type Props = {
   group?: any;
   setGroups?: (updater: (prev: any) => any) => void;
   handleChangeWithGroup?: (groupId: number, itemId: number) => void;
+  setDateRange: any;
 };
 
 const FilterCheckField = ({
@@ -17,6 +18,7 @@ const FilterCheckField = ({
   handleChangeWithGroup,
   group,
   setGroups,
+  setDateRange,
 }: Props) => {
   const columnDataType = determineType(item);
   const columnFilterOperations = filterCriteria[columnDataType];
@@ -29,15 +31,28 @@ const FilterCheckField = ({
         g.id === group.id
           ? {
               ...g,
-              meta: g.meta.map((m) =>
-                m.id === item.id
+              meta: g.meta.map((m) => {
+                const updatedValues = value === "BETWEEN" ? ["", ""] : [""];
+
+                if (m.name === "created_at") {
+                  setDateRange([
+                    {
+                      startDate: updatedValues[0],
+                      endDate: updatedValues[1],
+                      key: "selection",
+                      color: "#6D2BE1",
+                    },
+                  ]);
+                }
+
+                return m.id === item.id
                   ? {
                       ...m,
                       operator: value,
-                      values: value === "BETWEEN" ? ["", ""] : [""],
+                      values: updatedValues,
                     }
-                  : m
-              ),
+                  : m;
+              }),
             }
           : g
       )
@@ -46,24 +61,37 @@ const FilterCheckField = ({
 
   const handleValueChange = (index: number, newValue: any) => {
     console.log({ newValue });
+
     setGroups?.((prevGroups) =>
       prevGroups.map((g) =>
         g.id === group.id
           ? {
               ...g,
-              meta: g.meta.map((m) =>
-                m.id === item.id
-                  ? {
-                      ...m,
-                      values:
-                        m.operator === "BETWEEN"
-                          ? m.values.map((v: string, i: number) =>
-                              i === index ? newValue : v
-                            )
-                          : [newValue],
-                    }
-                  : m
-              ),
+              meta: g.meta.map((m) => {
+                if (m.id === item.id) {
+                  const updatedValues =
+                    m.operator === "BETWEEN"
+                      ? m.values.map((v: string, i: number) =>
+                          i === index ? newValue : v
+                        )
+                      : [newValue];
+
+                  // Check for "created_at" condition inside the loop
+                  if (m.name === "created_at") {
+                    setDateRange([
+                      {
+                        startDate: updatedValues[0],
+                        endDate: updatedValues[1],
+                        key: "selection",
+                        color: "#6D2BE1",
+                      },
+                    ]);
+                  }
+
+                  return { ...m, values: updatedValues };
+                }
+                return m;
+              }),
             }
           : g
       )

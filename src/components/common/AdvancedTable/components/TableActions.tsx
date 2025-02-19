@@ -10,13 +10,12 @@ type Props = {
   sortData?: any;
   filterOpen: boolean;
   setFilterOpen: any;
-  setColumns?:any;
-  columns?:any;
+  setColumns?: any;
+  columns?: any;
   onPdfExport?: () => void;
   onCsvExport?: () => void;
   onRefresh?: () => void;
-  onSearch?: () => void;
-  onFilterClick?: () => void;
+  onClearFilters?: () => void;
   onFiltersApply?: (filterData: any) => void;
   onViewsApply?: (viewsData: any) => void;
 };
@@ -30,10 +29,9 @@ const TableActions = ({
   columns,
   setColumns,
   onCsvExport,
-  onFilterClick,
   onPdfExport,
   onRefresh,
-  onSearch,
+  onClearFilters,
   onFiltersApply,
   onViewsApply,
 }: Props) => {
@@ -66,12 +64,11 @@ const TableActions = ({
         />
       </div>
       <div className="right-actions flex items-center gap-3">
-        <IconField
-          onChange={onSearch}
-          value={""}
-          icon={SearchbarIcon}
-          wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
-          inputClassName="py-3"
+        <LoaderButton
+          content={"Clear Filters"}
+          variant={"outlined"}
+          className="border-0"
+          onClick={onClearFilters}
         />
         <button className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
           <SearchbarIcon className="" />

@@ -35,6 +35,7 @@ interface AdvancedTableProps {
   loading?: boolean;
   setColumns?: any;
   setSelectedRows?: () => void;
+  onClearFilters?: () => void;
   onSort: (sortData: any) => void;
   onSearch: (column: any, event: ChangeEvent<HTMLInputElement> | any) => void;
   onSearchKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
@@ -63,6 +64,7 @@ const AdvancedTable = ({
   filterOpen,
   setFilterOpen,
   setColumns,
+  onClearFilters,
   onSort,
   onSearch,
   onSearchKeyDown,
@@ -137,9 +139,8 @@ const AdvancedTable = ({
         <TableActions
           onCsvExport={() => {}}
           onPdfExport={() => {}}
-          onFilterClick={() => {}}
+          onClearFilters={onClearFilters}
           onRefresh={() => {}}
-          onSearch={() => {}}
           filterOpen={filterOpen}
           columns={columns}
           setColumns={setColumns}

@@ -202,6 +202,7 @@ const ColumnFiltering = ({
                         handleChangeWithGroup={() =>
                           handleCheckboxChange(group.id, item.id)
                         }
+                        setDateRange={setDateRange}
                         item={item}
                       />
                     </div>
