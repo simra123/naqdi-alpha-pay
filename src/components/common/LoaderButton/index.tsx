@@ -1,5 +1,6 @@
 import React from "react";
 import Loader from "../Loader";
+import { Tooltip } from "react-tooltip";
 
 type buttonVariants = "contained" | "outlined" | "text" | "error" | "success";
 type buttonColors = "success" | "error";
@@ -13,6 +14,8 @@ interface Props {
   disabled?: boolean;
   type?: "reset" | "submit";
   className?: string;
+  tooltip?: string;
+  tooltipId?: any;
 }
 
 const LoaderButton = ({
@@ -24,6 +27,8 @@ const LoaderButton = ({
   type,
   color,
   className,
+  tooltipId,
+  tooltip,
 }: Props) => {
   const getVariantClasses = (variant: buttonVariants, loading: boolean) => {
     const disabledClasses = disabled
@@ -47,10 +52,10 @@ const LoaderButton = ({
     };
 
     const colors = {
-      error: "border-0 py-3 text-white !bg-red-button rounded-medium w-56 !bg-none",
+      error:
+        "border-0 py-3 text-white !bg-red-button rounded-medium w-56 !bg-none",
       success: "border-0 py-3 text-white !bg-green-button rounded-medium w-56",
     };
-
 
     return `${disabledClasses} ${colors[color]} ${
       loading ? loadingClasses[variant] : variantClasses[variant]
@@ -67,6 +72,7 @@ const LoaderButton = ({
         onClick={onClick}
         disabled={disabled || loading}
         type={type}
+        id={tooltipId}
       >
         {loading ? (
           variant === "contained" ? (
@@ -87,6 +93,13 @@ const LoaderButton = ({
           content
         )}
       </button>
+      {tooltip && disabled && (
+        <Tooltip
+          content={tooltip}
+          anchorSelect={"#" + tooltipId}
+          className="z-30 !bg-red-500 max-w-64 xs:max-w-max"
+        />
+      )}
     </div>
   );
 };
