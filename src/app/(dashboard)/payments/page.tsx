@@ -111,9 +111,9 @@ const Payments = () => {
     let paymentCall = () => {
       return user?.role == Role.USER
         ? getClientPaymentsListApi(
-            { sort, filters },
-            { limit: limitValue, page: pageValue }
-          )
+          { sort, filters },
+          { limit: limitValue, page: pageValue }
+        )
         : getAllPaymentsByAdminApi();
     };
 
@@ -276,6 +276,10 @@ const Payments = () => {
             rows={paymentsList?.result}
             listConfig={listConfig}
             setListConfig={setListConfig}
+            onRowClick={(row) => {
+              console.log({ row })
+              router.push(`payments/details/${row?.id}`)
+            }}
             selectable={false}
             pagination
             loading={isPaymentLoading}
