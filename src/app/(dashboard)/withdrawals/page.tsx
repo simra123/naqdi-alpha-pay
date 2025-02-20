@@ -118,9 +118,9 @@ const Withdrawals = () => {
     let withdrawalCall = () => {
       return user?.role == Role.USER
         ? getUserWithdrawalsListApi(
-            { sort, filters },
-            { limit: limitValue, page: pageValue }
-          )
+          { sort, filters },
+          { limit: limitValue, page: pageValue }
+        )
         : getAdminWithdrawalsListApi();
     };
 
@@ -285,6 +285,10 @@ const Withdrawals = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             selectable={false}
+            onRowClick={(row) => {
+              console.log({ row })
+              router.push(`/withdrawals/details/${row?.id}`)
+            }}
             pagination
             loading={isWithdrawalsListLoading}
             totalItems={withdrawalsList?.total}
