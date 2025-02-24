@@ -39,7 +39,7 @@ export default function DateField({
         selected={date ? moment(date).toDate() : null}
         onChange={handleChange}
         placeholderText="MM/DD/YYYY"
-        dateFormat="MM/dd/yyyy"
+        dateFormat="dd/MM/yyyy"
         className={`w-full text-[14px] py-2 px-4 focus:outline-none ${className}`}
         calendarClassName="custom-calendar z-10000"
         popperClassName="!z-[10000]"
