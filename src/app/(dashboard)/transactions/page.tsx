@@ -49,6 +49,7 @@ const transactionsList_table_columns: TableColumns = [
     },
   },
   { field: "amount", headerName: "Amount", sortable: true },
+  { field: "client_fee", headerName: "Client Fee", sortable: true },
   {
     field: "receiveAddress",
     headerName: "Receive Address",
@@ -92,6 +93,7 @@ const transactionsList_Admin_table_columns: TableColumns = [
     },
   },
   { field: "amount", headerName: "Amount", sortable: true },
+  { field: "client_fee", headerName: "Client Fee", sortable: true },
   // { field: "userName", headerName: "UserName", sortable: true },
   // { field: "email", headerName: "Email", sortable: true },
   {
