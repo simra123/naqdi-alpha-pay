@@ -144,13 +144,19 @@ const TransactionDetails = ({ params }) => {
             )} ${transactionDetails?.unit}`}
           />
           <Details
-            label="Fees"
+            label="Alphaspay Fees"
             value={`${roundToPrecision(
               +transactionDetails?.withdrawal?.alphaspay_fee ||
                 +transactionDetails?.alphaspay_fees,
               10
             )} ${transactionDetails?.unit}`}
           />
+          {transactionDetails?.client_fee && (
+            <Details
+              label="Client Fees"
+              value={`${transactionDetails?.client_fee} ${transactionDetails?.unit}`}
+            />
+          )}
         </div>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">

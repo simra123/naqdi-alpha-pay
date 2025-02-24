@@ -114,6 +114,7 @@ export const formatTransactions = (response: []) => {
     blockchain: capitalize(
       item?.wallet?.blockchain || item?.clientWallet?.blockchain
     ),
+    client_fee: item?.client_fee || "_",
     status: capitalize(item?.status),
   }));
   return tableData;
@@ -145,6 +146,7 @@ export const formatTransactionsByAdmin = (response: []) => {
         ? "Withdrawal"
         : "Self Deposit"
     ),
+    client_fee: item?.client_fee || "_",
     network: capitalize(item?.wallet?.network),
     blockchain: capitalize(
       item?.wallet?.blockchain || item?.clientWallet?.blockchain
