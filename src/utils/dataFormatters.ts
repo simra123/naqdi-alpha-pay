@@ -93,7 +93,7 @@ export const formatTransactions = (response: []) => {
       item?.payment_transaction_uuid ||
       item?.withdraw_transaction_uuid ||
       item?.transaction_uuid,
-    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
+    dateReceived: item?.createdAt,
     transactionHash: item?.transaction_hash,
     amount:
       item?.unit != null
@@ -127,7 +127,7 @@ export const formatTransactionsByAdmin = (response: []) => {
       item?.payment_transaction_uuid ||
       item?.withdraw_transaction_uuid ||
       item?.transaction_uuid,
-    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
+    dateReceived: item?.createdAt,
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
     transactionHash: item?.transaction_hash,

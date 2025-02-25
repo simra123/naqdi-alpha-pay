@@ -10,18 +10,30 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { formatPayouts } from "@/utils/dataFormatters";
 import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
+import { getNewsSignedUpUsersByAdminApi } from "@/services/admin/news";
+import moment from "moment";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const newsletter_table_columns = [
-  { field: "uuid", headerName: "ID", sortable: true },
-  { field: "created_at", headerName: "Date", sortable: true },
-  { field: "email", headerName: "Email", sortable: true },
+  { field: "id", headerName: "ID", sortable: true },
   {
-    field: "status",
-    headerName: "Status",
+    field: "created_at",
+    headerName: "Created At",
     sortable: true,
     dataValidator: (value) => {
-      return <Chip status={value} />;
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
     },
+  },
+  {
+    field: "email",
+    headerName: "Email",
+    sortable: true,
   },
 ];
 
@@ -37,15 +49,14 @@ const NewsLetterSignups = () => {
   ] = useApi({ initailLoading: false });
 
   const getAllNewsLetterSignedUsers = async () => {
-    // await callApiHook({
-    //   apiCall: callNewsLetterUsersApi(
-    //     user?.role == Role.ADMIN ? listUserPayoutsApi() : listAdminPayoutsApi()
-    //   ),
-    //   successCallBack: (response: any) => {
-    //     const tableData = formatPayouts(response);
-    //     setNewsLetterUsers(tableData);
-    //   },
-    // });
+    await callApiHook({
+      apiCall: callNewsLetterUsersApi(
+        user?.role == Role.ADMIN && getNewsSignedUpUsersByAdminApi()
+      ),
+      successCallBack: (response: any) => {
+        setNewsLetterUsers(response);
+      },
+    });
   };
 
   const ExportCSVHandler = async () => {
