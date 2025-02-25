@@ -42,13 +42,13 @@ const Users = () => {
   const user = useLocalStorage("user");
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
-  const [subUsersList, setSubUsersList] = useState({ limit: 0, subUsers: [] });
+  const [subUsersList, setSubUsersList] = useState({ limit: 0, users: [] });
   const [isSubUsersListLoading, isSubUsersListError, callSubUsersListApi] =
     useApi();
 
   const ExportCSVHandler = async () => {
     await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(subUsersList.subUsers)),
+      apiCall: callCSVApi(generateCSVApi(subUsersList.users)),
       successCallBack: (response: any) => {
         downloadCSV(response, "sub-users.csv");
       },
@@ -61,7 +61,10 @@ const Users = () => {
         user?.role == Role.USER ? getSubusersApi() : getSubAdminsApi()
       ),
       successCallBack: (response: any) => {
-        setSubUsersList(response);
+        setSubUsersList({
+          limit: response?.limit,
+          users: response?.subUsers || response?.subAdmins,
+        });
       },
     });
   };
@@ -87,7 +90,7 @@ const Users = () => {
         <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
         <div className="flex items-center gap-3">
           <span className="bg-purple-400 text-white font-semibold px-3 py-1 rounded-full">
-            {subUsersList.subUsers.length} of {subUsersList.limit} users created
+            {subUsersList.users.length} of {subUsersList.limit} users created
           </span>
           {PermissionAccess(
             LoaderButton,
@@ -98,7 +101,7 @@ const Users = () => {
             className: "px-16",
             variant: "contained",
             onClick: createToggleHandler,
-            disabled: subUsersList?.subUsers?.length >= subUsersList.limit,
+            disabled: subUsersList?.users?.length >= subUsersList.limit,
             tooltip: "Maximum number of users created. ",
             tooltipId: "sub-user-limit",
           })}
@@ -110,7 +113,7 @@ const Users = () => {
         columns={userSettings_table_columns}
         // Filters={Filters}
         loading={isSubUsersListLoading}
-        rows={subUsersList?.subUsers}
+        rows={subUsersList?.users}
         csv={{
           handler: ExportCSVHandler,
           loading: isCSVLoading,

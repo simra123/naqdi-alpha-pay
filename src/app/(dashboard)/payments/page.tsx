@@ -11,6 +11,7 @@ import {
 import useLocalStorage from "@/hooks/useLocalStorage";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
+import momentTZ from "moment-timezone";
 import { generateCSVApi } from "@/services/common";
 import Chip from "@/components/common/Chip";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
@@ -111,9 +112,9 @@ const Payments = () => {
     let paymentCall = () => {
       return user?.role == Role.USER
         ? getClientPaymentsListApi(
-          { sort, filters },
-          { limit: limitValue, page: pageValue }
-        )
+            { sort, filters },
+            { limit: limitValue, page: pageValue }
+          )
         : getAllPaymentsByAdminApi();
     };
 
@@ -149,9 +150,17 @@ const Payments = () => {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
-                    let date: string | string[] =
-                      moment(value).format("DD-MM-YYYY_HH:MM a");
-                    let [day, time] = date.split("_");
+                    const currentTimeZone = momentTZ.tz.guess();
+
+                    console.log({ currentTimeZone });
+
+                    let date: string | string[] = momentTZ(value)
+                      .tz(currentTimeZone)
+                      .format("DD-MM-YYYY.hh:mm A");
+
+                    console.log({ date });
+
+                    let [day, time] = date.split(".");
                     return (
                       <div className="flex flex-col gap-1">
                         <span className="text-caption">{day}</span>
@@ -277,8 +286,8 @@ const Payments = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             onRowClick={(row) => {
-              console.log({ row })
-              router.push(`payments/details/${row?.id}`)
+              console.log({ row });
+              router.push(`payments/details/${row?.id}`);
             }}
             selectable={false}
             pagination
