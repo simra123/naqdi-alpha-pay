@@ -31,11 +31,30 @@ import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
-  { field: "created_at", headerName: "Created At", sortable: true },
-  { field: "updated_at", headerName: "Updated At", sortable: true },
+  { field: "created_at", headerName: "Created At", sortable: true,
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    }, },
+  { field: "updated_at", headerName: "Updated At", sortable: true,
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    }, },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
   { field: "blockchain", headerName: "Blockchain", sortable: true },
