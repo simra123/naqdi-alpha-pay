@@ -17,11 +17,36 @@ import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const usersList_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
-  { field: "created_at", headerName: "Created" },
-  { field: "updated_at", headerName: "Updated" },
+  {
+    field: "created_at",
+    headerName: "Created",
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
+  },
+  {
+    field: "updated_at",
+    headerName: "Updated",
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
+  },
   { field: "first_name", headerName: "First Name" },
   { field: "last_name", headerName: "Last Name" },
   { field: "username", headerName: "Username" },

@@ -22,6 +22,7 @@ import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import { roundToPrecision } from "@/utils/math";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import CustomTable from "@/components/common/CustomTable";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 const paymentsList_table_columns: TableColumns = [
@@ -32,10 +33,30 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "createdAt",
     headerName: "Created At",
+
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
   },
   {
     field: "updatedAt",
     headerName: "Updated At",
+
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
   },
   {
     field: "blockchain",
@@ -200,12 +221,8 @@ const Payments = () => {
               id: item?.id,
               payment_uuid: item?.payment_uuid,
               blockchain: item?.wallet?.blockchain,
-              createdAt: moment(item?.created_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              ),
-              updatedAt: moment(item?.updated_at).format(
-                "DD-MM-YYYY : hh:mm A"
-              ),
+              createdAt: item?.created_at,
+              updatedAt: item?.updated_at,
               senderAddress: item?.paymentTransaction?.sender_address,
               recieverAddress: item?.wallet?.address,
               requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,

@@ -93,7 +93,7 @@ export const formatTransactions = (response: []) => {
       item?.payment_transaction_uuid ||
       item?.withdraw_transaction_uuid ||
       item?.transaction_uuid,
-    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
+    dateReceived: item?.createdAt,
     transactionHash: item?.transaction_hash,
     amount:
       item?.unit != null
@@ -127,7 +127,7 @@ export const formatTransactionsByAdmin = (response: []) => {
       item?.payment_transaction_uuid ||
       item?.withdraw_transaction_uuid ||
       item?.transaction_uuid,
-    dateReceived: moment(item?.createdAt).format("DD-MM-YYYY : hh:mm A"),
+    dateReceived: item?.createdAt,
     userName: item?.userDetails?.user?.username,
     email: item?.userDetails?.user?.email,
     transactionHash: item?.transaction_hash,
@@ -158,7 +158,7 @@ export const formatTransactionsByAdmin = (response: []) => {
 
 export const formatUsers = (response: []) => {
   const tableData = response?.map((item: any) => ({
-    created_at: moment(item?.created_at).format("DD-MM-YYYY"),
+    created_at: item?.created_at,
     email: item?.email,
     first_name: item?.first_name,
     id: item?.id,
@@ -167,7 +167,7 @@ export const formatUsers = (response: []) => {
     legal_name: item?.legal_name,
     legal_type: capitalize(item?.legal_type),
     middle_name: item?.middle_name,
-    updated_at: moment(item?.updated_at).format("DD-MM-YYYY"),
+    updated_at: item?.updated_at,
     user_type: capitalize(item?.user_type),
     username: item?.username,
     verified: item?.verified,
@@ -179,8 +179,8 @@ export const formatWithdrawals = (response: []) => {
   const tableData = response?.map((item: any) => ({
     id: item?.id,
     uuid: item?.withdrawal_uuid,
-    created_at: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
-    updated_at: moment(item?.updated_at).format("DD-MM-YYYY : hh:mm A"),
+    created_at: item?.created_at,
+    updated_at: item?.updated_at,
     requested_amount: item?.requested_amount,
     blockchain: `${item?.unit}${item?.standard ? `(${item?.standard})` : ""}`,
     unit: item?.unit,

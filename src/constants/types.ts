@@ -29,6 +29,7 @@ export enum ModulesEnum {
   transaction = "transaction",
   payout = "payout",
   user = "user",
+  newsletter = "newsletter",
 }
 
 export enum AccessLevelEnum {
