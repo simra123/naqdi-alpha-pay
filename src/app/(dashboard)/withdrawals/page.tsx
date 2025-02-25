@@ -21,7 +21,6 @@ import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
-import { Add } from "@mui/icons-material";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import {
@@ -31,7 +30,7 @@ import {
 import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
-import moment from "moment";
+import momentTZ from "moment-timezone";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
@@ -118,9 +117,9 @@ const Withdrawals = () => {
     let withdrawalCall = () => {
       return user?.role == Role.USER
         ? getUserWithdrawalsListApi(
-          { sort, filters },
-          { limit: limitValue, page: pageValue }
-        )
+            { sort, filters },
+            { limit: limitValue, page: pageValue }
+          )
         : getAdminWithdrawalsListApi();
     };
 
@@ -166,9 +165,17 @@ const Withdrawals = () => {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
-                    let date: string | string[] =
-                      moment(value).format("DD-MM-YYYY_HH:MM a");
-                    let [day, time] = date.split("_");
+                    const currentTimeZone = momentTZ.tz.guess();
+
+                    console.log({ currentTimeZone });
+
+                    let date: string | string[] = momentTZ(value)
+                      .tz(currentTimeZone)
+                      .format("DD-MM-YYYY.hh:mm A");
+
+                    console.log({ date });
+
+                    let [day, time] = date.split(".");
                     return (
                       <div className="flex flex-col gap-1">
                         <span className="text-caption">{day}</span>
@@ -286,8 +293,8 @@ const Withdrawals = () => {
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-              console.log({ row })
-              router.push(`/withdrawals/details/${row?.id}`)
+              console.log({ row });
+              router.push(`/withdrawals/details/${row?.id}`);
             }}
             pagination
             loading={isWithdrawalsListLoading}

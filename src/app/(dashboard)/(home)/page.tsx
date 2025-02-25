@@ -39,6 +39,16 @@ import Link from "next/link";
 import { removeBrackets } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
 import { getPermission } from "@/utils/cookies";
+import useMountedQueue from "@/hooks/useMountedQueue";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import {
+  setBalance,
+  setPortfolioData,
+  enqueueCall,
+  setLastFetch,
+  setMounted,
+} from "@/store/slices/portfolio.slice";
 
 const adminColumns: TableColumns = [
   {
@@ -60,13 +70,17 @@ const columns: TableColumns = [
 
 const Home = () => {
   const user = useLocalStorage("user");
+  const dispatch = useDispatch();
+  const { portfolioData, balance, queue } = useSelector(
+    (state: any) => state?.portfolio
+  );
   const isWalletHasFullAccess =
     getPermission(ModulesEnum.wallet)?.access_level == AccessLevelEnum.full;
   const isTransactionHasMinumumAccess =
     getPermission(ModulesEnum.transaction)?.access_level !=
     AccessLevelEnum.none;
   const [isPortfolioLoading, isPorfolioError, callPortfolioApi] = useApi({
-    initailLoading: true,
+    initailLoading: false,
   });
   const [
     isLastTransactionsLoading,
@@ -82,14 +96,7 @@ const Home = () => {
   ] = useApi({
     initailLoading: true,
   });
-  const [
-    isPotfolioPercentageLoading,
-    isPotfolioPercentageError,
-    callPotfolioPercentageApi,
-  ] = useApi({
-    initailLoading: true,
-  });
-  const [portfolioPercentage, setPortfolioPercentage] = useState(0);
+
   const [hoveredButton, setHoveredButton] = useState("transfer"); // Default to "transfer"
 
   const handleMouseEnter = (buttonName) => {
@@ -99,10 +106,10 @@ const Home = () => {
   const handleMouseLeave = () => {
     setHoveredButton("transfer"); // Reset to "transfer" when not hovering
   };
-  const [totalPortfolio, setTotalPorfolio] = useState(0);
+
   const [chartUnit, setCharUnit] = useState("ALL");
   const [interval, setInterval] = useState("monthly");
-  const [portfolio, setPortfolio] = useState([]);
+
   const [depoistData, setDepositData] = useState<{
     blockchain?: null | string;
     standard?: null | string;
@@ -160,13 +167,16 @@ const Home = () => {
   };
 
   const getTotalPortfolioValue = async () => {
-    await callApiHook({
-      apiCall: callTotalPortfolioApi(getTotalPortfolioValueApi()),
-      successCallBack: (response: any) => {
-        setTotalPorfolio(response?.totalUSDT);
-      },
-    });
+    if (user?.role == Role.USER) {
+      await callApiHook({
+        apiCall: callTotalPortfolioApi(getTotalPortfolioValueApi()),
+        successCallBack: (response: any) => {
+          dispatch(setBalance(response?.totalUSDT));
+        },
+      });
+    }
   };
+
   const getLastTransactions = async () => {
     await callApiHook({
       apiCall: callLastTransactionsApi(getRecentTransactionsApi()),
@@ -175,19 +185,12 @@ const Home = () => {
       },
     });
   };
-  const getPortfolioPLPercentage = async () => {
-    await callApiHook({
-      apiCall: callPotfolioPercentageApi(getProfitPercentageApi()),
-      successCallBack: (response: any) => {
-        setPortfolioPercentage(response?.profitPercentage);
-      },
-    });
-  };
+
   const _getUserBalance = async () => {
     await callApiHook({
       apiCall: callPortfolioApi(getAllWalletBalancesApi()),
       successCallBack: (response: any) => {
-        setPortfolio(response);
+        dispatch(setPortfolioData(response));
       },
     });
   };
@@ -196,22 +199,27 @@ const Home = () => {
     await callApiHook({
       apiCall: callPortfolioApi(getAllWalletAssetsByAdminApi()),
       successCallBack: (response: any) => {
-        setPortfolio(response);
+        dispatch(setPortfolioData(response));
       },
     });
   };
 
   const UserApiCalls = () => {
-    getTotalPortfolioValue();
     // getPortfolioPLPercentage();
     if (isTransactionHasMinumumAccess) {
       getLastTransactions();
     }
   };
 
+  const fetchPortfolio = useMountedQueue(
+    [getBalances, getTotalPortfolioValue],
+    queue,
+    { enqueueCall, setLastFetch, setMounted }
+  );
+
   useEffect(() => {
-    getBalances();
     user?.role == Role.USER && UserApiCalls();
+    fetchPortfolio();
   }, []);
 
   return (
@@ -233,7 +241,7 @@ const Home = () => {
         <>
           <CustomTable
             columns={adminColumns}
-            rows={portfolio}
+            rows={portfolioData}
             loading={isPortfolioLoading}
             initialPageSize={10}
             actions={
@@ -247,14 +255,14 @@ const Home = () => {
                     content={"Reload"}
                     className="px-4 hidden lg:flex"
                     loading={isPortfolioLoading}
-                    onClick={getBalances}
+                    onClick={fetchPortfolio}
                     variant="outlined"
                   />
                   <LoaderButton
                     content={<Sync className="text-button" />}
                     className="px-4 flex lg:hidden"
                     loading={isPortfolioLoading}
-                    onClick={getBalances}
+                    onClick={fetchPortfolio}
                     variant="text"
                   />
                 </div>
@@ -287,7 +295,7 @@ const Home = () => {
                   <h3 className="text-white font-nunito text-center text-[60px] 2.5xl:text-[92px] font-semibold overflow-hidden text-ellipsis leading-[110px]">
                     $
                     <CountUp
-                      end={totalPortfolio}
+                      end={balance}
                       separator=","
                       decimal="."
                       decimals={2}
@@ -381,8 +389,8 @@ const Home = () => {
 
                   <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px] portfolio-body">
                     <LoadingApi loading={isPortfolioLoading}>
-                      {portfolio?.length > 0 ? (
-                        portfolio?.map((asset) => {
+                      {portfolioData?.length > 0 ? (
+                        portfolioData?.map((asset) => {
                           let unit = asset?.unit;
                           let tokenName = `${unit} (${asset?.standard})`;
                           let coinName =
