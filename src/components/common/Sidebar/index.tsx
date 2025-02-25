@@ -12,6 +12,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { LuNewspaper } from "react-icons/lu";
 import {
   DashboardIcon,
   DoubleLeftIcon,
@@ -105,6 +106,13 @@ const nav_items: NavItem[] = [
     roles: [Role.ADMIN, Role.USER],
     module: ModulesEnum.withdrawal,
   },
+  {
+    name: "News Signups",
+    icon: LuNewspaper,
+    path: "/news-signup",
+    roles: [Role.ADMIN],
+    module: ModulesEnum.newsletter,
+  },
   // {
   //   name: "Payouts",
   //   icon: PayoutsIcon,
@@ -161,7 +169,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   const getCurrentNav = useCallback(() => {
     let CurrentNav = [];
-
 
     if (
       user?.role == Role.ADMIN ||
