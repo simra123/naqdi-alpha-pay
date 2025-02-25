@@ -111,6 +111,7 @@ const nav_items: NavItem[] = [
     icon: LuNewspaper,
     path: "/news-signup",
     roles: [Role.ADMIN],
+    module: ModulesEnum.newsletter,
   },
   // {
   //   name: "Payouts",

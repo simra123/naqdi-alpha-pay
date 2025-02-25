@@ -13,6 +13,8 @@ import CustomTable from "@/components/common/CustomTable";
 import { getNewsSignedUpUsersByAdminApi } from "@/services/admin/news";
 import moment from "moment";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import PermissionAccess from "@/middleware/PermissionAccess";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 const newsletter_table_columns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -98,4 +100,8 @@ const NewsLetterSignups = () => {
   );
 };
 
-export default NewsLetterSignups;
+export default PermissionAccess(
+  NewsLetterSignups,
+  ModulesEnum.newsletter,
+  AccessLevelEnum.read
+);
