@@ -71,11 +71,7 @@ const Wallets = () => {
   ) => {
     event.stopPropagation();
 
-    console.log({
-      walletAddress,
-      blockchain,
-      walletType,
-    });
+
     setPaymentWallet({
       walletAddress,
       blockchain,
@@ -94,7 +90,7 @@ const Wallets = () => {
   };
 
   const wallets_table_columns = useCallback((): TableColumns => {
-    console.log("creating columns");
+
     return [
       {
         field: "wallet_uuid",

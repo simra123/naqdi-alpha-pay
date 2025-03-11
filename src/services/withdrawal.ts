@@ -22,8 +22,8 @@ export const getWithdrawableCurrenciesListApi = () => {
   return () => api.get(`wallet/withdrawal/balance`);
 };
 
-export const getUserWithdrawalsListApi = () => {
-  return () => api.get(`wallet/user-withdrawals`);
+export const getUserWithdrawalsListApi = (data?: {}, params?: { limit: number, page: number }) => {
+  return () => api.post(`withdrawal/list`, data, { params });
 };
 
 export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {

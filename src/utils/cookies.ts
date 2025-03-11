@@ -5,7 +5,6 @@ export const updateMfaInCookie = (newMfaValue) => {
   // Get the current userDetails cookie
   let user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
-  console.log(user);
 
   if (user) {
     if (user?.userDetails) {

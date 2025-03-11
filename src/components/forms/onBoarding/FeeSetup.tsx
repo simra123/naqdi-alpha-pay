@@ -62,7 +62,7 @@ const FeeSetup = () => {
         })
       ),
       successCallBack: (response: any) => {
-        console.log("MOVING TO NEXG STEP");
+
 
         dispatch(
           setStep({
@@ -157,7 +157,7 @@ export const FeeCard = ({ name, description, selected, handleSelect }) => {
 
       <div
         className={`text-center mt-2 ${
-          !selected ? "text-blackGrey-70" : "text-purple-100"
+          !selected ? "text-blackGrey-70" : "text-purple-500"
         }`}
       >
         <span className="font-semibold">{name}</span>

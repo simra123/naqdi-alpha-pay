@@ -21,6 +21,7 @@ import {
 import Chip from "@/components/common/Chip";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { Role } from "@/constants/roles";
+import { Tooltip } from "react-tooltip";
 
 const userSettings_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
@@ -41,13 +42,13 @@ const Users = () => {
   const user = useLocalStorage("user");
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
-  const [subUsersList, setSubUsersList] = useState([]);
+  const [subUsersList, setSubUsersList] = useState({ limit: 0, users: [] });
   const [isSubUsersListLoading, isSubUsersListError, callSubUsersListApi] =
     useApi();
 
   const ExportCSVHandler = async () => {
     await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(subUsersList)),
+      apiCall: callCSVApi(generateCSVApi(subUsersList.users)),
       successCallBack: (response: any) => {
         downloadCSV(response, "sub-users.csv");
       },
@@ -60,7 +61,10 @@ const Users = () => {
         user?.role == Role.USER ? getSubusersApi() : getSubAdminsApi()
       ),
       successCallBack: (response: any) => {
-        setSubUsersList(response);
+        setSubUsersList({
+          limit: response?.limit,
+          users: response?.subUsers || response?.subAdmins,
+        });
       },
     });
   };
@@ -84,7 +88,10 @@ const Users = () => {
 
       <div className="items-center justify-between mb-8 hidden md:flex">
         <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
-        <>
+        <div className="flex items-center gap-3">
+          <span className="bg-purple-400 text-white font-semibold px-3 py-1 rounded-full">
+            {subUsersList.users.length} of {subUsersList.limit} users created
+          </span>
           {PermissionAccess(
             LoaderButton,
             ModulesEnum.user,
@@ -94,8 +101,11 @@ const Users = () => {
             className: "px-16",
             variant: "contained",
             onClick: createToggleHandler,
+            disabled: subUsersList?.users?.length >= subUsersList.limit,
+            tooltip: "Maximum number of users created. ",
+            tooltipId: "sub-user-limit",
           })}
-        </>
+        </div>
       </div>
       <ErrorApiText error={isSubUsersListError} />
 
@@ -103,7 +113,7 @@ const Users = () => {
         columns={userSettings_table_columns}
         // Filters={Filters}
         loading={isSubUsersListLoading}
-        rows={subUsersList}
+        rows={subUsersList?.users}
         csv={{
           handler: ExportCSVHandler,
           loading: isCSVLoading,

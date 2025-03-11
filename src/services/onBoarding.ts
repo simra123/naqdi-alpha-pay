@@ -13,8 +13,19 @@ export const PhoneSetupApi = (data) => {
 export const MfaSetupApi = (data) => {
   return () => api.post(`auth/verify-otp`, data);
 };
-export const FeeSetupApi = (data:{merchant_fees:boolean,client_fees:boolean}) => {
+export const FeeSetupApi = (data: {
+  merchant_fees: boolean;
+  client_fees: boolean;
+}) => {
   return () => api.post(`auth/set-fees`, data);
+};
+
+export const AdminFeeSetupApi = (data: {
+  merchant_fees: boolean;
+  client_fees: boolean;
+  userId: number;
+}) => {
+  return () => api.post(`auth/admin/set-fees`, data);
 };
 
 export const SubmitKYCApi = (data) => {

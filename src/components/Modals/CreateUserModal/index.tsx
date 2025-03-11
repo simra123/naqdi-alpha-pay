@@ -62,7 +62,8 @@ const subAdminPermissions = {
   [ModulesEnum?.wallet]: null,
   [ModulesEnum?.withdrawal]: null,
   [ModulesEnum?.kyc]: null,
-  [ModulesEnum?.merchant]: null, 
+  [ModulesEnum?.merchant]: null,
+  [ModulesEnum.newsletter]: null,
 };
 
 const CreateUserModal = ({
@@ -90,8 +91,6 @@ const CreateUserModal = ({
     };
 
   const [isCreateUserLoading, isCreateUserError, callCreateUserApi] = useApi();
-
-  console.log({ selectedPermissions, userPermissions });
 
   const {
     errors,
@@ -167,20 +166,20 @@ const CreateUserModal = ({
     };
     if (user?.role == Role.ADMIN) {
       requestBody?.permissions?.shift();
-        requestBody.permissions.push(
-          {
-            module: ModulesEnum.kyc,
-            access_level: checkCondition(selectedPermissions[ModulesEnum.kyc]),
-          },
-          {
-            module: ModulesEnum.merchant,
-            access_level: checkCondition(
-              selectedPermissions[ModulesEnum.merchant]
-            ),
-          }
-        );
+      requestBody.permissions.push(
+        {
+          module: ModulesEnum.kyc,
+          access_level: checkCondition(selectedPermissions[ModulesEnum.kyc]),
+        },
+        {
+          module: ModulesEnum.merchant,
+          access_level: checkCondition(
+            selectedPermissions[ModulesEnum.merchant]
+          ),
+        }
+      );
     }
-    console.log(requestBody);
+
     await callApiHook({
       apiCall: callCreateUserApi(
         user?.role == Role.USER
@@ -523,6 +522,29 @@ const CreateUserModal = ({
                 />
               )}
             </div>
+            {user?.role == Role.ADMIN && (
+              <>
+                <div className="flex justify-between items-center">
+                  <span className="font-medium text-base">NewsLetter</span>
+                  <SwitchButton
+                    handleToggle={togglePermission(
+                      ModulesEnum.newsletter,
+                      AccessLevelEnum.read
+                    )}
+                    isOn={selectedPermissions[ModulesEnum.newsletter]}
+                  />
+                </div>
+                {selectedPermissions[ModulesEnum.newsletter] && (
+                  <IconSelectBox
+                    wrapperClassName="!m-0"
+                    options={permissionOptions}
+                    onChange={handlePermissionChange}
+                    name={ModulesEnum.newsletter}
+                    value={selectedPermissions[ModulesEnum.newsletter]}
+                  />
+                )}
+              </>
+            )}
 
             <div className="flex flex-col gap-1 mt-6">
               <LoaderButton

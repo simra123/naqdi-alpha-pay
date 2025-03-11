@@ -26,7 +26,7 @@ const Onboarding = () => {
     (state: any) => state.onboarding.disabled_steps
   );
 
-  console.log({ user, userState, currentStep, disabledSteps });
+
 
   const handleStepChange = (stepName) => () => {
     dispatch(setStep({ current_step: stepName }));
@@ -39,7 +39,7 @@ const Onboarding = () => {
     return currentStep === stepName && <FormComponent />;
   };
 
-  console.log({ userState });
+
 
   return (
     <>

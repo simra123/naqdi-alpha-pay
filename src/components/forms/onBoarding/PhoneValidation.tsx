@@ -14,6 +14,7 @@ import LoadingApi from "@/components/common/LoadindApi";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import Loader from "@/components/common/Loader";
 import LoaderButton from "@/components/common/LoaderButton";
+import { getUserTimezone, getCountryCodeFromTimezone } from "@/utils/timezones";
 
 const PhoneValidation = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const PhoneValidation = () => {
   const [showCode, setShowCode] = useState(false);
   const { getUserDetails } = useGetUserDetaiils();
   const userDetails = useSelector((state: any) => state.user.data);
+  const [defaultCountry, setDefaultCountry] = useState<string>("us");
   const initialValuePhone = {
     phone: "",
   };
@@ -52,6 +54,12 @@ const PhoneValidation = () => {
     }
   }, [userDetails]);
 
+  useEffect(() => {
+    const timezone = getUserTimezone();
+    const country = getCountryCodeFromTimezone(timezone);
+    setDefaultCountry(country?.toLowerCase());
+  }, []);
+
   const onSubmitPhone = async () => {
     await callApiHook({
       apiCall: callPhoneApi(
@@ -80,7 +88,7 @@ const PhoneValidation = () => {
   };
   const onSubmitError = () => {
     window.scrollTo(0, 300);
-    console.log("Form Not submitted successfully!");
+
   };
 
   return (
@@ -119,6 +127,7 @@ const PhoneValidation = () => {
                   })
                 }
                 disabled={showCode}
+                country={defaultCountry}
                 value={phoneValues.phone}
                 onBlur={validatePhone}
                 enableSearch
@@ -129,9 +138,9 @@ const PhoneValidation = () => {
               />
 
               {phoneErrors.phone && (
-                 <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
-                 {phoneErrors.phone}
-               </p>
+                <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+                  {phoneErrors.phone}
+                </p>
               )}
             </div>
             <ErrorApiText error={isPhoneError} />

@@ -2,7 +2,7 @@
 
 import React, { use, useEffect, useState } from "react";
 import Modal from "../Modal";
-import { callApiHook } from "@/utils/apifuncs";
+import { callApiHook, sendPaymentInvoiceWhatsapp } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import { createDepoistAddressApi } from "@/services/wallet";
 import Image from "next/image";
@@ -25,6 +25,11 @@ import { createPaymentDepositApi } from "@/services/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import IconField from "@/components/common/IconField";
 import { roundToPrecision } from "@/utils/math";
+import Checkbox from "@/components/common/CheckBox";
+import useFormValidation from "@/hooks/useFormValidation";
+import { DepoistSchema } from "@/models/Deposit";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/material.css";
 
 interface Network {
   label: string;
@@ -37,6 +42,17 @@ interface DepositProps {
   blockchain?: string;
   standard?: string;
 }
+
+const initalFormValues = {
+  network: "",
+  blockchain: "",
+  standard: "",
+  amount: "",
+  client_name: "",
+  client_email: "",
+  client_phone_number: "",
+  email_notification: false,
+};
 
 const DepositModal = ({
   isOpen,
@@ -51,14 +67,16 @@ const DepositModal = ({
 
   const [filteredNets, setFilteredNets] = useState([]);
   const [depositAddress, setDepositAddress] = useState(null);
-  const [seletedOption, setSelectedOption] = useState({
-    network: "",
-    blockchain: "",
-    standard: "",
-    amount: "",
-  });
 
-  console.log({ blockchain, state: seletedOption.blockchain });
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    values,
+    setValues,
+    validateField,
+    setErrors,
+  } = useFormValidation(initalFormValues, DepoistSchema);
 
   const createDepoistAddress = async () => {
     await callApiHook({
@@ -71,17 +89,31 @@ const DepositModal = ({
           }),
           requested_currency: "USD",
           payment_currency:
-            blockchain_units[
-              seletedOption?.blockchain?.toLowerCase()
-            ]?.toUpperCase(),
-          payment_currency_standard: seletedOption?.standard,
-          requested_amount: seletedOption.amount,
+            blockchain_units[values?.blockchain?.toLowerCase()]?.toUpperCase(),
+          payment_currency_standard: values?.standard,
+          requested_amount: values.amount,
           notes: "Merchant Created This Payment Deposit",
+          customer_email: values?.client_email,
+          customer_name: values?.client_name,
+          customer_phone_number: values?.client_phone_number,
+          email_notification: values?.email_notification,
         })
       ),
       statusCode: 201,
       successCallBack: (response: any) => {
         setDepositAddress(response);
+        if (values?.whatsapp_notification && values?.client_phone_number) {
+          sendPaymentInvoiceWhatsapp({
+            address: response?.address,
+            client_name: values?.client_name,
+            currency: response?.payment_currency,
+            network:
+              values?.network ||
+              blockchain_standards[response?.payment_currency],
+            phone_number: values?.client_phone_number,
+            amount: response?.payment_amount,
+          });
+        }
       },
     });
   };
@@ -94,19 +126,17 @@ const DepositModal = ({
     );
   }, []);
 
-  console.log({ blockchain, standard });
-
   useEffect(() => {
     if (isOpen && blockchain) {
-      setSelectedOption((pre) => ({
+      setValues((pre) => ({
         ...pre,
         blockchain: blockchain,
       }));
       if (standard) {
         setFilteredNets(networks[blockchain?.toLowerCase()]);
         const blockchainName = standardBlockchain[standard];
-        console.log({ blockchainName, standardBlockchain, standard });
-        setSelectedOption((pre) => ({
+
+        setValues((pre) => ({
           ...pre,
           network: blockchainName,
           standard: standard,
@@ -116,8 +146,6 @@ const DepositModal = ({
       cleanupModal();
     }
   }, [blockchain, standard, isOpen]);
-
-  console.log(seletedOption);
 
   useEffect(() => {
     if (isDepositError) {
@@ -131,25 +159,17 @@ const DepositModal = ({
   };
 
   const cleanupModal = () => {
-    setSelectedOption({
-      blockchain: "",
-      network: "",
-      standard: "",
-      amount: "",
-    });
+    setValues(initalFormValues);
     setDepositAddress(null);
     setDepoistError(null);
   };
 
-  console.log({ filteredNets, seletedOption });
-
-  const handleChange = (event) => {
+  const handleChangeBlockchains = (event) => {
     const { value, name } = event.target;
 
     if (name === "blockchain") {
-      console.log(value);
       setFilteredNets(networks[value?.toLowerCase()]);
-      setSelectedOption((prev) => ({
+      setValues((prev) => ({
         ...prev,
         blockchain: value,
         network: "",
@@ -158,20 +178,17 @@ const DepositModal = ({
       setDepositAddress(null);
     } else if (name === "network") {
       const standard = filteredNetworks(
-        seletedOption.blockchain?.toLowerCase(),
+        values.blockchain?.toLowerCase(),
         value
       );
 
-      setSelectedOption((prev) => ({
+      setValues((prev) => ({
         ...prev,
         [name]: value,
         standard: standard || "", // Set standard if available, otherwise reset
       }));
     } else {
-      setSelectedOption((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      handleChange(event);
     }
   };
 
@@ -179,119 +196,197 @@ const DepositModal = ({
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
 
+  console.log({ values });
+
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="text-xl font-bold mb-6">
-        Deposit Address
-      </h2>
+      <h2 className="text-xl font-bold mb-6">Deposit Address</h2>
       {!depositAddress && (
-        <>
+        <form
+          onSubmit={(event) =>
+            handleSubmit(event, createDepoistAddress, () =>
+              console.log("Invalid Form Data")
+            )
+          }
+        >
           <IconSelectBox
             label="Select a Blockchain"
             options={blockchains}
             name="blockchain"
-            value={seletedOption.blockchain}
+            error={errors?.blockchain}
+            value={values.blockchain}
             placeholder="Select a Blockchain"
-            onChange={handleChange}
+            onChange={handleChangeBlockchains}
           />
 
-          {networks_available[seletedOption.blockchain] && (
+          {networks_available[values.blockchain] && (
             <IconSelectBox
               options={filteredNets}
               name="network"
-              value={seletedOption.network}
+              error={errors?.network}
+              value={values.network}
               placeholder="Select a Standard"
               label="Select a Standard"
-              onChange={handleChange}
+              onChange={handleChangeBlockchains}
             />
           )}
 
           <IconField
             label="Amount (USD)"
             name="amount"
-            value={seletedOption.amount}
+            type="number"
+            error={errors?.amount}
+            value={values.amount}
             placeholder="Enter amount in USD to deposit"
             onChange={handleChange}
+            onBlur={validateField}
           />
+          <IconField
+            label="Client Name"
+            name="client_name"
+            error={errors?.client_name}
+            value={values.client_name}
+            placeholder="Enter client name"
+            onChange={handleChange}
+            onBlur={validateField}
+          />
+          <IconField
+            label="Client Email"
+            name="client_email"
+            error={errors?.client_email}
+            value={values.client_email}
+            placeholder="Enter client email"
+            onChange={handleChange}
+            onBlur={validateField}
+          />
+          {/* <IconField
+            label="Client Phone Number"
+            name="client_phone_number"
+            error={errors?.client_phone_number}
+            value={values.client_phone_number}
+            placeholder="Enter client phone number"
+            onChange={handleChange}
+          /> */}
+
+          <Checkbox
+            label="Send Invoice Email"
+            name="email_notification"
+            checked={values?.email_notification}
+            onChange={handleChange}
+          />
+          <div className="mt-4">
+            <Checkbox
+              label="Send Invoice Whatsapp"
+              name="whatsapp_notification"
+              checked={values?.whatsapp_notification}
+              onChange={handleChange}
+            />
+          </div>
+          {values?.whatsapp_notification && (
+            <div className="w-full mt-4">
+              <label className="block mb-2 font-medium">
+                Client Phone Number
+              </label>
+              <PhoneInput
+                inputClass="!rounded-large !py-3 w-[360px] !w-full outline-none px-4 border focus:!border-1 focus:!border-light-gray hover:!border-light-gray !border-light-gray focus:!shadow-none hover:border-"
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "client_phone_number", value },
+                  })
+                }
+                enableSearch
+                specialLabel={null}
+                value={values.client_phone_number}
+              />
+            </div>
+          )}
 
           <ErrorApiText error={isDepositError} />
+
+          {!depositAddress && (
+            <div className="flex flex-col justify-end mt-2">
+              <LoaderButton
+                type="submit"
+                loading={isDepoistLoading}
+                className="mt-6"
+                content={`Create Deposit Address`}
+                variant="contained"
+              />
+            </div>
+          )}
+        </form>
+      )}
+
+      {depositAddress && (
+        <>
+          <div className="grid  grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="font-bold text-caption text-custom-title-gray">
+                Currency
+              </p>
+              <p className="text-black-100 font-medium">
+                {unitName[depositAddress?.payment_currency?.toLowerCase()]}
+              </p>
+            </div>
+            <div>
+              <p className="font-bold text-caption text-custom-title-gray">
+                Requested Amount (USD)
+              </p>
+              <p className="text-black-100 font-medium">
+                {depositAddress?.requested_amount}
+              </p>
+            </div>
+            <div>
+              <p className="font-bold text-caption text-custom-title-gray">
+                Alphaspay Fee
+              </p>
+              <p className="text-black-100 font-medium">
+                {roundToPrecision(+depositAddress?.alphaspay_fees, 10)}
+              </p>
+            </div>
+
+            <div>
+              <p className="font-bold text-caption text-custom-title-gray">
+                Payment Amount ({depositAddress?.payment_currency})
+              </p>
+              <p className="text-black-100 font-medium">
+                {roundToPrecision(+depositAddress?.payment_amount, 10)}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center overflow-hidden">
+            <Image
+              src={depositAddress?.qrcode}
+              height={250}
+              width={250}
+              alt="Depoist"
+            />
+
+            <Details copyable value={depositAddress?.address} />
+          </div>
+
+          <p className="text-custom-caption-gray text-button mt-6">
+            This Address is generated for depositing{" "}
+            {unitName[depositAddress?.payment_currency?.toLowerCase()]} on the{" "}
+            {values?.network ||
+              blockchain_standards[depositAddress?.payment_currency]}{" "}
+            network.
+          </p>
         </>
       )}
 
-      <LoadingApi loading={isDepoistLoading}>
-        {depositAddress && (
-          <>
-            <div className="grid  grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Currency
-                </p>
-                <p className="text-black-100 font-medium">
-                  {unitName[depositAddress?.payment_currency?.toLowerCase()]}
-                </p>
-              </div>
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Requested Amount (USD)
-                </p>
-                <p className="text-black-100 font-medium">
-                  {depositAddress?.requested_amount}
-                </p>
-              </div>
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Alphaspay Fee
-                </p>
-                <p className="text-black-100 font-medium">
-                  {roundToPrecision(+depositAddress?.alphaspay_fees, 10)}
-                </p>
-              </div>
-
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Payment Amount ({depositAddress?.payment_currency})
-                </p>
-                <p className="text-black-100 font-medium">
-                  {roundToPrecision(+depositAddress?.payment_amount, 10)}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center overflow-hidden">
-              <Image
-                src={depositAddress?.qrcode}
-                height={250}
-                width={250}
-                alt="Depoist"
-              />
-
-              <Details copyable value={depositAddress?.address} />
-            </div>
-
-            <p className="text-custom-caption-gray text-button mt-6">
-              This Address is generated for depositing{" "}
-              {unitName[depositAddress?.payment_currency?.toLowerCase()]} on the{" "}
-              {seletedOption?.network ||
-                blockchain_standards[depositAddress?.payment_currency]}{" "}
-              network.
-            </p>
-          </>
-        )}
-      </LoadingApi>
-
-      <div className="flex flex-col justify-end mt-2">
-        <LoaderButton
-          type="submit"
-          className="mt-6"
-          content={depositAddress ? "Back" : `Create Deposit Address`}
-          variant="contained"
-          onClick={
-            depositAddress
-              ? () => setDepositAddress(null)
-              : createDepoistAddress
-          }
-        />
-      </div>
+      {depositAddress && (
+        <div className="flex flex-col justify-end mt-2">
+          <LoaderButton
+            type="submit"
+            className="mt-6"
+            content={"Back"}
+            variant="contained"
+            onClick={() => setDepositAddress(null)}
+          />
+        </div>
+      )}
     </Modal>
   );
 };
