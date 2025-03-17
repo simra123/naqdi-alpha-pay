@@ -113,7 +113,7 @@ const CreateWithdrawalModal = ({
               : item?.unit,
             standard: item?.standard,
             unit: item?.unit,
-            amount: roundToPrecision(item?.totalAmount, 4),
+            amount: item?.totalAmount,
           };
         });
         setBalance(withdraw_currency_options);
