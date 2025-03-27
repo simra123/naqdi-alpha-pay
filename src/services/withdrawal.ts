@@ -22,7 +22,10 @@ export const getWithdrawableCurrenciesListApi = () => {
   return () => api.get(`wallet/withdrawal/balance`);
 };
 
-export const getUserWithdrawalsListApi = (data?: {}, params?: { limit: number, page: number }) => {
+export const getUserWithdrawalsListApi = (
+  data?: {},
+  params?: { limit: number; page: number }
+) => {
   return () => api.post(`withdrawal/list`, data, { params });
 };
 
@@ -42,17 +45,21 @@ export const withdrawalApproveAdminApi = (data: {
   withdraw_id: number;
   addresses?: string[];
 }) => {
-  if (data.withdrawal_mode == Withdrawal_Type.AUTOMATIC) {
+  if (data.withdrawal_mode == Withdrawal_Type.INTERNAL) {
     return () =>
       api.post(`wallet/auto-withdraw-approval`, {
         withdraw_id: data.withdraw_id,
       });
   }
-  return () =>
-    api.post(`/wallet/withdraw-approval`, {
-      withdraw_id: data.withdraw_id,
-      addresses: data.addresses,
-    });
+};
+
+export const externalWithdrawalApproveAdminApi = (data: {
+  withdraw_id: number;
+  transaction_hash: string;
+  sender_address: string;
+  internal_note?: string;
+}) => {
+  return () => api.post(`/wallet/external-withdraw`, data);
 };
 
 export const getWithdrawalWalletsApi = (
