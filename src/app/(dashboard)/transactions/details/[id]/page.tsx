@@ -27,6 +27,14 @@ import {
 } from "@/assets/Svgs";
 import { notFound, useSearchParams } from "next/navigation";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
+import LoaderButton from "@/components/common/LoaderButton";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+
+enum TransactionType {
+  Deposit = "Self Deposit",
+  Withdrawal = "Withdrawal",
+  Payment = "Payment",
+}
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
@@ -47,29 +55,29 @@ const TransactionDetails = ({ params }) => {
 
   const _getTransactionByType = () => {
     if (user?.role == Role.USER) {
-      if (transactionType == "Self Deposit") {
+      if (transactionType == TransactionType.Deposit) {
         return getTransactionDetailsByUserApi({ id: tranascionId });
       }
-      if (transactionType == "Payment") {
+      if (transactionType == TransactionType.Payment) {
         return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
       }
-      if (transactionType == "Withdrawal") {
+      if (transactionType == TransactionType.Withdrawal) {
         return getWithdrawalTransactionDetailsByUserApi({
           transaction_id: +tranascionId,
         });
       }
     }
     if (user?.role == Role.ADMIN) {
-      if (transactionType == "Self Deposit") {
+      if (transactionType == TransactionType.Deposit) {
         return getTransactionDetailsByAdminApi({ id: tranascionId });
       }
-      if (transactionType == "Payment") {
+      if (transactionType == TransactionType.Payment) {
         return getPaymentTransactionDetailsByAdminApi({ id: tranascionId });
       }
 
       // TODO: Need Admin api for now commenting this
 
-      if (transactionType == "Withdrawal") {
+      if (transactionType == TransactionType.Withdrawal) {
         return getWithdrawalTransactionDetailsByUserApi({
           transaction_id: +tranascionId,
         });
@@ -91,18 +99,18 @@ const TransactionDetails = ({ params }) => {
   }, []);
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+    <div className="flex flex-col bg-white rounded-medium">
+      <h3 className="font-semibold text-blackGrey-100 text-h3.5">
         Transaction Details
       </h3>
 
       <ErrorApiText error={isTransactionDetailsError} />
       <LoadingApi loading={isTransactionDetailsLoading}>
-        <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
           <FolderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
-        <div className="res-2-grid py-6">
+        <div className="!items-start res-2-grid py-6">
           <Details
             label="ID"
             value={
@@ -151,17 +159,28 @@ const TransactionDetails = ({ params }) => {
               10
             )} ${transactionDetails?.unit}`}
           />
-          {transactionDetails?.client_fee && (
-            <Details
-              label="Client Fees"
-              value={`${transactionDetails?.client_fee} ${transactionDetails?.unit}`}
-            />
+
+          <Details
+            label="Client Fees"
+            value={
+              transactionDetails?.client_fee
+                ? `${transactionDetails?.client_fee} ${transactionDetails?.unit}`
+                : "0"
+            }
+          />
+
+          {transactionType == TransactionType.Payment && (
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <div className="max-w-[240px]">
+                <LoaderButton content={"Send Webhook Request"} />
+              </div>
+            </RenderRoleBased>
           )}
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <PaymentIcon active={false} />
-          <h5 className="text-purple-500 text-h5 font-semibold">Wallets</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Wallets</h5>
         </div>
         <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
           <Details
@@ -201,9 +220,9 @@ const TransactionDetails = ({ params }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Dates</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -217,9 +236,9 @@ const TransactionDetails = ({ params }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <StatusIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Status</h5>
         </div>
 
         <div className="res-2-grid py-6">

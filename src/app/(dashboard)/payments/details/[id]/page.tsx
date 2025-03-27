@@ -29,6 +29,7 @@ import { roundToPrecision } from "@/utils/math";
 import { nileExplorerBaseURL } from "@/constants/block-explorers";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { TableColumns } from "@/constants/types";
+import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -119,8 +120,6 @@ const PaymentDetails = ({ params }) => {
     await callApiHook({
       apiCall: callPaymentApi(paymentDetailCall(paymentId)),
       successCallBack: (response: any) => {
-
-
         const transactionsList = response?.paymentTransaction?.map((item) => ({
           id: item?.id,
           payment_transaction_uuid: item?.payment_transaction_uuid,
@@ -184,19 +183,18 @@ const PaymentDetails = ({ params }) => {
     getPayment();
   }, []);
 
-
   return (
     <>
       <LoadingApi loading={isPaymentLoading}>
-        <div className="rounded-medium flex flex-col bg-white">
-          <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+        <div className="flex flex-col bg-white rounded-medium">
+          <h3 className="font-semibold text-blackGrey-100 text-h3.5">
             Payment Details
           </h3>
 
           <ErrorApiText error={isPaymentError}>
-            <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+            <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
               <FolderIcon />
-              <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+              <h5 className="font-semibold text-h5 text-purple-500">General</h5>
             </div>
             <div className="res-2-grid py-6">
               <Details label="Blockchain" value={payment?.wallet?.blockchain} />
@@ -218,9 +216,9 @@ const PaymentDetails = ({ params }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
               <CalenderIcon />
-              <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
+              <h5 className="font-semibold text-h5 text-purple-500">Dates</h5>
             </div>
 
             <div className="res-2-grid py-6">
@@ -234,9 +232,9 @@ const PaymentDetails = ({ params }) => {
               />
             </div>
 
-            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
               <PaymentIcon active={true} />
-              <h5 className="text-purple-500 text-h5 font-semibold">
+              <h5 className="font-semibold text-h5 text-purple-500">
                 Payments
               </h5>
             </div>
@@ -261,9 +259,9 @@ const PaymentDetails = ({ params }) => {
               <Details label="Alphaspay Fee" value={receivedAmount?.fees} />
             </div>
 
-            <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+            <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
               <StatusIcon />
-              <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
+              <h5 className="font-semibold text-h5 text-purple-500">Status</h5>
             </div>
 
             <div className="res-2-grid py-6">
@@ -280,9 +278,9 @@ const PaymentDetails = ({ params }) => {
 
             {orderInfo && (
               <>
-                <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+                <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
                   <InfoOutlined className="text-purple-500" />
-                  <h5 className="text-purple-500 text-h5 font-semibold">
+                  <h5 className="font-semibold text-h5 text-purple-500">
                     Order Information
                   </h5>
                 </div>
@@ -296,9 +294,9 @@ const PaymentDetails = ({ params }) => {
               </>
             )}
 
-            <h4 className="text-button font-semibold mb-5">Notes</h4>
+            <h4 className="mb-5 font-semibold text-button">Notes</h4>
 
-            <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+            <div className="p-4 border border-light-gray rounded-large w-full min-h-36 font-medium text-custom-caption-gray">
               {payment?.notes}
             </div>
           </ErrorApiText>
@@ -309,7 +307,7 @@ const PaymentDetails = ({ params }) => {
             columns={transactionsList_table_columns}
             rows={transaction}
             actions={
-              <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+              <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
                 Related Transactions
               </h3>
             }
@@ -318,6 +316,10 @@ const PaymentDetails = ({ params }) => {
             }
             columnClassName="max-w-[200px]"
           />
+        </div>
+
+        <div className="mt-8">
+          <WebhookResponseTabs />
         </div>
       </LoadingApi>
     </>
