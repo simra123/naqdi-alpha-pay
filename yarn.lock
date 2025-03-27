@@ -1064,6 +1064,13 @@
     hoist-non-react-statics "^3.3.0"
     redux "^4.0.0"
 
+"@types/react-tabs@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@types/react-tabs/-/react-tabs-5.0.5.tgz#f50a9527adbaf8d146da7f787d1fbdfeff31dd56"
+  integrity sha512-3CZTmjR7nNrZnYbnxp/DtK5e82mhM22dN47aYObmYLcp9fC1XjIEF0mLzGKFl1fR6/R8X7DyGh9hO6lON6LVkQ==
+  dependencies:
+    react-tabs "*"
+
 "@types/react-transition-group@^4.4.11", "@types/react-transition-group@^4.4.12":
   version "4.4.12"
   resolved "https://registry.yarnpkg.com/@types/react-transition-group/-/react-transition-group-4.4.12.tgz#b5d76568485b02a307238270bfe96cb51ee2a044"
@@ -4522,7 +4529,7 @@ react-select-country-list@^2.2.3:
   resolved "https://registry.yarnpkg.com/react-select-country-list/-/react-select-country-list-2.2.3.tgz#af263072a7797a660e7bd67702495dd1f95268ab"
   integrity sha512-eRgXL613dVyJiE99yKDYLvSBKDxvIlhkmvO2DVIjdKVyUQq6kBqoMUV/2zuRIAsbRXgBGmKjeL1dxjf7zTfszg==
 
-react-tabs@^6.1.0:
+react-tabs@*, react-tabs@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/react-tabs/-/react-tabs-6.1.0.tgz#a1fc9d9b8db4c6e7bb327a1b6783bc51a1c457a1"
   integrity sha512-6QtbTRDKM+jA/MZTTefvigNxo0zz+gnBTVFw2CFVvq+f2BuH0nF0vDLNClL045nuTAdOoK/IL1vTP0ZLX0DAyQ==
