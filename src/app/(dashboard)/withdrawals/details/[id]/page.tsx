@@ -38,6 +38,9 @@ import { FiRefreshCw } from "react-icons/fi";
 import { getPermission } from "@/utils/cookies";
 import { Tooltip } from "react-tooltip";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
+import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
+import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
+import { blockchain_units } from "@/constants/blockchains";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -111,7 +114,9 @@ const WithdrawalDetails = ({ params }) => {
   const [confirmModal, setConfirmModal] = useState(false);
   const [selectedWallets, setSelectedWallets] = useState([]);
 
-  const [withdrawalType, setWithdrawalType] = useState(Withdrawal_Type.MANUAL);
+  const [withdrawalType, setWithdrawalType] = useState(
+    Withdrawal_Type.INTERNAL
+  );
 
   const [wallets, setWallets] = useState([]);
   const [isRejectOpen, setRejectOpen] = useState(false);
@@ -150,7 +155,7 @@ const WithdrawalDetails = ({ params }) => {
     };
 
     const requestData =
-      withdrawalType == Withdrawal_Type.AUTOMATIC
+      withdrawalType == Withdrawal_Type.INTERNAL
         ? AutomaticData
         : { ...manualData, ...AutomaticData };
 
@@ -222,17 +227,24 @@ const WithdrawalDetails = ({ params }) => {
     setConfirmModal(!confirmModal);
   };
 
-
-
   return (
     <LoadingApi loading={isWithdrawalDetailsLoading}>
+      <ExternalWithdrawalModal
+        isOpen={withdrawalType == Withdrawal_Type.External}
+        toggleHandler={() => setWithdrawalType(Withdrawal_Type.INTERNAL)}
+        refreshHandler={getWithdrawalDetails}
+        withdrawId={withdraw_id}
+        blockchain={
+          blockchain_units[withdrawalDetails?.blockchain?.toLowerCase()]
+        }
+      />
       <ReasonModal
         isOpen={isRejectOpen}
         toggleHandler={rejectModalToggler}
         withdrawId={withdraw_id}
       />
-      <div className="rounded-medium flex flex-col">
-        <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+      <div className="flex flex-col rounded-medium">
+        <h3 className="font-semibold text-blackGrey-100 text-h3.5">
           Withdrawal Details
         </h3>
 
@@ -245,9 +257,9 @@ const WithdrawalDetails = ({ params }) => {
           title="Withdrawal Confirmation"
         />
 
-        <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
           <FolderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
@@ -270,9 +282,9 @@ const WithdrawalDetails = ({ params }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Dates</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -289,9 +301,9 @@ const WithdrawalDetails = ({ params }) => {
             )}
           />
         </div>
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <PaymentIcon active={false}/>
-          <h5 className="text-purple-500 text-h5 font-semibold">Withdrawals</h5>
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+          <PaymentIcon active={false} />
+          <h5 className="font-semibold text-h5 text-purple-500">Withdrawals</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -315,9 +327,9 @@ const WithdrawalDetails = ({ params }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <StatusIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Status</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -327,16 +339,16 @@ const WithdrawalDetails = ({ params }) => {
           />
         </div>
 
-        <h4 className="text-button font-semibold my-5">Notes</h4>
+        <h4 className="my-5 font-semibold text-button">Notes</h4>
 
-        <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+        <div className="p-4 border border-light-gray rounded-large w-full min-h-36 font-medium text-gray-400">
           {withdrawalDetails?.notes}
         </div>
         {withdrawalDetails?.status == "reject" && withdrawalDetails?.reason && (
           <>
-            <h4 className="text-button font-semibold my-5">Rejection Reason</h4>
+            <h4 className="my-5 font-semibold text-button">Rejection Reason</h4>
 
-            <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+            <div className="p-4 border border-light-gray rounded-large w-full min-h-36 font-medium text-gray-400">
               {withdrawalDetails?.reason}
             </div>
           </>
@@ -345,14 +357,14 @@ const WithdrawalDetails = ({ params }) => {
       </div>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10 mt-8">
-          <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+        <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
+          <h3 className="font-semibold text-blackGrey-100 text-h3.5">
             User Details
           </h3>
 
-          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
             <FolderIcon />
-            <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+            <h5 className="font-semibold text-h5 text-purple-500">General</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details
@@ -366,9 +378,9 @@ const WithdrawalDetails = ({ params }) => {
             />
           </div>
 
-          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
             <ContactMailOutlined className="text-purple-500" />
-            <h5 className="text-purple-500 text-h5 font-semibold">Contact</h5>
+            <h5 className="font-semibold text-h5 text-purple-500">Contact</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details
@@ -389,39 +401,38 @@ const WithdrawalDetails = ({ params }) => {
             AccessLevelEnum.full && (
             <>
               {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
-              <div className="rounded-medium shadow-sm flex flex-col  bg-white p-10">
-                <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+              <div className="flex flex-col bg-white shadow-sm p-10 rounded-medium">
+                <h3 className="font-semibold text-blackGrey-100 text-h3.5">
                   Withdraw
                 </h3>
 
-                <div className="p-2 w-full bg-light-gray grid grid-cols-2 px-5 rounded-large gap-2 mt-12 mb-10">
+                <div className="gap-2 grid grid-cols-2 bg-light-gray mt-12 mb-10 p-2 px-5 rounded-large w-full">
                   <button
                     className={`w-full  ${
-                      withdrawalType == Withdrawal_Type.MANUAL
-                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                      withdrawalType == Withdrawal_Type.INTERNAL
+                        ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
                         : "font-medium text-custom-title-gray"
                     }`}
-                    onClick={handleWithdrawalType(Withdrawal_Type.MANUAL)}
+                    onClick={handleWithdrawalType(Withdrawal_Type.INTERNAL)}
                   >
-                    Manual
+                    Internal
                   </button>
                   <button
                     id="disabled-auto-withdrawal"
                     className={`w-full rounded-large  ${
-                      withdrawalType != Withdrawal_Type.MANUAL
-                        ? "bg-purple-100 p-3 font-bold text-white rounded-large"
+                      withdrawalType == Withdrawal_Type.External
+                        ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
                         : "font-medium text-custom-title-gray"
                     }`}
-                    // onClick={handleWithdrawalType(Withdrawal_Type.AUTOMATIC)}
-                    disabled
+                    onClick={handleWithdrawalType(Withdrawal_Type.External)}
                   >
-                    Automatic
+                    External
                   </button>
-                  <Tooltip
+                  {/* <Tooltip
                     content="We are not providing automatic withdrawals at the moment."
                     className="!bg-purple-500"
                     anchorSelect="#disabled-auto-withdrawal"
-                  />
+                  /> */}
                 </div>
 
                 <CustomTable
@@ -435,10 +446,10 @@ const WithdrawalDetails = ({ params }) => {
                   actions={true}
                 />
 
-                {Withdrawal_Type.MANUAL == withdrawalType &&
+                {Withdrawal_Type.INTERNAL == withdrawalType &&
                   wallets?.length < totalWallets && (
                     <>
-                      <div className="mt-8 max-w-full w-[300px] mx-auto hidden sm:block">
+                      <div className="hidden sm:block mx-auto mt-8 w-[300px] max-w-full">
                         <LoaderButton
                           content={"Load More Wallets"}
                           variant="contained"
@@ -449,7 +460,7 @@ const WithdrawalDetails = ({ params }) => {
                       <LoaderButton
                         content={<FiRefreshCw />}
                         variant="outlined"
-                        className="sm:hidden text-xl !p-2 w-max ml-auto mt-8"
+                        className="sm:hidden mt-8 ml-auto !p-2 w-max text-xl"
                         loading={isWithdrawalWalletsLoading}
                         onClick={getWithdrawalWallets}
                       />
@@ -458,20 +469,21 @@ const WithdrawalDetails = ({ params }) => {
 
                 <ErrorApiText error={isApproveWithdrawalError} />
 
-                <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
+                <div className="sm:flex flex-wrap items-center gap-4 grid grid-cols-2 mt-14">
                   <LoaderButton
                     content={"Reject"}
                     color="error"
                     onClick={rejectModalToggler}
                     variant="error"
                   />
-
-                  <LoaderButton
-                    variant="text"
-                    color="success"
-                    onClick={toggleConfirmModal}
-                    content={"Approve"}
-                  />
+                  {withdrawalType == Withdrawal_Type.INTERNAL && (
+                    <LoaderButton
+                      variant="text"
+                      color="success"
+                      onClick={toggleConfirmModal}
+                      content={"Approve"}
+                    />
+                  )}
                 </div>
               </div>
               {/* </LoadingApi> */}
@@ -489,7 +501,7 @@ const WithdrawalDetails = ({ params }) => {
               return { ...item, blockchain: withdrawalDetails?.blockchain };
             })}
             actions={
-              <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+              <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
                 Related Transactions
               </h3>
             }

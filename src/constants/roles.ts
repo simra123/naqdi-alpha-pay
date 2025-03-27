@@ -6,4 +6,6 @@ export enum Role {
 export enum Withdrawal_Type {
   AUTOMATIC = "Automatic",
   MANUAL = "Manual",
+  INTERNAL = "Internal",
+  External = "External",
 }
