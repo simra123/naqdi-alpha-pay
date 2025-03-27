@@ -40,6 +40,7 @@ import { Tooltip } from "react-tooltip";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
 import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
+import { blockchain_units } from "@/constants/blockchains";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -231,6 +232,11 @@ const WithdrawalDetails = ({ params }) => {
       <ExternalWithdrawalModal
         isOpen={withdrawalType == Withdrawal_Type.External}
         toggleHandler={() => setWithdrawalType(Withdrawal_Type.INTERNAL)}
+        refreshHandler={getWithdrawalDetails}
+        withdrawId={withdraw_id}
+        blockchain={
+          blockchain_units[withdrawalDetails?.blockchain?.toLowerCase()]
+        }
       />
       <ReasonModal
         isOpen={isRejectOpen}
@@ -351,7 +357,7 @@ const WithdrawalDetails = ({ params }) => {
       </div>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        <div className="flex flex-col bg-white shadow-sm mt-8 p-10 rounded-medium">
+        <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
           <h3 className="font-semibold text-blackGrey-100 text-h3.5">
             User Details
           </h3>
