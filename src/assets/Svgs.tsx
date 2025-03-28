@@ -1972,3 +1972,29 @@ export const KYCIcon = ({ active }) => {
     </svg>
   );
 };
+
+
+export const RefreshIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="15"
+      height="20"
+      viewBox="0 0 15 20"
+      fill="none"
+    >
+      <path
+        d="M12.7169 10.5554C12.3146 13.2282 10.0085 15.2776 7.22352 15.2776C4.15519 15.2776 1.66797 12.7904 1.66797 9.72206C1.66797 6.65373 4.15519 4.1665 7.22352 4.1665C9.5013 4.1665 11.4596 5.53761 12.3169 7.49984"
+        stroke={IconsActiveColor}
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M10 7.49995H12.4444C12.4882 7.49995 12.5316 7.49132 12.572 7.47457C12.6124 7.45782 12.6492 7.43327 12.6801 7.40231C12.7111 7.37136 12.7357 7.33462 12.7524 7.29417C12.7692 7.25373 12.7778 7.21039 12.7778 7.16661V4.72217"
+        stroke={IconsActiveColor}
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};

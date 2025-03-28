@@ -36,3 +36,10 @@ export const formatDateToUserTimeZone = (value: string): [string, string] => {
   let [day, time] = date.split(".");
   return [day, time];
 };
+
+export const formatLocalDate = (utcDate: string) => {
+  if (!utcDate) return "";
+
+  const userTimeZone = moment.tz.guess(); // Get user's timezone
+  return moment.utc(utcDate).tz(userTimeZone).format("DD MMM YYYY HH:mm z");
+};
