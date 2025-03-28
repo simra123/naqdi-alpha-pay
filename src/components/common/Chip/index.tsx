@@ -32,6 +32,7 @@ const Chip = ({ status }: Props) => {
     capStatus == "confirm" ||
     capStatus == "approved" ||
     capStatus == "accepted" ||
+    capStatus == "200 ok" ||
     capStatus == "resolved"
   ) {
     statusColor = "text-green-chip";
