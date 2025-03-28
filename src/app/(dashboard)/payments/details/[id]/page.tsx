@@ -24,7 +24,7 @@ import {
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import { useRouter } from "next/navigation";
-import { capitalize } from "@/utils/dataFormatters";
+import { capitalize, mergeWebhookResponses } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
 import { nileExplorerBaseURL } from "@/constants/block-explorers";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
@@ -98,6 +98,7 @@ const PaymentDetails = ({ params }) => {
   const router = useRouter();
 
   const [payment, setPayment] = useState(null);
+  const [webhooks, setWebhooks] = useState([]);
   const [transaction, setTransacion] = useState([]);
   const [orderInfo, setOrderInfo] = useState<{}>(null);
   const [receivedAmount, setRecievedAmount] = useState({
@@ -174,6 +175,11 @@ const PaymentDetails = ({ params }) => {
           console.error("Failed to parse JSON:", error);
         }
         setPayment(response);
+
+        // Handling Webhooks Below
+
+        const webhooks = mergeWebhookResponses(response?.paymentTransaction);
+        setWebhooks(webhooks);
       },
     });
     // }
@@ -319,7 +325,7 @@ const PaymentDetails = ({ params }) => {
         </div>
 
         <div className="mt-8">
-          <WebhookResponseTabs />
+          <WebhookResponseTabs data={webhooks} />
         </div>
       </LoadingApi>
     </>

@@ -29,6 +29,9 @@ import { notFound, useSearchParams } from "next/navigation";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import LoaderButton from "@/components/common/LoaderButton";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { resendWebhookAPI } from "@/services/Integration";
+import { useDispatch } from "react-redux";
+import { setNotification } from "@/store/slices/modal.Slice";
 
 enum TransactionType {
   Deposit = "Self Deposit",
@@ -38,6 +41,7 @@ enum TransactionType {
 
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
+  const dispatch = useDispatch();
   const URLParams = useSearchParams();
   const transactionType = URLParams.get("type");
 
@@ -52,6 +56,7 @@ const TransactionDetails = ({ params }) => {
     isTransactionDetailsError,
     callTransactionDetailsApi,
   ] = useApi({ initailLoading: true });
+  const [isWebhookLoading, isWebhookError, callWebhookApi] = useApi();
 
   const _getTransactionByType = () => {
     if (user?.role == Role.USER) {
@@ -90,6 +95,21 @@ const TransactionDetails = ({ params }) => {
       apiCall: callTransactionDetailsApi(_getTransactionByType()),
       successCallBack: (response: any) => {
         setTransactionDetails(response);
+      },
+    });
+  };
+  const resendWebhook = async () => {
+    await callApiHook({
+      apiCall: callWebhookApi(
+        resendWebhookAPI({ payment_id: transactionDetails?.payment?.id ,transaction_id : +tranascionId})
+      ),
+      successCallBack: (response: any) => {
+        dispatch(
+          setNotification({
+            message: "Webhook has been sent again.",
+            status: "success",
+          })
+        );
       },
     });
   };
@@ -170,13 +190,19 @@ const TransactionDetails = ({ params }) => {
           />
 
           {transactionType == TransactionType.Payment && (
-            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
               <div className="max-w-[240px]">
-                <LoaderButton content={"Send Webhook Request"} />
+                <LoaderButton
+                  content={"Send Webhook Request"}
+                  loading={isWebhookLoading}
+                  onClick={resendWebhook}
+                />
               </div>
             </RenderRoleBased>
           )}
         </div>
+
+        <ErrorApiText error={isWebhookError} />
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <PaymentIcon active={false} />

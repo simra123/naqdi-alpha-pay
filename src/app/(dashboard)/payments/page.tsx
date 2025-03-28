@@ -39,7 +39,7 @@ const paymentsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -53,7 +53,7 @@ const paymentsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -185,7 +185,7 @@ const Payments = () => {
                     return (
                       <div className="flex flex-col gap-1">
                         <span className="text-caption">{day}</span>
-                        <span className="text-subtitle text-custom-title-gray">
+                        <span className="text-custom-title-gray text-subtitle">
                           {time}
                         </span>
                       </div>
@@ -214,9 +214,15 @@ const Payments = () => {
           setListConfig(response.listConfig);
 
           setPaymentsList(response);
+          
         }
         if (user?.role == Role.ADMIN) {
           const tableData = response.map((item) => {
+
+            if(item?.paymentTransaction?.length >1 ){
+              console.log(item?.payment_uuid)
+            }
+
             return {
               id: item?.id,
               payment_uuid: item?.payment_uuid,
@@ -268,7 +274,7 @@ const Payments = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         Payments
       </h3>
 
