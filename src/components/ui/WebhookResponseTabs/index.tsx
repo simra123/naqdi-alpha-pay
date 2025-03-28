@@ -66,7 +66,6 @@ const ResponeData = ({ responses }) => {
     getWebhookPayloadById(responses, responses[0]?.id)
   );
 
-  console.log({ selectedWebhook });
 
   return responses && responses?.length > 0 ? (
     <div className="gap-4 grid grid-cols-1 lg:grid-cols-2 mt-4">
@@ -111,7 +110,7 @@ const ResponeData = ({ responses }) => {
           <p className="mt-5 mb-4 text-input">Request</p>
           <div
             className={`px-4 py-1 rounded max-w-max text-caption font-semibold  ${
-              selectedWebhook.statusCode >= 400
+              selectedWebhook?.statusCode >= 400
                 ? "text-red-chip bg-chip-red"
                 : "text-green-chip bg-chip-green"
             }`}

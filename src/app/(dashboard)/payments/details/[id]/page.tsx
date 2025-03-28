@@ -30,6 +30,7 @@ import { nileExplorerBaseURL } from "@/constants/block-explorers";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { TableColumns } from "@/constants/types";
 import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -324,9 +325,11 @@ const PaymentDetails = ({ params }) => {
           />
         </div>
 
-        <div className="mt-8">
-          <WebhookResponseTabs data={webhooks} />
-        </div>
+        <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+          <div className="mt-8">
+             <WebhookResponseTabs data={webhooks} />
+          </div>
+        </RenderRoleBased>
       </LoadingApi>
     </>
   );
