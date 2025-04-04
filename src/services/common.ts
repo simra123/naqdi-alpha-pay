@@ -11,6 +11,7 @@ export const getFeesApi = (amount: number | string) => {
   return () => api.post(`wallet/alphaspay-fee`, { amount });
 };
 
+
 export const getCrpyoToFiatApi = (data: {
   unit: string;
   currency: string;
