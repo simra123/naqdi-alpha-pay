@@ -41,7 +41,7 @@ const withdrawalsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     }, },
@@ -51,7 +51,7 @@ const withdrawalsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     }, },
@@ -198,7 +198,7 @@ const Withdrawals = () => {
                     return (
                       <div className="flex flex-col gap-1">
                         <span className="text-caption">{day}</span>
-                        <span className="text-subtitle text-custom-title-gray">
+                        <span className="text-custom-title-gray text-subtitle">
                           {time}
                         </span>
                       </div>
@@ -262,12 +262,12 @@ const Withdrawals = () => {
         }}
       />
 
-      <div className="items-center justify-between mb-8 hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">
           Withdrawals
         </h3>
 
-        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <RenderRoleBased allowedRoles={[Role.USER,Role.ADMIN]} user={user}>
           {PermissionAccess(
             LoaderButton,
             ModulesEnum.withdrawal,

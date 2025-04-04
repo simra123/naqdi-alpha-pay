@@ -14,6 +14,17 @@ export const createWithdrawalApi = (data: {
   return () => api.post(`wallet/withdrawal`, data);
 };
 
+export const createAdminWithdrawalApi = (data: {
+  blockchain: string;
+  amount: string | number;
+  recipient_address: string;
+  notes?: string;
+  standard?: string;
+  token: string;
+}) => {
+  return () => api.post(`wallet/fee-withdrawal`, data);
+};
+
 export const getAdminWithdrawalsListApi = () => {
   return () => api.get(`wallet/withdrawals`);
 };
