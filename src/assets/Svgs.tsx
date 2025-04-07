@@ -1973,6 +1973,83 @@ export const KYCIcon = ({ active }) => {
   );
 };
 
+export const FeeLedgerIcon = ({ active }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="32"
+      height="32"
+      viewBox="0 0 60 60"
+      fill="none"
+    >
+      <g clip-path="url(#clip0_2177_1635)">
+        <path
+          d="M52.5 37.5H46.25C45.255 37.5 44.3025 37.895 43.5975 38.5975C42.895 39.3 42.5 40.255 42.5 41.25C42.5 42.245 42.895 43.1975 43.5975 43.9025C44.3 44.605 45.255 45 46.25 45H48.75C49.745 45 50.6975 45.395 51.4025 46.0975C52.105 46.8 52.5 47.755 52.5 48.75C52.5 49.745 52.105 50.6975 51.4025 51.4025C50.7 52.105 49.745 52.5 48.75 52.5H42.5"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          stroke-linejoin="round"
+      
+          />
+        <path
+          d="M47.5 52.5V55M47.5 35V37.5"
+          // stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          />
+        <path
+          d="M32.5 52.5H15C13.675 52.5 12.4025 51.9725 11.465 51.035C10.5275 50.0975 10 48.825 10 47.5V22.5C10 21.175 10.5275 19.9025 11.465 18.965C12.4025 18.0275 13.675 17.5 15 17.5H20M50 25.3V22.5C50 21.175 49.4725 19.9025 48.535 18.965C47.5975 18.0275 46.325 17.5 45 17.5H40"
+          stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          />
+        <path
+          d="M40 25V10C40 8.675 39.4725 7.4025 38.535 6.465C37.5975 5.5275 36.325 5 35 5H25C23.675 5 22.4025 5.5275 21.465 6.465C20.5275 7.4025 20 8.675 20 10V25M40 25H20M40 25H42.5M20 25H17.5"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          fill={active ? IconsActiveColor : "none"}
+          stroke-linejoin="round"
+          />
+        <path
+          d="M20 35V35.0244"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          stroke-linejoin="round"
+          />
+        <path
+          d="M20 42.5V42.5244"
+          stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          />
+        <path
+          d="M30 34.9751V34.9995"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          stroke-linejoin="round"
+          />
+        <path
+          d="M30 42.5V42.5244"
+          stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_2177_1635">
+          <rect width="60" height="60" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
 
 export const RefreshIcon = () => {
   return (
