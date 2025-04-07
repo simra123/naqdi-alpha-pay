@@ -247,28 +247,28 @@ const IndividualForm = ({ activeForm }) => {
             You and Alphaspay. Please read these legal documents carefully. To
             confirm your understanding and acceptance of the{" "}
             <Link
-              className="text-purple-100 underline font-medium"
+              className="text-purple-500 underline font-medium"
               href={"/privacy-policy"}
             >
               Privacy Policy
             </Link>
             ,
             <Link
-              className="text-purple-100 underline font-medium"
+              className="text-purple-500 underline font-medium"
               href={"/terms&conditions"}
             >
               Terms and Conditions
             </Link>
             ,{" "}
             <Link
-              className="text-purple-100 underline font-medium"
+              className="text-purple-500 underline font-medium"
               href={"/user-agreement"}
             >
               User Agreement
             </Link>{" "}
             and{" "}
             <Link
-              className="text-purple-100 underline font-medium"
+              className="text-purple-500 underline font-medium"
               href={"/custody-agreement"}
             >
               Custody Agreement
@@ -289,7 +289,7 @@ const IndividualForm = ({ activeForm }) => {
         </div>
         <p className="mt-6 text-center text-button">
           Got an account? Proceed to{" "}
-          <Link href="/login" className="text-purple-100 font-medium">
+          <Link href="/login" className="text-purple-500 font-medium">
             login
           </Link>{" "}
         </p>

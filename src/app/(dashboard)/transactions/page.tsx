@@ -22,6 +22,7 @@ import Chip from "@/components/common/Chip";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const statusList = [
   { label: "All", value: "all" },
@@ -32,7 +33,20 @@ const statusList = [
 
 const transactionsList_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
-  { field: "dateReceived", headerName: "Date Received", sortable: true },
+  {
+    field: "dateReceived",
+    headerName: "Date Received",
+    sortable: true,
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
+  },
   { field: "blockchain", headerName: "Blockchain", sortable: true },
   {
     field: "transactionHash",
@@ -49,6 +63,7 @@ const transactionsList_table_columns: TableColumns = [
     },
   },
   { field: "amount", headerName: "Amount", sortable: true },
+  { field: "client_fee", headerName: "Client Fee", sortable: true },
   {
     field: "receiveAddress",
     headerName: "Receive Address",
@@ -76,7 +91,20 @@ const transactionsList_table_columns: TableColumns = [
 
 const transactionsList_Admin_table_columns: TableColumns = [
   { field: "uuid", headerName: "ID", sortable: true },
-  { field: "dateReceived", headerName: "Date Received", sortable: true },
+  {
+    field: "dateReceived",
+    headerName: "Date Received",
+    sortable: true,
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
+  },
   { field: "blockchain", headerName: "Blockchain", sortable: true },
   {
     field: "transactionHash",
@@ -92,6 +120,7 @@ const transactionsList_Admin_table_columns: TableColumns = [
     },
   },
   { field: "amount", headerName: "Amount", sortable: true },
+  { field: "client_fee", headerName: "Client Fee", sortable: true },
   // { field: "userName", headerName: "UserName", sortable: true },
   // { field: "email", headerName: "Email", sortable: true },
   {
@@ -185,7 +214,6 @@ const Transactions = () => {
         }}
         initialPageSize={10}
         rowClickHandler={(row: any) => {
-          console.log(row);
           router.push(
             `/transactions/details/${row?.id}?type=${row?.transactionType}`
           );

@@ -57,7 +57,7 @@ const Login = () => {
         })
       ),
       successCallBack: async (response) => {
-        console.log(response, "IN LOGIN API RESPONSE");
+
         if (response?.data?.user?.userDetails?.mfa) {
           setHasMFA(true);
           setUserResponse(response);
@@ -71,8 +71,6 @@ const Login = () => {
 
   const verifyHandler = async () => {
 
-    console.log(userResponse, 'VerifyHandler'
-    )
 
     const verify = userResponse?.data?.user?.role == Role.USER
       ? verifyMFAForUserApi
@@ -155,7 +153,7 @@ const Login = () => {
             />
             <Link
               href={"/recover-password"}
-              className="text-purple-100 text-input font-semibold block text-end mb-14"
+              className="text-purple-500 text-input font-semibold block text-end mb-14"
             >
               Forgot Password?
             </Link>
@@ -171,7 +169,7 @@ const Login = () => {
           </form>
           <p className="mt-6 text-center text-button">
             New here?{" "}
-            <Link href="/register" className="text-purple-100 font-medium">
+            <Link href="/register" className="text-purple-500 font-medium">
               Sign Up
             </Link>{" "}
             for Free!

@@ -42,6 +42,9 @@ const nunitoSans = localFont({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/logo-small.png" />
+      </head>
       <body className={`${lato.variable} ${nunitoSans.variable}`}>
         <Provider store={store}>
           <LocalizationProvider dateAdapter={AdapterMoment}>

@@ -91,7 +91,7 @@ const TransactionDetails = ({ params }) => {
   }, []);
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6">
+    <div className="rounded-medium flex flex-col  bg-white">
       <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
         Transaction Details
       </h3>
@@ -100,7 +100,7 @@ const TransactionDetails = ({ params }) => {
       <LoadingApi loading={isTransactionDetailsLoading}>
         <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
           <FolderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details
@@ -144,18 +144,24 @@ const TransactionDetails = ({ params }) => {
             )} ${transactionDetails?.unit}`}
           />
           <Details
-            label="Fees"
+            label="Alphaspay Fees"
             value={`${roundToPrecision(
               +transactionDetails?.withdrawal?.alphaspay_fee ||
                 +transactionDetails?.alphaspay_fees,
               10
             )} ${transactionDetails?.unit}`}
           />
+          {transactionDetails?.client_fee && (
+            <Details
+              label="Client Fees"
+              value={`${transactionDetails?.client_fee} ${transactionDetails?.unit}`}
+            />
+          )}
         </div>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <PaymentIcon active={false} />
-          <h5 className="text-purple-100 text-h5 font-semibold">Wallets</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Wallets</h5>
         </div>
         <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
           <Details
@@ -197,7 +203,7 @@ const TransactionDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <CalenderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -213,7 +219,7 @@ const TransactionDetails = ({ params }) => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <StatusIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
         </div>
 
         <div className="res-2-grid py-6">

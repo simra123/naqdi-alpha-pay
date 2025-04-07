@@ -65,7 +65,7 @@ const makeChartData = (data: {
         pointRadius: 5, // Size of the point
         hoverRadius: 12,
         hoverBorderWidth: 3,
-        pointBackgroundColor: '#fff', // Point color
+        pointBackgroundColor: "#fff", // Point color
         pointBorderColor: purpleColor, // Point border color
         pointBorderWidth: 2, // Border width of the point
       },
@@ -187,8 +187,8 @@ const PortfolioChart = ({
             tooltipEl.style.zIndex = "100";
             tooltipEl.style.textAlign = "center"; // Center-align text
             tooltipEl.style.opacity = "0"; // Initially hidden
-            tooltipEl.style.minWidth = "112px"
-            tooltipEl.style.minHeight = "45px"
+            tooltipEl.style.minWidth = "112px";
+            tooltipEl.style.minHeight = "45px";
 
             document.body.appendChild(tooltipEl);
           }
@@ -214,7 +214,9 @@ const PortfolioChart = ({
           if (tooltip.body && tooltip.body.length) {
             tooltipEl.innerHTML = `
              <div style="font-size: 12px; color: #000;">
-              ${tooltip.dataPoints[0].label} <!-- Display the label for the current index -->
+              ${
+                tooltip.dataPoints[0].label
+              } <!-- Display the label for the current index -->
               </div>
               <div style="font-weight: 600; font-size: 18px;">
                 ${tooltip.dataPoints[0].raw.toLocaleString()} <!-- Format the number -->
@@ -247,7 +249,7 @@ const PortfolioChart = ({
       y: {
         stacked: false,
         grid: { color: "#e5e7eb" },
-        ticks: { stepSize: 0.1 },
+        ticks: { stepSize: 0.5, autoSkip: true, maxTicksLimit: 10 },
       },
     },
   };

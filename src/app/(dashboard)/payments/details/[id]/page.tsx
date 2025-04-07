@@ -119,7 +119,7 @@ const PaymentDetails = ({ params }) => {
     await callApiHook({
       apiCall: callPaymentApi(paymentDetailCall(paymentId)),
       successCallBack: (response: any) => {
-        console.log("Payment details api response", response);
+
 
         const transactionsList = response?.paymentTransaction?.map((item) => ({
           id: item?.id,
@@ -184,12 +184,11 @@ const PaymentDetails = ({ params }) => {
     getPayment();
   }, []);
 
-  console.log(payment, "Payment details");
 
   return (
     <>
       <LoadingApi loading={isPaymentLoading}>
-        <div className="rounded-medium flex flex-col  bg-white p-10">
+        <div className="rounded-medium flex flex-col bg-white">
           <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
             Payment Details
           </h3>
@@ -197,7 +196,7 @@ const PaymentDetails = ({ params }) => {
           <ErrorApiText error={isPaymentError}>
             <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
               <FolderIcon />
-              <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+              <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
             </div>
             <div className="res-2-grid py-6">
               <Details label="Blockchain" value={payment?.wallet?.blockchain} />
@@ -221,7 +220,7 @@ const PaymentDetails = ({ params }) => {
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
               <CalenderIcon />
-              <h5 className="text-purple-100 text-h5 font-semibold">Dates</h5>
+              <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
             </div>
 
             <div className="res-2-grid py-6">
@@ -236,8 +235,8 @@ const PaymentDetails = ({ params }) => {
             </div>
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-              <PaymentIcon active={false} />
-              <h5 className="text-purple-100 text-h5 font-semibold">
+              <PaymentIcon active={true} />
+              <h5 className="text-purple-500 text-h5 font-semibold">
                 Payments
               </h5>
             </div>
@@ -264,7 +263,7 @@ const PaymentDetails = ({ params }) => {
 
             <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
               <StatusIcon />
-              <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+              <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
             </div>
 
             <div className="res-2-grid py-6">
@@ -282,8 +281,8 @@ const PaymentDetails = ({ params }) => {
             {orderInfo && (
               <>
                 <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-                  <InfoOutlined className="text-purple-100" />
-                  <h5 className="text-purple-100 text-h5 font-semibold">
+                  <InfoOutlined className="text-purple-500" />
+                  <h5 className="text-purple-500 text-h5 font-semibold">
                     Order Information
                   </h5>
                 </div>

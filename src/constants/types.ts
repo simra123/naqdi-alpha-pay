@@ -1,9 +1,14 @@
 interface tableColumns {
+  id?: number;
   field: string;
   headerName: string;
   sortable?: boolean;
+  sticky?: boolean;
+  searchable?: boolean;
+  type?: any;
   dataValidator?: (value: string, row?: object) => any;
   copyable?: boolean;
+  maxWidth?: number;
   link?: (row?: object) => any;
 }
 
@@ -24,6 +29,7 @@ export enum ModulesEnum {
   transaction = "transaction",
   payout = "payout",
   user = "user",
+  newsletter = "newsletter",
 }
 
 export enum AccessLevelEnum {

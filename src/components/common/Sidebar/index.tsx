@@ -12,6 +12,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { LuNewspaper } from "react-icons/lu";
 import {
   DashboardIcon,
   DoubleLeftIcon,
@@ -105,6 +106,13 @@ const nav_items: NavItem[] = [
     roles: [Role.ADMIN, Role.USER],
     module: ModulesEnum.withdrawal,
   },
+  {
+    name: "News Signups",
+    icon: LuNewspaper,
+    path: "/news-signup",
+    roles: [Role.ADMIN],
+    module: ModulesEnum.newsletter,
+  },
   // {
   //   name: "Payouts",
   //   icon: PayoutsIcon,
@@ -161,7 +169,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   const getCurrentNav = useCallback(() => {
     let CurrentNav = [];
-    console.log(user);
 
     if (
       user?.role == Role.ADMIN ||
@@ -242,13 +249,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </button>
 
         <div
-          className={`p-6 pt-10 min-h-full w-full max-w-64 md:overflow-hidden flex flex-col bg-white border-r border-light-white justify-between SidebarWrapper fixed top-0 left-0 z-50 md:static transform ${
+          className={`pt-10 min-h-full w-full max-w-64 md:overflow-hidden flex flex-col bg-white border-r border-light-white justify-between SidebarWrapper fixed top-0 left-0 z-50 md:static transform ${
             isOpen ? "translate-x-0" : "-translate-x-full"
           } transition-all duration-300 ease-in-out md:translate-x-0`}
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the sidebar
         >
           <div className="flex flex-col gap-3">
-            <div className="logo mb-12 ">
+            <div className="logo mb-12 px-6">
               <h3 className="text-center text-white text-p120 font-bold">
                 {!isCollapsed ? (
                   <img src="/logo-new.png" className="w-[160px]" alt="Logo" />
@@ -261,8 +268,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                 )}
               </h3>
             </div>
-            <div className="max-h-[calc(100vh-350px)] overflow-y-auto sidebar-scrollbar">
-              <div className=" flex flex-col gap-3">
+            <div className="max-h-[calc(100vh-230px)] md:max-h-[calc(100vh-160px)] overflow-y-auto sidebar-scrollbar">
+              <div className=" flex flex-col gap-3 px-6">
                 {getCurrentNav().map(
                   ({ icon: Icon, name, path, sub_nav, roles, module }) =>
                     roles &&
@@ -358,7 +365,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
           </div>
 
-          <div className="items-center gap-2 md:hidden flex border-t border-light-purple pt-5">
+          <div className="items-center gap-2 md:hidden flex border-t border-light-purple py-5 mx-auto">
             <BorderedIconButton>
               <SupportIcon />
             </BorderedIconButton>

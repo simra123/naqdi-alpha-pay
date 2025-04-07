@@ -18,18 +18,49 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
+import EditableField from "@/components/common/IconField/EditableField";
+import useFormValidation from "@/hooks/useFormValidation";
+import { clientFeeSchema } from "@/models/clientFee";
+import ErrorApiText from "@/components/common/ErrorApiText";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { getClientFeeApi, setClientFeeApi } from "@/services/user";
+import { useDispatch } from "react-redux";
+import { setNotification } from "@/store/slices/modal.Slice";
+import LoadingApi from "@/components/common/LoadindApi";
+
+let initalFormValues = {
+  clientFee: 0,
+};
 
 const Account = () => {
+  const dispatch = useDispatch();
   const localUser = useLocalStorage("user");
   const [isMFaVerified, setIsMfaVerified] = useState(false);
+  const [isFeeEditing, setIsFeeEditing] = useState(false);
+  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [isQROpen, setQROpen] = useState(false);
+  const [initFeeVal, setInitFeeVal] = useState(5);
+
+  const [isClientFeeLoading, isClientFeeError, callClientFeeApi] = useApi();
+  const [isGetClientFeeLoading, isGetClientFeeError, callGetClientFeeApi] =
+    useApi({ initailLoading: true });
 
   const user =
     localUser?.role == Role.ADMIN
       ? localUser
       : useSelector((state: any) => state?.user?.data);
 
-  const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
-  const [isQROpen, setQROpen] = useState(false);
+  // Initialize useFormValidation
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    values,
+    setValues,
+    validateField,
+    setErrors,
+  } = useFormValidation(initalFormValues, clientFeeSchema);
 
   const changePasswordModalToggler = () => {
     setChangePasswordOpen(!isChangePasswordOpen);
@@ -39,11 +70,49 @@ const Account = () => {
     setQROpen(!isQROpen);
   };
 
+  const setClientFeeHandler = async () => {
+    setIsFeeEditing(false);
+    await callApiHook({
+      apiCall: callClientFeeApi(setClientFeeApi({ amount: values?.clientFee })),
+      successCallBack: (response) => {
+        console.log("Setting Client Fee ", response);
+        SetFeeValues(values?.clientFee);
+        dispatch(
+          setNotification({
+            status: "success",
+            message: "Client Fee has been updated successfully.",
+          })
+        );
+      },
+    });
+  };
+
+  const getClientFeeHandler = async () => {
+    await callApiHook({
+      apiCall: callGetClientFeeApi(getClientFeeApi()),
+      successCallBack: (response) => {
+        console.log("Getting Client Fee ", response);
+        SetFeeValues(response?.fee);
+      },
+    });
+  };
+
+  const SetFeeValues = (fee) => {
+    setValues({ clientFee: fee });
+    setInitFeeVal(fee);
+  };
+
   useEffect(() => {
     if (user?.role == Role.ADMIN && user?.userDetails?.mfa) {
       setIsMfaVerified(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user?.role == Role.USER) {
+      getClientFeeHandler();
+    }
+  }, []);
 
   return (
     <>
@@ -67,10 +136,10 @@ const Account = () => {
           variant="contained"
         />
       </div>
-      <div className="rounded-medium flex flex-col bg-white p-6 sm:p-10 shadow-sm">
+      <div className="flex flex-col">
         <div className="flex items-center gap-2 border-b border-light-gray pb-4">
           <FolderIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">General</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="ID" value={user?.id} />
@@ -84,8 +153,8 @@ const Account = () => {
         </div>
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-          <ContactMailOutlined className="text-purple-100" />
-          <h5 className="text-purple-100 text-h5 font-semibold">Contacts</h5>
+          <ContactMailOutlined className="text-purple-500" />
+          <h5 className="text-purple-500 text-h5 font-semibold">Contacts</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="Email" value={user?.email} />
@@ -96,8 +165,8 @@ const Account = () => {
 
         <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
           <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
-            <LocationOnOutlined className="text-purple-100" />
-            <h5 className="text-purple-100 text-h5 font-semibold">
+            <LocationOnOutlined className="text-purple-500" />
+            <h5 className="text-purple-500 text-h5 font-semibold">
               Addressess
             </h5>
           </div>
@@ -118,9 +187,9 @@ const Account = () => {
 
         <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
           <StatusIcon />
-          <h5 className="text-purple-100 text-h5 font-semibold">Status</h5>
+          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
         </div>
-        <div className="res-2-grid py-6">
+        <div className="res-2-grid !items-baseline py-6">
           <div className="flex gap-4 items-center">
             <Details
               label="MFA"
@@ -145,7 +214,46 @@ const Account = () => {
             <>
               <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
                 <Details label="KYC" value={user?.userDetails?.kyc_status} />
-                <Details label="Fees" value={user?.userDetails?.fees + "%"} />
+                <Details
+                  label="Admin Fees"
+                  value={user?.userDetails?.fees + "%"}
+                />
+                <form
+                  onSubmit={(e) =>
+                    handleSubmit(e, setClientFeeHandler, () =>
+                      console.log("Something went wrong")
+                    )
+                  }
+                >
+                  <Details
+                    label="Client Fees"
+                    className={!isClientFeeLoading && "items-baseline"}
+                    value={
+                      <LoadingApi
+                        loading={isClientFeeLoading || isGetClientFeeLoading}
+                      >
+                        <EditableField
+                          onCancel={(initalValue) =>
+                            setValues({ clientFee: initalValue })
+                          }
+                          inputClassName="py-2 max-w-[140px]"
+                          onChange={handleChange}
+                          value={values?.clientFee}
+                          initalValue={initFeeVal}
+                          type="number"
+                          inputProps={{
+                            step: "0.01",
+                          }}
+                          name="clientFee"
+                          error={errors?.clientFee}
+                          isEditing={isFeeEditing}
+                          setIsEditing={setIsFeeEditing}
+                        />
+                      </LoadingApi>
+                    }
+                  />
+                </form>
+                <ErrorApiText error={isClientFeeError || isGetClientFeeError} />
               </RenderRoleBased>
             </>
           )}

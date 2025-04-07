@@ -17,10 +17,26 @@ import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { getPermission } from "@/utils/cookies";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const columns: TableColumns = [
-  { field: "user_details_uuid", headerName: "ID" },
-  { field: "createdAt", headerName: "Created At" },
+  {
+    field: "user_details_uuid",
+    headerName: "ID",
+  },
+  {
+    field: "createdAt",
+    headerName: "Created At",
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-subtitle text-custom-title-gray">{time}</span>
+        </div>
+      );
+    },
+  },
   { field: "firstName", headerName: "First name" },
   { field: "lastName", headerName: "Last name" },
   { field: "email", headerName: "Email" },
@@ -40,9 +56,11 @@ const columns: TableColumns = [
 
 const KYCUsersPage = () => {
   const router = useRouter();
-  const currentUser = useLocalStorage('user')
+  const currentUser = useLocalStorage("user");
   const [usersList, setUsersList] = useState([]);
-  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({ initailLoading: true });
+  const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({
+    initailLoading: true,
+  });
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const getUsersList = async () => {
@@ -53,9 +71,7 @@ const KYCUsersPage = () => {
           return {
             id: data?.id,
             user_details_uuid: data?.user_details_uuid,
-            createdAt: moment(data?.user?.created_at).format(
-              "DD-MM-YYYY : hh:mm a"
-            ),
+            createdAt: data?.user?.created_at,
             userId: data?.user?.id,
             firstName: data?.user?.first_name,
             lastName: data?.user?.last_name,
@@ -104,8 +120,11 @@ const KYCUsersPage = () => {
           }}
           initialPageSize={10}
           rowClickHandler={(row: any) => {
-            if (getPermission(ModulesEnum.kyc)?.access_level == AccessLevelEnum?.full) {
-              router.push(`/kyc/${row?.userId}`)
+            if (
+              getPermission(ModulesEnum.kyc)?.access_level ==
+              AccessLevelEnum?.full
+            ) {
+              router.push(`/kyc/${row?.userId}`);
             }
           }}
           pagination
@@ -119,4 +138,8 @@ const KYCUsersPage = () => {
   );
 };
 
-export default PermissionAccess(KYCUsersPage, ModulesEnum.kyc, AccessLevelEnum.read);
+export default PermissionAccess(
+  KYCUsersPage,
+  ModulesEnum.kyc,
+  AccessLevelEnum.read
+);

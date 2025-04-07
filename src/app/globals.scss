@@ -75,8 +75,9 @@
 .loader-circle {
   width: 20px;
   height: 20px;
-  border: 3px solid transparent;
-  border-top: 3px solid #8245c9;
+  @apply border-purple;
+  border: 2px solid;
+  border-top: 2px solid transparent;
   /* Color of the loader */
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -153,12 +154,12 @@ input[type="number"] {
 }
 
 /* On mouse-over, add a grey background color */
-.custom-checkbox:hover input[type="checkbox"] ~ .checkmark {
+.custom-checkbox:hover input[type="checkbox"]~.checkmark {
   background-color: #ccc;
 }
 
 /* When the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
+.custom-checkbox input[type="checkbox"]:checked~.checkmark {
   @apply bg-purple-100;
   border: none;
 }
@@ -171,7 +172,7 @@ input[type="number"] {
 }
 
 /* Show the checkmark when checked */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+.custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
   display: block;
 }
 
@@ -220,7 +221,10 @@ input[type="number"] {
 }
 
 button:disabled {
-  @apply bg-gray-300 !important;
+  &.disabled {
+
+    @apply bg-gray-300 !important;
+  }
 }
 
 .custom-radio input[type="radio"]:checked::before {
@@ -232,3 +236,8 @@ button:disabled {
   @apply font-medium;
   @apply text-black-100;
 }
+
+// React Phone Input Classes overrides
+// .special-label {
+//   position: static !important;
+// }
