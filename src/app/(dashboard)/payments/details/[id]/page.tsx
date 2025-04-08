@@ -18,6 +18,7 @@ import { InfoOutlined, Mail } from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
+  MerchantDetailIcon,
   PaymentIcon,
   StatusIcon,
 } from "@/assets/Svgs";
@@ -223,6 +224,44 @@ const PaymentDetails = ({ params }) => {
               />
             </div>
 
+            <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+              <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+                <MerchantDetailIcon />
+                <h5 className="font-semibold text-h5 text-purple-500">
+                  Merchant
+                </h5>
+              </div>
+              <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
+                <Details
+                  label="ID"
+                  value={payment?.client?.id}
+                  link={`/users/details/${payment?.client?.id}`}
+                  target="_self"
+                />
+                <Details
+                  label="First Name"
+                  value={payment?.client?.first_name}
+                />
+                <Details label="Last Name" value={payment?.client?.last_name} />
+                <Details label="Username" value={payment?.client?.username} />
+                <Details label="Email" value={payment?.client?.email} />
+                <Details label="Role" value={payment?.client?.role} />
+                <Details label="User Type" value={payment?.client?.user_type} />
+                <Details
+                  label="Created Date"
+                  value={moment(payment?.client?.created_at).format(
+                    "DD-MM-YYYY"
+                  )}
+                />
+                <Details
+                  label="Updated Date"
+                  value={moment(payment?.client?.updated_at).format(
+                    "DD-MM-YYYY"
+                  )}
+                />
+              </div>
+            </RenderRoleBased>
+
             <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
               <CalenderIcon />
               <h5 className="font-semibold text-h5 text-purple-500">Dates</h5>
@@ -240,7 +279,7 @@ const PaymentDetails = ({ params }) => {
             </div>
 
             <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-              <PaymentIcon active={true} />
+              <PaymentIcon active={false} />
               <h5 className="font-semibold text-h5 text-purple-500">
                 Payments
               </h5>
@@ -327,7 +366,7 @@ const PaymentDetails = ({ params }) => {
 
         <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
           <div className="mt-8">
-             <WebhookResponseTabs data={webhooks} />
+            <WebhookResponseTabs data={webhooks} />
           </div>
         </RenderRoleBased>
       </LoadingApi>
