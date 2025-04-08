@@ -294,7 +294,7 @@ const WithdrawalDetails = ({ params }) => {
                 <Details
                   label="ID"
                   value={withdrawalDetails?.user?.id}
-                  link={`/users/details/${withdrawalDetails?.user?.id}`}
+                  link={`/merchants/details/${withdrawalDetails?.user?.id}`}
                   target="_self"
                 />
                 <Details

@@ -235,7 +235,7 @@ const PaymentDetails = ({ params }) => {
                 <Details
                   label="ID"
                   value={payment?.client?.id}
-                  link={`/users/details/${payment?.client?.id}`}
+                  link={`/merchants/details/${payment?.client?.id}`}
                   target="_self"
                 />
                 <Details

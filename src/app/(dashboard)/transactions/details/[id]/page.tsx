@@ -219,7 +219,7 @@ const TransactionDetails = ({ params }) => {
                 transactionDetails?.client?.id ||
                 transactionDetails?.withdrawal?.user?.id
               }
-              link={`/users/details/${
+              link={`/merchants/details/${
                 transactionDetails?.client?.id ||
                 transactionDetails?.withdrawal?.user?.id
               }`}
