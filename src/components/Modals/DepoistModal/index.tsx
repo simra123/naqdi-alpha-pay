@@ -41,6 +41,8 @@ interface DepositProps {
   setIsOpen: any;
   blockchain?: string;
   standard?: string;
+  onSuccessCallback?: () => void;
+  type?: "payment" | "deposit";
 }
 
 const initalFormValues = {
@@ -59,6 +61,8 @@ const DepositModal = ({
   setIsOpen,
   blockchain,
   standard,
+  onSuccessCallback,
+  type,
 }: DepositProps) => {
   const user = useLocalStorage("user");
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
@@ -113,6 +117,10 @@ const DepositModal = ({
             phone_number: values?.client_phone_number,
             amount: response?.payment_amount,
           });
+        }
+
+        if (onSuccessCallback) {
+          onSuccessCallback();
         }
       },
     });
@@ -200,7 +208,9 @@ const DepositModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="text-xl font-bold mb-6">Deposit Address</h2>
+      <h2 className="mb-6 font-bold text-xl">
+        {type == "payment" ? "Add Payment" : "Deposit Address"}
+      </h2>
       {!depositAddress && (
         <form
           onSubmit={(event) =>
@@ -283,7 +293,7 @@ const DepositModal = ({
             />
           </div>
           {values?.whatsapp_notification && (
-            <div className="w-full mt-4">
+            <div className="mt-4 w-full">
               <label className="block mb-2 font-medium">
                 Client Phone Number
               </label>
@@ -309,7 +319,11 @@ const DepositModal = ({
                 type="submit"
                 loading={isDepoistLoading}
                 className="mt-6"
-                content={`Create Deposit Address`}
+                content={
+                  type == "payment"
+                    ? "Create"
+                    : `Create Deposit Address`
+                }
                 variant="contained"
               />
             </div>
@@ -319,12 +333,12 @@ const DepositModal = ({
 
       {depositAddress && (
         <>
-          <div className="grid  grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
                 Currency
               </p>
-              <p className="text-black-100 font-medium">
+              <p className="font-medium text-black-100">
                 {unitName[depositAddress?.payment_currency?.toLowerCase()]}
               </p>
             </div>
@@ -332,7 +346,7 @@ const DepositModal = ({
               <p className="font-bold text-caption text-custom-title-gray">
                 Requested Amount (USD)
               </p>
-              <p className="text-black-100 font-medium">
+              <p className="font-medium text-black-100">
                 {depositAddress?.requested_amount}
               </p>
             </div>
@@ -340,7 +354,7 @@ const DepositModal = ({
               <p className="font-bold text-caption text-custom-title-gray">
                 Alphaspay Fee
               </p>
-              <p className="text-black-100 font-medium">
+              <p className="font-medium text-black-100">
                 {roundToPrecision(+depositAddress?.alphaspay_fees, 10)}
               </p>
             </div>
@@ -349,7 +363,7 @@ const DepositModal = ({
               <p className="font-bold text-caption text-custom-title-gray">
                 Payment Amount ({depositAddress?.payment_currency})
               </p>
-              <p className="text-black-100 font-medium">
+              <p className="font-medium text-black-100">
                 {roundToPrecision(+depositAddress?.payment_amount, 10)}
               </p>
             </div>
@@ -366,7 +380,7 @@ const DepositModal = ({
             <Details copyable value={depositAddress?.address} />
           </div>
 
-          <p className="text-custom-caption-gray text-button mt-6">
+          <p className="mt-6 text-button text-custom-caption-gray">
             This Address is generated for depositing{" "}
             {unitName[depositAddress?.payment_currency?.toLowerCase()]} on the{" "}
             {values?.network ||

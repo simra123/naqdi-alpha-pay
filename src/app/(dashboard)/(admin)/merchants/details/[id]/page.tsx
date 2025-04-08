@@ -56,13 +56,13 @@ const UserDetails = ({ params }) => {
       <ErrorApiText error={isUserDetailsError} />
       <LoadingApi loading={isUserDetailsLoading}>
         <div className="flex flex-col">
-          <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
-            User Details
+          <h3 className="font-semibold text-blackGrey-100 text-h3.5">
+            Merchant Details
           </h3>
 
-          <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
             <FolderIcon />
-            <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+            <h5 className="font-semibold text-h5 text-purple-500">General</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details label="ID" value={userDetails?.user_details_uuid} />
@@ -76,18 +76,18 @@ const UserDetails = ({ params }) => {
             <Details label="User Type" value={userDetails?.user?.user_type} />
           </div>
 
-          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
             <ContactMailOutlined className="text-purple-500" />
-            <h5 className="text-purple-500 text-h5 font-semibold">Contacts</h5>
+            <h5 className="font-semibold text-h5 text-purple-500">Contacts</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details label="Phone" value={userDetails?.phone_number} />
             <Details label="Email" value={userDetails?.user?.email} />
           </div>
 
-          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
             <LocationOnOutlined className="text-purple-500" />
-            <h5 className="text-purple-500 text-h5 font-semibold">
+            <h5 className="font-semibold text-h5 text-purple-500">
               Addressess
             </h5>
           </div>
@@ -99,9 +99,9 @@ const UserDetails = ({ params }) => {
             <Details label="Postal Code" value={userDetails?.postal_code} />
           </div>
 
-          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
             <StatusIcon />
-            <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
+            <h5 className="font-semibold text-h5 text-purple-500">Status</h5>
           </div>
           <div className="res-2-grid py-6">
             <Details
@@ -126,7 +126,7 @@ const UserDetails = ({ params }) => {
             columns={BalanceColumns}
             rows={userDetails?.user?.balances || []}
             actions={
-              <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-8">
+              <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
                 Balance
               </h3>
             }

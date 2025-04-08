@@ -1834,8 +1834,8 @@ export const MerchantIcon = ({ active }) => {
           y2="19.0686"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stop-color="#000" strokeWidth={2}/>
+          <stop offset="1" stop-color="#000" />
         </linearGradient>
       </defs>
     </svg>
