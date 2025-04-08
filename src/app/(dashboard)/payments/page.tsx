@@ -23,6 +23,8 @@ import { roundToPrecision } from "@/utils/math";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import CustomTable from "@/components/common/CustomTable";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import LoaderButton from "@/components/common/LoaderButton";
+import DepositModal from "@/components/Modals/DepoistModal";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 const paymentsList_table_columns: TableColumns = [
@@ -102,6 +104,13 @@ const paymentsList_table_columns: TableColumns = [
   },
 ];
 
+interface PaymentAPi {
+  pageValue?: number;
+  limitValue?: number;
+  sort?: any;
+  filters?: any;
+}
+
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
@@ -112,6 +121,7 @@ const Payments = () => {
   const [listConfig, setListConfig] = useState(null);
 
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
@@ -122,14 +132,7 @@ const Payments = () => {
     limitValue,
     sort,
     filters,
-  }: {
-    pageValue?: number;
-    limitValue?: number;
-    sort?: any;
-    filters?: any;
-  }) => {
-    // if (user?.role == Role.USER) {
-
+  }: PaymentAPi) => {
     let paymentCall = () => {
       return user?.role == Role.USER
         ? getClientPaymentsListApi(
@@ -214,13 +217,11 @@ const Payments = () => {
           setListConfig(response.listConfig);
 
           setPaymentsList(response);
-          
         }
         if (user?.role == Role.ADMIN) {
           const tableData = response.map((item) => {
-
-            if(item?.paymentTransaction?.length >1 ){
-              console.log(item?.payment_uuid)
+            if (item?.paymentTransaction?.length > 1) {
+              console.log(item?.payment_uuid);
             }
 
             return {
@@ -265,6 +266,13 @@ const Payments = () => {
       },
     });
   };
+  const toggelPaymentModal = () => {
+    setIsPaymentOpen(!isPaymentOpen);
+  };
+
+  const onPaymentCreation = () => {
+    getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
+  };
 
   useEffect(() => {
     getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
@@ -274,9 +282,29 @@ const Payments = () => {
 
   return (
     <>
-      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
-        Payments
-      </h3>
+      <DepositModal
+        isOpen={isPaymentOpen}
+        setIsOpen={setIsPaymentOpen}
+        onSuccessCallback={onPaymentCreation}
+        type="payment"
+      />
+      <div className="flex justify-between items-center">
+        <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
+          Payments
+        </h3>
+        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+          {PermissionAccess(
+            LoaderButton,
+            ModulesEnum.payment,
+            AccessLevelEnum.full
+          )({
+            content: "New Payment",
+            className: "px-16",
+            variant: "contained",
+            onClick: toggelPaymentModal,
+          })}
+        </RenderRoleBased>
+      </div>
 
       {/* Table Actions Below */}
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
