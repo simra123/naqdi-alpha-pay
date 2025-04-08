@@ -29,7 +29,7 @@ const usersList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -42,7 +42,7 @@ const usersList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -94,8 +94,8 @@ const Users = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
-        Users
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
+        Merchants
       </h3>
 
       {/* Table Actions Below */}
@@ -112,7 +112,7 @@ const Users = () => {
           }}
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            router.push(`/users/details/${row?.id}`)
+            router.push(`/merchants/details/${row?.id}`)
           }
           pagination
           columnClassName="max-w-[250px]"

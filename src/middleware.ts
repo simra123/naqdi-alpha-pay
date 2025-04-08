@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./constants/roles";
 
-const adminRoutes = ["/kyc", "/users", "/wallets", "/news-signup"];
+const adminRoutes = ["/kyc", "/merchants", "/wallets", "/news-signup"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
 const nonFunctionalRoutes = ["/payouts","/wallets"];
 
