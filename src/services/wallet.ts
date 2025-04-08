@@ -13,6 +13,10 @@ export const getAllWalletBalancesApi = () => {
   return () => api.get(`wallet/balance`);
 };
 
+export const getAllAdminWalletBalancesApi = () => {
+  return () => api.get(`wallet/admin/balance`);
+};
+
 export const getAllWalletsListByAdminApi = () => {
   return () => api.get(`wallet/wallet-list`);
 };
