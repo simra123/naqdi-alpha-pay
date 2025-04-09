@@ -6,7 +6,10 @@ import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
-import { getAllWalletBalancesApi } from "@/services/wallet";
+import {
+  getAllAdminWalletBalancesApi,
+  getAllWalletBalancesApi,
+} from "@/services/wallet";
 import {
   createAdminWithdrawalApi,
   createWithdrawalApi,
@@ -108,7 +111,7 @@ const CreateWithdrawalModal = ({
       apiCall: callBalanceApi(
         user?.role == Role.USER
           ? getWithdrawableCurrenciesListApi()
-          : getAllWalletAssetsByAdminApi()
+          : getAllAdminWalletBalancesApi()
       ),
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {

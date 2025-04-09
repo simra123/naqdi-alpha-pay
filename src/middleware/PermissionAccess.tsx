@@ -54,28 +54,24 @@ const PermissionAccess = (
   requiredAccessLevel: AccessLevelEnum,
   config?: IPermissionConfig
 ) => {
-  console.log("permission access hoc running");
+
   return (props: WithPermissionProps): any => {
     // Get permissions from cookies and parse them
     let router = useRouter();
     const user = useLocalStorage("user");
-    console.log({ user, permissions: user?.permissions });
+
     if (user && user?.permissions) {
       let permissions: Permissions = user?.permissions;
 
       const redirectOnNoAccess = config?.redirectOnNoAccess;
 
-      console.log({
-        permissions,
-        message: "testing issue of integration loggout",
-      });
 
       // Find the specific module permission
       const modulePermission = permissions.find(
         (perm) => perm.permission.module === requiredModule
       );
 
-      console.log({ modulePermission });
+
 
       if (!modulePermission) {
         // Module not found in permissions, render NotFound
@@ -90,24 +86,14 @@ const PermissionAccess = (
       if (redirectOnNoAccess && !hasAccess) {
         // Redirect based on permission available
         let availableModule = findFirstNonNoneAccessLevel(permissions);
-        console.log({
-          availableModule,
-          message: "redirect on no access is true",
-        });
+ 
         if (availableModule) {
           return router.push(ModuleRoutes[availableModule.module]);
         } else {
           return router.push("/settings/account");
         }
       }
-      console.log({
-        requiredAccessLevel,
-        requiredModule,
-        modulePermission,
-        access_level,
-        permissions,
-        hasAccess,
-      });
+
 
       // If access is denied, render NotFound
       if (!hasAccess) {

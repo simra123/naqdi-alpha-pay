@@ -5,7 +5,6 @@ export const updateMfaInCookie = (newMfaValue) => {
   // Get the current userDetails cookie
   let user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
-
   if (user) {
     if (user?.userDetails) {
       user.userDetails.mfa = newMfaValue;
@@ -37,9 +36,11 @@ export const debounce = (func: Function, delay: number) => {
   };
 };
 
-
 export const getPermission = (moduleName: ModulesEnum) => {
-  const currentUser = JSON.parse(Cookies.get('user'))
-  const permissionObj = currentUser?.permissions?.find(perm => perm?.permission?.module == moduleName);
-  return permissionObj?.permission
-}
+  const userCookie = Cookies.get("user");
+  const currentUser = JSON.parse(userCookie || "");
+  const permissionObj = currentUser?.permissions?.find(
+    (perm) => perm?.permission?.module == moduleName
+  );
+  return permissionObj?.permission;
+};

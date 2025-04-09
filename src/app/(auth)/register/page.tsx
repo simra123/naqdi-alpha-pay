@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { forms } from "@/constants/registerforms";
 import IndividualForm from "@/components/forms/registerForm";
 
-import "./regsiter.scss";
 import { Individual, LegalEntity } from "@/assets/Svgs";
 
 const Register = () => {
@@ -15,21 +14,21 @@ const Register = () => {
 
   return (
     <main className="register">
-      <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+      <h2 className="mt-[30px] mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
         Ready to Begin? Sign Up Now!
       </h2>
 
-      <p className="text-p120 text-blackGrey-100 leading-7 mt-5">
+      <p className="mt-2 text-blackGrey-100 text-p120 text-center leading-7">
         Please select whether you would like to be registered as an Individual
         User, or as a Legal Entity.
       </p>
 
-      <h4 className="text-h3.5 font-semibold mb-4 text-blackGrey-100 mt-10">
+      <h4 className="mt-10 mb-4 font-semibold text-blackGrey-100 text-h3.5">
         Select Role
       </h4>
 
       <div className="register__form">
-        <div className="flex gap-2 justify-between">
+        <div className="flex justify-between gap-2">
           <button
             className={`w-full border   p-4 text-center rounded-large ${
               activeForm === forms.INDIVIDUAL
@@ -41,7 +40,7 @@ const Register = () => {
             <div
               className={`p-[10px] w-fit m-auto rounded-full mb-1 ${
                 activeForm === forms.INDIVIDUAL
-                  ? "bg-purple-100"
+                  ? "bg-purple-500"
                   : "bg-light-gray"
               }`}
             >
@@ -63,7 +62,7 @@ const Register = () => {
             <div
               className={`p-[10px] w-fit rounded-full m-auto ${
                 activeForm === forms.LegalEntity
-                  ? "bg-purple-100"
+                  ? "bg-purple-500"
                   : "bg-light-gray"
               }`}
             >

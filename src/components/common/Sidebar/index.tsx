@@ -72,7 +72,7 @@ const nav_items: NavItem[] = [
   {
     name: "Merchants",
     icon: MerchantIcon,
-    path: "/users",
+    path: "/merchants",
     roles: [Role.ADMIN],
     module: ModulesEnum.merchant,
   },

@@ -23,7 +23,7 @@ const FilterCheckField = ({
   const columnDataType = determineType(item);
   const columnFilterOperations = filterCriteria[columnDataType];
 
-  console.log({ columnDataType });
+
 
   const handleOperatorChange = (value: string) => {
     setGroups?.((prevGroups) =>
@@ -60,7 +60,7 @@ const FilterCheckField = ({
   };
 
   const handleValueChange = (index: number, newValue: any) => {
-    console.log({ newValue });
+
 
     setGroups?.((prevGroups) =>
       prevGroups.map((g) =>
@@ -115,7 +115,7 @@ const FilterCheckField = ({
               onChange={({ target: { value } }) => handleOperatorChange(value)}
             />
           </div>
-          <div className="w-[90%] flex gap-2">
+          <div className="flex gap-2 w-[90%]">
             {item?.operator &&
               (columnDataType === "date" ? (
                 <>
@@ -123,13 +123,13 @@ const FilterCheckField = ({
                     value={item?.values?.[0] || ""}
                     handleChange={(date) => handleValueChange(0, date)}
                     name="date1"
-                    className="border border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder p-4 bg-transparent"
+                    className="bg-transparent p-4 border focus:border-purple border-light-gray rounded-large focus:outline-none placeholder:text-blackGrey-placeholder"
                     date={item?.values?.[0]}
                   />
                   {item?.operator === "BETWEEN" && (
                     <DateField
                       value={item?.values?.[1] || ""}
-                      className="border border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder p-4 bg-transparent"
+                      className="bg-transparent p-4 border focus:border-purple border-light-gray rounded-large focus:outline-none placeholder:text-blackGrey-placeholder"
                       handleChange={(date) => handleValueChange(1, date)}
                       name="date2"
                       date={item?.values?.[1]}

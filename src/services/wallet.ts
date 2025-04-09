@@ -14,7 +14,7 @@ export const getAllWalletBalancesApi = () => {
 };
 
 export const getAllAdminWalletBalancesApi = () => {
-  return () => api.get(`admin/wallet/balance`);
+  return () => api.get(`wallet/admin/balance`);
 };
 
 export const getAllWalletsListByAdminApi = () => {
