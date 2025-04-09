@@ -177,10 +177,10 @@ const Login = () => {
         </>
       ) : (
         <>
-          <h1 className="mb-8 font-semibold text-blackGrey-100 text-h2">
+          <h1 className="mb-2 font-semibold text-blackGrey-100 text-h2 text-center">
             Confirm Your Identity
           </h1>
-          <p className="mb-12 text-p120">
+          <p className="mb-[30px] text-p120 text-center">
             Enter your Google Autheticator code to complete login.
           </p>
 
