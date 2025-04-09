@@ -24,36 +24,25 @@ const Authlayout = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="flex w-full shadow-lg">
+    <div className="flex bg-[url('/auth-page-logo.png')] bg-no-repeat bg-left-bottom sm:px-8 min-h-screen">
+      <div className="flex bg-white sm:bg-transparent bg-opacity-95 sm:bg-opacity-100 sm:m-auto py-5 w-full max-w-[1650px] sm:h-[874px] max-h-screen">
         {/* Left Side (Form) */}
-        <div className="w-full lg:w-1/2 py-20 px-6 bg-bluish-gray">
-          <section className="content max-w-[500px] m-auto">
-            <div className="logo-wrapper">
-              <h4 className="text-h4 text-purple-500 font-bold">Alphaspay</h4>
-            </div>
+        <div className="sm:bg-white sm:bg-opacity-95 px-6 py-[75px] border-purple sm:border-t sm:border-r lg:border-r-0 sm:border-b sm:border-l sm:rounded-r-[50px] lg:rounded-r-[0px] sm:rounded-l-[50px] w-full lg:w-1/2 overflow-auto short-scrollbar">
+          <section className="m-auto max-w-[500px] content">
+            <img
+              src="/logo-new.png"
+              alt="Alphaspay Logo"
+              className="block mx-auto w-[200px]"
+            />
+
             {children}
           </section>
         </div>
 
         {/* Right Side (Image) */}
 
-        <div className="fixed-background-wrapper w-1/2 hidden lg:block">
-          <div className="fixed bg-auth-bg-purple h-screen w-1/2 flex items-center justify-center">
-            <img
-              src={"/auth-bg-person.png"}
-              alt="Crypto Image"
-              className="relative z-10 max-h-[674px] max-w-[85%]"
-              draggable={false}
-            />
-            <img
-              src="/auth-bg-footer.png"
-              alt="background footer"
-              className="absolute z-0 bottom-0 left-0 w-full"
-              draggable={false}
-            />
-          </div>
-          {/* Add any overlay text or icons here */}
+        <div className="hidden lg:flex lg:justify-center lg:items-center bg-[#310F4E] px-12 rounded-r-[50px] w-1/2">
+          <img src="/auth-bg.png" alt="Crypto Mobile device" className="max-h-[90%]" />
         </div>
       </div>
     </div>
