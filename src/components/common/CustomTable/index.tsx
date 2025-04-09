@@ -182,7 +182,6 @@ const CustomTable = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isHovered]);
 
-  
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
@@ -262,9 +261,9 @@ const CustomTable = ({
                     </label>
                   </th>
                 )}
-                {columns.map((column) => (
+                {columns.map((column,index) => (
                   <th
-                    key={column.field}
+                    key={column.field + index}
                     style={{ width: equalColumns ? columnWidths : "auto" }}
                     className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     onClick={() => handleSort(column)}
@@ -310,9 +309,9 @@ const CustomTable = ({
                       </label>
                     </td>
                   )}
-                  {columns.map((column) => (
+                  {columns.map((column, index) => (
                     <td
-                      key={column.field}
+                      key={column.field + index}
                       className={`${
                         column.dataValidator ? "py-4" : "py-6"
                       } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
@@ -510,12 +509,12 @@ const Pagination = ({
           >
             <NavigateBefore />
           </IconButton>
-          {pages.map((item) =>
+          {pages.map((item,index) =>
             item == "..." ? (
-              <span>...</span>
+              <span key={index}>...</span>
             ) : (
               <IconButton
-                key={item}
+                key={index}
                 className={
                   currentPage === item &&
                   "text-black-100 font-bold bg-light-gray"

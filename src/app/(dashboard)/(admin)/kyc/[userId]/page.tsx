@@ -123,7 +123,6 @@ const KYCUserID = ({ params }) => {
         })
       ),
       successCallBack: (response: any) => {
-        console.log("MOVING TO NEXG STEP");
         dispatch(
           setNotification({
             message: `Fee has been set to ${
@@ -158,16 +157,16 @@ const KYCUserID = ({ params }) => {
         setData={setReason}
         toggleHandler={toggleRejectHandler}
       />
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         User Details
       </h3>
       <ErrorApiText error={isUserDetailsError}>
         {userDetails?.kyc_approved && (
           <>
-            <div className="rounded-medium flex flex-col">
+            <div className="flex flex-col rounded-medium">
               <div>
                 <p className="font-semibold text-button">Set a Fee ( % )</p>
-                <div className="flex items-start gap-6 xl:gap-0 justify-between xl:items-center mt-4 flex-wrap">
+                <div className="flex flex-wrap justify-between items-start xl:items-center gap-6 xl:gap-0 mt-4">
                   <IconField
                     inputContainerClassName="!bg-blackGrey-filled-input w-full"
                     wrapperClassName="!mb-0 max-w-full w-[460px]"
@@ -190,7 +189,7 @@ const KYCUserID = ({ params }) => {
               </div>
             </div>
 
-            <div className="rounded-medium flex flex-col mt-8">
+            <div className="flex flex-col mt-8 rounded-medium">
               <div>
                 <p className="font-semibold text-button">
                   Deposit Fee Deduct from
@@ -236,7 +235,7 @@ const KYCUserID = ({ params }) => {
           </>
         )}
 
-        <div className="rounded-medium flex flex-col mt-8">
+        <div className="flex flex-col mt-8 rounded-medium">
           <p className="font-semibold text-button">KYC Details</p>
 
           <div className="py-6">
@@ -246,30 +245,30 @@ const KYCUserID = ({ params }) => {
           <div className="mt-4">
             <p className="font-semibold text-button">Attachments</p>
 
-            <div className="attachments flex gap-3 flex-wrap mt-4">
+            <div className="flex flex-wrap gap-3 mt-4 attachments">
               <div
-                className="wrapper relative  cursor-pointer group"
+                className="group relative cursor-pointer wrapper"
                 onClick={() => setUrl(userDetails?.front_image)}
               >
                 <img
                   src={userDetails?.front_image}
                   alt="front side"
-                  className="max-w-full w-60"
+                  className="w-60 max-w-full"
                 />
-                <div className="opener absolute top-0 right-0 left-0 bottom-0 grid-cols-1 place-items-center backdrop-blur-sm hidden group-hover:grid">
+                <div className="hidden top-0 right-0 bottom-0 left-0 absolute place-items-center group-hover:grid grid-cols-1 backdrop-blur-sm opener">
                   <OpenInNew color="inherit" accentHeight={100} />
                 </div>
               </div>
               <div
-                className="wrapper relative  cursor-pointer group"
+                className="group relative cursor-pointer wrapper"
                 onClick={() => setUrl(userDetails?.back_image)}
               >
                 <img
                   src={userDetails?.back_image}
                   alt="front side"
-                  className="max-w-full  w-60"
+                  className="w-60 max-w-full"
                 />
-                <div className="opener absolute top-0 right-0 left-0 bottom-0 grid-cols-1 place-items-center backdrop-blur-sm hidden group-hover:grid">
+                <div className="hidden top-0 right-0 bottom-0 left-0 absolute place-items-center group-hover:grid grid-cols-1 backdrop-blur-sm opener">
                   <OpenInNew color="inherit" accentHeight={100} />
                 </div>
               </div>
@@ -278,7 +277,7 @@ const KYCUserID = ({ params }) => {
 
           <ErrorApiText error={isKYCSubmitError} />
 
-          <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-14 flex-wrap">
+          <div className="sm:flex flex-wrap items-center gap-4 grid grid-cols-2 mt-14">
             {!userDetails?.kyc_approved && (
               <>
                 <LoaderButton

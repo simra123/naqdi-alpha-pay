@@ -89,11 +89,11 @@ const AdvancedTable = ({
         pageValue: 1,
       });
     }
-    console.log(column, value, filteredColsData);
+
   };
 
   const onFiltersApply = (filtersData, closeAfter?: boolean) => {
-    console.log({ filtersData });
+ 
     setFilterData(filtersData);
     setPage(1);
     fetchData({
@@ -118,7 +118,7 @@ const AdvancedTable = ({
   };
 
   const onViewsApply = (viewData) => {
-    console.log({ viewData });
+
     setColumns(viewData);
     let newConfig = replaceColumns(listConfig, viewData);
     setListConfig(newConfig);
@@ -126,7 +126,7 @@ const AdvancedTable = ({
   };
 
   const onSearchKeyDown = (event) => {
-    console.log(event.key);
+
     if (event.key == "Enter") {
       fetchData({
         sort: sortData,
@@ -140,7 +140,7 @@ const AdvancedTable = ({
   const onSort = (sortValues) => {
     const colsToSort = updateColumnSortState(sortValues, sortData);
     setSortData(colsToSort);
-    console.log({ colsToSort });
+
     fetchData({
       sort: colsToSort,
       filters: filtersData,

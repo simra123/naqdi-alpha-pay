@@ -39,7 +39,7 @@ const useFormValidation = (
           },
         });
       } else {
-        console.log("Changing single check values", name, checked);
+
         setValues({
           ...values,
           [name]: checked,
