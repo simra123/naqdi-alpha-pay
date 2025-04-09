@@ -115,7 +115,7 @@ const nav_items: NavItem[] = [
     icon: FeeLedgerIcon,
     path: "/fee-ledger",
     roles: [Role.ADMIN, Role.USER],
-    module: ModulesEnum.withdrawal,
+    module: ModulesEnum.feeLedger,
   },
   {
     name: "News Signups",

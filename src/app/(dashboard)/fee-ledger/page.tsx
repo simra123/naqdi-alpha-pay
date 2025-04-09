@@ -321,6 +321,6 @@ const FeeLedger = () => {
 
 export default PermissionAccess(
   FeeLedger,
-  ModulesEnum.withdrawal,
+  ModulesEnum.feeLedger,
   AccessLevelEnum.read
 );

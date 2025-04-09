@@ -30,7 +30,7 @@ export enum ModulesEnum {
   payout = "payout",
   user = "user",
   newsletter = "newsletter",
-  feeLedger = "feeLedger",
+  feeLedger='fee-ledger'
 }
 
 export enum AccessLevelEnum {

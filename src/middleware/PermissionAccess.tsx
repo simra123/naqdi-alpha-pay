@@ -40,12 +40,16 @@ interface IPermissionConfig {
 }
 
 let ModuleRoutes = {
-  [ModulesEnum.payment]: "/payments",
-  [ModulesEnum.integration]: "settings/integrations",
-  [ModulesEnum.transaction]: "/transactions",
-  [ModulesEnum.user]: "/settings/users",
   [ModulesEnum.wallet]: "/",
+  [ModulesEnum.merchant]: "/merchants",
+  [ModulesEnum.kyc]: "/kyc",
+  [ModulesEnum.payment]: "/payments",
+  [ModulesEnum.transaction]: "/transactions",
   [ModulesEnum.withdrawal]: "/withdrawals",
+  [ModulesEnum.feeLedger]: "/fee-ledger",
+  [ModulesEnum.newsletter]: "/newsletter",
+  [ModulesEnum.integration]: "settings/integrations",
+  [ModulesEnum.user]: "/settings/users",
 };
 
 const PermissionAccess = (
@@ -54,7 +58,6 @@ const PermissionAccess = (
   requiredAccessLevel: AccessLevelEnum,
   config?: IPermissionConfig
 ) => {
-
   return (props: WithPermissionProps): any => {
     // Get permissions from cookies and parse them
     let router = useRouter();
@@ -65,13 +68,10 @@ const PermissionAccess = (
 
       const redirectOnNoAccess = config?.redirectOnNoAccess;
 
-
       // Find the specific module permission
       const modulePermission = permissions.find(
         (perm) => perm.permission.module === requiredModule
       );
-
-
 
       if (!modulePermission) {
         // Module not found in permissions, render NotFound
@@ -86,14 +86,19 @@ const PermissionAccess = (
       if (redirectOnNoAccess && !hasAccess) {
         // Redirect based on permission available
         let availableModule = findFirstNonNoneAccessLevel(permissions);
- 
-        if (availableModule) {
-          return router.push(ModuleRoutes[availableModule.module]);
+
+        console.log({
+          availablepath: ModuleRoutes[availableModule.module],
+          ModuleRoutes,
+          module: availableModule.module,
+        });
+        const isPathAvailable = !!ModuleRoutes[availableModule.module];
+        if (availableModule && isPathAvailable) {
+          router.push(ModuleRoutes[availableModule.module]);
         } else {
           return router.push("/settings/account");
         }
       }
-
 
       // If access is denied, render NotFound
       if (!hasAccess) {
