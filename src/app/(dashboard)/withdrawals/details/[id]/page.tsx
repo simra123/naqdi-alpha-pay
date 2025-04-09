@@ -145,22 +145,13 @@ const WithdrawalDetails = ({ params }) => {
       (item) => item?.wallet_address || item?.address
     );
 
-    const manualData = {
+    const internalData = {
+      withdraw_id: withdraw_id,
       addresses,
     };
 
-    const AutomaticData = {
-      withdraw_id: withdraw_id,
-      withdrawal_mode: withdrawalType,
-    };
-
-    const requestData =
-      withdrawalType == Withdrawal_Type.INTERNAL
-        ? AutomaticData
-        : { ...manualData, ...AutomaticData };
-
     await callApiHook({
-      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(requestData)),
+      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(internalData)),
       successCallBack: (response: any) => {
         dispatch(
           setNotification({
@@ -440,7 +431,7 @@ const WithdrawalDetails = ({ params }) => {
                   initialPageSize={10000}
                   columns={availableWallets_table_columns}
                   rows={wallets}
-                  selectable={withdrawalType == Withdrawal_Type.MANUAL}
+                  selectable={withdrawalType == Withdrawal_Type.INTERNAL}
                   selectedRows={selectedWallets}
                   setSelectedRows={setSelectedWallets}
                   actions={true}
