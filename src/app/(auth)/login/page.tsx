@@ -113,21 +113,21 @@ const Login = () => {
   };
 
   return (
-    <section className="mt-[100px]">
+    <section className="mt-[30px]">
       {!hasMFA ? (
         <>
-          <h1 className="text-h2 font-semibold mb-4 text-blackGrey-100">
+          <h1 className="mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
             Welcome Back!
           </h1>
-          <p className="mb-4 text-p120">
+          <p className="mb-[6px] text-p120 text-center">
             Enter your credentials to access your account.
           </p>
           <form
             onSubmit={(event) => handleSubmit(event, onSubmit, onSubmitError)}
-            className="mt-20"
+            className="mt-[31px]"
           >
             <IconField
-              label="Username"
+              label="Email"
               wrapperClassName="mb-6"
               type="text"
               error={errors.email}
@@ -135,7 +135,7 @@ const Login = () => {
               onChange={handleChange}
               onBlur={validateField}
               name="email"
-              placeholder="Enter Your Email"
+              placeholder="Enter your email or username"
               icon={Mail}
             />
             <IconField
@@ -149,11 +149,11 @@ const Login = () => {
               onBlur={validateField}
               name="password"
               icon={Lock}
-              placeholder="Enter Your Password"
+              placeholder="Enter your password"
             />
             <Link
               href={"/recover-password"}
-              className="text-purple-500 text-input font-semibold block text-end mb-14"
+              className="block mb-14 font-semibold text-input text-purple-500 text-end"
             >
               Forgot Password?
             </Link>
@@ -167,9 +167,9 @@ const Login = () => {
               loading={isLoginLoading}
             />
           </form>
-          <p className="mt-6 text-center text-button">
+          <p className="mt-6 text-button text-center">
             New here?{" "}
-            <Link href="/register" className="text-purple-500 font-medium">
+            <Link href="/register" className="font-medium text-purple-500">
               Sign Up
             </Link>{" "}
             for Free!
@@ -177,7 +177,7 @@ const Login = () => {
         </>
       ) : (
         <>
-          <h1 className="text-h2 font-semibold text-blackGrey-100 mb-8">
+          <h1 className="mb-8 font-semibold text-blackGrey-100 text-h2">
             Confirm Your Identity
           </h1>
           <p className="mb-12 text-p120">
@@ -190,18 +190,18 @@ const Login = () => {
             }
           >
             <div className="mt-2 w-fit">
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <label className="block mb-2 font-medium">Enter Code</label>
 
-                <div className="relative flex items-center group">
-                  <Info className="text-blue-info mb-1 text-[18px]" />
+                <div className="group relative flex items-center">
+                  <Info className="mb-1 text-[18px] text-blue-info" />
 
-                  <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                  <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                     <div className="relative p-2">
                       <p className="w-full text-center">
                         Use your Google Autheticator code here
                       </p>
-                      <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                      <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
                     </div>
                   </div>
                 </div>
@@ -217,7 +217,7 @@ const Login = () => {
                 renderInput={(props) => (
                   <input
                     {...props}
-                    className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                    className="bg-blackGrey-filled-input p-2 md:p-4 py-4 border border-light-gray rounded-large outline-none !w-14 max-w-full"
                   />
                 )}
                 onChange={(value) =>
@@ -226,7 +226,7 @@ const Login = () => {
                 value={otpValues?.otp}
               />
               {otpErrors?.otp && (
-                <p className="text-red-error-dark text-subtitle mt-2 ml-2">
+                <p className="mt-2 ml-2 text-red-error-dark text-subtitle">
                   {otpErrors?.otp}
                 </p>
               )}
