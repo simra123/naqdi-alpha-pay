@@ -177,7 +177,7 @@ const Login = () => {
         </>
       ) : (
         <>
-          <h1 className="mb-2 font-semibold text-blackGrey-100 text-h2 text-center">
+          <h1 className="mb-2 text-blackGrey-100 text-h2 text-center \font-semibold">
             Confirm Your Identity
           </h1>
           <p className="mb-[30px] text-p120 text-center">
@@ -189,7 +189,7 @@ const Login = () => {
               verificationSubmit(event, verifyHandler, onSubmitError)
             }
           >
-            <div className="mt-2 w-fit">
+            <div className="mx-auto mt-2 w-fit">
               <div className="flex items-center gap-2">
                 <label className="block mb-2 font-medium">Enter Code</label>
 
