@@ -267,3 +267,10 @@ button:disabled {
   }
 }
 
+
+.short-scrollbar{
+
+  &::-webkit-scrollbar-track {
+    margin: 40px 0;
+  }
+}
