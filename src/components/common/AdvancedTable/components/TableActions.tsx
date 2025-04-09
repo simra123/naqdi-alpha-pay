@@ -39,10 +39,10 @@ const TableActions = ({
   onFiltersApply,
   onViewsApply,
 }: Props) => {
-  console.log({ listConfig });
+
 
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex justify-between items-center mb-6">
       <AdvancedTableFilters
         listConfig={listConfig}
         filterData={filtersData}
@@ -77,12 +77,12 @@ const TableActions = ({
           className="border-0"
           onClick={onClearFilters}
         />
-        <button className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
+        <button className="lg:hidden block bg-transparent hover:bg-white bg-none hover:shadow-md p-3 border-0 rounded-full outline-0 w-12 h-12 transition-all">
           <SearchbarIcon className="" />
         </button>
 
         <button
-          className="bg-none bg-transparent outline-0 border rounded-xl transition-all hover:bg-gray-100 p-1 w-11 h-11 flex items-center justify-center"
+          className="flex justify-center items-center bg-transparent hover:bg-gray-100 bg-none p-1 border rounded-xl outline-0 w-11 h-11 transition-all"
           //   onClick={onFilterClick}
           onClick={() => setFilterOpen(!filterOpen)}
         >

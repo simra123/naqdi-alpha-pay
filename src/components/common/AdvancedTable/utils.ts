@@ -183,7 +183,7 @@ export const getFilterState = (columnName: string, filterColsArray: any[]) => {
   const filterState = filterColsArray.find(
     (item) => item?.listColumnMeta?.name == columnName
   );
-  console.log({ filterState });
+
   return filterState;
 };
 
@@ -248,12 +248,6 @@ export const getPaginationPages = (
   const showLeftEllipsis = leftSiblingIndex > 2;
   const showRightEllipsis = rightSiblingIndex < totalPages - 1;
 
-  console.log({
-    leftSiblingIndex,
-    rightSiblingIndex,
-    showLeftEllipsis,
-    showRightEllipsis,
-  });
 
   if (showLeftEllipsis) {
     pages.push("..."); // Left ellipsis

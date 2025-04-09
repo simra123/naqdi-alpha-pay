@@ -42,7 +42,7 @@ const MFASetup = () => {
     await callApiHook({
       apiCall: callQrCodeApi(generateMFACodeApi()),
       successCallBack: (response) => {
-        console.log(response, "qr code generated response");
+   
         setQrCode({ secret: response?.secret });
         getUserDetails();
       },
@@ -84,17 +84,17 @@ const MFASetup = () => {
   };
 
   return (
-    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
-      <h4 className="text-black-100 text-h3.5 font-semibold">
+    <div className="flex flex-col gap-5 bg-white mt-8 p-12 rounded-small">
+      <h4 className="font-semibold text-black-100 text-h3.5">
         Phone Validation
       </h4>
-      <p className="text-button text-black-100">
+      <p className="text-black-100 text-button">
         MFA is a simple best practice that uses Google Authenticator to add an
         extra layer of protection for your account.
       </p>
 
-      <div className="form_steps mt-4">
-        <h4 className="text-p120 text-black-100 font-semibold">
+      <div className="mt-4 form_steps">
+        <h4 className="font-semibold text-black-100 text-p120">
           STEP 1: Download Google Authenticator
         </h4>
         <div className="flex gap-4 mt-8">
@@ -113,11 +113,11 @@ const MFASetup = () => {
         </div>
       </div>
 
-      <div className="form_steps mt-6 w-fit">
-        <h4 className="text-p120 text-black-100 font-semibold">
+      <div className="mt-6 w-fit form_steps">
+        <h4 className="font-semibold text-black-100 text-p120">
           STEP 2: Generate and Scan the QR Code
         </h4>
-        <div className="qr_code mt-6 flex justify-center">
+        <div className="flex justify-center mt-6 qr_code">
           {qrCode && qrCode.secret && (
             <QRCodeCanvas
               value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
@@ -142,11 +142,11 @@ const MFASetup = () => {
       </div>
 
       <form onSubmit={handleSubmit}>
-        <div className="form_steps mt-8">
-          <h4 className="text-p120 text-black-100 font-semibold">
+        <div className="mt-8 form_steps">
+          <h4 className="font-semibold text-black-100 text-p120">
             STEP 3: Enter your personal generated MFA Code (6-Digit Code)
           </h4>
-          <p className="text-lg mt-3">
+          <p className="mt-3 text-lg">
             Make a note of the MFA code that appears on your device and enter
             that code in the box below, and then choose Verify.
           </p>
@@ -162,7 +162,7 @@ const MFASetup = () => {
                 <input
                   {...props}
                   disabled={isVerified}
-                  className="!w-10 md:!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                  className="bg-blackGrey-filled-input p-2 md:p-4 py-4 border border-light-gray rounded-large outline-none !w-10 md:!w-14 max-w-full"
                 />
               )}
               onChange={(value) => setOtp(value)}
@@ -172,7 +172,7 @@ const MFASetup = () => {
           </div>
 
           {isVerified && (
-            <p className="success note mt-5">Verified Successfully.</p>
+            <p className="mt-5 success note">Verified Successfully.</p>
           )}
 
           <ErrorApiText error={isVerifyError} />
@@ -190,7 +190,7 @@ const MFASetup = () => {
         </div>
       </form>
 
-      <p className="text-black-100 mt-4">
+      <p className="mt-4 text-black-100">
         Alphaspay does not charge any fees for using MFA. If you have any
         questions or concerns, please Contact us
       </p>

@@ -155,7 +155,7 @@ const Payments = () => {
                   link: (row: {
                     wallet: { blockchain: string; address: string };
                   }) => {
-                    console.log({ row, message: "Inside mod cols loops" });
+ 
                     return showExplorerDetailsByChain({
                       env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
                       blockchain: row?.wallet?.blockchain,
@@ -176,13 +176,12 @@ const Payments = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-                    console.log({ currentTimeZone });
 
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
 
-                    console.log({ date });
+
 
                     let [day, time] = date.split(".");
                     return (
@@ -210,7 +209,7 @@ const Payments = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-          console.log({ modifiedColumns });
+
 
           setColumns(modifiedColumns);
 
@@ -220,10 +219,6 @@ const Payments = () => {
         }
         if (user?.role == Role.ADMIN) {
           const tableData = response.map((item) => {
-            if (item?.paymentTransaction?.length > 1) {
-              console.log(item?.payment_uuid);
-            }
-
             return {
               id: item?.id,
               payment_uuid: item?.payment_uuid,
@@ -278,7 +273,6 @@ const Payments = () => {
     getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
-  console.log({ colsState: columns });
 
   return (
     <>
@@ -337,7 +331,6 @@ const Payments = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             onRowClick={(row) => {
-              console.log({ row });
               router.push(`payments/details/${row?.id}`);
             }}
             selectable={false}

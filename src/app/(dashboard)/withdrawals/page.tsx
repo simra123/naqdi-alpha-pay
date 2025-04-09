@@ -186,13 +186,13 @@ const Withdrawals = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-                    console.log({ currentTimeZone });
+
 
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
 
-                    console.log({ date });
+     
 
                     let [day, time] = date.split(".");
                     return (
@@ -220,7 +220,7 @@ const Withdrawals = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-          console.log({ modifiedColumns });
+
 
           setColumns(modifiedColumns);
 
@@ -241,7 +241,6 @@ const Withdrawals = () => {
     getWithdrawals({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
-  console.log({ colsState: columns });
 
   const toggleCreateModal = () => {
     setIsCreateOpen(!isCreateOpen);
@@ -312,7 +311,7 @@ const Withdrawals = () => {
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-              console.log({ row });
+   
               router.push(`/withdrawals/details/${row?.id}`);
             }}
             pagination
