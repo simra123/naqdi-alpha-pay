@@ -32,12 +32,29 @@ import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
-import { getAdminLedgerListApi, getUserLedgerListApi } from "@/services/feeLedger";
+import {
+  getAdminLedgerListApi,
+  getUserLedgerListApi,
+} from "@/services/feeLedger";
 
 const feeLedger_table_columns: TableColumns = [
-  { field: "uuid", headerName: "ID", sortable: true },
+  { field: "id", headerName: "ID", sortable: true },
   {
-    field: "created_at",
+    field: "id",
+    headerName: "Transaction Type",
+    dataValidator(value, row: any) {
+      console.log({ row });
+      return row?.payment ? "Payment" : "Withdrawal";
+    },
+    link(row: any) {
+      return row?.payment
+        ? `/payments/details/${row?.payment?.id}`
+        : `/withdrawals/details/${row?.withdraw?.id}`;
+    },
+    target: "_self",
+  },
+  {
+    field: "createdAt",
     headerName: "Created At",
     sortable: true,
     dataValidator: (value) => {
@@ -64,41 +81,37 @@ const feeLedger_table_columns: TableColumns = [
       );
     },
   },
-  { field: "requested_amount", headerName: "Requested Amount", sortable: true },
-  { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
-
+  { field: "type", headerName: "Currency Type", sortable: true },
+  { field: "unit", headerName: "Currency", sortable: true },
+  { field: "before_amount", headerName: "Before Amount", sortable: true },
+  { field: "after_amount", headerName: "After Amount", sortable: true },
+  { field: "fee_amount", headerName: "Fee Amount", sortable: true },
   {
-    field: "recipient_address",
-    headerName: "Recipient Address",
-    sortable: true,
-    link(row: {
-      standard: string | null;
-      recipient_address: string;
-      unit: string;
-    }) {
-      let blockchain: string | null;
-
-      if (row?.standard) {
-        blockchain = standardBlockchain[row?.standard];
-      } else {
-        let standard = blockchain_standards[row?.unit];
-        blockchain = standardBlockchain[standard];
-      }
-
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: blockchain,
-        type: "address",
-        address: row?.recipient_address,
-      });
+    field: "client",
+    headerName: "Merchant First Name",
+    dataValidator(value: any, row) {
+      return value?.first_name;
     },
   },
   {
-    field: "status",
-    headerName: "Status",
-    dataValidator: (value) => {
-      return <Chip status={value} />;
+    field: "client",
+    headerName: "Merchant Last Name",
+    dataValidator(value: any, row) {
+      return value?.last_name;
+    },
+  },
+  {
+    field: "client",
+    headerName: "Merchant Email",
+    dataValidator(value: any, row) {
+      return value?.email;
+    },
+  },
+  {
+    field: "client",
+    headerName: "Merchant Type",
+    dataValidator(value: any, row) {
+      return value?.user_type;
     },
   },
 ];
@@ -142,9 +155,9 @@ const FeeLedger = () => {
     let feeLeadgerCall = () => {
       return user?.role == Role.USER
         ? getUserLedgerListApi(
-          { sort, filters },
-          { limit: limitValue, page: pageValue }
-        )
+            { sort, filters },
+            { limit: limitValue, page: pageValue }
+          )
         : getAdminLedgerListApi();
     };
 
@@ -154,39 +167,7 @@ const FeeLedger = () => {
         if (user.role == Role.USER) {
           const modifiedColumns = response?.listConfig.views[0].columns.map(
             (column) => {
-              if (column.listColumnsMeta.name === "recipient_address") {
-                return {
-                  ...column,
-                  copyable: true,
-                  link(row: {
-                    standard: string | null;
-                    recipient_address: string;
-                    unit: string;
-                  }) {
-                    let blockchain: string | null;
-
-                    if (row?.standard) {
-                      blockchain = standardBlockchain[row?.standard];
-                    } else {
-                      let standard = blockchain_standards[row?.unit];
-                      blockchain = standardBlockchain[standard];
-                    }
-
-                    return showExplorerDetailsByChain({
-                      env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                      blockchain: blockchain,
-                      type: "address",
-                      address: row?.recipient_address,
-                    });
-                  },
-                };
-              }
-
-              if (
-                ["created_at", "updated_at"].includes(
-                  column.listColumnsMeta.name
-                )
-              ) {
+              if (["createdAt"].includes(column.listColumnsMeta.name)) {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
@@ -213,13 +194,6 @@ const FeeLedger = () => {
                 };
               }
 
-              if (column.listColumnsMeta.name === "status") {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => <Chip status={value} />,
-                };
-              }
-
               return column;
             }
           );
@@ -235,8 +209,7 @@ const FeeLedger = () => {
           setFeeLedgerList(response);
         }
         if (user?.role == Role.ADMIN) {
-          const tableData = formatWithdrawals(response);
-          setFeeLedgerList(tableData);
+          setFeeLedgerList(response);
         }
       },
     });
@@ -286,7 +259,7 @@ const FeeLedger = () => {
           }}
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            router.push(`/fee-ledger/details/${row?.id}`)
+            router.push(`/merchants/details/${row?.client?.id}`)
           }
           pagination
           columnClassName="max-w-[200px]"
@@ -304,7 +277,12 @@ const FeeLedger = () => {
             selectable={false}
             onRowClick={(row) => {
               console.log({ row });
-              router.push(`/fee-ledger/details/${row?.id}`);
+              if (row?.payment) {
+                router.push(`payments/details/${row.payment?.id}`);
+              }
+              if (row?.withdraw) {
+                router.push(`withdrawals/details/${row.withdraw?.id}`);
+              }
             }}
             pagination
             loading={isFeeLedgerListLoading}

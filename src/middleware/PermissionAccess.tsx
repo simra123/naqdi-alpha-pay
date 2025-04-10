@@ -1,19 +1,14 @@
 import React from "react";
 import Cookies from "js-cookie";
-import { notFound, useRouter } from "next/navigation";
-import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { notFound, useRouter,redirect } from "next/navigation";
+import {
+  AccessLevelEnum,
+  ModuleRoutes,
+  ModulesEnum,
+  Permissions,
+} from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";
-
-type Permission = {
-  id: number;
-  module: ModulesEnum;
-  access_level: AccessLevelEnum;
-};
-
-type Permissions = {
-  id: number;
-  permission: Permission;
-}[];
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 type WithPermissionProps = {};
 
@@ -26,7 +21,7 @@ const hasSufficientAccess = (
   return userAccessLevel === requiredAccessLevel;
 };
 
-const findFirstNonNoneAccessLevel = (permission: Permissions) => {
+const findFirstAccessableModule = (permission: Permissions) => {
   if (permission && permission?.length) {
     const item = permission.find(
       (item) => item.permission.access_level !== "none"
@@ -39,19 +34,6 @@ interface IPermissionConfig {
   redirectOnNoAccess?: boolean;
 }
 
-let ModuleRoutes = {
-  [ModulesEnum.wallet]: "/",
-  [ModulesEnum.merchant]: "/merchants",
-  [ModulesEnum.kyc]: "/kyc",
-  [ModulesEnum.payment]: "/payments",
-  [ModulesEnum.transaction]: "/transactions",
-  [ModulesEnum.withdrawal]: "/withdrawals",
-  [ModulesEnum.feeLedger]: "/fee-ledger",
-  [ModulesEnum.newsletter]: "/newsletter",
-  [ModulesEnum.integration]: "settings/integrations",
-  [ModulesEnum.user]: "/settings/users",
-};
-
 const PermissionAccess = (
   WrappedComponent: (props: any) => React.JSX.Element,
   requiredModule: ModulesEnum,
@@ -60,6 +42,8 @@ const PermissionAccess = (
 ) => {
   return (props: WithPermissionProps): any => {
     // Get permissions from cookies and parse them
+
+
     let router = useRouter();
     const user = useLocalStorage("user");
 
@@ -85,18 +69,14 @@ const PermissionAccess = (
 
       if (redirectOnNoAccess && !hasAccess) {
         // Redirect based on permission available
-        let availableModule = findFirstNonNoneAccessLevel(permissions);
+        let availableModule = findFirstAccessableModule(permissions);
 
-        console.log({
-          availablepath: ModuleRoutes[availableModule.module],
-          ModuleRoutes,
-          module: availableModule.module,
-        });
         const isPathAvailable = !!ModuleRoutes[availableModule.module];
+
         if (availableModule && isPathAvailable) {
-          router.push(ModuleRoutes[availableModule.module]);
+          return redirect(ModuleRoutes[availableModule.module]);
         } else {
-          return router.push("/settings/account");
+          return redirect("/settings/account");
         }
       }
 

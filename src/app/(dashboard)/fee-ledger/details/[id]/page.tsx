@@ -41,7 +41,7 @@ import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";
 
-export const availableWallets_table_columns: TableColumns = [
+const availableWallets_table_columns: TableColumns = [
   {
     field: "wallet_uuid",
     headerName: "ID",
