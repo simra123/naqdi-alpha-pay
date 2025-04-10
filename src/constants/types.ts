@@ -1,6 +1,7 @@
 interface tableColumns {
   id?: number;
   field: string;
+  target?: string;
   headerName: string;
   sortable?: boolean;
   sticky?: boolean;
@@ -30,7 +31,32 @@ export enum ModulesEnum {
   payout = "payout",
   user = "user",
   newsletter = "newsletter",
+  feeLedger='fee-ledger'
 }
+
+export const ModuleRoutes = {
+  [ModulesEnum.wallet]: "/",
+  [ModulesEnum.merchant]: "/merchants",
+  [ModulesEnum.kyc]: "/kyc",
+  [ModulesEnum.payment]: "/payments",
+  [ModulesEnum.transaction]: "/transactions",
+  [ModulesEnum.withdrawal]: "/withdrawals",
+  [ModulesEnum.feeLedger]: "/fee-ledger",
+  [ModulesEnum.newsletter]: "/newsletter",
+  [ModulesEnum.integration]: "/settings/integrations",
+  [ModulesEnum.user]: "/settings/users",
+};
+
+export type Permission = {
+  id: number;
+  module: ModulesEnum;
+  access_level: AccessLevelEnum;
+};
+
+export type Permissions = {
+  id: number;
+  permission: Permission;
+}[];
 
 export enum AccessLevelEnum {
   read = "read_only",

@@ -24,6 +24,7 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
 
 interface Props {
   isOpen: boolean;
@@ -54,6 +55,7 @@ const subUserPermissions = {
   [ModulesEnum?.user]: null,
   [ModulesEnum?.wallet]: null,
   [ModulesEnum?.withdrawal]: null,
+  [ModulesEnum?.feeLedger]: null,
 };
 const subAdminPermissions = {
   [ModulesEnum?.payment]: null,
@@ -64,6 +66,7 @@ const subAdminPermissions = {
   [ModulesEnum?.kyc]: null,
   [ModulesEnum?.merchant]: null,
   [ModulesEnum.newsletter]: null,
+  [ModulesEnum?.feeLedger]: null,
 };
 
 const CreateUserModal = ({
@@ -80,7 +83,8 @@ const CreateUserModal = ({
   let permissions =
     user?.role == Role.ADMIN ? subAdminPermissions : subUserPermissions;
 
-  const [selectedPermissions, setSelectedPermissions] = useState(permissions);
+  const [selectedPermissions, setSelectedPermissions] =
+    useState<any>(permissions);
 
   const togglePermission =
     (name: ModulesEnum, permission?: AccessLevelEnum) => () => {
@@ -123,62 +127,43 @@ const CreateUserModal = ({
   };
 
   const createSubUser = async () => {
+    const ModulesByRole = {
+      [Role.USER]: [ModulesEnum.integration],
+      [Role.ADMIN]: [
+        ModulesEnum.kyc,
+        ModulesEnum.merchant,
+        ModulesEnum.newsletter,
+      ],
+    };
+
+    const baseModules = [
+      ModulesEnum.payment,
+      ModulesEnum.transaction,
+      ModulesEnum.user,
+      ModulesEnum.wallet,
+      ModulesEnum.withdrawal,
+      ModulesEnum.feeLedger,
+    ];
+
+    // Combine base modules with role-specific modules
+    const modulesToInclude = [
+      ...baseModules,
+      ...(ModulesByRole[user?.role] || []),
+    ];
+
+    const permissions = modulesToInclude.map((module) => ({
+      module,
+      access_level: checkCondition(selectedPermissions[module]),
+    }));
+
     const requestBody = {
       first_name: values?.firstName,
       last_name: values?.lastName,
       username: values?.username,
       email: values?.email,
       password: values?.password,
-      permissions: [
-        {
-          module: ModulesEnum.integration,
-          access_level: checkCondition(
-            selectedPermissions[ModulesEnum.integration]
-          ),
-        },
-        {
-          module: ModulesEnum.payment,
-          access_level: checkCondition(
-            selectedPermissions[ModulesEnum.payment]
-          ),
-        },
-        {
-          module: ModulesEnum.transaction,
-          access_level: checkCondition(
-            selectedPermissions[ModulesEnum.transaction]
-          ),
-        },
-        {
-          module: ModulesEnum.user,
-          access_level: checkCondition(selectedPermissions[ModulesEnum.user]),
-        },
-        {
-          module: ModulesEnum.wallet,
-          access_level: checkCondition(selectedPermissions[ModulesEnum.wallet]),
-        },
-        {
-          module: ModulesEnum.withdrawal,
-          access_level: checkCondition(
-            selectedPermissions[ModulesEnum.withdrawal]
-          ),
-        },
-      ],
+      permissions,
     };
-    if (user?.role == Role.ADMIN) {
-      requestBody?.permissions?.shift();
-      requestBody.permissions.push(
-        {
-          module: ModulesEnum.kyc,
-          access_level: checkCondition(selectedPermissions[ModulesEnum.kyc]),
-        },
-        {
-          module: ModulesEnum.merchant,
-          access_level: checkCondition(
-            selectedPermissions[ModulesEnum.merchant]
-          ),
-        }
-      );
-    }
 
     await callApiHook({
       apiCall: callCreateUserApi(
@@ -204,31 +189,75 @@ const CreateUserModal = ({
   };
 
   const updateSubUser = async () => {
-    let mappedPermissions = userPermissions?.map((perm) => {
-      if (
-        selectedPermissions[perm?.permission?.module] ||
-        selectedPermissions[perm?.permission?.module] === null
-      ) {
-        let currentAccessLevel = selectedPermissions[perm?.permission?.module];
+    // const updatedPermissions = Object.entries(selectedPermissions).map(
+    //   ([module, access_level]) => {
+    //     const existingPerm = userPermissions?.find(
+    //       (perm) => perm?.permission?.module === module
+    //     );
+
+    //     if (existingPerm) {
+    //       return {
+    //         ...existingPerm,
+    //         permission: {
+    //           ...existingPerm.permission,
+    //           access_level: access_level || "none",
+    //         },
+    //       };
+    //     }
+
+    //     // If it's a new permission not in userPermissions, add a fresh one
+    //     return {
+    //       permission: {
+    //         module,
+    //         access_level: access_level || "none",
+    //       },
+    //     };
+    //   }
+    // );
+
+    // console.log({ updatedPermissions });
+
+    let tempIdCounter = -1; // Start with negative IDs for new permissions
+
+    const updatedPermissions = Object.entries(selectedPermissions).map(
+      ([module, access_level]) => {
+        const existingPerm = userPermissions?.find(
+          (perm) => perm?.permission?.module === module
+        );
+
+        if (existingPerm) {
+          return {
+            ...existingPerm,
+            permission: {
+              ...existingPerm.permission,
+              access_level: access_level || "none",
+            },
+          };
+        }
+
+        // If new, assign a temporary negative ID
         return {
-          ...perm,
+          id: tempIdCounter--,
           permission: {
-            ...perm?.permission,
-            access_level: currentAccessLevel || "none",
+            id: tempIdCounter--,
+            module,
+            access_level: access_level || "none",
           },
         };
       }
-    });
+    );
+
+    console.log({ updatedPermissions });
 
     await callApiHook({
       apiCall: callCreateUserApi(
         user?.role == Role.USER
           ? updateSubuserApi({
-              user_permission: mappedPermissions,
+              user_permission: updatedPermissions,
               user_id: +user_id,
             })
           : updateSubAdminApi({
-              user_permission: mappedPermissions,
+              user_permission: updatedPermissions,
               user_id: +user_id,
             })
       ),
@@ -265,12 +294,12 @@ const CreateUserModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
-      <h2 className="text-h3.5 font-semibold mb-4">
+      <h2 className="mb-4 font-semibold text-h3.5">
         {step == 1 ? "Add User" : "Permissions"}
       </h2>
       {step == 1 ? (
         <form
-          className="mt-8 flex flex-col gap-2"
+          className="flex flex-col gap-2 mt-8"
           onSubmit={(e) =>
             handleSubmit(e, onSubmit, () => console.log("Something went wrong"))
           }
@@ -336,7 +365,7 @@ const CreateUserModal = ({
 
             {/* <button
               type="button"
-              className="text-black-100 px-4 py-2 mt-2"
+              className="mt-2 px-4 py-2 text-black-100"
               onClick={toggleHandler}
             >
               Cancel
@@ -345,7 +374,7 @@ const CreateUserModal = ({
         </form>
       ) : (
         <>
-          <div className="flex flex-col gap-4 justify-end mt-4">
+          <div className="flex flex-col justify-end gap-4 mt-4">
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-base">Wallet</span>
@@ -367,7 +396,7 @@ const CreateUserModal = ({
                 />
               )}
             </div>
-            {user?.role == Role.ADMIN && (
+            <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-base">Merchant</span>
@@ -389,8 +418,9 @@ const CreateUserModal = ({
                   />
                 )}
               </div>
-            )}
-            {user?.role == Role.ADMIN && (
+            </RenderRoleBased>
+
+            <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center">
                   <span className="font-medium text-base">KYC</span>
@@ -412,7 +442,8 @@ const CreateUserModal = ({
                   />
                 )}
               </div>
-            )}
+            </RenderRoleBased>
+
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
                 <span className="font-medium text-base">Transaction</span>
@@ -434,29 +465,28 @@ const CreateUserModal = ({
                 />
               )}
             </div>
-            {user?.role == Role.USER && (
-              <>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-base">Integrations</span>
-                  <SwitchButton
-                    handleToggle={togglePermission(
-                      ModulesEnum.integration,
-                      AccessLevelEnum.read
-                    )}
-                    isOn={selectedPermissions[ModulesEnum.integration]}
-                  />
-                </div>
-                {selectedPermissions[ModulesEnum.integration] && (
-                  <IconSelectBox
-                    wrapperClassName="!m-0"
-                    options={permissionOptions}
-                    onChange={handlePermissionChange}
-                    name={ModulesEnum.integration}
-                    value={selectedPermissions[ModulesEnum.integration]}
-                  />
-                )}
-              </>
-            )}
+
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-base">Integrations</span>
+                <SwitchButton
+                  handleToggle={togglePermission(
+                    ModulesEnum.integration,
+                    AccessLevelEnum.read
+                  )}
+                  isOn={selectedPermissions[ModulesEnum.integration]}
+                />
+              </div>
+              {selectedPermissions[ModulesEnum.integration] && (
+                <IconSelectBox
+                  wrapperClassName="!m-0"
+                  options={permissionOptions}
+                  onChange={handlePermissionChange}
+                  name={ModulesEnum.integration}
+                  value={selectedPermissions[ModulesEnum.integration]}
+                />
+              )}
+            </RenderRoleBased>
 
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
@@ -522,28 +552,47 @@ const CreateUserModal = ({
                 />
               )}
             </div>
-            {user?.role == Role.ADMIN && (
-              <>
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-base">NewsLetter</span>
-                  <SwitchButton
-                    handleToggle={togglePermission(
-                      ModulesEnum.newsletter,
-                      AccessLevelEnum.read
-                    )}
-                    isOn={selectedPermissions[ModulesEnum.newsletter]}
-                  />
-                </div>
-                {selectedPermissions[ModulesEnum.newsletter] && (
-                  <IconSelectBox
-                    wrapperClassName="!m-0"
-                    options={permissionOptions}
-                    onChange={handlePermissionChange}
-                    name={ModulesEnum.newsletter}
-                    value={selectedPermissions[ModulesEnum.newsletter]}
-                  />
+
+            <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-base">NewsLetter</span>
+                <SwitchButton
+                  handleToggle={togglePermission(
+                    ModulesEnum.newsletter,
+                    AccessLevelEnum.read
+                  )}
+                  isOn={selectedPermissions[ModulesEnum.newsletter]}
+                />
+              </div>
+              {selectedPermissions[ModulesEnum.newsletter] && (
+                <IconSelectBox
+                  wrapperClassName="!m-0"
+                  options={permissionOptions}
+                  onChange={handlePermissionChange}
+                  name={ModulesEnum.newsletter}
+                  value={selectedPermissions[ModulesEnum.newsletter]}
+                />
+              )}
+            </RenderRoleBased>
+
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-base">Fee Ledger</span>
+              <SwitchButton
+                handleToggle={togglePermission(
+                  ModulesEnum.feeLedger,
+                  AccessLevelEnum.read
                 )}
-              </>
+                isOn={selectedPermissions[ModulesEnum.feeLedger]}
+              />
+            </div>
+            {selectedPermissions[ModulesEnum.feeLedger] && (
+              <IconSelectBox
+                wrapperClassName="!m-0"
+                options={permissionOptions}
+                onChange={handlePermissionChange}
+                name={ModulesEnum.feeLedger}
+                value={selectedPermissions[ModulesEnum.feeLedger]}
+              />
             )}
 
             <div className="flex flex-col gap-1 mt-6">
@@ -557,7 +606,7 @@ const CreateUserModal = ({
               {type != ModalType.EDIT && (
                 <button
                   type="button"
-                  className="text-black-100 px-4 py-2 mt-2"
+                  className="mt-2 px-4 py-2 text-black-100"
                   onClick={goToStep(1)}
                 >
                   Back
