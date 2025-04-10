@@ -207,47 +207,79 @@ const TransactionDetails = ({ params }) => {
         </div>
 
         <ErrorApiText error={isWebhookError} />
-
         <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
           <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-            <MerchantDetailIcon/>
+            <MerchantDetailIcon />
             <h5 className="font-semibold text-h5 text-purple-500">Merchant</h5>
           </div>
           <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
             <Details
-              label="Reciever Wallet Address"
-              copyable
+              label="ID"
               value={
-                transactionType == "Withdrawal"
-                  ? transactionDetails?.withdrawal?.recipient_address
-                  : transactionDetails?.wallet?.wallet_address ||
-                    transactionDetails?.wallet?.address
+                transactionDetails?.client?.id ||
+                transactionDetails?.withdrawal?.user?.id
               }
-              link={showExplorerDetailsByChain({
-                env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                blockchain:
-                  transactionDetails?.wallet?.blockchain ||
-                  transactionDetails?.clientWallet?.blockchain,
-                type: "address",
-                address:
-                  transactionType == "Withdrawal"
-                    ? transactionDetails?.withdrawal?.recipient_address
-                    : transactionDetails?.wallet?.wallet_address ||
-                      transactionDetails?.wallet?.address,
-              })}
+              link={`/merchants/details/${
+                transactionDetails?.client?.id ||
+                transactionDetails?.withdrawal?.user?.id
+              }`}
+              target="_self"
             />
             <Details
-              label="Sender Wallet Address"
-              copyable
-              value={transactionDetails?.sender_address}
-              link={showExplorerDetailsByChain({
-                env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                blockchain:
-                  transactionDetails?.wallet?.blockchain ||
-                  transactionDetails?.clientWallet?.blockchain,
-                type: "address",
-                address: transactionDetails?.sender_address,
-              })}
+              label="First Name"
+              value={
+                transactionDetails?.client?.first_name ||
+                transactionDetails?.withdrawal?.user?.first_name
+              }
+            />
+            <Details
+              label="Last Name"
+              value={
+                transactionDetails?.client?.last_name ||
+                transactionDetails?.withdrawal?.user?.last_name
+              }
+            />
+            <Details
+              label="Username"
+              value={
+                transactionDetails?.client?.username ||
+                transactionDetails?.withdrawal?.user?.username
+              }
+            />
+            <Details
+              label="Email"
+              value={
+                transactionDetails?.client?.email ||
+                transactionDetails?.withdrawal?.user?.email
+              }
+            />
+            <Details
+              label="Role"
+              value={
+                transactionDetails?.client?.role ||
+                transactionDetails?.withdrawal?.user?.role
+              }
+            />
+            <Details
+              label="User Type"
+              value={
+                transactionDetails?.client?.user_type ||
+                transactionDetails?.withdrawal?.user?.user_type
+              }
+            />
+            <Details
+              label="Created Date"
+              value={moment(
+                transactionDetails?.client?.created_at ||
+                  transactionDetails?.withdrawal?.user?.created_at
+              ).format("DD-MM-YYYY")}
+            />
+            <Details
+              label="Updated Date"
+              value={moment(
+                transactionDetails?.client?.updated_at ||
+                  transactionDetails?.withdrawal?.user?.updated_at
+              ).format("DD-MM-YYYY")}
             />
           </div>
         </RenderRoleBased>

@@ -24,6 +24,8 @@ import { resetSteps } from "@/store/slices/onboarding.slice";
 import { setUser } from "@/store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
+import RenderRoleBased from "../RenderRoleBased";
+import { Role } from "@/constants/roles";
 
 const Header = ({ navHandler }) => {
   const user = useLocalStorage("user");
@@ -110,11 +112,13 @@ const Header = ({ navHandler }) => {
         </div>
 
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/support/create">
-            <BorderedIconButton>
-              <SupportIcon />
-            </BorderedIconButton>
-          </Link>
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <Link href="/support/create">
+              <BorderedIconButton>
+                <SupportIcon />
+              </BorderedIconButton>
+            </Link>
+          </RenderRoleBased>
           <BorderedIconButton>
             <ThemeChangeIcon />
           </BorderedIconButton>

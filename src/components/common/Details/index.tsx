@@ -1,6 +1,7 @@
 "use client";
 
 import { ContentCopy } from "@mui/icons-material";
+import Link from "next/link";
 import React, { useState } from "react";
 
 type Props = {
@@ -9,9 +10,17 @@ type Props = {
   copyable?: boolean;
   link?: string;
   className?: string;
+  target?: string;
 };
 
-const Details = ({ label, value, copyable, link, className }: Props) => {
+const Details = ({
+  label,
+  value,
+  copyable,
+  link,
+  className,
+  target = "_blank",
+}: Props) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const copyToClipboard = (text: string) => async () => {
@@ -31,18 +40,18 @@ const Details = ({ label, value, copyable, link, className }: Props) => {
       className={`flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis ${className}`}
     >
       {label && (
-        <span className="text-custom-caption-gray font-medium">{label}:</span>
+        <span className="font-medium text-custom-caption-gray">{label}:</span>
       )}
       {link ? (
-        <a
+        <Link
           href={link}
-          target="_blank"
-          className="hover:text-blue-700 hover:underline transition-all text-black-100 font-semibold text-ellipsis overflow-hidden capitalize"
+          target={target}
+          className="overflow-hidden font-semibold text-blue-700 hover:text-blue-600 hover:underline text-ellipsis capitalize transition-all"
         >
           {isCopied ? "Copied" : value}
-        </a>
+        </Link>
       ) : (
-        <span className=" text-black-100 font-semibold text-ellipsis overflow-hidden capitalize">
+        <span className="overflow-hidden font-semibold text-black-100 text-ellipsis capitalize">
           {isCopied ? "Copied" : value}
         </span>
       )}
@@ -50,7 +59,7 @@ const Details = ({ label, value, copyable, link, className }: Props) => {
         <button
           type="button"
           onClick={copyToClipboard(value)}
-          className="bg-transparent border-0 outline-0 text-[14px] hover:bg-purple-10 active:bg-purple-20 transition-all w-8 h-8 aspect-square rounded-full p-1"
+          className="bg-transparent hover:bg-purple-10 active:bg-purple-20 p-1 border-0 rounded-full outline-0 w-8 h-8 aspect-square text-[14px] transition-all"
         >
           <ContentCopy className="text-[12px]" />
         </button>
