@@ -284,50 +284,6 @@ const TransactionDetails = ({ params }) => {
           </div>
         </RenderRoleBased>
 
-        <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-            <MerchantDetailIcon/>
-            <h5 className="font-semibold text-h5 text-purple-500">Merchant</h5>
-          </div>
-          <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
-            <Details
-              label="Reciever Wallet Address"
-              copyable
-              value={
-                transactionType == "Withdrawal"
-                  ? transactionDetails?.withdrawal?.recipient_address
-                  : transactionDetails?.wallet?.wallet_address ||
-                    transactionDetails?.wallet?.address
-              }
-              link={showExplorerDetailsByChain({
-                env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                blockchain:
-                  transactionDetails?.wallet?.blockchain ||
-                  transactionDetails?.clientWallet?.blockchain,
-                type: "address",
-                address:
-                  transactionType == "Withdrawal"
-                    ? transactionDetails?.withdrawal?.recipient_address
-                    : transactionDetails?.wallet?.wallet_address ||
-                      transactionDetails?.wallet?.address,
-              })}
-            />
-            <Details
-              label="Sender Wallet Address"
-              copyable
-              value={transactionDetails?.sender_address}
-              link={showExplorerDetailsByChain({
-                env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                blockchain:
-                  transactionDetails?.wallet?.blockchain ||
-                  transactionDetails?.clientWallet?.blockchain,
-                type: "address",
-                address: transactionDetails?.sender_address,
-              })}
-            />
-          </div>
-        </RenderRoleBased>
-
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <PaymentIcon active={false} />
           <h5 className="font-semibold text-h5 text-purple-500">Wallets</h5>
