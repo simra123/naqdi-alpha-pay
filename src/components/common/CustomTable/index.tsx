@@ -21,6 +21,7 @@ import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { TableColumns } from "@/constants/types";
+import Link from "next/link";
 
 interface TableProps {
   columns: TableColumns;
@@ -261,7 +262,7 @@ const CustomTable = ({
                     </label>
                   </th>
                 )}
-                {columns.map((column,index) => (
+                {columns.map((column, index) => (
                   <th
                     key={column.field + index}
                     style={{ width: equalColumns ? columnWidths : "auto" }}
@@ -321,12 +322,14 @@ const CustomTable = ({
                           value={column.dataValidator(row[column.field], row)}
                           copyable={column.copyable}
                           link={column?.link ? column?.link(row) : null}
+                          target={column?.target}
                         />
                       ) : row[column.field] ? (
                         <CopyButtonColumn
                           value={row[column.field]}
                           copyable={column.copyable}
                           link={column?.link ? column?.link(row) : null}
+                          target={column?.target}
                         />
                       ) : (
                         "_"
@@ -365,10 +368,12 @@ const CopyButtonColumn = ({
   value,
   copyable,
   link,
+  target,
 }: {
   value: string;
   copyable: boolean;
   link: string;
+  target: string;
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -388,14 +393,14 @@ const CopyButtonColumn = ({
   return (
     <div className="flex items-center gap-2">
       {link ? (
-        <a
+        <Link
           onClick={(event) => event.stopPropagation()}
           href={link}
-          target="_blank"
+          target={target || "_blank"}
           className="overflow-hidden font-semibold text-black-100 hover:text-blue-700 hover:underline text-ellipsis capitalize transition-all"
         >
           {isCopied ? "Copied" : value}
-        </a>
+        </Link>
       ) : (
         <span className="flex-grow max-w-max overflow-hidden text-ellipsis whitespace-nowrap">
           {isCopied ? "Copied" : value}
@@ -509,7 +514,7 @@ const Pagination = ({
           >
             <NavigateBefore />
           </IconButton>
-          {pages.map((item,index) =>
+          {pages.map((item, index) =>
             item == "..." ? (
               <span key={index}>...</span>
             ) : (

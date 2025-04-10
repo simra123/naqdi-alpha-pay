@@ -17,6 +17,7 @@ import {
   DashboardIcon,
   DoubleLeftIcon,
   DoubleRightIcon,
+  FeeLedgerIcon,
   KYCIcon,
   LogoutDoorIcon,
   LogoutIcon,
@@ -108,6 +109,13 @@ const nav_items: NavItem[] = [
     path: "/withdrawals",
     roles: [Role.ADMIN, Role.USER],
     module: ModulesEnum.withdrawal,
+  },
+  {
+    name: "Fee Ledger",
+    icon: FeeLedgerIcon,
+    path: "/fee-ledger",
+    roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.feeLedger,
   },
   {
     name: "News Signups",
