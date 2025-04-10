@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { ContactMailOutlined } from "@mui/icons-material";
@@ -25,7 +24,6 @@ import RenderRoleBased from "@/components/common/RenderRoleBased";
 import {
   CalenderIcon,
   FolderIcon,
-  MerchantDetailIcon,
   PaymentIcon,
   StatusIcon,
 } from "@/assets/Svgs";
@@ -42,6 +40,33 @@ import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
 import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";
+
+const availableWallets_table_columns: TableColumns = [
+  {
+    field: "wallet_uuid",
+    headerName: "ID",
+    dataValidator(value, row: { wallet_uuid: string; id: number }) {
+      return row?.wallet_uuid || row?.id;
+    },
+  },
+
+  {
+    field: "address",
+    headerName: "Wallet Address",
+    copyable: true,
+    link(row: { address: string; blockchain: string }) {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.blockchain,
+        type: "address",
+        address: row?.address,
+      });
+    },
+  },
+  { field: "currency", headerName: "Currency" },
+  { field: "blockchain", headerName: "Blockchain" },
+  { field: "amount", headerName: "Available Balance" },
+];
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -103,7 +128,7 @@ const transactionsList_table_columns: TableColumns = [
   },
 ];
 
-const WithdrawalDetails = ({ params }) => {
+const FeeLedgerDetails = ({ params }) => {
   let isMounted = true;
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
@@ -122,11 +147,11 @@ const WithdrawalDetails = ({ params }) => {
   const [wallets, setWallets] = useState([]);
   const [isRejectOpen, setRejectOpen] = useState(false);
 
-  const [withdrawalDetails, setwithdrawalDetails]: any = useState({});
+  const [FeeLedgerDetails, setFeeLedgerDetails]: any = useState({});
   const [
-    isWithdrawalDetailsLoading,
-    isWithdrawalDetailsError,
-    callWithdrawalDetailsApi,
+    isFeeLedgerDetailsLoading,
+    isFeeLedgerDetailsError,
+    callFeeLedgerDetailsApi,
   ] = useApi({ initailLoading: true });
 
   const [
@@ -146,13 +171,22 @@ const WithdrawalDetails = ({ params }) => {
       (item) => item?.wallet_address || item?.address
     );
 
-    const internalData = {
-      withdraw_id: withdraw_id,
+    const manualData = {
       addresses,
     };
 
+    const AutomaticData = {
+      withdraw_id: withdraw_id,
+      withdrawal_mode: withdrawalType,
+    };
+
+    const requestData =
+      withdrawalType == Withdrawal_Type.INTERNAL
+        ? AutomaticData
+        : { ...manualData, ...AutomaticData };
+
     await callApiHook({
-      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(internalData)),
+      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(requestData)),
       successCallBack: (response: any) => {
         dispatch(
           setNotification({
@@ -169,13 +203,13 @@ const WithdrawalDetails = ({ params }) => {
     setRejectOpen(!isRejectOpen);
   };
 
-  const getWithdrawalDetails = async () => {
+  const getFeeLedgerDetails = async () => {
     await callApiHook({
-      apiCall: callWithdrawalDetailsApi(
+      apiCall: callFeeLedgerDetailsApi(
         getWithdrawalDetilsApi({ withdraw_id })
       ),
       successCallBack: (response: any) => {
-        setwithdrawalDetails(response);
+        setFeeLedgerDetails(response);
       },
     });
   };
@@ -197,7 +231,7 @@ const WithdrawalDetails = ({ params }) => {
   };
 
   useEffect(() => {
-    getWithdrawalDetails();
+    getFeeLedgerDetails();
   }, []);
 
   useFirstRenderEffect(() => {
@@ -220,14 +254,14 @@ const WithdrawalDetails = ({ params }) => {
   };
 
   return (
-    <LoadingApi loading={isWithdrawalDetailsLoading}>
+    <LoadingApi loading={isFeeLedgerDetailsLoading}>
       <ExternalWithdrawalModal
         isOpen={withdrawalType == Withdrawal_Type.External}
         toggleHandler={() => setWithdrawalType(Withdrawal_Type.INTERNAL)}
-        refreshHandler={getWithdrawalDetails}
+        refreshHandler={getFeeLedgerDetails}
         withdrawId={withdraw_id}
         blockchain={
-          blockchain_units[withdrawalDetails?.blockchain?.toLowerCase()]
+          blockchain_units[FeeLedgerDetails?.blockchain?.toLowerCase()]
         }
       />
       <ReasonModal
@@ -237,7 +271,7 @@ const WithdrawalDetails = ({ params }) => {
       />
       <div className="flex flex-col rounded-medium">
         <h3 className="font-semibold text-blackGrey-100 text-h3.5">
-          Withdrawal Details
+          Fee Details
         </h3>
 
         <ConfirmationModal
@@ -254,63 +288,25 @@ const WithdrawalDetails = ({ params }) => {
           <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
-          <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
+          <Details label="Blockchain" value={FeeLedgerDetails?.blockchain} />
 
+          <Details label="ID" value={FeeLedgerDetails?.withdrawal_uuid} />
           <Details
-            label={`${withdrawalDetails?.unit} ${
-              withdrawalDetails?.standard
-                ? `(${withdrawalDetails?.standard})`
+            label={`${FeeLedgerDetails?.unit} ${
+              FeeLedgerDetails?.standard
+                ? `(${FeeLedgerDetails?.standard})`
                 : ""
             } Wallet Address`}
-            value={withdrawalDetails?.recipient_address}
+            value={FeeLedgerDetails?.recipient_address}
             copyable
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-              blockchain: withdrawalDetails?.blockchain,
+              blockchain: FeeLedgerDetails?.blockchain,
               type: "address",
-              address: withdrawalDetails?.recipient_address,
+              address: FeeLedgerDetails?.recipient_address,
             })}
           />
         </div>
-
-        <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-              <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-                <MerchantDetailIcon />
-                <h5 className="font-semibold text-h5 text-purple-500">
-                  Merchant
-                </h5>
-              </div>
-              <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
-                <Details
-                  label="ID"
-                  value={withdrawalDetails?.user?.id}
-                  link={`/merchants/details/${withdrawalDetails?.user?.id}`}
-                  target="_self"
-                />
-                <Details
-                  label="First Name"
-                  value={withdrawalDetails?.user?.first_name}
-                />
-                <Details label="Last Name" value={withdrawalDetails?.user?.last_name} />
-                <Details label="Username" value={withdrawalDetails?.user?.username} />
-                <Details label="Email" value={withdrawalDetails?.user?.email} />
-                <Details label="Role" value={withdrawalDetails?.user?.role} />
-                <Details label="User Type" value={withdrawalDetails?.user?.user_type} />
-                <Details
-                  label="Created Date"
-                  value={moment(withdrawalDetails?.user?.created_at).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-                <Details
-                  label="Updated Date"
-                  value={moment(withdrawalDetails?.user?.updated_at).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-              </div>
-            </RenderRoleBased>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />
@@ -320,13 +316,13 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Created Date"
-            value={moment(withdrawalDetails?.created_at).format(
+            value={moment(FeeLedgerDetails?.created_at).format(
               "DD-MM-YYYY : hh:mm A"
             )}
           />
           <Details
             label="Updated Date"
-            value={moment(withdrawalDetails?.updated_at).format(
+            value={moment(FeeLedgerDetails?.updated_at).format(
               "DD-MM-YYYY : hh:mm A"
             )}
           />
@@ -339,21 +335,21 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Requested Amount"
-            value={`${withdrawalDetails?.total_requested_amount} ${withdrawalDetails?.unit}`}
+            value={`${FeeLedgerDetails?.total_requested_amount} ${FeeLedgerDetails?.unit}`}
           />
           <Details
             label="Fee"
             value={`${roundToPrecision(
-              +withdrawalDetails?.alphaspay_fee,
+              +FeeLedgerDetails?.alphaspay_fee,
               10
-            )} ${withdrawalDetails?.unit}`}
+            )} ${FeeLedgerDetails?.unit}`}
           />
           <Details
             label="Net Amount"
             value={`${roundToPrecision(
-              withdrawalDetails?.requested_amount,
+              FeeLedgerDetails?.requested_amount,
               10
-            )} ${withdrawalDetails?.unit}`}
+            )} ${FeeLedgerDetails?.unit}`}
           />
         </div>
 
@@ -365,29 +361,29 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Withdrawal Status"
-            value={withdrawalDetails?.status}
+            value={FeeLedgerDetails?.status}
           />
         </div>
 
         <h4 className="my-5 font-semibold text-button">Notes</h4>
 
         <div className="p-4 border border-light-gray rounded-large w-full min-h-36 font-medium text-gray-400">
-          {withdrawalDetails?.notes}
+          {FeeLedgerDetails?.notes}
         </div>
-        {withdrawalDetails?.status == "reject" && withdrawalDetails?.reason && (
+        {FeeLedgerDetails?.status == "reject" && FeeLedgerDetails?.reason && (
           <>
             <h4 className="my-5 font-semibold text-button">Rejection Reason</h4>
 
             <div className="p-4 border border-light-gray rounded-large w-full min-h-36 font-medium text-gray-400">
-              {withdrawalDetails?.reason}
+              {FeeLedgerDetails?.reason}
             </div>
           </>
         )}
-        <ErrorApiText error={isWithdrawalDetailsError} />
+        <ErrorApiText error={isFeeLedgerDetailsError} />
       </div>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        {/* <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
+        <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
           <h3 className="font-semibold text-blackGrey-100 text-h3.5">
             User Details
           </h3>
@@ -399,12 +395,12 @@ const WithdrawalDetails = ({ params }) => {
           <div className="res-2-grid py-6">
             <Details
               label="First Name"
-              value={withdrawalDetails?.user?.first_name}
+              value={FeeLedgerDetails?.user?.first_name}
             />
 
             <Details
               label="Last Name"
-              value={withdrawalDetails?.user?.last_name}
+              value={FeeLedgerDetails?.user?.last_name}
             />
           </div>
 
@@ -415,18 +411,18 @@ const WithdrawalDetails = ({ params }) => {
           <div className="res-2-grid py-6">
             <Details
               label="First Name"
-              value={withdrawalDetails?.user?.email}
+              value={FeeLedgerDetails?.user?.email}
             />
 
             <Details
               label="Last Name"
-              value={withdrawalDetails?.user?.userDetails?.phone_number}
+              value={FeeLedgerDetails?.user?.userDetails?.phone_number}
             />
           </div>
-        </div> */}
+        </div>
         <div className="mt-8"></div>
 
-        {withdrawalDetails?.status == "pending" &&
+        {FeeLedgerDetails?.status == "pending" &&
           getPermission(ModulesEnum.withdrawal)?.access_level ==
             AccessLevelEnum.full && (
             <>
@@ -470,7 +466,7 @@ const WithdrawalDetails = ({ params }) => {
                   initialPageSize={10000}
                   columns={availableWallets_table_columns}
                   rows={wallets}
-                  selectable={withdrawalType == Withdrawal_Type.INTERNAL}
+                  selectable={withdrawalType == Withdrawal_Type.MANUAL}
                   selectedRows={selectedWallets}
                   setSelectedRows={setSelectedWallets}
                   actions={true}
@@ -523,12 +519,12 @@ const WithdrawalDetails = ({ params }) => {
           )}
       </RenderRoleBased>
 
-      {withdrawalDetails?.status == "confirm" && (
+      {FeeLedgerDetails?.status == "confirm" && (
         <div className="mt-8">
           <CustomTable
             columns={transactionsList_table_columns}
-            rows={withdrawalDetails?.withdrawalTransactions?.map((item) => {
-              return { ...item, blockchain: withdrawalDetails?.blockchain };
+            rows={FeeLedgerDetails?.withdrawalTransactions?.map((item) => {
+              return { ...item, blockchain: FeeLedgerDetails?.blockchain };
             })}
             actions={
               <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
@@ -546,4 +542,4 @@ const WithdrawalDetails = ({ params }) => {
   );
 };
 
-export default WithdrawalDetails;
+export default FeeLedgerDetails;

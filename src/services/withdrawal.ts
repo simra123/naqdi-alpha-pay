@@ -52,16 +52,14 @@ export const withdrawalRejectAdminApi = (data: {
 };
 
 export const withdrawalApproveAdminApi = (data: {
-  withdrawal_mode: Withdrawal_Type;
   withdraw_id: number;
   addresses?: string[];
 }) => {
-  if (data.withdrawal_mode == Withdrawal_Type.INTERNAL) {
-    return () =>
-      api.post(`wallet/auto-withdraw-approval`, {
-        withdraw_id: data.withdraw_id,
-      });
-  }
+  return () =>
+    api.post(`wallet/withdraw-approval`, {
+      withdraw_id: data.withdraw_id,
+      addresses: data.addresses,
+    });
 };
 
 export const externalWithdrawalApproveAdminApi = (data: {

@@ -101,7 +101,7 @@ const Header = ({ navHandler }) => {
         </div>
         <div className="search">
           <IconField
-            onChange={(event) => console.log(event.target.value)}
+            onChange={(event) => {}}
             value={""}
             placeholder="Find something here..."
             icon={SearchbarIcon}

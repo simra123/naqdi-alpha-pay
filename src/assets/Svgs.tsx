@@ -517,8 +517,8 @@ export const FolderIcon = () => {
       fill="none"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M2.5 17.9487C2.22386 17.9487 2 17.7191 2 17.4359V10.7692V8.2051V5.97876C2.31278 6.09215 2.64936 6.15385 3 6.15385H17.6667C17.8508 6.15385 18 6.30691 18 6.49573V17.9487H2.5ZM0 3.07692C0 1.37759 1.34314 0 3 0H11.396C12.0057 0 12.5 0.50694 12.5 1.13227V4.10256L17.6667 4.10257C18.9553 4.10257 20 5.17402 20 6.49573V17.9487C20 19.0816 19.1046 20 18 20H2.5C1.11929 20 0 18.852 0 17.4359V10.7692V8.2051V3.07692ZM10.5 2.05128V4.10256L3 4.10257C2.44772 4.10257 2 3.64337 2 3.07692C2 2.51048 2.44772 2.05128 3 2.05128H10.5ZM4 9.7436C4 9.1771 4.44771 8.7179 5 8.7179H12C12.5523 8.7179 13 9.1771 13 9.7436C13 10.31 12.5523 10.7692 12 10.7692H5C4.44771 10.7692 4 10.31 4 9.7436ZM5 12.8205C4.44771 12.8205 4 13.2797 4 13.8462C4 14.4126 4.44771 14.8718 5 14.8718H15C15.5523 14.8718 16 14.4126 16 13.8462C16 13.2797 15.5523 12.8205 15 12.8205H5Z"
         fill={IconsActiveColor}
       />
@@ -1271,8 +1271,8 @@ export const CancelIcon = ({ className }: { className?: string }) => {
       className={className}
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M2.79841 0.347656L0.347656 2.79841L4.04925 6.50001L0.347656 10.2016L2.79841 12.6524L6.50001 8.95076L10.2016 12.6524L12.6524 10.2016L8.95079 6.50001L12.6524 2.79841L10.2016 0.347656L6.50001 4.04922L2.79841 0.347656Z"
         fill="#FFFFFE"
       />
@@ -1973,6 +1973,82 @@ export const KYCIcon = ({ active }) => {
   );
 };
 
+export const FeeLedgerIcon = ({ active }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="32"
+      height="32"
+      viewBox="0 0 60 60"
+      fill="none"
+    >
+      <g clip-path="url(#clip0_2177_1635)">
+        <path
+          d="M52.5 37.5H46.25C45.255 37.5 44.3025 37.895 43.5975 38.5975C42.895 39.3 42.5 40.255 42.5 41.25C42.5 42.245 42.895 43.1975 43.5975 43.9025C44.3 44.605 45.255 45 46.25 45H48.75C49.745 45 50.6975 45.395 51.4025 46.0975C52.105 46.8 52.5 47.755 52.5 48.75C52.5 49.745 52.105 50.6975 51.4025 51.4025C50.7 52.105 49.745 52.5 48.75 52.5H42.5"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          stroke-linejoin="round"
+        />
+        <path
+          d="M47.5 52.5V55M47.5 35V37.5"
+          // stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M32.5 52.5H15C13.675 52.5 12.4025 51.9725 11.465 51.035C10.5275 50.0975 10 48.825 10 47.5V22.5C10 21.175 10.5275 19.9025 11.465 18.965C12.4025 18.0275 13.675 17.5 15 17.5H20M50 25.3V22.5C50 21.175 49.4725 19.9025 48.535 18.965C47.5975 18.0275 46.325 17.5 45 17.5H40"
+          stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M40 25V10C40 8.675 39.4725 7.4025 38.535 6.465C37.5975 5.5275 36.325 5 35 5H25C23.675 5 22.4025 5.5275 21.465 6.465C20.5275 7.4025 20 8.675 20 10V25M40 25H20M40 25H42.5M20 25H17.5"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          fill={active ? IconsActiveColor : "none"}
+          stroke-linejoin="round"
+        />
+        <path
+          d="M20 35V35.0244"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          stroke-linejoin="round"
+        />
+        <path
+          d="M20 42.5V42.5244"
+          stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M30 34.9751V34.9995"
+          stroke={active ? IconsActiveColor : "#000"}
+          stroke-linecap="round"
+          strokeWidth={2}
+          stroke-linejoin="round"
+        />
+        <path
+          d="M30 42.5V42.5244"
+          stroke={active ? IconsActiveColor : "#000"}
+          strokeWidth={2}
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </g>
+      <defs>
+        <clipPath id="clip0_2177_1635">
+          <rect width="60" height="60" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  );
+};
 
 export const RefreshIcon = () => {
   return (
@@ -1998,7 +2074,6 @@ export const RefreshIcon = () => {
     </svg>
   );
 };
-
 
 export const MerchantDetailIcon = () => {
   return (

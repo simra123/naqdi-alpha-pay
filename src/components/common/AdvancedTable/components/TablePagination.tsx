@@ -37,18 +37,18 @@ const TablePagination = ({
     [currentPage, limit, totalPages]
   );
 
-  console.log({ currentPage, limit, totalPages, pages });
+
 
   return (
-    <div className="flex justify-center sm:justify-between items-center mt-4 relative">
+    <div className="relative flex justify-center sm:justify-between items-center mt-4">
       {/* Pages Indicator */}
-      <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${
+      <span className="hidden sm:block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
         (currentPage - 1) * limit + 1
       } - ${currentPage * limit} of ${totalPages * limit}`}</span>
 
       {/* Pages Navigation */}
       <div className="relative w-full">
-        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm sm:p-0">
+        <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
           <IconButton
             className={
               currentPage === 1 || totalPages == 0
@@ -114,7 +114,7 @@ const TablePagination = ({
           <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
             <LoaderButton
               content={<Add className="!text-h2" />}
-              className="!p-1 !rounded-full !w-fit absolute -top-8 right-4  sm:hidden"
+              className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
               variant="contained"
               onClick={createHandler}
             />
@@ -125,7 +125,7 @@ const TablePagination = ({
       {/* Page Change Dropdown below */}
 
       <div className="hidden sm:block">
-        <label htmlFor="page-size" className="text-sm mr-2 text-blackGrey-50">
+        <label htmlFor="page-size" className="mr-2 text-blackGrey-50 text-sm">
           Page Size
         </label>
         <select
@@ -134,7 +134,7 @@ const TablePagination = ({
           onChange={(e) => {
             onLimitChange(parseInt(e.target.value));
           }}
-          className="p-1 border-b cursor-pointer outline-none"
+          className="p-1 border-b outline-none cursor-pointer"
         >
           {[5, 10, 20, 30, 50].map((size) => (
             <option key={size} value={size}>
@@ -147,7 +147,7 @@ const TablePagination = ({
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
           <LoaderButton
             content={<Add className="!text-h2" />}
-            className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
+            className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
             variant="contained"
             onClick={createHandler}
           />

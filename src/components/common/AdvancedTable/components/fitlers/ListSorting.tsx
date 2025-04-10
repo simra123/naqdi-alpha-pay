@@ -72,11 +72,11 @@ const SortableItem = React.memo(
         ref={setNodeRef}
         style={style}
         className={clsx(
-          "flex items-center justify-between p-2 bg-white border rounded mb-2 shadow-sm group"
+          "group flex justify-between items-center bg-white shadow-sm mb-2 p-2 border rounded"
         )}
       >
         <div
-          className="flex items-center gap-3 flex-1"
+          className="flex flex-1 items-center gap-3"
           {...listeners}
           {...attributes}
         >
@@ -99,7 +99,7 @@ const SortableItem = React.memo(
         >
           <div className="flex items-center gap-1">
             <IconButton
-              className={clsx("p-1 hover:bg-purple-20")}
+              className={clsx("hover:bg-purple-20 p-1")}
               onClick={(e) => {
                 e.stopPropagation();
                 handlePinToggle(item.id);
@@ -109,7 +109,7 @@ const SortableItem = React.memo(
             </IconButton>
             <div className="bg-gray-300 w-[1px] h-5"></div>
             <IconButton
-              className="p-1 hover:bg-red-200"
+              className="hover:bg-red-200 p-1"
               onClick={(e) => {
                 e.stopPropagation();
                 handleClose(item.id);
@@ -155,7 +155,7 @@ const ListSorting = ({
           .sort((a, b) => (a.sequence ?? 0) - (b.sequence ?? 0)), // Sort by sequence in ascending order
       }));
 
-      console.log({ updatedListView });
+
 
       setListViews(updatedListView);
     }
@@ -269,14 +269,14 @@ const ListSorting = ({
         <div key={group.id} className="flex justify-between gap-8">
           {/* Left: Checkbox List */}
           <div className="flex-1">
-            <h3 className="text-caption font-semibold text-grey-100 pb-4 border-b border-light-gray">
+            <h3 className="pb-4 border-b border-light-gray font-semibold text-caption text-grey-100">
               {group.name}
             </h3>
-            <div className="flex gap-y-6 flex-wrap mt-4">
+            <div className="flex flex-wrap gap-y-6 mt-4">
               {group.meta.map((item) => (
                 <div
                   key={item.id}
-                  className="flex w-full lg:w-1/2 items-baseline gap-2 mb-2"
+                  className="flex items-baseline gap-2 mb-2 w-full lg:w-1/2"
                 >
                   <Checkbox
                     checked={item.isSelected}
@@ -290,7 +290,7 @@ const ListSorting = ({
 
           {/* Right: Drag and Drop */}
           <div className="w-[320px]">
-            <h3 className="text-caption font-semibold mb-4 text-grey-100">
+            <h3 className="mb-4 font-semibold text-caption text-grey-100">
               Sort order (drag & drop)
             </h3>
             <DndContext

@@ -32,79 +32,98 @@ import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import {
+  getAdminLedgerListApi,
+  getUserLedgerListApi,
+} from "@/services/feeLedger";
 
-const withdrawalsList_table_columns: TableColumns = [
-  { field: "uuid", headerName: "ID", sortable: true },
-  { field: "created_at", headerName: "Created At", sortable: true,
-    dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
-      return (
-        <div className="flex flex-col gap-1">
-          <span className="text-caption">{day}</span>
-          <span className="text-custom-title-gray text-subtitle">{time}</span>
-        </div>
-      );
-    }, },
-  { field: "updated_at", headerName: "Updated At", sortable: true,
-    dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
-      return (
-        <div className="flex flex-col gap-1">
-          <span className="text-caption">{day}</span>
-          <span className="text-custom-title-gray text-subtitle">{time}</span>
-        </div>
-      );
-    }, },
-  { field: "requested_amount", headerName: "Requested Amount", sortable: true },
-  { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
-
+const feeLedger_table_columns: TableColumns = [
+  { field: "id", headerName: "ID", sortable: true },
   {
-    field: "recipient_address",
-    headerName: "Recipient Address",
+    field: "id",
+    headerName: "Transaction Type",
+    dataValidator(value, row: any) {
+      console.log({ row });
+      return row?.payment ? "Payment" : "Withdrawal";
+    },
+    link(row: any) {
+      return row?.payment
+        ? `/payments/details/${row?.payment?.id}`
+        : `/withdrawals/details/${row?.withdraw?.id}`;
+    },
+    target: "_self",
+  },
+  {
+    field: "createdAt",
+    headerName: "Created At",
     sortable: true,
-    link(row: {
-      standard: string | null;
-      recipient_address: string;
-      unit: string;
-    }) {
-      let blockchain: string | null;
-
-      if (row?.standard) {
-        blockchain = standardBlockchain[row?.standard];
-      } else {
-        let standard = blockchain_standards[row?.unit];
-        blockchain = standardBlockchain[standard];
-      }
-
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: blockchain,
-        type: "address",
-        address: row?.recipient_address,
-      });
+    dataValidator: (value) => {
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
+        </div>
+      );
     },
   },
   {
-    field: "status",
-    headerName: "Status",
+    field: "updated_at",
+    headerName: "Updated At",
+    sortable: true,
     dataValidator: (value) => {
-      return <Chip status={value} />;
+      let [day, time] = formatDateToUserTimeZone(value);
+      return (
+        <div className="flex flex-col gap-1">
+          <span className="text-caption">{day}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
+        </div>
+      );
+    },
+  },
+  { field: "type", headerName: "Currency Type", sortable: true },
+  { field: "unit", headerName: "Currency", sortable: true },
+  { field: "before_amount", headerName: "Before Amount", sortable: true },
+  { field: "after_amount", headerName: "After Amount", sortable: true },
+  { field: "fee_amount", headerName: "Fee Amount", sortable: true },
+  {
+    field: "client",
+    headerName: "Merchant First Name",
+    dataValidator(value: any, row) {
+      return value?.first_name;
+    },
+  },
+  {
+    field: "client",
+    headerName: "Merchant Last Name",
+    dataValidator(value: any, row) {
+      return value?.last_name;
+    },
+  },
+  {
+    field: "client",
+    headerName: "Merchant Email",
+    dataValidator(value: any, row) {
+      return value?.email;
+    },
+  },
+  {
+    field: "client",
+    headerName: "Merchant Type",
+    dataValidator(value: any, row) {
+      return value?.user_type;
     },
   },
 ];
 
-const Withdrawals = () => {
+const FeeLedger = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [
-    isWithdrawalsListLoading,
-    isWithdrawalsListError,
-    callWithdrawalsListApi,
-  ] = useApi({ initailLoading: true });
+  const [isFeeLedgerListLoading, isFeeLedgerListError, callFeeLedgerListApi] =
+    useApi({ initailLoading: true });
 
-  const [withdrawalsList, setWithdrawalsList] = useState<ListApiResponse | any>(
+  const [FeeLedgerList, setFeeLedgerList] = useState<ListApiResponse | any>(
     user?.role == Role.USER ? null : []
   );
   const [columns, setColumns] = useState([]);
@@ -113,14 +132,14 @@ const Withdrawals = () => {
 
   const ExportCSVHandler = async () => {
     await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(withdrawalsList)),
+      apiCall: callCSVApi(generateCSVApi(FeeLedgerList)),
       successCallBack: (response: any) => {
-        downloadCSV(response, "withdrawals.csv");
+        downloadCSV(response, "FeeLedger.csv");
       },
     });
   };
 
-  const getWithdrawals = async ({
+  const getFeeLedger = async ({
     pageValue,
     limitValue,
     sort,
@@ -133,66 +152,34 @@ const Withdrawals = () => {
   }) => {
     // if (user?.role == Role.USER) {
 
-    let withdrawalCall = () => {
+    let feeLeadgerCall = () => {
       return user?.role == Role.USER
-        ? getUserWithdrawalsListApi(
+        ? getUserLedgerListApi(
             { sort, filters },
             { limit: limitValue, page: pageValue }
           )
-        : getAdminWithdrawalsListApi();
+        : getAdminLedgerListApi();
     };
 
     await callApiHook({
-      apiCall: callWithdrawalsListApi(withdrawalCall()),
+      apiCall: callFeeLedgerListApi(feeLeadgerCall()),
       successCallBack: (response: any) => {
         if (user.role == Role.USER) {
           const modifiedColumns = response?.listConfig.views[0].columns.map(
             (column) => {
-              if (column.listColumnsMeta.name === "recipient_address") {
-                return {
-                  ...column,
-                  copyable: true,
-                  link(row: {
-                    standard: string | null;
-                    recipient_address: string;
-                    unit: string;
-                  }) {
-                    let blockchain: string | null;
-
-                    if (row?.standard) {
-                      blockchain = standardBlockchain[row?.standard];
-                    } else {
-                      let standard = blockchain_standards[row?.unit];
-                      blockchain = standardBlockchain[standard];
-                    }
-
-                    return showExplorerDetailsByChain({
-                      env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                      blockchain: blockchain,
-                      type: "address",
-                      address: row?.recipient_address,
-                    });
-                  },
-                };
-              }
-
-              if (
-                ["created_at", "updated_at"].includes(
-                  column.listColumnsMeta.name
-                )
-              ) {
+              if (["createdAt"].includes(column.listColumnsMeta.name)) {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-
+                    console.log({ currentTimeZone });
 
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
 
-     
+                    console.log({ date });
 
                     let [day, time] = date.split(".");
                     return (
@@ -207,30 +194,22 @@ const Withdrawals = () => {
                 };
               }
 
-              if (column.listColumnsMeta.name === "status") {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => <Chip status={value} />,
-                };
-              }
-
               return column;
             }
           );
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-
+          console.log({ modifiedColumns });
 
           setColumns(modifiedColumns);
 
           setListConfig(response.listConfig);
 
-          setWithdrawalsList(response);
+          setFeeLedgerList(response);
         }
         if (user?.role == Role.ADMIN) {
-          const tableData = formatWithdrawals(response);
-          setWithdrawalsList(tableData);
+          setFeeLedgerList(response);
         }
       },
     });
@@ -238,9 +217,10 @@ const Withdrawals = () => {
   };
 
   useEffect(() => {
-    getWithdrawals({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
+    getFeeLedger({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
+  console.log({ colsState: columns });
 
   const toggleCreateModal = () => {
     setIsCreateOpen(!isCreateOpen);
@@ -252,7 +232,7 @@ const Withdrawals = () => {
         isOpen={isCreateOpen}
         toggleHandler={toggleCreateModal}
         refreshHandler={() => {
-          getWithdrawals({
+          getFeeLedger({
             pageValue: 1,
             filters: [],
             limitValue: 10,
@@ -262,31 +242,16 @@ const Withdrawals = () => {
       />
 
       <div className="hidden md:flex justify-between items-center mb-8">
-        <h3 className="font-semibold text-blackGrey-100 text-h3">
-          Withdrawals
-        </h3>
-
-        <RenderRoleBased allowedRoles={[Role.USER,Role.ADMIN]} user={user}>
-          {PermissionAccess(
-            LoaderButton,
-            ModulesEnum.withdrawal,
-            AccessLevelEnum.full
-          )({
-            content: "New Withdrawal",
-            className: "px-16",
-            variant: "contained",
-            onClick: toggleCreateModal,
-          })}
-        </RenderRoleBased>
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Fee Ledger</h3>
       </div>
 
       {user?.role == Role.ADMIN && (
         <CustomTable
-          loading={isWithdrawalsListLoading}
-          columns={withdrawalsList_table_columns}
+          loading={isFeeLedgerListLoading}
+          columns={feeLedger_table_columns}
           // Filters={Filters}
           createHandler={toggleCreateModal}
-          rows={withdrawalsList}
+          rows={FeeLedgerList}
           csv={{
             handler: ExportCSVHandler,
             loading: isCSVLoading,
@@ -294,7 +259,7 @@ const Withdrawals = () => {
           }}
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            router.push(`/withdrawals/details/${row?.id}`)
+            router.push(`/merchants/details/${row?.client?.id}`)
           }
           pagination
           columnClassName="max-w-[200px]"
@@ -306,29 +271,34 @@ const Withdrawals = () => {
           <AdvancedTable
             columns={columns}
             setColumns={setColumns}
-            rows={withdrawalsList?.result}
+            rows={FeeLedgerList?.result}
             listConfig={listConfig}
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-   
-              router.push(`/withdrawals/details/${row?.id}`);
+              console.log({ row });
+              if (row?.payment) {
+                router.push(`payments/details/${row.payment?.id}`);
+              }
+              if (row?.withdraw) {
+                router.push(`withdrawals/details/${row.withdraw?.id}`);
+              }
             }}
             pagination
-            loading={isWithdrawalsListLoading}
-            totalItems={withdrawalsList?.total}
-            fetchData={getWithdrawals}
+            loading={isFeeLedgerListLoading}
+            totalItems={FeeLedgerList?.total}
+            fetchData={getFeeLedger}
             tableName="payments"
           />
         </div>
       )}
-      <ErrorApiText error={isWithdrawalsListError} />
+      <ErrorApiText error={isFeeLedgerListError} />
     </>
   );
 };
 
 export default PermissionAccess(
-  Withdrawals,
-  ModulesEnum.withdrawal,
+  FeeLedger,
+  ModulesEnum.feeLedger,
   AccessLevelEnum.read
 );

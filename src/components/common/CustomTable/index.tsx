@@ -21,6 +21,7 @@ import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { TableColumns } from "@/constants/types";
+import Link from "next/link";
 
 interface TableProps {
   columns: TableColumns;
@@ -71,6 +72,8 @@ const CustomTable = ({
   const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
   const totalPages = Math.ceil(rows?.length / pageSize);
+  const scrollContainerRef = useRef(null); // Add this for the scrollable div
+  const [isHovered, setIsHovered] = useState(false); // Track mouse hover
 
   useEffect(() => {
     if (selectable) {
@@ -158,6 +161,28 @@ const CustomTable = ({
     setSortConfig({ key: column.field, direction });
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!scrollContainerRef.current || !isHovered) return;
+
+      const scrollAmount = 100; // Customize this
+      if (e.key === "ArrowRight") {
+        scrollContainerRef.current.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
+      } else if (e.key === "ArrowLeft") {
+        scrollContainerRef.current.scrollBy({
+          left: -scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isHovered]);
+
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
@@ -178,7 +203,7 @@ const CustomTable = ({
         {/* Table Actions defined here */}
 
         {!actions ? (
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex justify-between items-center mb-6">
             <div className="left-actions flex items-center gap-3">
               {pdf?.handler && (
                 <LoaderButton
@@ -205,7 +230,7 @@ const CustomTable = ({
                 wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
                 inputClassName="py-3"
               />
-              <button className="bg-none bg-transparent block lg:hidden outline-0 border-0 rounded-full transition-all w-12 h-12 hover:bg-white hover:shadow-md p-3">
+              <button className="lg:hidden block bg-transparent hover:bg-white bg-none hover:shadow-md p-3 border-0 rounded-full outline-0 w-12 h-12 transition-all">
                 <Search />
               </button>
             </div>
@@ -214,35 +239,38 @@ const CustomTable = ({
           actions
         )}
         <div
+          ref={scrollContainerRef}
           className={`overflow-x-auto ${
             pagination && "min-h-[calc(100vh-350px)]"
           } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
           <table className="w-full text-caption sm:text-p16">
             {/* Table Headers Below */}
-            <thead className="text-gray-700 font-medium bg-table-header">
+            <thead className="bg-table-header font-medium text-gray-700">
               <tr>
                 {selectable && (
-                  <th className="py-3 px-6 text-left">
+                  <th className="px-6 py-3 text-left">
                     <label className="custom-checkbox">
                       <input
                         type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAll}
                       />
-                      <span className="checkmark !static block"></span>
+                      <span className="block !static checkmark"></span>
                     </label>
                   </th>
                 )}
-                {columns.map((column) => (
+                {columns.map((column, index) => (
                   <th
-                    key={column.field}
+                    key={column.field + index}
                     style={{ width: equalColumns ? columnWidths : "auto" }}
                     className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                     onClick={() => handleSort(column)}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-nowrap text-ellipsis overflow-hidden">
+                    <div className="flex justify-between items-center">
+                      <span className="overflow-hidden text-ellipsis text-nowrap">
                         {column.headerName}
                       </span>
 
@@ -268,23 +296,23 @@ const CustomTable = ({
                 <tr
                   key={index}
                   onClick={() => rowClickHandler && rowClickHandler(row)}
-                  className="bg-white border-b hover:bg-gray-50 cursor-pointer"
+                  className="bg-white hover:bg-gray-50 border-b cursor-pointer"
                 >
                   {selectable && (
-                    <td className="py-4 px-6">
+                    <td className="px-6 py-4">
                       <label className="custom-checkbox">
                         <input
                           type="checkbox"
                           checked={selectedRows.includes(row)}
                           onChange={() => handleRowSelection(row)}
                         />
-                        <span className="checkmark !static block"></span>
+                        <span className="block !static checkmark"></span>
                       </label>
                     </td>
                   )}
-                  {columns.map((column) => (
+                  {columns.map((column, index) => (
                     <td
-                      key={column.field}
+                      key={column.field + index}
                       className={`${
                         column.dataValidator ? "py-4" : "py-6"
                       } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
@@ -294,12 +322,14 @@ const CustomTable = ({
                           value={column.dataValidator(row[column.field], row)}
                           copyable={column.copyable}
                           link={column?.link ? column?.link(row) : null}
+                          target={column?.target}
                         />
                       ) : row[column.field] ? (
                         <CopyButtonColumn
                           value={row[column.field]}
                           copyable={column.copyable}
                           link={column?.link ? column?.link(row) : null}
+                          target={column?.target}
                         />
                       ) : (
                         "_"
@@ -314,7 +344,7 @@ const CustomTable = ({
             <Loader bg wrapperClassName="w-full flex justify-center my-8" />
           )}
           {!loading && currentRows?.length < 1 && (
-            <div className="bg-white border-b p-4 text-custom-title-gray  font-semibold text-p120 text-center ">
+            <div className="bg-white p-4 border-b font-semibold text-custom-title-gray text-p120 text-center">
               No Data!!
             </div>
           )}
@@ -338,10 +368,12 @@ const CopyButtonColumn = ({
   value,
   copyable,
   link,
+  target,
 }: {
   value: string;
   copyable: boolean;
   link: string;
+  target: string;
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -361,23 +393,23 @@ const CopyButtonColumn = ({
   return (
     <div className="flex items-center gap-2">
       {link ? (
-        <a
+        <Link
           onClick={(event) => event.stopPropagation()}
           href={link}
-          target="_blank"
-          className="hover:text-blue-700 hover:underline transition-all text-black-100 font-semibold text-ellipsis overflow-hidden capitalize"
+          target={target || "_blank"}
+          className="overflow-hidden font-semibold text-black-100 hover:text-blue-700 hover:underline text-ellipsis capitalize transition-all"
         >
           {isCopied ? "Copied" : value}
-        </a>
+        </Link>
       ) : (
-        <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap max-w-max">
+        <span className="flex-grow max-w-max overflow-hidden text-ellipsis whitespace-nowrap">
           {isCopied ? "Copied" : value}
         </span>
       )}
       {copyable && (
         <button
           onClick={copyToClipboard(value)}
-          className="bg-transparent flex items-center justify-center border-0 outline-0 text-[14px] hover:bg-purple-10 active:bg-purple-20 transition-all w-8 h-8 aspect-square rounded-full p-1 flex-shrink-0"
+          className="flex flex-shrink-0 justify-center items-center bg-transparent hover:bg-purple-10 active:bg-purple-20 p-1 border-0 rounded-full outline-0 w-8 h-8 aspect-square text-[14px] transition-all"
         >
           <MdCopyAll className="text-[16px]" />
         </button>
@@ -451,15 +483,15 @@ const Pagination = ({
   );
 
   return (
-    <div className="flex justify-center sm:justify-between items-center mt-4 relative">
+    <div className="relative flex justify-center sm:justify-between items-center mt-4">
       {/* Pages Indicator */}
-      <span className="text-sm text-blackGrey-50 min-w-20 font-medium hidden sm:block">{`${
+      <span className="hidden sm:block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
         (currentPage - 1) * pageSize + 1
       } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
 
       {/* Pages Navigation */}
       <div className="relative w-full">
-        <div className="flex space-x-2 w-fit mx-auto bg-white p-2 rounded-sm sm:p-0">
+        <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
           <IconButton
             className={
               currentPage === 1
@@ -482,12 +514,12 @@ const Pagination = ({
           >
             <NavigateBefore />
           </IconButton>
-          {pages.map((item) =>
+          {pages.map((item, index) =>
             item == "..." ? (
-              <span>...</span>
+              <span key={index}>...</span>
             ) : (
               <IconButton
-                key={item}
+                key={index}
                 className={
                   currentPage === item &&
                   "text-black-100 font-bold bg-light-gray"
@@ -525,7 +557,7 @@ const Pagination = ({
           <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
             <LoaderButton
               content={<Add className="!text-h2" />}
-              className="!p-1 !rounded-full !w-fit absolute -top-8 right-4  sm:hidden"
+              className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
               variant="contained"
               onClick={createHandler}
             />
@@ -536,7 +568,7 @@ const Pagination = ({
       {/* Page Change Dropdown below */}
 
       <div className="hidden sm:block">
-        <label htmlFor="page-size" className="text-sm mr-2 text-blackGrey-50">
+        <label htmlFor="page-size" className="mr-2 text-blackGrey-50 text-sm">
           Page Size
         </label>
         <select
@@ -546,7 +578,7 @@ const Pagination = ({
             setPageSize(parseInt(e.target.value));
             onChangePage(1);
           }}
-          className="p-1 border-b cursor-pointer outline-none"
+          className="p-1 border-b outline-none cursor-pointer"
         >
           {[5, 10, 20, 30, 50].map((size) => (
             <option key={size} value={size}>
@@ -559,7 +591,7 @@ const Pagination = ({
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
           <LoaderButton
             content={<Add className="!text-h2" />}
-            className="!p-1 !rounded-full !w-fit absolute -top-10 right-2 hidden sm:block md:hidden"
+            className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
             variant="contained"
             onClick={createHandler}
           />

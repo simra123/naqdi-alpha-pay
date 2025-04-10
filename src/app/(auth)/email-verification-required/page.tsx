@@ -45,12 +45,12 @@ const page = () => {
   return (
     <div className="mx-auto max-w-screen-md">
       {email ? (
-        <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
-          <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+        <>
+          <h2 className="mt-[30px] mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
             Email Verification !
           </h2>
 
-          <p className="text-p120 text-blackGrey-100 leading-7 mt-5">
+          <p className="text-blackGrey-100 text-p120 text-center">
             Your security is our priority. We sent an email to {email} to ensure
             a seamless and protected sign-up process, we require email
             verification. Please check your inbox, then follow the instructions
@@ -66,7 +66,7 @@ const page = () => {
               variant={"contained"}
             />
 
-            <div className="mx-auto w-[310px] mt-4">
+            <div className="mx-auto mt-4 w-[310px]">
               <LoaderButton
                 content={"Go Back"}
                 variant="text"
@@ -74,14 +74,14 @@ const page = () => {
               />
             </div>
           </div>
-        </div>
+        </>
       ) : (
-        <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
-          <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+        <>
+          <h2 className="mt-[30px] mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
             Resend Verification Email !
           </h2>
 
-          <p className="text-p120 text-blackGrey-100 leading-7 mt-2">
+          <p className="text-blackGrey-100 text-p120 text-center">
             Enter the email address registered with your Alphaspay account and
             we will send you verification email again.
           </p>
@@ -89,7 +89,7 @@ const page = () => {
           <form
             id="login-form"
             onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
-            className="mt-12"
+            className="mt-[30px]"
           >
             <IconField
               type="email"
@@ -113,7 +113,7 @@ const page = () => {
             </div>
           </form>
 
-          <p className="text-blackGrey-100 mt-6">
+          <p className="mt-6 text-blackGrey-100">
             NOTE: It is extremely important to ensure that email registered for
             your account is valid and up-to-date. If you lose your password or
             otherwise lose access to your account, the only way to regain access
@@ -128,7 +128,7 @@ const page = () => {
               info@alphaspay.com
             </a>
           </p>
-        </div>
+        </>
       )}
     </div>
   );

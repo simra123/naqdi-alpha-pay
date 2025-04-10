@@ -38,12 +38,12 @@ const ForgotPassword = () => {
     window.scrollTo(0, 500);
   };
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
-      <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+    <>
+      <h2 className="mt-[30px] mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
         Recover Your Account
       </h2>
 
-      <p className="text-p120 text-blackGrey-100 leading-7 mt-2">
+      <p className="text-blackGrey-100 text-p120 text-center">
         Enter the email address registered with your Alphaspay account and we
         will email you instructions on how to reset your password.
       </p>
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
       <form
         id="login-form"
         onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
-        className="mt-12"
+        className="mt-[30px]"
       >
         <IconField
           type="email"
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
         </div>
       </form>
 
-      <p className="text-blackGrey-100 mt-6">
+      <p className="mt-6 text-blackGrey-100">
         NOTE: It is extremely important to ensure that email registered for your
         account is valid and up-to-date. If you lose your password or otherwise
         lose access to your account, the only way to regain access is by
@@ -89,7 +89,7 @@ const ForgotPassword = () => {
           info@alphaspay.com
         </a>
       </p>
-    </div>
+    </>
   );
 };
 
