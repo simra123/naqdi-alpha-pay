@@ -189,6 +189,36 @@ const CreateUserModal = ({
   };
 
   const updateSubUser = async () => {
+    // const updatedPermissions = Object.entries(selectedPermissions).map(
+    //   ([module, access_level]) => {
+    //     const existingPerm = userPermissions?.find(
+    //       (perm) => perm?.permission?.module === module
+    //     );
+
+    //     if (existingPerm) {
+    //       return {
+    //         ...existingPerm,
+    //         permission: {
+    //           ...existingPerm.permission,
+    //           access_level: access_level || "none",
+    //         },
+    //       };
+    //     }
+
+    //     // If it's a new permission not in userPermissions, add a fresh one
+    //     return {
+    //       permission: {
+    //         module,
+    //         access_level: access_level || "none",
+    //       },
+    //     };
+    //   }
+    // );
+
+    // console.log({ updatedPermissions });
+
+    let tempIdCounter = -1; // Start with negative IDs for new permissions
+
     const updatedPermissions = Object.entries(selectedPermissions).map(
       ([module, access_level]) => {
         const existingPerm = userPermissions?.find(
@@ -205,9 +235,11 @@ const CreateUserModal = ({
           };
         }
 
-        // If it's a new permission not in userPermissions, add a fresh one
+        // If new, assign a temporary negative ID
         return {
+          id: tempIdCounter--,
           permission: {
+            id: tempIdCounter--,
             module,
             access_level: access_level || "none",
           },
