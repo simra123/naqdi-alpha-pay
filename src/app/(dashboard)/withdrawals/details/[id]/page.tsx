@@ -25,6 +25,7 @@ import RenderRoleBased from "@/components/common/RenderRoleBased";
 import {
   CalenderIcon,
   FolderIcon,
+  MerchantDetailIcon,
   PaymentIcon,
   StatusIcon,
 } from "@/assets/Svgs";
@@ -253,9 +254,9 @@ const WithdrawalDetails = ({ params }) => {
           <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="res-2-grid py-6">
+          <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
 
-          <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
           <Details
             label={`${withdrawalDetails?.unit} ${
               withdrawalDetails?.standard
@@ -272,6 +273,44 @@ const WithdrawalDetails = ({ params }) => {
             })}
           />
         </div>
+
+        <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+              <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+                <MerchantDetailIcon />
+                <h5 className="font-semibold text-h5 text-purple-500">
+                  Merchant
+                </h5>
+              </div>
+              <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
+                <Details
+                  label="ID"
+                  value={withdrawalDetails?.user?.id}
+                  link={`/merchants/details/${withdrawalDetails?.user?.id}`}
+                  target="_self"
+                />
+                <Details
+                  label="First Name"
+                  value={withdrawalDetails?.user?.first_name}
+                />
+                <Details label="Last Name" value={withdrawalDetails?.user?.last_name} />
+                <Details label="Username" value={withdrawalDetails?.user?.username} />
+                <Details label="Email" value={withdrawalDetails?.user?.email} />
+                <Details label="Role" value={withdrawalDetails?.user?.role} />
+                <Details label="User Type" value={withdrawalDetails?.user?.user_type} />
+                <Details
+                  label="Created Date"
+                  value={moment(withdrawalDetails?.user?.created_at).format(
+                    "DD-MM-YYYY"
+                  )}
+                />
+                <Details
+                  label="Updated Date"
+                  value={moment(withdrawalDetails?.user?.updated_at).format(
+                    "DD-MM-YYYY"
+                  )}
+                />
+              </div>
+            </RenderRoleBased>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />
@@ -348,7 +387,7 @@ const WithdrawalDetails = ({ params }) => {
       </div>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
+        {/* <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
           <h3 className="font-semibold text-blackGrey-100 text-h3.5">
             User Details
           </h3>
@@ -384,7 +423,7 @@ const WithdrawalDetails = ({ params }) => {
               value={withdrawalDetails?.user?.userDetails?.phone_number}
             />
           </div>
-        </div>
+        </div> */}
         <div className="mt-8"></div>
 
         {withdrawalDetails?.status == "pending" &&

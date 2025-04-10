@@ -42,6 +42,7 @@ import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
 import { FaUsers } from "react-icons/fa";
 import { BorderedIconButton } from "../IconButton";
+import RenderRoleBased from "../RenderRoleBased";
 
 interface NavItem {
   name: string;
@@ -377,9 +378,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           </div>
 
           <div className="md:hidden flex items-center gap-2 mx-auto py-5 border-t border-light-purple">
-            <BorderedIconButton>
-              <SupportIcon />
-            </BorderedIconButton>
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <BorderedIconButton>
+                <SupportIcon />
+              </BorderedIconButton>
+            </RenderRoleBased>
             <BorderedIconButton>
               <ThemeChangeIcon />
             </BorderedIconButton>
