@@ -8,9 +8,9 @@ export const getUserLedgerListApi = (
   data?: {},
   params?: { limit: number; page: number }
 ) => {
-  return () => api.post(`fee-ledger/list`, data, { params });
+  return () => api.post(`ledger-fee/list`, data, { params });
 };
 
 export const getAdminLedgerListApi = () => {
-  return () => api.get(`admin/fee-ledger`);
+  return () => api.get(`admin/ledger-fee`);
 };

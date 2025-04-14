@@ -40,16 +40,12 @@ import {
 const feeLedger_table_columns: TableColumns = [
   { field: "id", headerName: "ID", sortable: true },
   {
-    field: "id",
+    field: "type",
     headerName: "Transaction Type",
-    dataValidator(value, row: any) {
-      console.log({ row });
-      return row?.payment ? "Payment" : "Withdrawal";
-    },
     link(row: any) {
-      return row?.payment
-        ? `/payments/details/${row?.payment?.id}`
-        : `/withdrawals/details/${row?.withdraw?.id}`;
+      return row?.payment_id
+        ? `/payments/details/${row?.payment_id}`
+        : `/withdrawals/details/${row?.withdraw_id}`;
     },
     target: "_self",
   },
@@ -81,38 +77,33 @@ const feeLedger_table_columns: TableColumns = [
       );
     },
   },
-  { field: "type", headerName: "Currency Type", sortable: true },
+  { field: "transaction_type", headerName: "Currency Type", sortable: true },
   { field: "unit", headerName: "Currency", sortable: true },
-  { field: "before_amount", headerName: "Before Amount", sortable: true },
-  { field: "after_amount", headerName: "After Amount", sortable: true },
+
+  { field: "received_amount", headerName: "Received Amount", sortable: true },
+  { field: "paid_amount", headerName: "Paid Amount", sortable: true },
   { field: "fee_amount", headerName: "Fee Amount", sortable: true },
+  { field: "fee", headerName: "Fee (%)", sortable: true,dataValidator(value, row) {
+    return `${value} %`
+  }, },
   {
-    field: "client",
+    field: "owner_first_name",
     headerName: "Merchant First Name",
-    dataValidator(value: any, row) {
-      return value?.first_name;
-    },
   },
   {
-    field: "client",
+    field: "owner_last_name",
     headerName: "Merchant Last Name",
-    dataValidator(value: any, row) {
-      return value?.last_name;
-    },
+
   },
   {
-    field: "client",
+    field: "owner_email",
     headerName: "Merchant Email",
-    dataValidator(value: any, row) {
-      return value?.email;
-    },
+
   },
   {
-    field: "client",
+    field: "owner_user_type",
     headerName: "Merchant Type",
-    dataValidator(value: any, row) {
-      return value?.user_type;
-    },
+
   },
 ];
 
@@ -259,7 +250,7 @@ const FeeLedger = () => {
           }}
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            router.push(`/merchants/details/${row?.client?.id}`)
+            router.push(`/merchants/details/${row?.owner_id}`)
           }
           pagination
           columnClassName="max-w-[200px]"
