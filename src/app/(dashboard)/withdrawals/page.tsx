@@ -63,6 +63,34 @@ const withdrawalsList_table_columns: TableColumns = [
       );
     },
   },
+  {
+    field: "user.id",
+    headerName: "Merchant ID",
+    target: "_self",
+    link: (row: any) => {
+      return `/merchants/details/${row?.user?.id}`;
+    },
+  },
+  {
+    field: "user.first_name",
+    headerName: "Merchant First Name",
+  },
+  {
+    field: "user.last_name",
+    headerName: "Merchant Last Name",
+  },
+  {
+    field: "user.email",
+    headerName: "Merchant Email",
+  },
+  {
+    field: "user.username",
+    headerName: "Merchant Username",
+  },
+  {
+    field: "user.user_type",
+    headerName: "Merchant Type",
+  },
   { field: "total_requested_amount", headerName: "Total Requested Amount", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "alphaspay_fee", headerName: "Fee", sortable: true },
