@@ -21,6 +21,7 @@ import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { TableColumns } from "@/constants/types";
+import { getNestedValue } from "./utils";
 import Link from "next/link";
 
 interface TableProps {
@@ -115,15 +116,17 @@ const CustomTable = ({
 
   useEffect(() => {
     const filteredRows = searchQuery
-      ? rows.filter((row) =>
-          columns.some((column) =>
-            row[column.field]
-              ?.toString()
-              ?.toLowerCase()
-              ?.includes(searchQuery?.toLowerCase()?.trim())
-          )
-        )
-      : rows;
+    ? rows.filter((row) =>
+        columns.some((column) => {
+          const value = getNestedValue(row, column.field);
+          return value
+            ?.toString()
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase().trim());
+        })
+      )
+    : rows;
+  
 
     const sortedRows = sortConfig
       ? filteredRows.sort((a, b) => {
@@ -310,32 +313,35 @@ const CustomTable = ({
                       </label>
                     </td>
                   )}
-                  {columns.map((column, index) => (
-                    <td
-                      key={column.field + index}
-                      className={`${
-                        column.dataValidator ? "py-4" : "py-6"
-                      } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
-                    >
-                      {column.dataValidator ? (
-                        <CopyButtonColumn
-                          value={column.dataValidator(row[column.field], row)}
-                          copyable={column.copyable}
-                          link={column?.link ? column?.link(row) : null}
-                          target={column?.target}
-                        />
-                      ) : row[column.field] ? (
-                        <CopyButtonColumn
-                          value={row[column.field]}
-                          copyable={column.copyable}
-                          link={column?.link ? column?.link(row) : null}
-                          target={column?.target}
-                        />
-                      ) : (
-                        "_"
-                      )}
-                    </td>
-                  ))}
+                  {columns.map((column, index) => {
+                    const value = getNestedValue(row, column.field);
+                    return (
+                      <td
+                        key={column.field + index}
+                        className={`${
+                          column.dataValidator ? "py-4" : "py-6"
+                        } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                      >
+                        {column.dataValidator ? (
+                          <CopyButtonColumn
+                            value={column.dataValidator(value, row)}
+                            copyable={column.copyable}
+                            link={column?.link ? column?.link(row) : null}
+                            target={column?.target}
+                          />
+                        ) : value ? (
+                          <CopyButtonColumn
+                            value={value}
+                            copyable={column.copyable}
+                            link={column?.link ? column?.link(row) : null}
+                            target={column?.target}
+                          />
+                        ) : (
+                          "_"
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </tbody>
