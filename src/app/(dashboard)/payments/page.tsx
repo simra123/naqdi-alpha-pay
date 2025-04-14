@@ -61,38 +61,91 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "blockchain",
+    field: "client.id",
+    headerName: "Merchant ID",
+    link: (row: any) => {
+      return `/merchants/details/${row?.client?.id}`;
+    },
+  },
+  {
+    field: "client.first_name",
+    headerName: "Merchant First Name",
+  },
+  {
+    field: "client.last_name",
+    headerName: "Merchant Last Name",
+  },
+  {
+    field: "client.email",
+    headerName: "Merchant Email",
+  },
+  {
+    field: "client.username",
+    headerName: "Merchant Username",
+  },
+  {
+    field: "client.user_type",
+    headerName: "Merchant Type",
+  },
+
+  {
+    field: "wallet.blockchain",
     headerName: "Blockchain",
   },
 
   {
-    field: "recieverAddress",
+    field: "wallet.address",
     headerName: "Reciever Wallet Address",
     copyable: true,
-    link: (row: { blockchain: string; recieverAddress: string }) => {
+    link: (row: any) => {
       return showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
+        blockchain: row?.wallet?.blockchain,
         type: "address",
-        address: row?.recieverAddress,
+        address: row?.wallet?.address,
       });
     },
   },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
+    dataValidator(value, row: any) {
+      return `${row?.requested_amount} ${row?.requested_currency}`;
+    },
   },
   {
     field: "amountToPay",
     headerName: "Amount to Pay",
+    dataValidator(value, row: any) {
+      return `${roundToPrecision(row?.payment_currency_amount, 6)} ${
+        row?.payment_currency
+      }`;
+    },
   },
   {
     field: "amountPaid",
     headerName: "Amount Paid",
+    dataValidator(value, row: any) {
+      return (
+        roundToPrecision(
+          row?.paymentTransaction?.reduce((acc, transaction) => {
+            return acc + parseFloat(transaction.transaction_amount);
+          }, 0),
+          6
+        ) +
+        " " +
+        row?.payment_currency
+      );
+    },
   },
   {
     field: "paid",
     headerName: "Paid",
+    dataValidator(value, row: any) {
+      return unpaidStatuses.some((status) => status == row?.status)
+        ? "No"
+        : "Yes";
+    },
   },
   {
     field: "status",
@@ -155,7 +208,6 @@ const Payments = () => {
                   link: (row: {
                     wallet: { blockchain: string; address: string };
                   }) => {
- 
                     return showExplorerDetailsByChain({
                       env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
                       blockchain: row?.wallet?.blockchain,
@@ -176,12 +228,9 @@ const Payments = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
-
-
 
                     let [day, time] = date.split(".");
                     return (
@@ -209,8 +258,6 @@ const Payments = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-
-
           setColumns(modifiedColumns);
 
           setListConfig(response.listConfig);
@@ -218,36 +265,7 @@ const Payments = () => {
           setPaymentsList(response);
         }
         if (user?.role == Role.ADMIN) {
-          const tableData = response.map((item) => {
-            return {
-              id: item?.id,
-              payment_uuid: item?.payment_uuid,
-              blockchain: item?.wallet?.blockchain,
-              createdAt: item?.created_at,
-              updatedAt: item?.updated_at,
-              senderAddress: item?.paymentTransaction?.sender_address,
-              recieverAddress: item?.wallet?.address,
-              requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
-              amountToPay: `${roundToPrecision(
-                item?.payment_currency_amount,
-                6
-              )} ${item?.payment_currency}`,
-              amountPaid:
-                roundToPrecision(
-                  item?.paymentTransaction?.reduce((acc, transaction) => {
-                    return acc + parseFloat(transaction.transaction_amount);
-                  }, 0),
-                  6
-                ) +
-                " " +
-                item?.payment_currency,
-              paid: unpaidStatuses.some((status) => status == item?.status)
-                ? "No"
-                : "Yes",
-              status: item?.status,
-            };
-          });
-          setPaymentsList(tableData);
+          setPaymentsList(response);
         }
       },
     });
@@ -272,7 +290,6 @@ const Payments = () => {
   useEffect(() => {
     getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
-
 
   return (
     <>
