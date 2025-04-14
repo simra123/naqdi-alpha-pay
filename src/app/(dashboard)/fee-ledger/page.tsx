@@ -81,11 +81,15 @@ const feeLedger_table_columns: TableColumns = [
       );
     },
   },
-  { field: "type", headerName: "Currency Type", sortable: true },
+  { field: "transaction_type", headerName: "Currency Type", sortable: true },
   { field: "unit", headerName: "Currency", sortable: true },
-  { field: "before_amount", headerName: "Before Amount", sortable: true },
-  { field: "after_amount", headerName: "After Amount", sortable: true },
+
+  { field: "received_amount", headerName: "Received Amount", sortable: true },
+  { field: "paid_amount", headerName: "Paid Amount", sortable: true },
   { field: "fee_amount", headerName: "Fee Amount", sortable: true },
+  { field: "fee", headerName: "Fee (%)", sortable: true,dataValidator(value, row) {
+    return `${value} %`
+  }, },
   {
     field: "client",
     headerName: "Merchant First Name",
@@ -259,7 +263,7 @@ const FeeLedger = () => {
           }}
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            router.push(`/merchants/details/${row?.client?.id}`)
+            router.push(`/merchants/details/${row?.merchant?.user_id}`)
           }
           pagination
           columnClassName="max-w-[200px]"
