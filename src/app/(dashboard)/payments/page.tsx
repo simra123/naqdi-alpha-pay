@@ -63,6 +63,7 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "client.id",
     headerName: "Merchant ID",
+    target: "_self",
     link: (row: any) => {
       return `/merchants/details/${row?.client?.id}`;
     },
@@ -91,6 +92,10 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "wallet.blockchain",
     headerName: "Blockchain",
+  },
+  {
+    field: "payment_currency",
+    headerName: "Currency",
   },
 
   {

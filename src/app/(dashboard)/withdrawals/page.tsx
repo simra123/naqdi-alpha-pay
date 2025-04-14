@@ -34,8 +34,11 @@ import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const withdrawalsList_table_columns: TableColumns = [
-  { field: "uuid", headerName: "ID", sortable: true },
-  { field: "created_at", headerName: "Created At", sortable: true,
+  { field: "withdrawal_uuid", headerName: "ID", sortable: true },
+  {
+    field: "created_at",
+    headerName: "Created At",
+    sortable: true,
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -44,8 +47,12 @@ const withdrawalsList_table_columns: TableColumns = [
           <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
-    }, },
-  { field: "updated_at", headerName: "Updated At", sortable: true,
+    },
+  },
+  {
+    field: "updated_at",
+    headerName: "Updated At",
+    sortable: true,
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -54,11 +61,21 @@ const withdrawalsList_table_columns: TableColumns = [
           <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
-    }, },
+    },
+  },
+  { field: "total_requested_amount", headerName: "Total Requested Amount", sortable: true },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
-  { field: "withdrawal_type", headerName: "Withdrawal Type", sortable: true },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
-
+  { field: "alphaspay_fee", headerName: "Fee", sortable: true },
+  { field: "transaction_type", headerName: "Currency Type", sortable: true },
+  { field: "unit", headerName: "Currency", sortable: true },
+  {
+    field: "standard",
+    headerName: "Blockchain",
+    sortable: true,
+    dataValidator(value, row: any) {
+      return standardBlockchain[value || blockchain_standards[row?.unit]];
+    },
+  },
   {
     field: "recipient_address",
     headerName: "Recipient Address",
@@ -186,13 +203,9 @@ const Withdrawals = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-
-
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
-
-     
 
                     let [day, time] = date.split(".");
                     return (
@@ -220,8 +233,6 @@ const Withdrawals = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-
-
           setColumns(modifiedColumns);
 
           setListConfig(response.listConfig);
@@ -229,8 +240,7 @@ const Withdrawals = () => {
           setWithdrawalsList(response);
         }
         if (user?.role == Role.ADMIN) {
-          const tableData = formatWithdrawals(response);
-          setWithdrawalsList(tableData);
+          setWithdrawalsList(response);
         }
       },
     });
@@ -240,7 +250,6 @@ const Withdrawals = () => {
   useEffect(() => {
     getWithdrawals({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
-
 
   const toggleCreateModal = () => {
     setIsCreateOpen(!isCreateOpen);
@@ -266,7 +275,7 @@ const Withdrawals = () => {
           Withdrawals
         </h3>
 
-        <RenderRoleBased allowedRoles={[Role.USER,Role.ADMIN]} user={user}>
+        <RenderRoleBased allowedRoles={[Role.USER, Role.ADMIN]} user={user}>
           {PermissionAccess(
             LoaderButton,
             ModulesEnum.withdrawal,
@@ -311,7 +320,6 @@ const Withdrawals = () => {
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-   
               router.push(`/withdrawals/details/${row?.id}`);
             }}
             pagination

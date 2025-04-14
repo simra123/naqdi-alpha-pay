@@ -32,9 +32,16 @@ const statusList = [
 ];
 
 const transactionsList_table_columns: TableColumns = [
-  { field: "uuid", headerName: "ID", sortable: true },
   {
-    field: "dateReceived",
+    field: "uuid",
+    headerName: "ID",
+    sortable: true,
+    dataValidator(value, row: any) {
+      return row?.withdraw_transaction_uuid || row?.payment_transaction_uuid;
+    },
+  },
+  {
+    field: "createdAt",
     headerName: "Date Received",
     sortable: true,
     dataValidator: (value) => {
@@ -47,38 +54,77 @@ const transactionsList_table_columns: TableColumns = [
       );
     },
   },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
+  { field: "transaction_type", headerName: "Currency Type", sortable: true },
+  { field: "unit", headerName: "Currency", sortable: true },
   {
-    field: "transactionHash",
+    field: "blockchain",
+    headerName: "Blockchain",
+    sortable: true,
+    dataValidator(value, row: any) {
+      return row?.clientWallet?.blockchain || row?.wallet?.blockchain;
+    },
+  },
+  {
+    field: "transaction_hash",
     headerName: "Transaction Hash",
     sortable: true,
-    copyable: true,
-    link: (row: { blockchain: string; transactionHash: string }) => {
-      return showExplorerDetailsByChain({
+    link: (row: any) => {
+      const transactionExplorerLink = showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
+        blockchain: row?.wallet?.blockchain || row?.clientWallet?.blockchain,
         type: "hash",
-        hash: row?.transactionHash,
+        hash: row?.transaction_hash,
       });
+      return transactionExplorerLink;
     },
   },
   { field: "amount", headerName: "Amount", sortable: true },
-  { field: "client_fee", headerName: "Client Fee", sortable: true },
+  { field: "alphaspay_fees", headerName: "Fee", sortable: true },
   {
-    field: "receiveAddress",
-    headerName: "Receive Address",
+    field: "sender_address",
+    headerName: "Sender Address",
     sortable: true,
     copyable: true,
-    link: (row: { blockchain: string; receiveAddress: string }) => {
+    link: (row: any) => {
       return showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
+        blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
         type: "address",
-        address: row?.receiveAddress,
+        address: row?.sender_address,
       });
     },
   },
-  { field: "transactionType", headerName: "Transacion Type", sortable: true },
+  {
+    field: "receiveAddress",
+    headerName: "Receiver Address",
+    sortable: true,
+    copyable: true,
+    dataValidator(value, row: any) {
+      return row?.withdrawal?.recipient_address || row?.wallet?.address;
+    },
+    link: (row: any) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
+        type: "address",
+        address: row?.withdrawal?.recipient_address || row?.wallet?.address,
+      });
+    },
+  },
+  {
+    field: "",
+    headerName: "Transacion Type",
+    sortable: true,
+    dataValidator(value, row: any) {
+      return row?.payment ? "Payment" : "Withdrawal";
+    },
+    link(row: any) {
+      return row?.payment
+        ? `payments/details/${row?.payment?.id}`
+        : `withdrawals/details/${row?.withdrawal?.id}`;
+    },
+    target: "_self",
+  },
   {
     field: "status",
     headerName: "Status",
@@ -118,6 +164,7 @@ const transactionsList_Admin_table_columns: TableColumns = [
     dataValidator(value, row: any) {
       return row?.client?.id || row?.withdrawal?.user?.id;
     },
+    target: "_self",
     link: (row: any) => {
       return `/merchants/details/${
         row?.client?.id || row?.withdrawal?.user?.id
@@ -159,45 +206,78 @@ const transactionsList_Admin_table_columns: TableColumns = [
       return row?.client?.user_type || row?.withdrawal?.user?.user_type;
     },
   },
+  { field: "transaction_type", headerName: "Currency Type", sortable: true },
+  { field: "unit", headerName: "Currency", sortable: true },
   {
     field: "blockchain",
     headerName: "Blockchain",
     sortable: true,
-    dataValidator(value, row:any) {
-      return row?.clientWallet?.blockchain || row?.wallet?.blockchain
+    dataValidator(value, row: any) {
+      return row?.clientWallet?.blockchain || row?.wallet?.blockchain;
     },
   },
   {
-    field: "transactionHash",
+    field: "transaction_hash",
     headerName: "Transaction Hash",
     sortable: true,
-    link: (row: { blockchain: string; transactionHash: string }) => {
-      return showExplorerDetailsByChain({
+    link: (row: any) => {
+      const transactionExplorerLink = showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
+        blockchain: row?.wallet?.blockchain || row?.clientWallet?.blockchain,
         type: "hash",
-        hash: row?.transactionHash,
+        hash: row?.transaction_hash,
       });
+      return transactionExplorerLink;
     },
   },
   { field: "amount", headerName: "Amount", sortable: true },
-  { field: "client_fee", headerName: "Client Fee", sortable: true },
+  { field: "alphaspay_fees", headerName: "Fee", sortable: true },
 
   {
-    field: "receiveAddress",
-    headerName: "Receive Address",
+    field: "sender_address",
+    headerName: "Sender Address",
     sortable: true,
     copyable: true,
-    link: (row: { blockchain: string; receiveAddress: string }) => {
+    link: (row: any) => {
       return showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
+        blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
         type: "address",
-        address: row?.receiveAddress,
+        address: row?.sender_address,
       });
     },
   },
-  { field: "transactionType", headerName: "Transacion Type", sortable: true },
+  {
+    field: "receiveAddress",
+    headerName: "Receiver Address",
+    sortable: true,
+    copyable: true,
+    dataValidator(value, row: any) {
+      return row?.withdrawal?.recipient_address || row?.wallet?.address;
+    },
+    link: (row: any) => {
+      return showExplorerDetailsByChain({
+        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+        blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
+        type: "address",
+        address: row?.withdrawal?.recipient_address || row?.wallet?.address,
+      });
+    },
+  },
+  {
+    field: "",
+    headerName: "Transacion Type",
+    sortable: true,
+    dataValidator(value, row: any) {
+      return row?.payment ? "Payment" : "Withdrawal";
+    },
+    link(row: any) {
+      return row?.payment
+        ? `payments/details/${row?.payment?.id}`
+        : `withdrawals/details/${row?.withdrawal?.id}`;
+    },
+    target: "_self",
+  },
   {
     field: "status",
     headerName: "Status",
@@ -223,8 +303,7 @@ const Transactions = () => {
       await callApiHook({
         apiCall: callTransactionsApi(getAllTransactionsApi({})),
         successCallBack: (response: any) => {
-          const tableData = formatTransactions(response);
-          setTransactions(tableData);
+          setTransactions(response);
         },
       });
     }
@@ -273,7 +352,9 @@ const Transactions = () => {
         initialPageSize={10}
         rowClickHandler={(row: any) => {
           router.push(
-            `/transactions/details/${row?.id}?type=${row?.transactionType}`
+            `/transactions/details/${row?.id}?type=${
+              row?.payment ? "Payment" : "Withdrawal"
+            }`
           );
         }}
         pagination
