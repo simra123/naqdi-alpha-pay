@@ -42,7 +42,7 @@ const transactionsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -90,9 +90,16 @@ const transactionsList_table_columns: TableColumns = [
 ];
 
 const transactionsList_Admin_table_columns: TableColumns = [
-  { field: "uuid", headerName: "ID", sortable: true },
   {
-    field: "dateReceived",
+    field: "uuid",
+    headerName: "ID",
+    sortable: true,
+    dataValidator(value, row: any) {
+      return row?.withdraw_transaction_uuid || row?.payment_transaction_uuid;
+    },
+  },
+  {
+    field: "createdAt",
     headerName: "Date Received",
     sortable: true,
     dataValidator: (value) => {
@@ -100,12 +107,66 @@ const transactionsList_Admin_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
   },
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
+  {
+    field: "client.id",
+    headerName: "Merchant ID",
+    dataValidator(value, row: any) {
+      return row?.client?.id || row?.withdrawal?.user?.id;
+    },
+    link: (row: any) => {
+      return `/merchants/details/${
+        row?.client?.id || row?.withdrawal?.user?.id
+      }`;
+    },
+  },
+  {
+    field: "client.first_name",
+    headerName: "Merchant First Name",
+    dataValidator(value, row: any) {
+      return row?.client?.first_name || row?.withdrawal?.user?.first_name;
+    },
+  },
+  {
+    field: "client.last_name",
+    headerName: "Merchant Last Name",
+    dataValidator(value, row: any) {
+      return row?.client?.last_name || row?.withdrawal?.user?.last_name;
+    },
+  },
+  {
+    field: "client.email",
+    headerName: "Merchant Email",
+    dataValidator(value, row: any) {
+      return row?.client?.email || row?.withdrawal?.user?.email;
+    },
+  },
+  {
+    field: "client.username",
+    headerName: "Merchant Username",
+    dataValidator(value, row: any) {
+      return row?.client?.username || row?.withdrawal?.user?.username;
+    },
+  },
+  {
+    field: "client.user_type",
+    headerName: "Merchant Type",
+    dataValidator(value, row: any) {
+      return row?.client?.user_type || row?.withdrawal?.user?.user_type;
+    },
+  },
+  {
+    field: "blockchain",
+    headerName: "Blockchain",
+    sortable: true,
+    dataValidator(value, row:any) {
+      return row?.clientWallet?.blockchain || row?.wallet?.blockchain
+    },
+  },
   {
     field: "transactionHash",
     headerName: "Transaction Hash",
@@ -121,8 +182,7 @@ const transactionsList_Admin_table_columns: TableColumns = [
   },
   { field: "amount", headerName: "Amount", sortable: true },
   { field: "client_fee", headerName: "Client Fee", sortable: true },
-  // { field: "userName", headerName: "UserName", sortable: true },
-  // { field: "email", headerName: "Email", sortable: true },
+
   {
     field: "receiveAddress",
     headerName: "Receive Address",
@@ -172,9 +232,7 @@ const Transactions = () => {
       await callApiHook({
         apiCall: callTransactionsApi(getAllTransactionsByAdminApi()),
         successCallBack: (response: any) => {
-          const tableData = formatTransactionsByAdmin(response);
-
-          setTransactions(tableData);
+          setTransactions(response);
         },
       });
     }
@@ -195,7 +253,7 @@ const Transactions = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         Transactions
       </h3>
 
