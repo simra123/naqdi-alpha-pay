@@ -100,8 +100,8 @@ const filterCriteria: FilterCriteria = {
     { label: "False", value: false },
   ] as const,
   number: [
-    { label: "Greater Than", value: "GREATER_THAN" },
-    { label: "Less Than", value: "LESS_THAN" },
+    { label: "Greater Than", value: "GREATER_THAN_OR_EQUAL" },
+    { label: "Less Than", value: "LESS_THAN_OR_EQUAL" },
     { label: "Equal To", value: "EQUALS" },
     { label: "Between", value: "BETWEEN" },
   ],
