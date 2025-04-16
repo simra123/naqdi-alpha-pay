@@ -16,7 +16,8 @@ import LoaderButton from "@/components/common/LoaderButton";
 import { loginSchema, mfaSchema } from "@/models/login";
 
 import { Role } from "@/constants/roles";
-import { loginApi, verifyMFAForUserApi, verifyMFAForAdminApi } from "@/services/auth";
+import { loginApi, verifyMFAForUserApi} from "@/services/auth";
+import {  verifyMFAForAdminApi } from "@/services/admin/auth";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import useFormValidation from "@/hooks/useFormValidation";

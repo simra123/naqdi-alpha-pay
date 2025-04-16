@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 import useFormValidation from "@/hooks/useFormValidation";
-import { codeSchema, PhoneSchema } from "@/models/Phone";
+import { codeSchema, PhoneSchema } from "@/models/phone";
 import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -92,15 +92,15 @@ const PhoneValidation = () => {
   };
 
   return (
-    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
-      <h4 className="text-black-100 text-h3.5 font-semibold">
+    <div className="flex flex-col gap-5 bg-white mt-8 p-12 rounded-small">
+      <h4 className="font-semibold text-black-100 text-h3.5">
         Phone Validation
       </h4>
 
-      <p className="text-button text-black-100">
+      <p className="text-black-100 text-button">
         Please provide the Mobile Number you wish to register with your account.
       </p>
-      <p className="text-black-100 mt-4">
+      <p className="mt-4 text-black-100">
         Note: Alphapay is committed to providing a global service to all of our
         customers. However, certain mobile networks can be unreliable for
         various reasons. In the event of difficulties validating your mobile
@@ -109,7 +109,7 @@ const PhoneValidation = () => {
       </p>
       <div className="mt-6">
         <div className="mb-2">
-          <h5 className="text-input font-medium">Phone Number</h5>
+          <h5 className="font-medium text-input">Phone Number</h5>
         </div>
 
         <LoadingApi loading={isPhoneLoading}>
@@ -138,7 +138,7 @@ const PhoneValidation = () => {
               />
 
               {phoneErrors.phone && (
-                <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+                <p className="mt-[4px] ml-4 text-red-error-dark text-subtitle">
                   {phoneErrors.phone}
                 </p>
               )}
@@ -164,7 +164,7 @@ const PhoneValidation = () => {
             )} */}
 
             {/* {showCode && (
-              <p className="text-black-100 mt-6">
+              <p className="mt-6 text-black-100">
                 An SMS was sent to the mobile phone number you entered. Please
                 enter the code received to validate your mobile number.
               </p>

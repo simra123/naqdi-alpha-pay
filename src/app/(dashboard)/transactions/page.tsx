@@ -5,16 +5,11 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { getAllTransactionsApi } from "@/services/transaction";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import {
-  capitalize,
-  formatTransactions,
-  formatTransactionsByAdmin,
-} from "@/utils/dataFormatters";
+
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";

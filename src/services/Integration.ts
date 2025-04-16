@@ -24,10 +24,3 @@ export const addWebhookURLAPI = (data: { url: string }) => {
 export const getWebhookURLAPI = () => {
   return () => api.get(`auth/get/user-webhooks`);
 };
-
-export const resendWebhookAPI = (data: {
-  payment_id: number;
-  transaction_id: number;
-}) => {
-  return () => api.post(`/v1/admin/resend/client-webhook`, data);
-};

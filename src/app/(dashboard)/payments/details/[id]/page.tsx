@@ -6,10 +6,8 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
-import {
-  getPaymentDetailsApi,
-  getPaymentDetailsByAdminApi,
-} from "@/services/payments";
+import { getPaymentDetailsByAdminApi } from "@/services/admin/payments";
+import { getPaymentDetailsApi } from "@/services/payments";
 import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";

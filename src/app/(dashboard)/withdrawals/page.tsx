@@ -8,10 +8,8 @@ import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAdminWithdrawalsListApi,
-  getUserWithdrawalsListApi,
-} from "@/services/withdrawal";
+import { getUserWithdrawalsListApi } from "@/services/withdrawal";
+import { getAdminWithdrawalsListApi } from "@/services/admin/withdrawal";
 import { formatWithdrawals } from "@/utils/dataFormatters";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
@@ -91,7 +89,11 @@ const withdrawalsList_table_columns: TableColumns = [
     field: "user.user_type",
     headerName: "Merchant Type",
   },
-  { field: "total_requested_amount", headerName: "Total Requested Amount", sortable: true },
+  {
+    field: "total_requested_amount",
+    headerName: "Total Requested Amount",
+    sortable: true,
+  },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "alphaspay_fee", headerName: "Fee", sortable: true },
   { field: "transaction_type", headerName: "Currency Type", sortable: true },

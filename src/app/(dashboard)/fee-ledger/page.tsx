@@ -8,34 +8,23 @@ import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAdminWithdrawalsListApi,
-  getUserWithdrawalsListApi,
-} from "@/services/withdrawal";
-import { formatWithdrawals } from "@/utils/dataFormatters";
+
 import ErrorApiText from "@/components/common/ErrorApiText";
-import LoadingApi from "@/components/common/LoadindApi";
-import LoaderButton from "@/components/common/LoaderButton";
+
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
-import Chip from "@/components/common/Chip";
+
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
-import RenderRoleBased from "@/components/common/RenderRoleBased";
+
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-import { showExplorerDetailsByChain } from "@/utils/block-explorers";
-import {
-  blockchain_standards,
-  standardBlockchain,
-} from "@/constants/blockchains";
+
 import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
-import {
-  getAdminLedgerListApi,
-  getUserLedgerListApi,
-} from "@/services/feeLedger";
+import { getUserLedgerListApi } from "@/services/feeLedger";
+import { getAdminLedgerListApi } from "@/services/admin/feeLedger";
 
 const feeLedger_table_columns: TableColumns = [
   { field: "id", headerName: "ID", sortable: true },
@@ -83,9 +72,14 @@ const feeLedger_table_columns: TableColumns = [
   { field: "received_amount", headerName: "Received Amount", sortable: true },
   { field: "paid_amount", headerName: "Paid Amount", sortable: true },
   { field: "fee_amount", headerName: "Fee Amount", sortable: true },
-  { field: "fee", headerName: "Fee (%)", sortable: true,dataValidator(value, row) {
-    return `${value} %`
-  }, },
+  {
+    field: "fee",
+    headerName: "Fee (%)",
+    sortable: true,
+    dataValidator(value, row) {
+      return `${value} %`;
+    },
+  },
   {
     field: "owner_first_name",
     headerName: "Merchant First Name",
@@ -93,17 +87,14 @@ const feeLedger_table_columns: TableColumns = [
   {
     field: "owner_last_name",
     headerName: "Merchant Last Name",
-
   },
   {
     field: "owner_email",
     headerName: "Merchant Email",
-
   },
   {
     field: "owner_user_type",
     headerName: "Merchant Type",
-
   },
 ];
 
@@ -188,9 +179,7 @@ const FeeLedger = () => {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
-                    return (
-                     `${value} %`
-                    );
+                    return `${value} %`;
                   },
                 };
               }

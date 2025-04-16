@@ -20,7 +20,7 @@ import KYCReasonModal from "@/components/Modals/KYCReasonModal";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import { FeeCard } from "@/components/forms/onBoarding/FeeSetup";
-import { AdminFeeSetupApi } from "@/services/onBoarding";
+import { adminFeeSetupApi } from "@/services/admin/onBoarding";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 
@@ -116,7 +116,7 @@ const KYCUserID = ({ params }) => {
 
     await callApiHook({
       apiCall: callFeeSetupApi(
-        AdminFeeSetupApi({
+        adminFeeSetupApi({
           client_fees: selectedRole?.client,
           merchant_fees: selectedRole?.merchant,
           userId: +userId,

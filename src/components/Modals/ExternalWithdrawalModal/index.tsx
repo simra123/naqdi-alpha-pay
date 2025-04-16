@@ -13,8 +13,8 @@ import ErrorApiText from "../../common/ErrorApiText";
 
 import useFormValidation from "@/hooks/useFormValidation";
 
-import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
-import { externalWithdrawalApproveAdminApi } from "@/services/withdrawal";
+import { ExternalWithdrawal } from "@/models/externalWithdrawal";
+import { externalWithdrawalApproveAdminApi } from "@/services/admin/withdrawal";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 

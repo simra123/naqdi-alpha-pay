@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ForgotSchema } from "@/models/Forgot";
+import { ForgotSchema } from "@/models/forgot";
 import useFormValidation from "@/hooks/useFormValidation";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";

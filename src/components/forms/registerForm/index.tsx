@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import ReCaptcha from "react-google-recaptcha";
 
-import { LegalSchema, RegisterSchema } from "@/models/Register";
+import { LegalSchema, RegisterSchema } from "@/models/register";
 
 import { forms } from "@/constants/registerforms";
 

@@ -8,12 +8,11 @@ import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
+import { getWithdrawalDetilsApi } from "@/services/withdrawal";
 import {
-  getWithdrawalDetilsApi,
   getWithdrawalWalletsApi,
   withdrawalApproveAdminApi,
-  withdrawalRejectAdminApi,
-} from "@/services/withdrawal";
+} from "@/services/admin/withdrawal";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useDispatch } from "react-redux";
@@ -39,7 +38,7 @@ import { FiRefreshCw } from "react-icons/fi";
 import { getPermission } from "@/utils/cookies";
 import { Tooltip } from "react-tooltip";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
-import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
+import { ExternalWithdrawal } from "@/models/externalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";
 
@@ -152,7 +151,9 @@ const WithdrawalDetails = ({ params }) => {
     };
 
     await callApiHook({
-      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(internalData)),
+      apiCall: callApproveWithdrawalApi(
+        withdrawalApproveAdminApi(internalData)
+      ),
       successCallBack: (response: any) => {
         dispatch(
           setNotification({
@@ -275,42 +276,49 @@ const WithdrawalDetails = ({ params }) => {
         </div>
 
         <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-              <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-                <MerchantDetailIcon />
-                <h5 className="font-semibold text-h5 text-purple-500">
-                  Merchant
-                </h5>
-              </div>
-              <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
-                <Details
-                  label="ID"
-                  value={withdrawalDetails?.user?.id}
-                  link={`/merchants/details/${withdrawalDetails?.user?.id}`}
-                  target="_self"
-                />
-                <Details
-                  label="First Name"
-                  value={withdrawalDetails?.user?.first_name}
-                />
-                <Details label="Last Name" value={withdrawalDetails?.user?.last_name} />
-                <Details label="Username" value={withdrawalDetails?.user?.username} />
-                <Details label="Email" value={withdrawalDetails?.user?.email} />
-                <Details label="Role" value={withdrawalDetails?.user?.role} />
-                <Details label="User Type" value={withdrawalDetails?.user?.user_type} />
-                <Details
-                  label="Created Date"
-                  value={moment(withdrawalDetails?.user?.created_at).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-                <Details
-                  label="Updated Date"
-                  value={moment(withdrawalDetails?.user?.updated_at).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-              </div>
-            </RenderRoleBased>
+          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+            <MerchantDetailIcon />
+            <h5 className="font-semibold text-h5 text-purple-500">Merchant</h5>
+          </div>
+          <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
+            <Details
+              label="ID"
+              value={withdrawalDetails?.user?.id}
+              link={`/merchants/details/${withdrawalDetails?.user?.id}`}
+              target="_self"
+            />
+            <Details
+              label="First Name"
+              value={withdrawalDetails?.user?.first_name}
+            />
+            <Details
+              label="Last Name"
+              value={withdrawalDetails?.user?.last_name}
+            />
+            <Details
+              label="Username"
+              value={withdrawalDetails?.user?.username}
+            />
+            <Details label="Email" value={withdrawalDetails?.user?.email} />
+            <Details label="Role" value={withdrawalDetails?.user?.role} />
+            <Details
+              label="User Type"
+              value={withdrawalDetails?.user?.user_type}
+            />
+            <Details
+              label="Created Date"
+              value={moment(withdrawalDetails?.user?.created_at).format(
+                "DD-MM-YYYY"
+              )}
+            />
+            <Details
+              label="Updated Date"
+              value={moment(withdrawalDetails?.user?.updated_at).format(
+                "DD-MM-YYYY"
+              )}
+            />
+          </div>
+        </RenderRoleBased>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />

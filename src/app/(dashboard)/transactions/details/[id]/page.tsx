@@ -5,6 +5,9 @@ import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import {
   getPaymentTransactionDetailsByAdminApi,
+  getTransactionDetailsByAdminApi,
+} from "@/services/admin/transaction";
+import {
   getPaymentTransactionDetailsByUserApi,
   getTransactionDetailsByUserApi,
   getWithdrawalTransactionDetailsByUserApi,
@@ -12,12 +15,12 @@ import {
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
-import { capitalize } from "@/utils/dataFormatters";
+
 import { roundToPrecision } from "@/utils/math";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
-import { getTransactionDetailsByAdminApi } from "@/services/admin/transaction";
-import { Mail, Person } from "@mui/icons-material";
+
+
 import Details from "@/components/common/Details";
 import {
   CalenderIcon,
@@ -30,7 +33,7 @@ import { notFound, useSearchParams } from "next/navigation";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import LoaderButton from "@/components/common/LoaderButton";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
-import { resendWebhookAPI } from "@/services/Integration";
+import { resendWebhookAPI } from "@/services/admin/Integration";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 

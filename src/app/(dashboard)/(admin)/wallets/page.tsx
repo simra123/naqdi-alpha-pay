@@ -11,7 +11,7 @@ import { TableColumns, WalletType } from "@/constants/types";
 
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
-import { getAllWalletsListByAdminApi } from "@/services/wallet";
+import { getAllWalletsListByAdminApi } from "@/services/admin/wallet";
 import moment from "moment";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import GasPaymentModal from "@/components/Modals/GasPaymentModal";
@@ -172,7 +172,7 @@ const Wallets = () => {
         walletType={paymentWallet?.walletType}
       />
 
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         Wallets
       </h3>
 

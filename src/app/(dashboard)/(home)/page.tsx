@@ -13,7 +13,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 
-import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
+import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
 
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { unitName } from "@/constants/blockchains";
@@ -246,21 +246,21 @@ const Home = () => {
             initialPageSize={10}
             actions={
               <div className="flex justify-between items-center mb-4">
-                <h4 className="text-base sm:text-p122 text-black-100 font-semibold">
+                <h4 className="font-semibold text-black-100 sm:text-p122 text-base">
                   Crypto Wallets
                 </h4>
 
                 <div className="flex items-center gap-2">
                   <LoaderButton
                     content={"Reload"}
-                    className="px-4 hidden lg:flex"
+                    className="hidden lg:flex px-4"
                     loading={isPortfolioLoading}
                     onClick={fetchPortfolio}
                     variant="outlined"
                   />
                   <LoaderButton
                     content={<Sync className="text-button" />}
-                    className="px-4 flex lg:hidden"
+                    className="lg:hidden flex px-4"
                     loading={isPortfolioLoading}
                     onClick={fetchPortfolio}
                     variant="text"
@@ -282,17 +282,17 @@ const Home = () => {
             }
           >
             <div
-              className="wallets min-h-[310px] 2.5xl:min-h-[470px] py-[35px] 2.5xl:py-[60px] px-4 2.5xlpx-8"
+              className="px-4 py-[35px] 2.5xl:py-[60px] min-h-[310px] 2.5xl:min-h-[470px] wallets 2.5xlpx-8"
               onClick={(e) => {
                 handleAssetSelection("ALL");
               }}
             >
-              <div className="flex flex-col justify-between h-full gap-8">
+              <div className="flex flex-col justify-between gap-8 h-full">
                 <div>
-                  <h4 className="text-white font-bold text-h4 font-nunito text-center">
+                  <h4 className="font-nunito font-bold text-h4 text-white text-center">
                     Crypto Wallets
                   </h4>
-                  <h3 className="text-white font-nunito text-center text-[60px] 2.5xl:text-[92px] font-semibold overflow-hidden text-ellipsis leading-[110px]">
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[60px] text-white 2.5xl:text-[92px] text-center text-ellipsis leading-[110px]">
                     $
                     <CountUp
                       end={balance}
@@ -302,12 +302,12 @@ const Home = () => {
                     />
                   </h3>
                   <ErrorApiText error={isTotalPortfolioError} />
-                  {/* <h6 className="text-purple-light-purple text-button xs:text-p122 md:text-h4 font-nunito text-center font-semibold overflow-hidden text-ellipsis">
+                  {/* <h6 className="overflow-hidden font-nunito font-semibold text-button text-purple-light-purple xs:text-p122 md:text-h4 text-center text-ellipsis">
                   {portfolioPercentage}% Last Week
                   </h6> */}
                 </div>
                 <div
-                  className="flex gap-4 justify-center 2.5xl:gap-0 2.5xl:justify-between xl:px-8"
+                  className="flex justify-center 2.5xl:justify-between gap-4 2.5xl:gap-0 xl:px-8"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <BorderedIconButton
@@ -327,7 +327,7 @@ const Home = () => {
                   >
                     <ReciveIcon className="w-4 2.5xl:w-[23px]" />
                     {hoveredButton === "receive" && (
-                      <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
+                      <span className="hidden sm:flex font-nunito text-button 2.5xl:text-h3.5">
                         Receive
                       </span>
                     )}
@@ -349,7 +349,7 @@ const Home = () => {
                   >
                     <SendIcon className="w-4 2.5xl:w-[23px]" />
                     {hoveredButton === "send" && (
-                      <span className="font-nunito text-button 2.5xl:text-h3.5  sm:flex hidden">
+                      <span className="hidden sm:flex font-nunito text-button 2.5xl:text-h3.5">
                         Send
                       </span>
                     )}
@@ -370,7 +370,7 @@ const Home = () => {
                   >
                     <TransferIcon className="w-4 2.5xl:w-[23px]" />
                     {hoveredButton === "transfer" && (
-                      <span className="font-nunito text-button 2.5xl:text-h3.5  sm:inline hidden">
+                      <span className="hidden sm:inline font-nunito text-button 2.5xl:text-h3.5">
                         Transfer
                       </span>
                     )}
@@ -381,13 +381,13 @@ const Home = () => {
             <div className="portfolio">
               <div className="flex flex-col flex-auto">
                 <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
-                  {/* <header className="sticky top-0 z-10"> */}
-                  <h3 className="text-p120 2xl:text-h4 font-nunito mb-2">
+                  {/* <header className="top-0 z-10 sticky"> */}
+                  <h3 className="mb-2 font-nunito text-p120 2xl:text-h4">
                     My Portfolio
                   </h3>
                   {/* </header> */}
 
-                  <div className="flex-1 overflow-y-auto pr-4 flex flex-col gap-[14px] portfolio-body">
+                  <div className="flex flex-col flex-1 gap-[14px] pr-4 overflow-y-auto portfolio-body">
                     <LoadingApi loading={isPortfolioLoading}>
                       {portfolioData?.length > 0 ? (
                         portfolioData?.map((asset) => {
@@ -439,7 +439,7 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="history xs:block hidden">
+            <div className="hidden xs:block history">
               <PortfolioChart
                 interval={interval}
                 setInterval={setInterval}
@@ -448,9 +448,9 @@ const Home = () => {
             </div>
             {isTransactionHasMinumumAccess && (
               <div className="transactions">
-                <div className="xxs:border border-purple-10 xxs:py-[30px] xxs:px-5 rounded-[28px]">
-                  <div className="flex items-end justify-between mb-2">
-                    <h3 className="text-p120 2xl:text-h4 font-nunito">
+                <div className="xxs:px-5 xxs:py-[30px] xxs:border border-purple-10 rounded-[28px]">
+                  <div className="flex justify-between items-end mb-2">
+                    <h3 className="font-nunito text-p120 2xl:text-h4">
                       Last Transactions
                     </h3>
                     <Link className="text-caption" href={"/transactions"}>
