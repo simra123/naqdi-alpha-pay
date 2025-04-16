@@ -91,7 +91,7 @@ const filterCriteria: FilterCriteria = {
   date: [
     { label: "Greater Than", value: "GREATER_THAN" },
     { label: "Less Than", value: "LESS_THAN" },
-    { label: "Equals", value: "EQUALS" },
+    // { label: "Equals", value: "EQUALS" },
     { label: "Between", value: "BETWEEN" },
     { label: "Not Equal", value: "NOT_EQUAL" },
   ],
