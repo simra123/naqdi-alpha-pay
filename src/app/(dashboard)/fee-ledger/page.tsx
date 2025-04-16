@@ -184,6 +184,16 @@ const FeeLedger = () => {
                   },
                 };
               }
+              if (["fee"].includes(column.listColumnsMeta.name)) {
+                return {
+                  ...column,
+                  dataValidator: (value: string) => {
+                    return (
+                     `${value} %`
+                    );
+                  },
+                };
+              }
 
               return column;
             }
