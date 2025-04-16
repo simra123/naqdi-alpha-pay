@@ -91,7 +91,7 @@ const filterCriteria: FilterCriteria = {
   date: [
     { label: "Greater Than", value: "GREATER_THAN" },
     { label: "Less Than", value: "LESS_THAN" },
-    { label: "Equal To", value: "EQUAL_TO" },
+    { label: "Equals", value: "EQUALS" },
     { label: "Between", value: "BETWEEN" },
     { label: "Not Equal", value: "NOT_EQUAL" },
   ],
@@ -113,7 +113,7 @@ const operatorMapping: { [key: string]: string } = {
   CONTAINS: "CONTAINS",
   GREATER_THAN: "GREATER_THAN",
   LESS_THAN: "LESS_THAN",
-  EQUAL_TO: "EQUALS",
+  EQUALS: "EQUALS",
   BETWEEN: "BETWEEN",
   NOT_EQUAL: "NOT_EQUAL",
   GREATER_THAN_OR_EQUAL: "GREATER_THAN_OR_EQUAL",
