@@ -66,7 +66,10 @@ const ColumnFiltering = ({
                 meta: group.meta.map((item) => {
                   const isSelected = !item.isSelected;
 
-                  if (item.name === "created_at" && !isSelected) {
+                  if (
+                    (item.name === "created_at" || item.name === "createdAt") &&
+                    !isSelected
+                  ) {
                     setDateRange([
                       {
                         startDate: null,
@@ -95,7 +98,10 @@ const ColumnFiltering = ({
 
   const removeFilter = (name: string) => {
     let filters = filterData.filter((item) => {
-      if (item.listColumnMeta.name === "created_at") {
+      if (
+        item.listColumnMeta.name === "created_at" ||
+        item.listColumnMeta.name === "createdAt"
+      ) {
         setDateRange([
           {
             startDate: null,
@@ -160,7 +166,7 @@ const ColumnFiltering = ({
           return (
             <div
               key={index}
-              className="flex items-center gap-2 p-1 pr-3 bg-white-100 border border-disabled-white rounded-large"
+              className="flex items-center gap-2 bg-white-100 p-1 pr-3 border border-disabled-white rounded-large"
             >
               <button
                 className="p-1 rounded-full"
@@ -187,14 +193,14 @@ const ColumnFiltering = ({
           return (
             <div key={group.id} className="flex justify-between gap-8 w-full">
               <div className="w-full">
-                <h3 className="text-caption font-semibold text-grey-100 pb-4 border-b border-light-gray">
+                <h3 className="pb-4 border-b border-light-gray font-semibold text-caption text-grey-100">
                   {group.name}
                 </h3>
-                <div className="flex gap-y-6 flex-wrap mt-4 w-full">
+                <div className="flex flex-wrap gap-y-6 mt-4 w-full">
                   {filteredMeta.map((item) => (
                     <div
                       key={item.id}
-                      className="flex flex-col w-full lg:w-1/4 items-baseline gap-2 mb-2"
+                      className="flex flex-col items-baseline gap-2 mb-2 w-full lg:w-1/4"
                     >
                       <FilterCheckField
                         group={group}
