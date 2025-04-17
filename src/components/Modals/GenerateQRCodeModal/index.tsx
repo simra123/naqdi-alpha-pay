@@ -15,10 +15,11 @@ import {
   verifyMFAForAdminApi,
 } from "@/services/admin/auth";
 import OTPInput from "react-otp-input";
-import { Info } from "@mui/icons-material";
+
 import { updateMfaInCookie } from "@/utils/cookies";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { QRCodeCanvas } from "qrcode.react";
+import { MdInfo } from "react-icons/md";
 
 const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
   const user = useLocalStorage("user");
@@ -95,7 +96,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
               <label className="block mb-2 font-medium">Enter Code</label>
 
               <div className="group relative flex items-center">
-                <Info className="mb-1 text-[18px] text-blue-info" />
+                <MdInfo className="mb-1 text-[18px] text-blue-info" />
 
                 <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                   <div className="relative p-2">

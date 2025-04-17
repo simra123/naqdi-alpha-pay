@@ -18,9 +18,10 @@ import { registerApi } from "@/services/auth";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import IconField from "@/components/common/IconField";
-import { Business, Lock, Mail, Person } from "@mui/icons-material";
+
 import LoaderButton from "@/components/common/LoaderButton";
 import IconSelectBox from "@/components/common/IconSelectBox";
+import { MdBusiness, MdEmail, MdLock, MdPerson } from "react-icons/md";
 
 const options = [
   {
@@ -134,13 +135,13 @@ const IndividualForm = ({ activeForm }) => {
               name="legalName"
               error={errors.legalName}
               label="Legal Name"
-              icon={Person}
+              icon={MdPerson}
             />
 
             <IconSelectBox
               label="Select Entity Type"
               placeholder="Enter Entity Type"
-              icon={Business}
+              icon={MdBusiness}
               name="entityType"
               onChange={handleChange}
               value={values?.entityType}
@@ -158,7 +159,7 @@ const IndividualForm = ({ activeForm }) => {
           name="firstName"
           error={errors.firstName}
           label="First Name"
-          icon={Person}
+          icon={MdPerson}
         />
         <IconField
           placeholder="Enter You Middle Name"
@@ -167,7 +168,7 @@ const IndividualForm = ({ activeForm }) => {
           onChange={handleChange}
           name="middleName"
           label="Middle Name"
-          icon={Person}
+          icon={MdPerson}
         />
         <IconField
           placeholder="Enter You Last Name"
@@ -178,7 +179,7 @@ const IndividualForm = ({ activeForm }) => {
           name="lastName"
           error={errors.lastName}
           label="Last Name"
-          icon={Person}
+          icon={MdPerson}
         />
         <IconField
           placeholder="Enter You Username"
@@ -189,7 +190,7 @@ const IndividualForm = ({ activeForm }) => {
           name="userName"
           error={errors.userName}
           label="Username"
-          icon={Person}
+          icon={MdPerson}
         />
         <IconField
           placeholder="Enter You Email"
@@ -200,7 +201,7 @@ const IndividualForm = ({ activeForm }) => {
           name="email"
           error={errors.email}
           label="Email"
-          icon={Mail}
+          icon={MdEmail}
         />
         <IconField
           placeholder="Enter You Password"
@@ -213,7 +214,7 @@ const IndividualForm = ({ activeForm }) => {
           name="password"
           error={errors.password}
           label="Password"
-          icon={Lock}
+          icon={MdLock}
         />
         <IconField
           placeholder="Enter You Password"
@@ -224,7 +225,7 @@ const IndividualForm = ({ activeForm }) => {
           name="confirmPassword"
           error={confirmPassError}
           label="Confirm Password"
-          icon={Lock}
+          icon={MdLock}
         />
 
         <div>

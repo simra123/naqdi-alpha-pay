@@ -17,9 +17,9 @@ import LoadingApi from "@/components/common/LoadindApi";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import { getUrlOrObjectUrl, urlToFile } from "@/utils/getImageSrcType";
 import IconSelectBox from "@/components/common/IconSelectBox";
-import { Add, LocationOn } from "@mui/icons-material";
 import { DocumentFormat } from "@/assets/Svgs";
 import LoaderButton from "@/components/common/LoaderButton";
+import { MdAdd, MdLocationOn } from "react-icons/md";
 
 const IdentityCheck = () => {
   const dispatch = useDispatch();
@@ -137,7 +137,7 @@ const IdentityCheck = () => {
               onChange={handleChange}
               searchable
               error={errors.country}
-              icon={LocationOn}
+              icon={MdLocationOn}
               label="Country"
               name="country"
               placeholder="Select your country"
@@ -201,7 +201,7 @@ const IdentityCheck = () => {
                           className="flex justify-center items-center gap-2 bg-blackGrey-filled-input p-3 px-8 border border-light-gray border-dashed rounded-full min-w-[470px]"
                           onClick={() => front?.current?.click()}
                         >
-                          <Add className="text-purple-500" />
+                          <MdAdd className="text-purple-500" />
                           <span className="text-blackGrey-placeholder text-input">
                             {" "}
                             Drop Files Here Or Click To Upload{" "}
@@ -242,7 +242,7 @@ const IdentityCheck = () => {
                           className="flex justify-center items-center gap-2 bg-blackGrey-filled-input p-3 px-8 border border-light-gray border-dashed rounded-full min-w-[470px]"
                           onClick={() => back?.current?.click()}
                         >
-                          <Add className="text-purple-500" />
+                          <MdAdd className="text-purple-500" />
                           <span className="text-blackGrey-placeholder text-input">
                             {" "}
                             Drop Files Here Or Click To Upload{" "}

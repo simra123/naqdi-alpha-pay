@@ -15,8 +15,6 @@ import CustomTable from "@/components/common/CustomTable";
 import LoaderButton from "@/components/common/LoaderButton";
 import CreatePayoutModal from "@/components/Modals/CreatePayoutModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
-import { Add } from "@mui/icons-material";
-
 const payoutsList_table_columns = [
   { field: "uuid", headerName: "ID", sortable: true },
   { field: "created_at", headerName: "Date", sortable: true },
@@ -81,8 +79,8 @@ const Payouts = () => {
         toggleHandler={toggleCreateModal}
         refreshHandler={getAllPayouts}
       />
-      <div className="items-center justify-between mb-8  hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">Payouts</h3>
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Payouts</h3>
 
         <LoaderButton
           content={"New Payout"}

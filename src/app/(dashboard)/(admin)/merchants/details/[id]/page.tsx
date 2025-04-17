@@ -11,7 +11,7 @@ import { capitalize } from "@/utils/dataFormatters";
 
 import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 import Details from "@/components/common/Details";
-import { ContactMailOutlined, LocationOnOutlined } from "@mui/icons-material";
+import { MdOutlineContactMail, MdOutlineLocationOn } from "react-icons/md"
 import CustomTable from "@/components/common/CustomTable";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { unitName } from "@/constants/blockchains";
@@ -77,7 +77,7 @@ const UserDetails = ({ params }) => {
           </div>
 
           <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-            <ContactMailOutlined className="text-purple-500" />
+            <MdOutlineContactMail className="text-purple-500" />
             <h5 className="font-semibold text-h5 text-purple-500">Contacts</h5>
           </div>
           <div className="res-2-grid py-6">
@@ -86,7 +86,7 @@ const UserDetails = ({ params }) => {
           </div>
 
           <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-            <LocationOnOutlined className="text-purple-500" />
+            <MdOutlineLocationOn className="text-purple-500" />
             <h5 className="font-semibold text-h5 text-purple-500">
               Addressess
             </h5>

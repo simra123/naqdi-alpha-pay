@@ -11,13 +11,13 @@ import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
-import { Info, Lock } from "@mui/icons-material";
 import { ChangePasswordSchema } from "@/models/profilePage";
 import useFormValidation from "@/hooks/useFormValidation";
 import { ChangePassowordApi } from "@/services/auth";
 import { ChangePassowordAdminpi } from "@/services/admin/auth";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
+import { MdInfo, MdLock } from "react-icons/md";
 
 interface Props {
   isOpen: boolean;
@@ -104,7 +104,7 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
           onChange={handleChange}
           onBlur={validateField}
           name="oldPassword"
-          icon={Lock}
+          icon={MdLock}
           placeholder="Enter Your Current Password"
         />
 
@@ -118,7 +118,7 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
                 special & uppercase characters."
           onBlur={validateField}
           name="newPassword"
-          icon={Lock}
+          icon={MdLock}
           placeholder="Enter Your New Password"
         />
 
@@ -130,7 +130,7 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
           onChange={handleChange}
           onBlur={validateMatch}
           name="confirmNewPassword"
-          icon={Lock}
+          icon={MdLock}
           placeholder="Confirm Your New Password"
         />
 
@@ -139,7 +139,7 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
             <label className="block mb-2 font-medium">Enter Code</label>
 
             <div className="group relative flex items-center">
-              <Info className="mb-1 text-[18px] text-blue-info" />
+              <MdInfo className="mb-1 text-[18px] text-blue-info" />
 
               <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                 <div className="relative p-2">

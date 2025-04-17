@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import {
-  CancelOutlined,
-  CheckCircleOutline,
-  PauseCircleOutline,
-} from "@mui/icons-material";
+
 import { useDispatch, useSelector } from "react-redux";
 import { STEPS } from "@/constants/onboarding";
 import { setStep } from "@/store/slices/onboarding.slice";
@@ -35,21 +30,21 @@ const KYCApproval = () => {
   };
 
   return (
-    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
-      <h4 className="text-black-100 text-h3.5 font-semibold">KYC Approval</h4>
-      <p className="text-button text-black-100">Welcome back to Alphaspay</p>
+    <div className="flex flex-col gap-5 bg-white mt-8 p-12 rounded-small">
+      <h4 className="font-semibold text-black-100 text-h3.5">KYC Approval</h4>
+      <p className="text-black-100 text-button">Welcome back to Alphaspay</p>
 
       <LoadingApi loading={!user || isUserDetailsLoading}>
         {user?.userDetails.kyc_status == "pending" && (
-          <div className="status my-8">
+          <div className="my-8 status">
             <div className="flex flex-col justify-center items-center gap-1">
               <img
                 src="/kyc-pending.png"
-                className="max-w-full w-[450px]"
+                className="w-[450px] max-w-full"
                 alt="KYC PENDING"
               />
             </div>
-            <p className="text-black-100 mt-8">
+            <p className="mt-8 text-black-100">
               Please wait patiently while we are verifying your documents. The
               process may take 1-3 days to complete. Once your documents have
               been approved, you will be notified and you will be able to move
@@ -59,15 +54,15 @@ const KYCApproval = () => {
         )}
 
         {user?.userDetails.kyc_status == "approved" && (
-          <div className="status my-8">
+          <div className="my-8 status">
             <div className="flex flex-col justify-center items-center gap-1">
               <img
                 src="/kyc-approved.png"
-                className="max-w-full w-[450px]"
+                className="w-[450px] max-w-full"
                 alt="KYC Approved"
               />
             </div>
-            <p className="text-black-100 mt-8">
+            <p className="mt-8 text-black-100">
               Congratulations, Your documents have been verified. Please click
               the next button to set your fee schedule.
             </p>
@@ -75,26 +70,26 @@ const KYCApproval = () => {
         )}
 
         {user?.userDetails.kyc_status == "rejected" && (
-          <div className="status my-8">
+          <div className="my-8 status">
             <div className="flex flex-col justify-center items-center gap-1">
               <img
                 src="/kyc-rejected.png"
-                className="max-w-full w-[450px]"
+                className="w-[450px] max-w-full"
                 alt="KYC Approved"
               />
             </div>
-            <p className="text-black-100 mt-8">
+            <p className="mt-8 text-black-100">
               We have not been able to verify your documents. Please check the
               remarks and try again.
             </p>
 
             {user?.userDetails.reason && (
               <>
-                <h2 className="medium_heading_light mt-6 !font-semibold">
+                <h2 className="mt-6 !font-semibold medium_heading_light">
                   Remarks
                 </h2>
 
-                <p className="font-semibold mt-2">{user?.userDetails.reason}</p>
+                <p className="mt-2 font-semibold">{user?.userDetails.reason}</p>
               </>
             )}
           </div>

@@ -12,26 +12,26 @@ const Error = ({
 }) => {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error);
+    console.error(error.cause);
   }, [error]);
 
   return (
-    <div className="p-10 bg-[#FAFAFA] h-dvh">
-      <div className="bg-white shadow-sm h-full p-6 md:p-16">
+    <div className="bg-[#FAFAFA] p-10 h-dvh">
+      <div className="bg-white shadow-sm p-6 md:p-16 h-full">
         <img
           src="/404.png"
           alt="404"
-          className="max-w-[90%] w-[667px] mx-auto"
+          className="mx-auto w-[667px] max-w-[90%]"
         />
-        <div className="text-center text-black-100">
-          <p className="font-medium text-h3 mt-16">
+        <div className="text-black-100 text-center">
+          <p className="mt-16 font-medium text-h3">
             Oops! <span className="text-red-button"> {error.message} </span>
           </p>
-          <p className="font-medium text-p122 mt-4">
+          <p className="mt-4 font-medium text-p122">
             Remote developers with strong technical and communication skills at
             unbeatable prices, ready to work in your timezone.
           </p>
-          <div className="mx-auto w-[310px] mt-12">
+          <div className="mx-auto mt-12 w-[310px]">
             <LoaderButton
               content={"Reset"}
               variant="contained"

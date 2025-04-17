@@ -18,7 +18,6 @@ import LoaderButton from "../../common/LoaderButton";
 import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
-import { Info } from "@mui/icons-material";
 import useFormValidation from "@/hooks/useFormValidation";
 import {
   emptySchema,
@@ -32,6 +31,7 @@ import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { MdInfo } from "react-icons/md";
 
 interface Props {
   isOpen: boolean;
@@ -360,7 +360,7 @@ const CreateWithdrawalModal = ({
               <div className="flex items-center gap-2">
                 <label className="block mb-2 font-medium">Enter Code</label>
                 <div className="group relative flex items-center">
-                  <Info className="mb-1 text-[18px] text-blue-info" />
+                  <MdInfo className="mb-1 text-[18px] text-blue-info" />
                 </div>
               </div>
               <OtpInput

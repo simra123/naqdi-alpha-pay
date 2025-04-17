@@ -150,7 +150,7 @@ const Login = () => {
           special & uppercase characters."
               onBlur={validateField}
               name="password"
-              icon={Lock}
+              icon={MdLock}
               placeholder="Enter your password"
             />
             <Link

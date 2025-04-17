@@ -13,12 +13,13 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
-import { LocationOn, Mail, Person } from "@mui/icons-material";
+
 
 import countriesJson from "@/constants/countries.json";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import IconField from "@/components/common/IconField";
 import LoaderButton from "@/components/common/LoaderButton";
+import { MdLocationOn, MdMail, MdPerson } from "react-icons/md";
 
 const initialValues = {
   addressLine1: "",
@@ -152,7 +153,7 @@ const ProfileForm = () => {
         <div className="flex flex-wrap mt-3 details">
           <div className="flex items-center gap-3 p-2 md:w-1/3">
             <div className="bg-light-gray-10 p-3 rounded-full w-12 aspect-square text-purple-500">
-              <Person />
+              <MdPerson />
             </div>
 
             <div className="flex flex-col gap-1">
@@ -167,7 +168,7 @@ const ProfileForm = () => {
 
           <div className="flex items-center gap-3 p-2">
             <div className="bg-light-gray-10 p-3 rounded-full w-12 aspect-square text-purple-500">
-              <Mail />
+              <MdMail />
             </div>
 
             <div className="flex flex-col gap-1">
@@ -195,7 +196,7 @@ const ProfileForm = () => {
             onChange={handleChangeMiddleware}
             searchable
             error={errors.country}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Country"
             name="country"
             placeholder="Select your country"
@@ -210,7 +211,7 @@ const ProfileForm = () => {
             searchable
             disabled={!values?.country}
             error={errors.state}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="State/Province"
             name="state"
             placeholder="Select your state/province"
@@ -224,7 +225,7 @@ const ProfileForm = () => {
             searchable
             disabled={!values?.state}
             error={errors.city}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="City"
             name="city"
             placeholder="Select your City"
@@ -239,7 +240,7 @@ const ProfileForm = () => {
             onChange={handleChange}
             value={values.addressLine1}
             error={errors.addressLine1}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Address Line 1"
           />
           <IconField
@@ -249,7 +250,7 @@ const ProfileForm = () => {
             onBlur={validateField}
             onChange={handleChange}
             value={values.addressLine2}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Address Line 2"
           />
 
@@ -261,7 +262,7 @@ const ProfileForm = () => {
             onChange={handleChange}
             value={values.postalCode}
             error={errors.postalCode}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Postal Code"
           />
         </div>

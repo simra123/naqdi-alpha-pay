@@ -13,13 +13,13 @@ import moment from "moment";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import { capitalize } from "@/utils/dataFormatters";
-import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
 import DateField from "@/components/common/DateField";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { roundToPrecision } from "@/utils/math";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -406,7 +406,7 @@ const AmountFilter = ({
         <span className="ml-8 text-[18px]">Amount</span>
       </label>
     </div>
-    <KeyboardArrowRight />
+    <MdKeyboardArrowRight />
     {isOpen && (
       <div
         className="-left-[108%] absolute flex flex-col gap-2 bg-white shadow-md px-6 py-4 rounded-medium min-w-52"
@@ -468,7 +468,7 @@ const StatusFilter = ({
         <span className="ml-8 text-[18px]">Status</span>
       </label>
     </div>
-    <KeyboardArrowRight />
+    <MdKeyboardArrowRight />
     {isOpen && (
       <div
         className="-left-full absolute flex flex-col bg-white shadow-md p-1 rounded-medium min-w-52"
@@ -526,7 +526,7 @@ const DateFilter = ({
         <span className="ml-8 text-[18px]">Date</span>
       </label>
     </div>
-    <KeyboardArrowRight />
+    <MdKeyboardArrowRight />
     {isOpen && (
       <div
         className="-left-[113%] absolute flex flex-col gap-2 bg-white shadow-md px-6 py-4 rounded-medium min-w-52"

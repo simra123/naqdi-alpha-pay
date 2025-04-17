@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { ContactMailOutlined } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";

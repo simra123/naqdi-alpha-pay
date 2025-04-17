@@ -33,7 +33,6 @@ import LoadingApi from "@/components/common/LoadindApi";
 import CountUp from "react-countup";
 import DepositModal from "@/components/Modals/DepoistModal";
 import CustomTable from "@/components/common/CustomTable";
-import { Sync } from "@mui/icons-material";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 import Link from "next/link";
 import { removeBrackets } from "@/utils/dataFormatters";
@@ -49,6 +48,7 @@ import {
   setLastFetch,
   setMounted,
 } from "@/store/slices/portfolio.slice";
+import { MdSync } from "react-icons/md";
 
 const adminColumns: TableColumns = [
   {
@@ -259,7 +259,7 @@ const Home = () => {
                     variant="outlined"
                   />
                   <LoaderButton
-                    content={<Sync className="text-button" />}
+                    content={<MdSync className="text-button" />}
                     className="lg:hidden flex px-4"
                     loading={isPortfolioLoading}
                     onClick={fetchPortfolio}
