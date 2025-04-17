@@ -23,8 +23,6 @@ const FilterCheckField = ({
   const columnDataType = determineType(item);
   const columnFilterOperations = filterCriteria[columnDataType];
 
-
-
   const handleOperatorChange = (value: string) => {
     setGroups?.((prevGroups) =>
       prevGroups.map((g) =>
@@ -60,8 +58,6 @@ const FilterCheckField = ({
   };
 
   const handleValueChange = (index: number, newValue: any) => {
-
-
     setGroups?.((prevGroups) =>
       prevGroups.map((g) =>
         g.id === group.id
@@ -118,24 +114,26 @@ const FilterCheckField = ({
           <div className="flex gap-2 w-[90%]">
             {item?.operator &&
               (columnDataType === "date" ? (
-                <>
+                <div className="flex flex-col gap-2 w-full">
                   <DateField
                     value={item?.values?.[0] || ""}
-                    handleChange={(date) => handleValueChange(0, date)}
+                    handleChange={(date) => {
+                      handleValueChange(0, date);
+                    }}
                     name="date1"
-                    className="bg-transparent p-4 border focus:border-purple border-light-gray rounded-large focus:outline-none placeholder:text-blackGrey-placeholder"
+                    className="flex-1 bg-transparent p-4 border focus:border-purple border-light-gray rounded-large focus:outline-none w-full placeholder:text-blackGrey-placeholder"
                     date={item?.values?.[0]}
                   />
                   {item?.operator === "BETWEEN" && (
                     <DateField
                       value={item?.values?.[1] || ""}
-                      className="bg-transparent p-4 border focus:border-purple border-light-gray rounded-large focus:outline-none placeholder:text-blackGrey-placeholder"
+                      className="flex-1 bg-transparent p-4 border focus:border-purple border-light-gray rounded-large focus:outline-none placeholder:text-blackGrey-placeholder"
                       handleChange={(date) => handleValueChange(1, date)}
                       name="date2"
                       date={item?.values?.[1]}
                     />
                   )}
-                </>
+                </div>
               ) : (
                 <>
                   <IconField
