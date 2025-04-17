@@ -1,11 +1,11 @@
-// components/DateField.js
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
-import { CalenderGrayIcon } from "@/assets/Svgs";
-import ReactDOM from "react-dom"; // Import ReactDOM for portals
+import ReactDOM from "react-dom";
 import "./style.scss";
+import { MdCalendarMonth } from "react-icons/md";
+import { CalenderGrayIcon } from "@/assets/Svgs";
 
 interface Props {
   date: string;
@@ -25,11 +25,10 @@ export default function DateField({
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Ensures the DatePicker is mounted on the client side to avoid SSR issues
     setIsMounted(true);
   }, []);
 
-  if (!isMounted) return null; // Prevent rendering before mounted (SSR issue)
+  if (!isMounted) return null;
 
   return (
     <div className="relative">
@@ -38,20 +37,20 @@ export default function DateField({
         name={name}
         selected={date ? moment(date).toDate() : null}
         onChange={handleChange}
-        placeholderText="MM/DD/YYYY"
-        dateFormat="dd/MM/yyyy"
-        className={`w-full text-[14px] py-2 px-4 focus:outline-none ${className}`}
+        placeholderText="Select Date & Time"
+        showTimeSelect
+        timeFormat="hh:mm a"
+        timeIntervals={10} // You can change this to 5, 10, 30, etc.
+        timeCaption="Time"
+        dateFormat="MM/dd/yyyy hh:mm aa" // Ensure AM/PM is included
+        className={`w-full text-[14px] py-[10px] px-4 focus:outline-none ${className}`}
         calendarClassName="custom-calendar z-10000"
         popperClassName="!z-[10000]"
-        // We are using a React Portal here to render the popper outside of the table
-        popperContainer={(props) => {
-          return ReactDOM.createPortal(
-            <div {...props} />, // Rendering popper container using a portal
-            document.body // You can also render it to a specific element like a modal container
-          );
-        }}
+        popperContainer={(props) =>
+          ReactDOM.createPortal(<div {...props} />, document.body)
+        }
       />
-      <div className="absolute right-3 top-2.5 pointer-events-none">
+      <div className="top-2.5 right-3 absolute pointer-events-none">
         <CalenderGrayIcon />
       </div>
     </div>
