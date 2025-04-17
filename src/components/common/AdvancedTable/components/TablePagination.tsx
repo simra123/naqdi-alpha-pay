@@ -2,16 +2,11 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import React, { useMemo } from "react";
 import { getPaginationPages } from "../utils";
 import IconButton from "../../IconButton";
-import {
-  Add,
-  FirstPage,
-  LastPage,
-  NavigateBefore,
-  NavigateNext,
-} from "@mui/icons-material";
+
 import RenderRoleBased from "../../RenderRoleBased";
 import { Role } from "@/constants/roles";
 import LoaderButton from "../../LoaderButton";
+import { MdAdd, MdFirstPage, MdLastPage, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 
 type Props = {
   currentPage: number;
@@ -58,7 +53,7 @@ const TablePagination = ({
             onClick={() => onChangePage(1)}
             disabled={currentPage === 1 || totalPages == 0}
           >
-            <FirstPage />
+            <MdFirstPage />
           </IconButton>
           <IconButton
             className={
@@ -69,7 +64,7 @@ const TablePagination = ({
             onClick={() => onChangePage(currentPage - 1)}
             disabled={currentPage === 1 || totalPages == 0}
           >
-            <NavigateBefore />
+            <MdNavigateBefore />
           </IconButton>
           {pages.map((item) =>
             item == "..." ? (
@@ -96,7 +91,7 @@ const TablePagination = ({
             onClick={() => onChangePage(currentPage + 1)}
             disabled={currentPage === totalPages || totalPages == 0}
           >
-            <NavigateNext />
+            <MdNavigateNext />
           </IconButton>
           <IconButton
             className={
@@ -107,13 +102,13 @@ const TablePagination = ({
             onClick={() => onChangePage(totalPages)}
             disabled={currentPage === totalPages || totalPages == 0}
           >
-            <LastPage />
+            <MdLastPage />
           </IconButton>
         </div>
         {createHandler && (
           <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
             <LoaderButton
-              content={<Add className="!text-h2" />}
+              content={<MdAdd className="!text-h2" />}
               className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
               variant="contained"
               onClick={createHandler}
@@ -146,7 +141,7 @@ const TablePagination = ({
       {createHandler && (
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
           <LoaderButton
-            content={<Add className="!text-h2" />}
+            content={<MdAdd className="!text-h2" />}
             className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
             variant="contained"
             onClick={createHandler}

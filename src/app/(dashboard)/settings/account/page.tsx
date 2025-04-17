@@ -2,13 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import {
-  ContactMailOutlined,
-  ErrorOutlineOutlined,
-  LocationOnOutlined,
-  WarningOutlined,
-  WarningRounded,
-} from "@mui/icons-material";
 import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 
 import ChangePasswordModal from "@/components/Modals/ChangePasswordModal";
@@ -28,6 +21,7 @@ import { getClientFeeApi, setClientFeeApi } from "@/services/user";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import LoadingApi from "@/components/common/LoadindApi";
+import { MdOutlineContactMail, MdOutlineErrorOutline, MdOutlineLocationOn } from "react-icons/md";
 
 let initalFormValues = {
   clientFee: 0,
@@ -153,7 +147,7 @@ const Account = () => {
         </div>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-          <ContactMailOutlined className="text-purple-500" />
+          <MdOutlineContactMail className="text-purple-500" />
           <h5 className="font-semibold text-h5 text-purple-500">Contacts</h5>
         </div>
         <div className="res-2-grid py-6">
@@ -165,7 +159,7 @@ const Account = () => {
 
         <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
           <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-            <LocationOnOutlined className="text-purple-500" />
+            <MdOutlineLocationOn className="text-purple-500" />
             <h5 className="font-semibold text-h5 text-purple-500">
               Addressess
             </h5>
@@ -201,7 +195,7 @@ const Account = () => {
                   content={
                     <div className="flex items-center gap-2 font-semibold text-[14px]">
                       <span>Setup MFA</span>
-                      <ErrorOutlineOutlined className="text-[18px] text-purple-100" />
+                      <MdOutlineErrorOutline className="text-[18px] text-purple-100" />
                     </div>
                   }
                   variant="text"

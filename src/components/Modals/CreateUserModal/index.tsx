@@ -10,16 +10,12 @@ import ErrorApiText from "../../common/ErrorApiText";
 
 import useFormValidation from "@/hooks/useFormValidation";
 
-import { UserSchema } from "@/models/Register";
+import { UserSchema } from "@/models/register";
 import SwitchButton from "@/components/common/SwitchButton";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import { callApiHook } from "@/utils/apifuncs";
-import {
-  createSubAdminApi,
-  createSubuserApi,
-  updateSubAdminApi,
-  updateSubuserApi,
-} from "@/services/auth";
+import { createSubuserApi, updateSubuserApi } from "@/services/auth";
+import { createSubAdminApi, updateSubAdminApi } from "@/services/admin/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";

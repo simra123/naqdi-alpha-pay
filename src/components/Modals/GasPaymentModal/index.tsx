@@ -13,7 +13,7 @@ import { blockchain_units, unitName } from "@/constants/blockchains";
 import {
   addFeeStaticWalletAdminApi,
   addFeeVirtualWalletAdminApi,
-} from "@/services/payments";
+} from "@/services/admin/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Fiats } from "@/constants/fiat";
 import { WalletType } from "@/constants/types";
@@ -113,11 +113,11 @@ const GasPaymentModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={resetAndClose}>
-      <h2 className="text-xl font-bold mb-6">{walletType} Gas Payment</h2>
+      <h2 className="mb-6 font-bold text-xl">{walletType} Gas Payment</h2>
 
       {walletType == WalletType.Virtual && (
         <form
-          className="mt-8 flex flex-col gap-2"
+          className="flex flex-col gap-2 mt-8"
           onSubmit={(e) =>
             handleSubmit(e, createVirtualGasPayment, () =>
               console.log("Something went wrong")
@@ -147,7 +147,7 @@ const GasPaymentModal = ({
                   value={`${paymentDetails?.payment_currency_amount} ${paymentDetails?.payment_currency}`}
                   label="Payment Amount"
                 />
-                <div className="flex flex-col items-center overflow-hidden mt-4">
+                <div className="flex flex-col items-center mt-4 overflow-hidden">
                   <Image
                     src={paymentDetails?.qr_code}
                     height={250}
@@ -189,7 +189,7 @@ const GasPaymentModal = ({
                   <Details copyable value={paymentDetails?.wallet_Address} />
                 </div>
 
-                <p className="text-custom-caption-gray text-button mt-6">
+                <p className="mt-6 text-button text-custom-caption-gray">
                   This Address is generated for Depositing{" "}
                   {paymentDetails?.blockchain} on the {paymentDetails?.network}{" "}
                   network.

@@ -12,7 +12,6 @@ import LoadingApi from "@/components/common/LoadindApi";
 import { useApi } from "@/hooks/useApi";
 import { TicketsListApi } from "@/services/support";
 import { callApiHook } from "@/utils/apifuncs";
-import { Add } from "@mui/icons-material";
 import moment from "moment";
 import { Role } from "@/constants/roles";
 
@@ -98,8 +97,8 @@ const Support = () => {
 
   return (
     <>
-      <div className="items-center justify-between mb-8  hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">Support</h3>
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Support</h3>
         <LoaderButton
           content={"New Ticket"}
           className="px-16"

@@ -8,10 +8,11 @@ import { resendEmailApi } from "@/services/auth";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import useFormValidation from "@/hooks/useFormValidation";
-import { ForgotSchema } from "@/models/Forgot";
+import { ForgotSchema } from "@/models/forgot";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
-import { Mail } from "@mui/icons-material";
+import { MdEmail } from "react-icons/md";
+
 
 const page = () => {
   const router = useRouter();
@@ -98,7 +99,7 @@ const page = () => {
               onChange={handleChange}
               value={values.email}
               error={errors.email}
-              icon={Mail}
+              icon={MdEmail}
               label="Email"
               placeholder="Enter Your Email"
             />

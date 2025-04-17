@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
+import { MdArrowDropDown, MdArrowDropUp, MdInfo } from "react-icons/md";
 
 interface Props {
   label?: string | any;
@@ -98,15 +98,15 @@ const IconSelectBox = ({
 
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`} ref={dropdownRef}>
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2">
         <label className="block mb-2 font-medium">{label}</label>
         {info && (
-          <div className="relative flex items-center group">
-            <Info className="text-blue-info mb-1 text-[18px]" />
-            <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+          <div className="group relative flex items-center">
+            <MdInfo className="mb-1 text-[18px] text-blue-info" />
+            <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
               <div className="relative p-2">
                 <p className="w-full text-center">{info}</p>
-                <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
               </div>
             </div>
           </div>
@@ -114,7 +114,7 @@ const IconSelectBox = ({
       </div>
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-4 top-0 flex !h-full items-center text-gray-400" />
+          <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
         )}
 
         {/* Conditionally show an input that allows searching if searchable is true */}
@@ -155,16 +155,16 @@ const IconSelectBox = ({
           </div>
         )}
 
-        <div className="absolute h-full right-4 top-0 cursor-pointer flex items-center text-gray-400">
+        <div className="top-0 right-4 absolute flex items-center h-full text-gray-400 cursor-pointer">
           <div
             onClick={toggleOpen}
-            className="rounded-full h-2-w-2 p-1 hover:bg-light-gray"
+            className="hover:bg-light-gray p-1 rounded-full h-2-w-2"
           >
-            {open ? <ArrowDropUp /> : <ArrowDropDown />}
+            {open ? <MdArrowDropUp /> : <MdArrowDropDown />}
           </div>
         </div>
         {open && (
-          <div className="absolute w-full max-h-80 overflow-auto bg-white border p-3 border-light-gray rounded-large mt-1 shadow-lg z-10">
+          <div className="z-10 absolute bg-white shadow-lg mt-1 p-3 border border-light-gray rounded-large w-full max-h-80 overflow-auto">
             {filteredOptions.length > 0 ? (
               filteredOptions?.map((option, index) => (
                 <div
@@ -190,7 +190,7 @@ const IconSelectBox = ({
         )}
       </div>
       {error && (
-        <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+        <p className="mt-[4px] ml-4 text-red-error-dark text-subtitle">
           {error}
         </p>
       )}

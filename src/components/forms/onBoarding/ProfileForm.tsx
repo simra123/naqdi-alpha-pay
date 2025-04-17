@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import useFormValidation from "@/hooks/useFormValidation";
-import { ProfileSchema } from "@/models/Profile";
+import { ProfileSchema } from "@/models/profile";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { ProfileSetupApi } from "@/services/onBoarding";
@@ -13,12 +13,13 @@ import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
-import { LocationOn, Mail, Person } from "@mui/icons-material";
+
 
 import countriesJson from "@/constants/countries.json";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import IconField from "@/components/common/IconField";
 import LoaderButton from "@/components/common/LoaderButton";
+import { MdLocationOn, MdMail, MdPerson } from "react-icons/md";
 
 const initialValues = {
   addressLine1: "",
@@ -146,35 +147,35 @@ const ProfileForm = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-      <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
-        <h4 className="text-blackGrey-100 text-h3.5 font-semibold">Trader</h4>
+      <div className="flex flex-col gap-5 bg-white mt-8 p-12 rounded-small">
+        <h4 className="font-semibold text-blackGrey-100 text-h3.5">Trader</h4>
 
-        <div className="details flex mt-3 flex-wrap">
-          <div className="gap-3 flex items-center p-2 md:w-1/3">
-            <div className="text-purple-500 bg-light-gray-10 aspect-square w-12 rounded-full p-3">
-              <Person />
+        <div className="flex flex-wrap mt-3 details">
+          <div className="flex items-center gap-3 p-2 md:w-1/3">
+            <div className="bg-light-gray-10 p-3 rounded-full w-12 aspect-square text-purple-500">
+              <MdPerson />
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className=" text-custom-title-gray font-medium">
+              <span className="font-medium text-custom-title-gray">
                 {user?.first_name} {user?.last_name}
               </span>
-              <span className="text-[13px] text-custom-caption-gray font-medium">
+              <span className="font-medium text-[13px] text-custom-caption-gray">
                 Full Name
               </span>
             </div>
           </div>
 
-          <div className="gap-3 flex items-center p-2">
-            <div className="text-purple-500 bg-light-gray-10 aspect-square w-12 rounded-full p-3">
-              <Mail />
+          <div className="flex items-center gap-3 p-2">
+            <div className="bg-light-gray-10 p-3 rounded-full w-12 aspect-square text-purple-500">
+              <MdMail />
             </div>
 
             <div className="flex flex-col gap-1">
-              <span className="text-custom-title-gray font-medium">
+              <span className="font-medium text-custom-title-gray">
                 {user?.email}
               </span>
-              <span className="text-[13px] text-custom-caption-gray font-medium">
+              <span className="font-medium text-[13px] text-custom-caption-gray">
                 Email
               </span>
             </div>
@@ -182,20 +183,20 @@ const ProfileForm = () => {
         </div>
       </div>
 
-      <div className="bg-white p-12 flex flex-col gap-3 mt-8">
+      <div className="flex flex-col gap-3 bg-white mt-8 p-12">
         <div className="register_form__trader__heading">
-          <h4 className="text-blackGrey-100 text-h3.5 font-semibold">
+          <h4 className="font-semibold text-blackGrey-100 text-h3.5">
             Contry of Domicile Details
           </h4>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-2">
+        <div className="gap-x-8 gap-y-2 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 mt-8">
           <IconSelectBox
             options={countriesJson}
             onChange={handleChangeMiddleware}
             searchable
             error={errors.country}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Country"
             name="country"
             placeholder="Select your country"
@@ -210,7 +211,7 @@ const ProfileForm = () => {
             searchable
             disabled={!values?.country}
             error={errors.state}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="State/Province"
             name="state"
             placeholder="Select your state/province"
@@ -224,7 +225,7 @@ const ProfileForm = () => {
             searchable
             disabled={!values?.state}
             error={errors.city}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="City"
             name="city"
             placeholder="Select your City"
@@ -239,7 +240,7 @@ const ProfileForm = () => {
             onChange={handleChange}
             value={values.addressLine1}
             error={errors.addressLine1}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Address Line 1"
           />
           <IconField
@@ -249,7 +250,7 @@ const ProfileForm = () => {
             onBlur={validateField}
             onChange={handleChange}
             value={values.addressLine2}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Address Line 2"
           />
 
@@ -261,7 +262,7 @@ const ProfileForm = () => {
             onChange={handleChange}
             value={values.postalCode}
             error={errors.postalCode}
-            icon={LocationOn}
+            icon={MdLocationOn}
             label="Postal Code"
           />
         </div>

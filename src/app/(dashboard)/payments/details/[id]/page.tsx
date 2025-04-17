@@ -6,15 +6,12 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
-import {
-  getPaymentDetailsApi,
-  getPaymentDetailsByAdminApi,
-} from "@/services/payments";
+import { getPaymentDetailsByAdminApi } from "@/services/admin/payments";
+import { getPaymentDetailsApi } from "@/services/payments";
 import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import { InfoOutlined, Mail } from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
@@ -32,6 +29,7 @@ import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { TableColumns } from "@/constants/types";
 import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { MdOutlineInfo } from "react-icons/md";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -325,7 +323,7 @@ const PaymentDetails = ({ params }) => {
             {orderInfo && (
               <>
                 <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-                  <InfoOutlined className="text-purple-500" />
+                  <MdOutlineInfo className="text-purple-500" />
                   <h5 className="font-semibold text-h5 text-purple-500">
                     Order Information
                   </h5>

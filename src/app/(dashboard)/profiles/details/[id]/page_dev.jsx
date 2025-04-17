@@ -4,9 +4,8 @@ import React, { useState } from "react";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import { Mail } from "@mui/icons-material";
 import { LabelRadioButton } from "@/components/common/RadioButton";
-import Checkbox from "@/components/common/CheckBox";
+import {MdEmail} from "react-icons/md"
 
 const ProfileDetails = ({ params }) => {
   const profileId = params?.id;
@@ -33,26 +32,26 @@ const ProfileDetails = ({ params }) => {
   };
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6 shadow-sm">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+    <div className="flex flex-col bg-white shadow-sm p-6 rounded-medium">
+      <h3 className="font-semibold text-blackGrey-100 text-h3.5">
         Profile Details
       </h3>
 
       <LoadingApi loading={false}>
-        <div className="res-4-grid py-6 mt-4 border-b border-light-gray">
-          <Details Icon={Mail} label="Profile ID" value={payout?.id} />
+        <div className="res-4-grid mt-4 py-6 border-b border-light-gray">
+          <Details Icon={MdEmail} label="Profile ID" value={payout?.id} />
           <Details
-            Icon={Mail}
+            Icon={MdEmail}
             label="Profile Name"
             value={payout?.profileName}
           />
-          <Details Icon={Mail} label="Webhook URL" value={payout?.webhookURL} />
-          <Details Icon={Mail} label="Webhook URL" value={payout?.email} />
+          <Details Icon={MdEmail} label="Webhook URL" value={payout?.webhookURL} />
+          <Details Icon={MdEmail} label="Webhook URL" value={payout?.email} />
         </div>
 
-        <h4 className="text-button font-semibold my-8">Profile Settings</h4>
+        <h4 className="my-8 font-semibold text-button">Profile Settings</h4>
 
-        <div className="flex gap-x-24 gap-y-8 flex-wrap">
+        <div className="flex flex-wrap gap-x-24 gap-y-8">
           <LabelRadioButton
             label={"Send Email Notifications"}
             options={[
@@ -64,14 +63,14 @@ const ProfileDetails = ({ params }) => {
           />
 
           <div className="flex flex-wrap gap-x-12 gap-y-3">
-            <span className="text-button text-black-100">
+            <span className="text-black-100 text-button">
               Currency Configuration
             </span>
             <table>
               <thead>
                 <tr>
-                  <th className="pr-8 text-gray-600 font-medium">Currency</th>
-                  <th className="px-8  text-gray-600 font-medium">
+                  <th className="pr-8 font-medium text-gray-600">Currency</th>
+                  <th className="px-8 font-medium text-gray-600">
                     Markup Profit %
                   </th>
                 </tr>
@@ -80,7 +79,7 @@ const ProfileDetails = ({ params }) => {
                 {checkedState.map((checked, index) => (
                   <tr key={index}>
                     <td className="">
-                      <div className="flex items-center relative">
+                      <div className="relative flex items-center">
                         <label className="custom-checkbox">
                           <input
                             type="checkbox"
@@ -100,11 +99,11 @@ const ProfileDetails = ({ params }) => {
           </div>
         </div>
 
-        <div className="flex gap-4 items-center mt-20 flex-wrap">
-          <button className="border-0 py-3 text-center text-white bg-red-button rounded-medium w-56 ">
+        <div className="flex flex-wrap items-center gap-4 mt-20">
+          <button className="bg-red-button py-3 border-0 rounded-medium w-56 text-white text-center">
             Delete
           </button>
-          <button className="border-0 py-3 text-center text-white bg-green-button rounded-medium w-56 ">
+          <button className="bg-green-button py-3 border-0 rounded-medium w-56 text-white text-center">
             Edit
           </button>
         </div>

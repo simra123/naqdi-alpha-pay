@@ -11,9 +11,9 @@ import {
 } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import { getAllWalletBalancesApi } from "@/services/wallet";
-import { formatBalanceForUser } from "@/utils/dataFormatters";
+
 import { getFeesApi } from "@/services/common";
-import { createWithdrawalApi } from "@/services/withdrawal";
+
 import { setNotification } from "@/store/slices/modal.Slice";
 import { clamp } from "@/utils/math";
 import IconField from "../../common/IconField";
@@ -23,7 +23,8 @@ import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
 import { createPayoutRequestApi } from "@/services/payout";
 import { fiatOptions } from "@/constants/fiat";
-import { Info } from "@mui/icons-material";
+import { MdInfo } from "react-icons/md";
+
 
 interface Props {
   isOpen: boolean;
@@ -50,7 +51,9 @@ const CreatePayoutModal = ({
   const [withdrawalFee, setWithdrawalFee] = useState(0);
   const [isCreatePayoutLoading, isCreatePayoutError, callCreatePayoutApi] =
     useApi();
-  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({initailLoading:true});
+  const [isBalanceLoading, isBalanceError, callBalanceApi] = useApi({
+    initailLoading: true,
+  });
   const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [sourceOptions, setSourceOptions] = useState({
@@ -81,8 +84,6 @@ const CreatePayoutModal = ({
     const { value, name } = event.target;
 
     if (name === "blockchain") {
-
-
       setSourceOptions((prev) => ({
         ...prev,
         filteredNets: networks[value],
@@ -107,10 +108,12 @@ const CreatePayoutModal = ({
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {
           return {
-            label: `${item?.unit}${item?.standard ? `(${item?.standard})` : ""
-              }`,
-            value: `${item?.unit}${item?.standard ? `(${item?.standard})` : ""
-              }`,
+            label: `${item?.unit}${
+              item?.standard ? `(${item?.standard})` : ""
+            }`,
+            value: `${item?.unit}${
+              item?.standard ? `(${item?.standard})` : ""
+            }`,
             amount: item?.amount,
           };
         });
@@ -198,7 +201,6 @@ const CreatePayoutModal = ({
   };
 
   const filteredNetworks = (network, blockchain) => {
-
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
 
@@ -208,11 +210,10 @@ const CreatePayoutModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
-
-      <h2 className="text-h3.5 font-semibold mb-4">Add Payout</h2>
+      <h2 className="mb-4 font-semibold text-h3.5">Add Payout</h2>
 
       <LoadingApi loading={isBalanceLoading}>
-        <form className="mt-8 flex flex-col gap-2">
+        <form className="flex flex-col gap-2 mt-8">
           <IconSelectBox
             wrapperClassName="!mb-2"
             label="Source Currency & Network"
@@ -225,7 +226,7 @@ const CreatePayoutModal = ({
 
           {sourceOptions.blockchain && (
             <div className="mb-1">
-              <p className="text-black-100 font-medium">
+              <p className="font-medium text-black-100">
                 {getCurrentAssetAmount(sourceOptions.blockchain)}
               </p>
               <p className="font-medium text-[13px] text-custom-title-gray">
@@ -254,7 +255,7 @@ const CreatePayoutModal = ({
           <LoadingApi loading={isFeeLoading}>
             {destinationAmount && (
               <div className="mb-1">
-                <p className="text-black-100 font-medium">
+                <p className="font-medium text-black-100">
                   {destinationAmount}
                 </p>
                 <p className="font-medium text-[13px] text-custom-title-gray">
@@ -288,18 +289,18 @@ const CreatePayoutModal = ({
           />
 
           <div className="mt-2">
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
               <label className="block mb-2 font-medium">Enter Code</label>
 
-              <div className="relative flex items-center group">
-                <Info className="text-blue-info mb-1 text-[18px]" />
+              <div className="group relative flex items-center">
+                <MdInfo className="mb-1 text-[18px] text-blue-info" />
 
-                <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                   <div className="relative p-2">
                     <p className="w-full text-center">
                       Use your Google Autheticator code here
                     </p>
-                    <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                    <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
                   </div>
                 </div>
               </div>
@@ -315,7 +316,7 @@ const CreatePayoutModal = ({
               renderInput={(props) => (
                 <input
                   {...props}
-                  className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                  className="bg-blackGrey-filled-input p-2 md:p-4 py-4 border border-light-gray rounded-large outline-none !w-14 max-w-full"
                 />
               )}
               onChange={(value) => setOtp(value)}
@@ -345,7 +346,7 @@ const CreatePayoutModal = ({
 
             {/* <button
               type="button"
-              className="text-black-100 px-4 py-2 mt-2"
+              className="mt-2 px-4 py-2 text-black-100"
               onClick={toggleHandler}
             >
               Cancel
@@ -354,7 +355,6 @@ const CreatePayoutModal = ({
         </form>
       </LoadingApi>
       <ErrorApiText error={isBalanceError || isCreatePayoutError} />
-
     </Modal>
   );
 };

@@ -3,9 +3,10 @@
 import React from "react";
 
 import "./approvedstepsbox.scss";
-import { Check, Security } from "@mui/icons-material";
+
 import { useSelector } from "react-redux";
 import { STEPS } from "@/constants/onboarding";
+import { MdCheck, MdSecurity } from "react-icons/md";
 
 const ApprovedStepsBox = () => {
   const { current_step, disabled_steps } = useSelector(
@@ -23,10 +24,10 @@ const ApprovedStepsBox = () => {
   };
 
   return (
-    <div className="approved_steps_box mt-6">
-      <div className="approved_box_content flex flex-col gap-8">
-        <div className="secure_icon text-center">
-          <Security />
+    <div className="mt-6 approved_steps_box">
+      <div className="flex flex-col gap-8 approved_box_content">
+        <div className="text-center secure_icon">
+          <MdSecurity />
         </div>
         <div className="heading">
           <h4>UPGRADE TO TRADER</h4>
@@ -40,7 +41,7 @@ const ApprovedStepsBox = () => {
             )}`}
           >
             <span>Profile Complete</span>
-            <Check />
+            <MdCheck />
           </div>
           <div
             className={`step ${checkStepState(
@@ -49,13 +50,13 @@ const ApprovedStepsBox = () => {
             )}`}
           >
             <span>Phone Validation</span>
-            <Check />
+            <MdCheck />
           </div>
           <div
             className={`step ${checkStepState(STEPS.MFASETUP, STEPS.FEESETUP)}`}
           >
             <span>MFA Setup</span>
-            <Check />
+            <MdCheck />
           </div>
           <div
             className={`step ${checkStepState(
@@ -64,7 +65,7 @@ const ApprovedStepsBox = () => {
             )}`}
           >
             <span>Fee Setup</span>
-            <Check />
+            <MdCheck />
           </div>
           <div
             className={`step ${checkStepState(
@@ -73,7 +74,7 @@ const ApprovedStepsBox = () => {
             )}`}
           >
             <span>Indentity Check</span>
-            <Check />
+            <MdCheck />
           </div>
           <div
             className={`step ${checkStepState(
@@ -82,11 +83,11 @@ const ApprovedStepsBox = () => {
             )}`}
           >
             <span>KYC Approval</span>
-            <Check />
+            <MdCheck />
           </div>
           <div className={`step ${checkStepState(STEPS.FEESCHEDULE, false)}`}>
             <span>Fee Schedule</span>
-            <Check />
+            <MdCheck />
           </div>
         </div>
       </div>

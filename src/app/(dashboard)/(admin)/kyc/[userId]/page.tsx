@@ -10,7 +10,6 @@ import {
   updateUserFeeApi,
 } from "@/services/admin/users";
 import { callApiHook } from "@/utils/apifuncs";
-import { Check, Close, OpenInNew } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import LoaderButton from "@/components/common/LoaderButton";
@@ -20,9 +19,10 @@ import KYCReasonModal from "@/components/Modals/KYCReasonModal";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import { FeeCard } from "@/components/forms/onBoarding/FeeSetup";
-import { AdminFeeSetupApi } from "@/services/onBoarding";
+import { adminFeeSetupApi } from "@/services/admin/onBoarding";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
+import { MdOpenInNew } from "react-icons/md";
 
 const statuses = {
   APPROVED: "approved",
@@ -116,7 +116,7 @@ const KYCUserID = ({ params }) => {
 
     await callApiHook({
       apiCall: callFeeSetupApi(
-        AdminFeeSetupApi({
+        adminFeeSetupApi({
           client_fees: selectedRole?.client,
           merchant_fees: selectedRole?.merchant,
           userId: +userId,
@@ -256,7 +256,7 @@ const KYCUserID = ({ params }) => {
                   className="w-60 max-w-full"
                 />
                 <div className="hidden top-0 right-0 bottom-0 left-0 absolute place-items-center group-hover:grid grid-cols-1 backdrop-blur-sm opener">
-                  <OpenInNew color="inherit" accentHeight={100} />
+                  <MdOpenInNew color="inherit" accentHeight={100} />
                 </div>
               </div>
               <div
@@ -269,7 +269,7 @@ const KYCUserID = ({ params }) => {
                   className="w-60 max-w-full"
                 />
                 <div className="hidden top-0 right-0 bottom-0 left-0 absolute place-items-center group-hover:grid grid-cols-1 backdrop-blur-sm opener">
-                  <OpenInNew color="inherit" accentHeight={100} />
+                  <MdOpenInNew color="inherit" accentHeight={100} />
                 </div>
               </div>
             </div>

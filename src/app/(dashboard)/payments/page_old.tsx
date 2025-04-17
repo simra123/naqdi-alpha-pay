@@ -4,10 +4,8 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAllPaymentsApi,
-  getAllPaymentsByAdminApi,
-} from "@/services/payments";
+import { getAllPaymentsByAdminApi } from "@/services/admin/payments";
+import { getAllPaymentsApi } from "@/services/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -15,13 +13,13 @@ import moment from "moment";
 import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import { capitalize } from "@/utils/dataFormatters";
-import { KeyboardArrowRight } from "@mui/icons-material";
 import Chip from "@/components/common/Chip";
 import DateField from "@/components/common/DateField";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { roundToPrecision } from "@/utils/math";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -151,7 +149,7 @@ const Payments = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         Payments
       </h3>
 
@@ -394,9 +392,9 @@ const AmountFilter = ({
 }) => (
   <div
     onClick={(e) => toggleFiltersDisplay(e, "amount")}
-    className="flex gap-1 items-center justify-between custom-checkbox p-3 hover:bg-light-blue rounded-b-small"
+    className="flex justify-between items-center gap-1 hover:bg-light-blue p-3 rounded-b-small custom-checkbox"
   >
-    <div className="flex items-center relative">
+    <div className="relative flex items-center">
       <label className="custom-checkbox">
         <input
           type="checkbox"
@@ -408,16 +406,16 @@ const AmountFilter = ({
         <span className="ml-8 text-[18px]">Amount</span>
       </label>
     </div>
-    <KeyboardArrowRight />
+    <MdKeyboardArrowRight />
     {isOpen && (
       <div
-        className="bg-white shadow-md absolute px-6 py-4 rounded-medium  -left-[108%] flex gap-2 flex-col min-w-52"
+        className="-left-[108%] absolute flex flex-col gap-2 bg-white shadow-md px-6 py-4 rounded-medium min-w-52"
         onClick={(event) => event.stopPropagation()}
       >
         <input
           type="number"
           name="amount"
-          className="outline-none border border-light-gray rounded-medium focus:border-purple-100 p-2"
+          className="p-2 border focus:border-purple-100 border-light-gray rounded-medium outline-none"
           value={values.amount}
           onChange={handleFilterValueChange}
           placeholder="Enter Amount"
@@ -456,9 +454,9 @@ const StatusFilter = ({
 }: FitlerProps) => (
   <div
     onClick={(e) => toggleFiltersDisplay(e, "status")}
-    className="flex gap-1 items-center justify-between custom-checkbox p-3 hover:bg-light-blue border-b border-slate-200"
+    className="flex justify-between items-center gap-1 hover:bg-light-blue p-3 border-slate-200 border-b custom-checkbox"
   >
-    <div className="flex items-center relative">
+    <div className="relative flex items-center">
       <label className="custom-checkbox">
         <input
           type="checkbox"
@@ -470,10 +468,10 @@ const StatusFilter = ({
         <span className="ml-8 text-[18px]">Status</span>
       </label>
     </div>
-    <KeyboardArrowRight />
+    <MdKeyboardArrowRight />
     {isOpen && (
       <div
-        className="bg-white shadow-md absolute p-1 rounded-medium -left-full flex flex-col min-w-52"
+        className="-left-full absolute flex flex-col bg-white shadow-md p-1 rounded-medium min-w-52"
         onClick={(event) => event.stopPropagation()}
       >
         {statusList?.map((option, index) => (
@@ -514,9 +512,9 @@ const DateFilter = ({
 }) => (
   <div
     onClick={(e) => toggleFiltersDisplay(e, "date")}
-    className="flex gap-1 relative items-center justify-between custom-checkbox p-3 hover:bg-light-blue rounded-t-small border-b border-slate-200"
+    className="relative flex justify-between items-center gap-1 hover:bg-light-blue p-3 border-slate-200 border-b rounded-t-small custom-checkbox"
   >
-    <div className="flex items-center relative">
+    <div className="relative flex items-center">
       <label className="custom-checkbox">
         <input
           type="checkbox"
@@ -528,10 +526,10 @@ const DateFilter = ({
         <span className="ml-8 text-[18px]">Date</span>
       </label>
     </div>
-    <KeyboardArrowRight />
+    <MdKeyboardArrowRight />
     {isOpen && (
       <div
-        className="bg-white shadow-md absolute px-6 py-4 rounded-medium  -left-[113%] flex gap-2 flex-col min-w-52"
+        className="-left-[113%] absolute flex flex-col gap-2 bg-white shadow-md px-6 py-4 rounded-medium min-w-52"
         onClick={(event) => event.stopPropagation()}
       >
         {/* Replace the input fields with the DateField component */}

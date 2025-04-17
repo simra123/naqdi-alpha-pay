@@ -1,18 +1,9 @@
 import React, { useCallback, useState } from "react";
 import Link from "next/link";
-import {
-  AccountBalance,
-  Assignment,
-  Key,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  PersonRounded,
-  Wallet,
-} from "@mui/icons-material";
+
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { LuNewspaper } from "react-icons/lu";
 import {
   DashboardIcon,
   DoubleLeftIcon,
@@ -43,6 +34,7 @@ import { STEPS } from "@/constants/onboarding";
 import { FaUsers } from "react-icons/fa";
 import { BorderedIconButton } from "../IconButton";
 import RenderRoleBased from "../RenderRoleBased";
+import { MdAccountBalance, MdKey, MdPerson2 } from "react-icons/md";
 
 interface NavItem {
   name: string;
@@ -139,20 +131,20 @@ const nav_items: NavItem[] = [
     sub_nav: [
       {
         name: "Account",
-        icon: AccountBalance,
+        icon: MdAccountBalance,
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
       {
         name: "Users",
-        icon: PersonRounded,
+        icon: MdPerson2,
         path: "/settings/users",
         roles: [Role.USER, Role.ADMIN],
         module: ModulesEnum.user,
       },
       {
         name: "Integrations",
-        icon: Key,
+        icon: MdKey,
         path: "/settings/integrations",
         roles: [Role.USER],
         module: ModulesEnum.integration,
