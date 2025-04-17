@@ -3,8 +3,6 @@
 import { Lato } from "next/font/google";
 import localFont from "next/font/local";
 import { Provider } from "react-redux";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import store from "@/store";
 import Notification from "@/components/common/Notification";
 import "./globals.scss";
@@ -78,9 +76,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className={`${lato.variable} ${nunitoSans.variable}`}>
         <Provider store={store}>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            {children}
-          </LocalizationProvider>
+          {children}
 
           <Notification />
         </Provider>

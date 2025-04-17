@@ -7,7 +7,8 @@ import Link from "next/link";
 import Cookie from "js-cookie";
 import OTPInput from "react-otp-input";
 
-import { Info, Lock, Mail } from "@mui/icons-material";
+import { MdInfo, MdLock, MdEmail } from "react-icons/md";
+
 
 import ErrorApiText from "@/components/common/ErrorApiText";
 import IconField from "@/components/common/IconField";
@@ -137,7 +138,7 @@ const Login = () => {
               onBlur={validateField}
               name="email"
               placeholder="Enter your email or username"
-              icon={Mail}
+              icon={MdEmail}
             />
             <IconField
               label="Password"
@@ -195,7 +196,7 @@ const Login = () => {
                 <label className="block mb-2 font-medium">Enter Code</label>
 
                 <div className="group relative flex items-center">
-                  <Info className="mb-1 text-[18px] text-blue-info" />
+                  <MdInfo className="mb-1 text-[18px] text-blue-info" />
 
                   <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                     <div className="relative p-2">
