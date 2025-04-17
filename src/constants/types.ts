@@ -42,7 +42,7 @@ export const ModuleRoutes = {
   [ModulesEnum.transaction]: "/transactions",
   [ModulesEnum.withdrawal]: "/withdrawals",
   [ModulesEnum.feeLedger]: "/fee-ledger",
-  [ModulesEnum.newsletter]: "/newsletter",
+  [ModulesEnum.newsletter]: "/news-signup",
   [ModulesEnum.integration]: "/settings/integrations",
   [ModulesEnum.user]: "/settings/users",
 };
