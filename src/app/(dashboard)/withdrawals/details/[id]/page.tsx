@@ -34,10 +34,8 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
-import { getPermission } from "@/utils/cookies";
-import { Tooltip } from "react-tooltip";
+import { hasMinAccess } from "@/utils/cookies";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
-import { ExternalWithdrawal } from "@/models/externalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";
 
@@ -283,7 +281,10 @@ const WithdrawalDetails = ({ params }) => {
             <Details
               label="ID"
               value={withdrawalDetails?.user?.id}
-              link={`/merchants/details/${withdrawalDetails?.user?.id}`}
+              link={
+                hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+                `/merchants/details/${withdrawalDetails?.user?.id}`
+              }
               target="_self"
             />
             <Details
@@ -434,8 +435,7 @@ const WithdrawalDetails = ({ params }) => {
         <div className="mt-8"></div>
 
         {withdrawalDetails?.status == "pending" &&
-          getPermission(ModulesEnum.withdrawal)?.access_level ==
-            AccessLevelEnum.full && (
+          hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.full) && (
             <>
               {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
               <div className="flex flex-col bg-white shadow-sm p-10 rounded-medium">
@@ -543,6 +543,7 @@ const WithdrawalDetails = ({ params }) => {
               </h3>
             }
             rowClickHandler={(row: any) =>
+              hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
               router.push(`/transactions/details/${row?.id}?type=Withdrawal`)
             }
             columnClassName="max-w-[200px]"
