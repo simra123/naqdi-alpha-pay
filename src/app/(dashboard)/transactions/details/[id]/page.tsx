@@ -33,6 +33,8 @@ import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { resendWebhookAPI } from "@/services/Integration";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
+import { hasMinAccess } from "@/utils/cookies";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 enum TransactionType {
   Deposit = "Self Deposit",
@@ -219,10 +221,13 @@ const TransactionDetails = ({ params }) => {
                 transactionDetails?.client?.id ||
                 transactionDetails?.withdrawal?.user?.id
               }
-              link={`/merchants/details/${
-                transactionDetails?.client?.id ||
-                transactionDetails?.withdrawal?.user?.id
-              }`}
+              link={
+                hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+                `/merchants/details/${
+                  transactionDetails?.client?.id ||
+                  transactionDetails?.withdrawal?.user?.id
+                }`
+              }
               target="_self"
             />
             <Details

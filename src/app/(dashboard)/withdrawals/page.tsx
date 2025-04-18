@@ -32,6 +32,7 @@ import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import { hasMinAccess } from "@/utils/cookies";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "withdrawal_uuid", headerName: "ID", sortable: true },
@@ -68,7 +69,10 @@ const withdrawalsList_table_columns: TableColumns = [
     headerName: "Merchant ID",
     target: "_self",
     link: (row: any) => {
-      return `/merchants/details/${row?.user?.id}`;
+      return (
+        hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+        `/merchants/details/${row?.user?.id}`
+      );
     },
   },
   {
@@ -91,7 +95,11 @@ const withdrawalsList_table_columns: TableColumns = [
     field: "user.user_type",
     headerName: "Merchant Type",
   },
-  { field: "total_requested_amount", headerName: "Total Requested Amount", sortable: true },
+  {
+    field: "total_requested_amount",
+    headerName: "Total Requested Amount",
+    sortable: true,
+  },
   { field: "requested_amount", headerName: "Requested Amount", sortable: true },
   { field: "alphaspay_fee", headerName: "Fee", sortable: true },
   { field: "transaction_type", headerName: "Currency Type", sortable: true },

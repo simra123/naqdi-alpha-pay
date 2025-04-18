@@ -25,8 +25,18 @@ import CustomTable from "@/components/common/CustomTable";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import LoaderButton from "@/components/common/LoaderButton";
 import DepositModal from "@/components/Modals/DepoistModal";
+import {  hasMinAccess } from "@/utils/cookies";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
+
+interface PaymentAPi {
+  pageValue?: number;
+  limitValue?: number;
+  sort?: any;
+  filters?: any;
+}
+
+
 const paymentsList_table_columns: TableColumns = [
   {
     field: "payment_uuid",
@@ -65,7 +75,9 @@ const paymentsList_table_columns: TableColumns = [
     headerName: "Merchant ID",
     target: "_self",
     link: (row: any) => {
-      return `/merchants/details/${row?.client?.id}`;
+      if (hasMinAccess(ModulesEnum.merchant,AccessLevelEnum.read)) {
+        return `/merchants/details/${row?.client?.id}`;
+      }
     },
   },
   {
@@ -162,12 +174,6 @@ const paymentsList_table_columns: TableColumns = [
   },
 ];
 
-interface PaymentAPi {
-  pageValue?: number;
-  limitValue?: number;
-  sort?: any;
-  filters?: any;
-}
 
 const Payments = () => {
   const router = useRouter();
@@ -275,6 +281,7 @@ const Payments = () => {
       },
     });
   };
+
 
   const ExportCSVHandler = async () => {
     await callApiHook({

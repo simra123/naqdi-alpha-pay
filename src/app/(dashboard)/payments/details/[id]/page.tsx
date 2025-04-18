@@ -29,70 +29,12 @@ import { capitalize, mergeWebhookResponses } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
 import { nileExplorerBaseURL } from "@/constants/block-explorers";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
-import { TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { getPermission, hasMinAccess } from "@/utils/cookies";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
-
-const transactionsList_table_columns: TableColumns = [
-  { field: "payment_transaction_uuid", headerName: "ID", sortable: true },
-  { field: "dateReceived", headerName: "Date Received", sortable: true },
-  {
-    field: "senderAddress",
-    headerName: "Sender Address",
-    sortable: true,
-    copyable: true,
-    link(row: { blockchain: string; senderAddress: string }) {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
-        type: "address",
-        address: row?.senderAddress,
-      });
-    },
-  },
-  {
-    field: "receiveAddress",
-    headerName: "Receive Address",
-    sortable: true,
-    copyable: true,
-    link(row: { blockchain: string; receiveAddress: string }) {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
-        type: "address",
-        address: row?.receiveAddress,
-      });
-    },
-  },
-  {
-    field: "transactionHash",
-    headerName: "Transaction Hash",
-    sortable: true,
-    copyable: true,
-    link(row: { blockchain: string; transactionHash: string }) {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
-        type: "hash",
-        hash: row?.transactionHash,
-      });
-    },
-  },
-  { field: "recievedAmount", headerName: "Recieved Amount", sortable: true },
-  { field: "netAmount", headerName: "Net Amount", sortable: true },
-
-  { field: "blockchain", headerName: "Blockchain", sortable: true },
-  {
-    field: "status",
-    headerName: "Status",
-    sortable: true,
-    dataValidator: (value) => {
-      return <Chip status={value} />;
-    },
-  },
-];
 
 const PaymentDetails = ({ params }) => {
   const paymentId = params?.id;
@@ -111,6 +53,8 @@ const PaymentDetails = ({ params }) => {
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
   });
+  const isMerchantHasReadAccess =
+    getPermission(ModulesEnum.merchant)?.access_level == AccessLevelEnum.read;
 
   const getPayment = async () => {
     // if (user?.role == Role.USER) {
@@ -187,6 +131,65 @@ const PaymentDetails = ({ params }) => {
     // }
   };
 
+  const transactionsList_table_columns: TableColumns = [
+    { field: "payment_transaction_uuid", headerName: "ID", sortable: true },
+    { field: "dateReceived", headerName: "Date Received", sortable: true },
+    {
+      field: "senderAddress",
+      headerName: "Sender Address",
+      sortable: true,
+      copyable: true,
+      link(row: { blockchain: string; senderAddress: string }) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: row?.blockchain,
+          type: "address",
+          address: row?.senderAddress,
+        });
+      },
+    },
+    {
+      field: "receiveAddress",
+      headerName: "Receive Address",
+      sortable: true,
+      copyable: true,
+      link(row: { blockchain: string; receiveAddress: string }) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: row?.blockchain,
+          type: "address",
+          address: row?.receiveAddress,
+        });
+      },
+    },
+    {
+      field: "transactionHash",
+      headerName: "Transaction Hash",
+      sortable: true,
+      copyable: true,
+      link(row: { blockchain: string; transactionHash: string }) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: row?.blockchain,
+          type: "hash",
+          hash: row?.transactionHash,
+        });
+      },
+    },
+    { field: "recievedAmount", headerName: "Recieved Amount", sortable: true },
+    { field: "netAmount", headerName: "Net Amount", sortable: true },
+
+    { field: "blockchain", headerName: "Blockchain", sortable: true },
+    {
+      field: "status",
+      headerName: "Status",
+      sortable: true,
+      dataValidator: (value) => {
+        return <Chip status={value} />;
+      },
+    },
+  ];
+
   useEffect(() => {
     getPayment();
   }, []);
@@ -235,7 +238,10 @@ const PaymentDetails = ({ params }) => {
                 <Details
                   label="ID"
                   value={payment?.client?.id}
-                  link={`/merchants/details/${payment?.client?.id}`}
+                  link={
+                    isMerchantHasReadAccess &&
+                    `/merchants/details/${payment?.client?.id}`
+                  }
                   target="_self"
                 />
                 <Details
@@ -358,6 +364,7 @@ const PaymentDetails = ({ params }) => {
               </h3>
             }
             rowClickHandler={(row: any) =>
+              hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
               router.push(`/transactions/details/${row?.id}?type=Payment`)
             }
             columnClassName="max-w-[200px]"
