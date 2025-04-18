@@ -35,9 +35,7 @@ import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
 import { getPermission } from "@/utils/cookies";
-import { Tooltip } from "react-tooltip";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
-import { ExternalWithdrawal } from "@/models/externalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";
 
