@@ -36,10 +36,9 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
-import { getPermission } from "@/utils/cookies";
+import { getPermission, hasMinAccess } from "@/utils/cookies";
 import { Tooltip } from "react-tooltip";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
-import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";
 
@@ -152,7 +151,9 @@ const WithdrawalDetails = ({ params }) => {
     };
 
     await callApiHook({
-      apiCall: callApproveWithdrawalApi(withdrawalApproveAdminApi(internalData)),
+      apiCall: callApproveWithdrawalApi(
+        withdrawalApproveAdminApi(internalData)
+      ),
       successCallBack: (response: any) => {
         dispatch(
           setNotification({
@@ -275,42 +276,52 @@ const WithdrawalDetails = ({ params }) => {
         </div>
 
         <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-              <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-                <MerchantDetailIcon />
-                <h5 className="font-semibold text-h5 text-purple-500">
-                  Merchant
-                </h5>
-              </div>
-              <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
-                <Details
-                  label="ID"
-                  value={withdrawalDetails?.user?.id}
-                  link={`/merchants/details/${withdrawalDetails?.user?.id}`}
-                  target="_self"
-                />
-                <Details
-                  label="First Name"
-                  value={withdrawalDetails?.user?.first_name}
-                />
-                <Details label="Last Name" value={withdrawalDetails?.user?.last_name} />
-                <Details label="Username" value={withdrawalDetails?.user?.username} />
-                <Details label="Email" value={withdrawalDetails?.user?.email} />
-                <Details label="Role" value={withdrawalDetails?.user?.role} />
-                <Details label="User Type" value={withdrawalDetails?.user?.user_type} />
-                <Details
-                  label="Created Date"
-                  value={moment(withdrawalDetails?.user?.created_at).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-                <Details
-                  label="Updated Date"
-                  value={moment(withdrawalDetails?.user?.updated_at).format(
-                    "DD-MM-YYYY"
-                  )}
-                />
-              </div>
-            </RenderRoleBased>
+          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+            <MerchantDetailIcon />
+            <h5 className="font-semibold text-h5 text-purple-500">Merchant</h5>
+          </div>
+          <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
+            <Details
+              label="ID"
+              value={withdrawalDetails?.user?.id}
+              link={
+                hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+                `/merchants/details/${withdrawalDetails?.user?.id}`
+              }
+              target="_self"
+            />
+            <Details
+              label="First Name"
+              value={withdrawalDetails?.user?.first_name}
+            />
+            <Details
+              label="Last Name"
+              value={withdrawalDetails?.user?.last_name}
+            />
+            <Details
+              label="Username"
+              value={withdrawalDetails?.user?.username}
+            />
+            <Details label="Email" value={withdrawalDetails?.user?.email} />
+            <Details label="Role" value={withdrawalDetails?.user?.role} />
+            <Details
+              label="User Type"
+              value={withdrawalDetails?.user?.user_type}
+            />
+            <Details
+              label="Created Date"
+              value={moment(withdrawalDetails?.user?.created_at).format(
+                "DD-MM-YYYY"
+              )}
+            />
+            <Details
+              label="Updated Date"
+              value={moment(withdrawalDetails?.user?.updated_at).format(
+                "DD-MM-YYYY"
+              )}
+            />
+          </div>
+        </RenderRoleBased>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />
@@ -427,8 +438,7 @@ const WithdrawalDetails = ({ params }) => {
         <div className="mt-8"></div>
 
         {withdrawalDetails?.status == "pending" &&
-          getPermission(ModulesEnum.withdrawal)?.access_level ==
-            AccessLevelEnum.full && (
+          hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.full) && (
             <>
               {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
               <div className="flex flex-col bg-white shadow-sm p-10 rounded-medium">
@@ -536,6 +546,7 @@ const WithdrawalDetails = ({ params }) => {
               </h3>
             }
             rowClickHandler={(row: any) =>
+              hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
               router.push(`/transactions/details/${row?.id}?type=Withdrawal`)
             }
             columnClassName="max-w-[200px]"
