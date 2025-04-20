@@ -49,6 +49,7 @@ import {
   setMounted,
 } from "@/store/slices/portfolio.slice";
 import { MdSync } from "react-icons/md";
+import MerchantSummary from "@/components/common/MerchantSummary";
 
 const adminColumns: TableColumns = [
   {
@@ -66,6 +67,56 @@ const adminColumns: TableColumns = [
 const columns: TableColumns = [
   { field: "user_balance_uuid", headerName: "ID" },
   ...adminColumns,
+];
+
+const merchantsColumns: TableColumns = [
+  { field: "username", headerName: "Username" },
+  { field: "first_name", headerName: "First Name" },
+  { field: "last_name", headerName: "Last Name" },
+  { field: "email", headerName: "Email" },
+  { field: "user_type", headerName: "User Type" },
+];
+const merchantsRows = [
+  {
+    id: 1,
+    username: "ahmed",
+    first_name: "Muhammad",
+    last_name: "Ahmed",
+    email: "aw708596@gmail.com",
+    user_type: "Individual",
+  },
+  {
+    id: 2,
+    username: "ahmed",
+    first_name: "Muhammad",
+    last_name: "Ahmed",
+    email: "aw708596@gmail.com",
+    user_type: "Individual",
+  },
+  {
+    id: 3,
+    username: "ahmed",
+    first_name: "Muhammad",
+    last_name: "Ahmed",
+    email: "aw708596@gmail.com",
+    user_type: "Individual",
+  },
+  {
+    id: 4,
+    username: "ahmed",
+    first_name: "Muhammad",
+    last_name: "Ahmed",
+    email: "aw708596@gmail.com",
+    user_type: "Individual",
+  },
+  {
+    id: 5,
+    username: "ahmed",
+    first_name: "Muhammad",
+    last_name: "Ahmed",
+    email: "aw708596@gmail.com",
+    user_type: "Individual",
+  },
 ];
 
 const Home = () => {
@@ -87,7 +138,7 @@ const Home = () => {
     isLastTransactionsError,
     callLastTransactionsApi,
   ] = useApi({
-    initailLoading: true,
+    initailLoading: user?.role == Role.ADMIN ? false : true,
   });
   const [
     isTotalPortfolioLoading,
@@ -238,39 +289,146 @@ const Home = () => {
       />
 
       {user?.role == Role.ADMIN && (
-        <>
-          <CustomTable
-            columns={adminColumns}
-            rows={portfolioData}
-            loading={isPortfolioLoading}
-            initialPageSize={10}
-            actions={
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="font-semibold text-black-100 sm:text-p122 text-base">
+        <div className="flex flex-col gap-6">
+          <LoadingApi loading={isPortfolioLoading}>
+            <div className="flex gap-6">
+              <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
+                {/* <header className="top-0 z-10 sticky"> */}
+                <h3 className="mb-2 font-nunito text-p120 2xl:text-h4">
                   Crypto Wallets
-                </h4>
+                </h3>
+                {/* </header> */}
 
-                <div className="flex items-center gap-2">
-                  <LoaderButton
-                    content={"Reload"}
-                    className="hidden lg:flex px-4"
-                    loading={isPortfolioLoading}
-                    onClick={fetchPortfolio}
-                    variant="outlined"
-                  />
-                  <LoaderButton
-                    content={<MdSync className="text-button" />}
-                    className="lg:hidden flex px-4"
-                    loading={isPortfolioLoading}
-                    onClick={fetchPortfolio}
-                    variant="text"
-                  />
+                <div className="flex flex-col flex-1 gap-[14px] pr-4 overflow-y-auto portfolio-body">
+                  {portfolioData?.length > 0 ? (
+                    portfolioData?.map((asset) => {
+                      let unit = asset?.unit;
+                      let tokenName = `${unit} (${asset?.standard})`;
+                      let coinName = unitName[unit?.toLowerCase()] || "Unknown";
+                      let currencyTicker =
+                        asset?.type == "coin" ? unit : tokenName;
+                      let currencyHistoryData = asset?.historyData?.map(
+                        (item) => item?.rate_open
+                      );
+                      let depoistBlockchain = asset?.standard
+                        ? unit
+                        : coinName?.toLowerCase();
+                      return (
+                        <PortfolioCard
+                          isAdmin={user?.role == Role.ADMIN}
+                          Balance={asset?.totalAmount}
+                          IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
+                          ChartLineData={currencyHistoryData}
+                          CurrencyName={coinName}
+                          isWalletHasFullAccess={isWalletHasFullAccess}
+                          CurrencyTicker={currencyTicker}
+                          onClick={() =>
+                            handleAssetSelection(unit?.toUpperCase())
+                          }
+                          onRecieve={() =>
+                            handleDepoistAndCreateAddress(
+                              depoistBlockchain,
+                              asset?.standard
+                            )
+                          }
+                          onSend={() =>
+                            handleWithdrawAndSetBlockchain(currencyTicker)
+                          }
+                          onTransfer={() => {}}
+                        />
+                      );
+                    })
+                  ) : !isPorfolioError ? (
+                    "No Assets Found. Deposit Assets to see them here."
+                  ) : (
+                    <></>
+                  )}
+                  <ErrorApiText error={isPorfolioError} />
                 </div>
               </div>
-            }
-          />
-          <ErrorApiText error={isPorfolioError} />
-        </>
+
+              <div className="hidden xs:block flex-1">
+                <PortfolioChart
+                  interval={interval}
+                  setInterval={setInterval}
+                  unit={chartUnit}
+                />
+              </div>
+            </div>
+          </LoadingApi>
+
+          <div className="flex gap-6">
+            <div className="w-[70%]">
+              <CustomTable
+                columns={merchantsColumns}
+                rows={merchantsRows}
+                ExpandComponent={({ row }) => <div>{row?.id}</div>}
+                initialPageSize={10}
+                rowClickHandler={(row: any) => {
+                  console.log(row);
+                }}
+                actions={
+                  <div className="flex justify-between items-end mb-6">
+                    <h3 className="font-nunito text-p120 2xl:text-h4">
+                      Merchants Wallet Summary
+                    </h3>
+                    <Link className="text-caption" href={"/merchants"}>
+                      View All
+                    </Link>
+                  </div>
+                }
+                tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
+                pagination
+                columnClassName="max-w-[250px]"
+                // loading={isUsersListLoading}
+              />
+            </div>
+            <div className="flex-1">
+              <div className="xxs:px-5 xxs:py-[30px] xxs:border border-purple-10 rounded-[28px]">
+                <div className="flex justify-between items-end mb-2">
+                  <h3 className="font-nunito text-p120 2xl:text-h4">
+                    Last Transactions
+                  </h3>
+                  <Link className="text-caption" href={"/transactions"}>
+                    View All
+                  </Link>
+                </div>
+                <div className="flex flex-col gap-3 2xl:gap-4">
+                  <LoadingApi loading={isLastTransactionsLoading}>
+                    {lastTransactions?.length > 0 ? (
+                      lastTransactions?.map((transaction) => (
+                        <TransactionCard
+                          currencyName={
+                            unitName[transaction?.unit?.toLowerCase()]
+                          }
+                          date={transaction?.createdAt}
+                          direction={
+                            transaction?.withdrawal?.id
+                              ? "outgoing"
+                              : "incoming"
+                          }
+                          onClick={() => {}}
+                          amount={transaction?.amount}
+                        />
+                      ))
+                    ) : !isLastTransactionsError ? (
+                      "No Transactions Found"
+                    ) : (
+                      <></>
+                    )}
+                  </LoadingApi>
+                  <ErrorApiText error={isLastTransactionsError} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-6">
+            <div className="w-[70%]">
+              <MerchantSummary />
+            </div>
+          </div>
+        </div>
       )}
       {user?.role == Role.USER && (
         <>

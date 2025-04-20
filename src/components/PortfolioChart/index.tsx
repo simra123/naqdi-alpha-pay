@@ -12,6 +12,8 @@ import LoadingApi from "../common/LoadindApi";
 import { unitName } from "@/constants/blockchains";
 import Image from "next/image";
 import IconSelectBox from "../common/IconSelectBox";
+import { Role } from "@/constants/roles";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 // Custom plugin for the vertical dashed line
 const crosshairLinePlugin = {
@@ -38,10 +40,10 @@ const crosshairLinePlugin = {
 ChartJS.register(...registerables, crosshairLinePlugin);
 
 const makeChartData = (data: {
-  sent: [];
-  received: [];
-  balances: [];
-  labels: [];
+  sent: any[];
+  received: any[];
+  balances: any[];
+  labels: any[];
 }) => {
   let greenColor = "#CFECE1";
   let redColor = "#F7CAD8";
@@ -96,20 +98,21 @@ const PortfolioChart = ({
   setInterval: any;
   unit: string;
 }) => {
+  const user = useLocalStorage("user");
   // State for selected interval
-
-  const [chartData, setChartData] = useState<{}>({});
+  const [chartData, setChartData] = useState<{
+    sent?: any[];
+    received?: any[];
+    balances?: any[];
+    labels?: any[];
+  }>({});
   const [
     isPortfolioActivityLoading,
     isPortfolioActivityError,
     callPortfolioActivityApi,
   ] = useApi({
-    initailLoading: true,
+    initailLoading: user?.role == Role.ADMIN ? false : true,
   });
-
-  useEffect(() => {
-    getChartData();
-  }, [interval, unit]);
 
   const getChartData = useCallback(async () => {
     await callApiHook({
@@ -121,6 +124,12 @@ const PortfolioChart = ({
       },
     });
   }, [unit, interval]);
+
+  useEffect(() => {
+    if (user?.role === Role.USER) {
+      getChartData();
+    }
+  }, [interval, unit]);
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -255,7 +264,7 @@ const PortfolioChart = ({
   };
 
   return (
-    <div className="p-6 rounded-[28px] border border-purple-10">
+    <div className="p-6 border border-purple-10 rounded-[28px]">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <Image
@@ -269,13 +278,16 @@ const PortfolioChart = ({
             alt="Currency"
             height={50}
             width={50}
-            className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] rounded-full"
+            className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
           />
-          <h2 className="text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold leading-4">
-            {unitName[unit?.toLowerCase()] || "Portfolio"} History
+          <h2 className="font-semibold text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 leading-4">
+            {user?.role == Role.USER
+              ? unitName[unit?.toLowerCase()] || "Portfolio"
+              : "Crypto Wallets"}{" "}
+            History
           </h2>
         </div>
-        <div className="hidden gap-2 md:gap-4 lg:flex ">
+        <div className="hidden lg:flex gap-2 md:gap-4">
           {["daily", "weekly", "monthly", "lifetime"].map((int) => (
             <button
               key={int}
@@ -290,7 +302,7 @@ const PortfolioChart = ({
             </button>
           ))}
         </div>
-        <div className="block lg:hidden w-32">
+        <div className="lg:hidden block w-32">
           <IconSelectBox
             options={[
               { label: "Daily", value: "daily" },
@@ -304,7 +316,27 @@ const PortfolioChart = ({
         </div>
       </div>
       <LoadingApi loading={isPortfolioActivityLoading}>
-        <Chart data={chartData as any} type="line" options={options} />
+        {user?.role == Role.USER ? (
+          <Chart data={chartData as any} type="line" options={options} />
+        ) : (
+          <Chart
+            data={
+              makeChartData({
+                sent: [200, 150, 100, 250, 300, 100, 50],
+                received: [400, 300, 500, 100, 200, 300, 400],
+                balances: [1000, 1150, 1300, 1150, 1050, 1250, 1600],
+                labels: Array.from({ length: 7 }).map((_, i) =>
+                  moment()
+                    .subtract(6 - i, "days")
+                    .format("MMM D")
+                ),
+              }) as any
+            }
+            type="line"
+            className="max-h-[300px] 2.5xl:max-h-[370px]"
+            options={options}
+          />
+        )}
       </LoadingApi>
       <ErrorApiText error={isPortfolioActivityError} />
     </div>
