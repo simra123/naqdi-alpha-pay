@@ -6,8 +6,12 @@ import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
-import { getAllWalletBalancesApi } from "@/services/wallet";
 import {
+  getAllAdminWalletBalancesApi,
+  getAllWalletBalancesApi,
+} from "@/services/wallet";
+import {
+  createAdminWithdrawalApi,
   createWithdrawalApi,
   getWithdrawableCurrenciesListApi,
 } from "@/services/withdrawal";
@@ -27,6 +31,10 @@ import {
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
 import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
+import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
 
 interface Props {
   isOpen: boolean;
@@ -55,7 +63,7 @@ const CreateWithdrawalModal = ({
   blockchain,
 }: Props) => {
   const dispatch = useDispatch();
-
+  const user = useLocalStorage("user");
   const [balance, setBalance] = useState([]);
   const [fee, setFee] = useState<null | FeeState>(null);
   const [currentSchema, setCurrentSchema] = useState(emptySchema);
@@ -89,7 +97,6 @@ const CreateWithdrawalModal = ({
   } = useFormValidation(initalFormValues, currentSchema);
 
   useEffect(() => {
-    
     if (currentStep == 1) {
       const maxAmount = getCurrentAssetAmount(values?.blockchain);
       setCurrentSchema(getWithdrawalSchema(+maxAmount || 0));
@@ -99,9 +106,13 @@ const CreateWithdrawalModal = ({
     }
   }, [values?.blockchain, currentStep]);
 
-  const _getUserBalance = async () => {
+  const getBalance = async () => {
     await callApiHook({
-      apiCall: callBalanceApi(getWithdrawableCurrenciesListApi()),
+      apiCall: callBalanceApi(
+        user?.role == Role.USER
+          ? getWithdrawableCurrenciesListApi()
+          : getAllAdminWalletBalancesApi()
+      ),
       successCallBack: (response: any) => {
         const withdraw_currency_options = response.map((item) => {
           return {
@@ -113,7 +124,7 @@ const CreateWithdrawalModal = ({
               : item?.unit,
             standard: item?.standard,
             unit: item?.unit,
-            amount: item?.totalAmount,
+            amount: item?.totalAmount || item?.amount,
           };
         });
         setBalance(withdraw_currency_options);
@@ -127,7 +138,7 @@ const CreateWithdrawalModal = ({
   const handleStepChange = (step: number) => () => {
     setCurrentStep(step);
     if (step == 2) {
-      getAlpapayFee({ amount: values?.amount });
+      user?.role == Role.USER && getAlpapayFee({ amount: values?.amount });
     }
   };
 
@@ -143,14 +154,16 @@ const CreateWithdrawalModal = ({
       standard: currentAsset?.standard || null,
     };
 
-
     if (withdraw_request_payload.standard == null) {
       delete withdraw_request_payload.standard;
     }
 
-
     await callApiHook({
-      apiCall: callWithdrawalApi(createWithdrawalApi(withdraw_request_payload)),
+      apiCall: callWithdrawalApi(
+        user?.role == Role.USER
+          ? createWithdrawalApi(withdraw_request_payload)
+          : createAdminWithdrawalApi(withdraw_request_payload)
+      ),
       successCallBack: () => {
         dispatch(
           setNotification({
@@ -168,7 +181,6 @@ const CreateWithdrawalModal = ({
       apiCall: callFeeApi(getFeesApi(amount)),
       successCallBack: (response) => {
         setFee(response);
-
       },
     });
   };
@@ -178,24 +190,22 @@ const CreateWithdrawalModal = ({
       setErrors({});
       setBalanceError(null);
       setWithdrawalError(null);
-      _getUserBalance();
+      getBalance();
       setCurrentStep(1);
       setValues(initalFormValues); // Reset form values
     }
   }, [isOpen]);
 
-
-
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
-      <h2 className="text-h3.5 font-semibold mb-4">
+      <h2 className="mb-4 font-semibold text-h3.5">
         {currentStep == 1 ? "Create" : "Confirm"} Withdrawal
       </h2>
 
       <LoadingApi loading={isBalanceLoading}>
         {currentStep == 1 && (
           <form
-            className="mt-8 flex flex-col gap-2"
+            className="flex flex-col gap-2 mt-8"
             onSubmit={(e) =>
               handleSubmit(e, handleStepChange(2), () =>
                 console.log("Something went wrong")
@@ -215,14 +225,16 @@ const CreateWithdrawalModal = ({
 
             {values.blockchain && (
               <div className="mb-1">
-                <p className="text-black-100 font-medium">
+                <p className="font-medium text-black-100">
                   {
                     balance.find((item) => item.value === values.blockchain)
                       ?.amount
                   }
                 </p>
                 <p className="font-semibold text-[13px] text-custom-title-gray">
-                  Available Balance
+                  {user?.role == Role.USER
+                    ? "Available Balance"
+                    : "Available Fee"}
                 </p>
               </div>
             )}
@@ -272,19 +284,19 @@ const CreateWithdrawalModal = ({
       {currentStep == 2 && (
         <LoadingApi loading={isFeeLoading}>
           <form
-            className="mt-8 flex flex-col gap-2"
+            className="flex flex-col gap-2 mt-8"
             onSubmit={(e) =>
               handleSubmit(e, handleWithdrawal, () =>
                 console.log("Something went wrong")
               )
             }
           >
-            <div className="grid  grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
               <div>
                 <p className="font-bold text-caption text-custom-title-gray">
                   Blockchain
                 </p>
-                <p className="text-black-100 font-medium">
+                <p className="font-medium text-black-100">
                   {formattedBlockchainName(values?.blockchain)
                     ?.standardBlockchain
                     ? capitalize(
@@ -298,7 +310,7 @@ const CreateWithdrawalModal = ({
                 <p className="font-bold text-caption text-custom-title-gray">
                   Currency
                 </p>
-                <p className="text-black-100 font-medium">
+                <p className="font-medium text-black-100">
                   {formattedBlockchainName(values?.blockchain)?.ticker}
                 </p>
               </div>
@@ -306,33 +318,35 @@ const CreateWithdrawalModal = ({
                 <p className="font-bold text-caption text-custom-title-gray">
                   Requested Amount
                 </p>
-                <p className="text-black-100 font-medium">
+                <p className="font-medium text-black-100">
                   {roundToPrecision(+values?.amount, 10)}
                 </p>
               </div>
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Alphapay Fee
-                </p>
-                <p className="text-black-100 font-medium">
-                  {roundToPrecision(+fee?.alphaspayFees, 10)}
-                </p>
-              </div>
+              <RenderRoleBased user={user} allowedRoles={[Role.USER]}>
+                <div>
+                  <p className="font-bold text-caption text-custom-title-gray">
+                    Alphapay Fee
+                  </p>
+                  <p className="font-medium text-black-100">
+                    {roundToPrecision(+fee?.alphaspayFees, 10)}
+                  </p>
+                </div>
 
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Net Amount
-                </p>
-                <p className="text-black-100 font-medium">
-                  {roundToPrecision(+fee?.netAmount, 10)}
-                </p>
-              </div>
+                <div>
+                  <p className="font-bold text-caption text-custom-title-gray">
+                    Net Amount
+                  </p>
+                  <p className="font-medium text-black-100">
+                    {roundToPrecision(+fee?.netAmount, 10)}
+                  </p>
+                </div>
+              </RenderRoleBased>
             </div>
             <div className="mt-3">
               <p className="font-bold text-caption text-custom-title-gray">
                 Recipient Address
               </p>
-              <p className="text-black-100 font-medium break-all">
+              <p className="font-medium text-black-100 break-all">
                 {values?.recipient_address}
               </p>
             </div>
@@ -340,16 +354,16 @@ const CreateWithdrawalModal = ({
               <p className="font-bold text-caption text-custom-title-gray">
                 Your Notes
               </p>
-              <p className="text-black-100 font-medium break-all">
+              <p className="font-medium text-black-100 break-all">
                 {values?.notes}
               </p>
             </div>
 
             <div className="mt-2">
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <label className="block mb-2 font-medium">Enter Code</label>
-                <div className="relative flex items-center group">
-                  <Info className="text-blue-info mb-1 text-[18px]" />
+                <div className="group relative flex items-center">
+                  <Info className="mb-1 text-[18px] text-blue-info" />
                 </div>
               </div>
               <OtpInput
@@ -363,7 +377,7 @@ const CreateWithdrawalModal = ({
                 renderInput={(props) => (
                   <input
                     {...props}
-                    className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                    className="bg-blackGrey-filled-input p-2 md:p-4 py-4 border border-light-gray rounded-large outline-none !w-14 max-w-full"
                   />
                 )}
                 onChange={(otp) => setValues((pre) => ({ ...pre, token: otp }))}
@@ -371,7 +385,7 @@ const CreateWithdrawalModal = ({
               />
             </div>
             {errors?.token && (
-              <p className="text-red-error-dark text-[12px] ml-3">
+              <p className="ml-3 text-[12px] text-red-error-dark">
                 {errors?.token}
               </p>
             )}
@@ -387,7 +401,7 @@ const CreateWithdrawalModal = ({
                 <LoaderButton
                   content="Back"
                   variant="text"
-                  className="w-full mt-2"
+                  className="mt-2 w-full"
                   onClick={handleStepChange(1)}
                 />
               )}

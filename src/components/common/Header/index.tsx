@@ -24,6 +24,8 @@ import { resetSteps } from "@/store/slices/onboarding.slice";
 import { setUser } from "@/store/slices/userSlice";
 import { useDispatch } from "react-redux";
 import Link from "next/link";
+import RenderRoleBased from "../RenderRoleBased";
+import { Role } from "@/constants/roles";
 
 const Header = ({ navHandler }) => {
   const user = useLocalStorage("user");
@@ -61,37 +63,37 @@ const Header = ({ navHandler }) => {
   };
 
   return (
-    <div className="md:bg-white md:shadow-md py-3 md:py-2 px-6 md:px-7 rounded-small mb-[2px]">
-      <div className="flex items-center gap-6 justify-between">
-        <div className="items-center gap-3 flex md:hidden">
+    <div className="md:bg-white md:shadow-md mb-[2px] px-6 md:px-7 py-3 md:py-2 rounded-small">
+      <div className="flex justify-between items-center gap-6">
+        <div className="md:hidden flex items-center gap-3">
           <button
             onClick={navHandler}
-            className="bg-none bg-transparent outline-0 border-0 rounded-full transition-all w-12 h-12 flex items-center justify-center hover:bg-white hover:shadow-md p-1"
+            className="flex justify-center items-center bg-transparent hover:bg-white bg-none hover:shadow-md p-1 border-0 rounded-full outline-0 w-12 h-12 transition-all"
           >
             <MenuIcon />
           </button>
-          {/* <h5 className="text-h5 text-black-100 font-semibold">
+          {/* <h5 className="font-semibold text-black-100 text-h5">
             {getHeaderName()}
           </h5> */}
         </div>
 
-        <div className="gap-6 items-center">
+        <div className="items-center gap-6">
           {/* <div className="icon">
             <Notifications />
           </div> */}
-          <div className="avatar hidden md:flex cursor-pointer gap-2 items-center rounded-full p-2 pr-3">
+          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full cursor-pointer avatar">
             <div>
               <img
                 src="/avatar.png"
                 alt="Avatar"
-                className="rounded-full h-14 border border-white"
+                className="border border-white rounded-full h-14"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-p120 font-medium leading-5">
+              <span className="font-medium text-p120 leading-5">
                 {user?.first_name} {user?.last_name}
               </span>
-              <span className="text-button text-custom-caption-gray font-medium">
+              <span className="font-medium text-button text-custom-caption-gray">
                 {capitalize(user?.user_type)}
               </span>
             </div>
@@ -99,7 +101,7 @@ const Header = ({ navHandler }) => {
         </div>
         <div className="search">
           <IconField
-            onChange={(event) => console.log(event.target.value)}
+            onChange={(event) => {}}
             value={""}
             placeholder="Find something here..."
             icon={SearchbarIcon}
@@ -109,12 +111,14 @@ const Header = ({ navHandler }) => {
           />
         </div>
 
-        <div className="items-center gap-6 hidden md:flex">
-          <Link href="/support/create">
-            <BorderedIconButton>
-              <SupportIcon />
-            </BorderedIconButton>
-          </Link>
+        <div className="hidden md:flex items-center gap-6">
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <Link href="/support/create">
+              <BorderedIconButton>
+                <SupportIcon />
+              </BorderedIconButton>
+            </Link>
+          </RenderRoleBased>
           <BorderedIconButton>
             <ThemeChangeIcon />
           </BorderedIconButton>
@@ -125,11 +129,11 @@ const Header = ({ navHandler }) => {
             <LogoutDoorIcon />
           </BorderedIconButton>
         </div>
-        <div className="flex md:hidden">
+        <div className="md:hidden flex">
           <img
             src="/avatar.png"
             alt="Avatar"
-            className="rounded-full h-14 border border-white"
+            className="border border-white rounded-full h-14"
           />
         </div>
       </div>

@@ -57,12 +57,12 @@ const UpdatePassword = ({ params }) => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
-      <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-20">
+    <>
+      <h2 className="mt-[30px] mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
         Reset Your Password
       </h2>
 
-      <p className="text-p120 text-blackGrey-100 leading-7 mt-2">
+      <p className="text-blackGrey-100 text-p120 text-center">
         Enter the new password you want to use with your {email} Alphaspay
         account.
       </p>
@@ -70,7 +70,7 @@ const UpdatePassword = ({ params }) => {
       <form
         id="login-form"
         onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
-        className="mt-12"
+        className="mt-[30px]"
       >
         <IconField
           type="password"
@@ -106,7 +106,7 @@ const UpdatePassword = ({ params }) => {
         </div>
       </form>
 
-      <p className="text-blackGrey-100 mt-6">
+      <p className="mt-6 text-blackGrey-100">
         NOTE: It is extremely important to ensure that email registered for your
         account is valid and up-to-date. If you lose your password or otherwise
         lose access to your account, the only way to regain access is by
@@ -120,7 +120,7 @@ const UpdatePassword = ({ params }) => {
           info@alphaspay.com
         </a>
       </p>
-    </div>
+    </>
   );
 };
 

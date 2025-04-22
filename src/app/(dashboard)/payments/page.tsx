@@ -23,8 +23,20 @@ import { roundToPrecision } from "@/utils/math";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import CustomTable from "@/components/common/CustomTable";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import LoaderButton from "@/components/common/LoaderButton";
+import DepositModal from "@/components/Modals/DepoistModal";
+import {  hasMinAccess } from "@/utils/cookies";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
+
+interface PaymentAPi {
+  pageValue?: number;
+  limitValue?: number;
+  sort?: any;
+  filters?: any;
+}
+
+
 const paymentsList_table_columns: TableColumns = [
   {
     field: "payment_uuid",
@@ -39,7 +51,7 @@ const paymentsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -53,44 +65,104 @@ const paymentsList_table_columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
   },
   {
-    field: "blockchain",
-    headerName: "Blockchain",
+    field: "client.id",
+    headerName: "Merchant ID",
+    target: "_self",
+    link: (row: any) => {
+      if (hasMinAccess(ModulesEnum.merchant,AccessLevelEnum.read)) {
+        return `/merchants/details/${row?.client?.id}`;
+      }
+    },
+  },
+  {
+    field: "client.first_name",
+    headerName: "Merchant First Name",
+  },
+  {
+    field: "client.last_name",
+    headerName: "Merchant Last Name",
+  },
+  {
+    field: "client.email",
+    headerName: "Merchant Email",
+  },
+  {
+    field: "client.username",
+    headerName: "Merchant Username",
+  },
+  {
+    field: "client.user_type",
+    headerName: "Merchant Type",
   },
 
   {
-    field: "recieverAddress",
+    field: "wallet.blockchain",
+    headerName: "Blockchain",
+  },
+  {
+    field: "payment_currency",
+    headerName: "Currency",
+  },
+
+  {
+    field: "wallet.address",
     headerName: "Reciever Wallet Address",
     copyable: true,
-    link: (row: { blockchain: string; recieverAddress: string }) => {
+    link: (row: any) => {
       return showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
+        blockchain: row?.wallet?.blockchain,
         type: "address",
-        address: row?.recieverAddress,
+        address: row?.wallet?.address,
       });
     },
   },
   {
     field: "requestedPaymentAmount",
     headerName: "Requested Payment Amount",
+    dataValidator(value, row: any) {
+      return `${row?.requested_amount} ${row?.requested_currency}`;
+    },
   },
   {
     field: "amountToPay",
     headerName: "Amount to Pay",
+    dataValidator(value, row: any) {
+      return `${roundToPrecision(row?.payment_currency_amount, 6)} ${
+        row?.payment_currency
+      }`;
+    },
   },
   {
     field: "amountPaid",
     headerName: "Amount Paid",
+    dataValidator(value, row: any) {
+      return (
+        roundToPrecision(
+          row?.paymentTransaction?.reduce((acc, transaction) => {
+            return acc + parseFloat(transaction.transaction_amount);
+          }, 0),
+          6
+        ) +
+        " " +
+        row?.payment_currency
+      );
+    },
   },
   {
     field: "paid",
     headerName: "Paid",
+    dataValidator(value, row: any) {
+      return unpaidStatuses.some((status) => status == row?.status)
+        ? "No"
+        : "Yes";
+    },
   },
   {
     field: "status",
@@ -102,6 +174,7 @@ const paymentsList_table_columns: TableColumns = [
   },
 ];
 
+
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
@@ -112,6 +185,7 @@ const Payments = () => {
   const [listConfig, setListConfig] = useState(null);
 
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+  const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
@@ -122,14 +196,7 @@ const Payments = () => {
     limitValue,
     sort,
     filters,
-  }: {
-    pageValue?: number;
-    limitValue?: number;
-    sort?: any;
-    filters?: any;
-  }) => {
-    // if (user?.role == Role.USER) {
-
+  }: PaymentAPi) => {
     let paymentCall = () => {
       return user?.role == Role.USER
         ? getClientPaymentsListApi(
@@ -152,7 +219,6 @@ const Payments = () => {
                   link: (row: {
                     wallet: { blockchain: string; address: string };
                   }) => {
-                    console.log({ row, message: "Inside mod cols loops" });
                     return showExplorerDetailsByChain({
                       env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
                       blockchain: row?.wallet?.blockchain,
@@ -173,19 +239,15 @@ const Payments = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-                    console.log({ currentTimeZone });
-
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
-
-                    console.log({ date });
 
                     let [day, time] = date.split(".");
                     return (
                       <div className="flex flex-col gap-1">
                         <span className="text-caption">{day}</span>
-                        <span className="text-subtitle text-custom-title-gray">
+                        <span className="text-custom-title-gray text-subtitle">
                           {time}
                         </span>
                       </div>
@@ -207,8 +269,6 @@ const Payments = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-          console.log({ modifiedColumns });
-
           setColumns(modifiedColumns);
 
           setListConfig(response.listConfig);
@@ -216,40 +276,12 @@ const Payments = () => {
           setPaymentsList(response);
         }
         if (user?.role == Role.ADMIN) {
-          const tableData = response.map((item) => {
-            return {
-              id: item?.id,
-              payment_uuid: item?.payment_uuid,
-              blockchain: item?.wallet?.blockchain,
-              createdAt: item?.created_at,
-              updatedAt: item?.updated_at,
-              senderAddress: item?.paymentTransaction?.sender_address,
-              recieverAddress: item?.wallet?.address,
-              requestedPaymentAmount: `${item?.requested_amount} ${item?.requested_currency}`,
-              amountToPay: `${roundToPrecision(
-                item?.payment_currency_amount,
-                6
-              )} ${item?.payment_currency}`,
-              amountPaid:
-                roundToPrecision(
-                  item?.paymentTransaction?.reduce((acc, transaction) => {
-                    return acc + parseFloat(transaction.transaction_amount);
-                  }, 0),
-                  6
-                ) +
-                " " +
-                item?.payment_currency,
-              paid: unpaidStatuses.some((status) => status == item?.status)
-                ? "No"
-                : "Yes",
-              status: item?.status,
-            };
-          });
-          setPaymentsList(tableData);
+          setPaymentsList(response);
         }
       },
     });
   };
+
 
   const ExportCSVHandler = async () => {
     await callApiHook({
@@ -259,18 +291,43 @@ const Payments = () => {
       },
     });
   };
+  const toggelPaymentModal = () => {
+    setIsPaymentOpen(!isPaymentOpen);
+  };
+
+  const onPaymentCreation = () => {
+    getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
+  };
 
   useEffect(() => {
     getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
-  console.log({ colsState: columns });
-
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
-        Payments
-      </h3>
+      <DepositModal
+        isOpen={isPaymentOpen}
+        setIsOpen={setIsPaymentOpen}
+        onSuccessCallback={onPaymentCreation}
+        type="payment"
+      />
+      <div className="flex justify-between items-center">
+        <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
+          Payments
+        </h3>
+        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+          {PermissionAccess(
+            LoaderButton,
+            ModulesEnum.payment,
+            AccessLevelEnum.full
+          )({
+            content: "New Payment",
+            className: "px-16",
+            variant: "contained",
+            onClick: toggelPaymentModal,
+          })}
+        </RenderRoleBased>
+      </div>
 
       {/* Table Actions Below */}
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
@@ -303,7 +360,6 @@ const Payments = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             onRowClick={(row) => {
-              console.log({ row });
               router.push(`payments/details/${row?.id}`);
             }}
             selectable={false}

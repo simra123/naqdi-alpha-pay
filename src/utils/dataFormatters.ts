@@ -208,3 +208,27 @@ export const formatPayouts = (response: []) => {
   }));
   return tableData;
 };
+
+// Webhooks Data Formatters
+export const mergeWebhookResponses = (data) => {
+  return data.flatMap((tx) => tx.webhookRequests) // Merge all webhook arrays
+  .sort((a, b) => moment(b.updatedAt).valueOf() - moment(a.updatedAt).valueOf()); // Sort by date (newest first)
+
+};
+
+export const filterWebhooks = (data: {
+  webhooks: any[];
+  filterType: "all" | "success" | "failed";
+}) => {
+  if (data.filterType === "success") {
+    return data.webhooks.filter((webhook) => webhook.statusCode < 400);
+  } else if (data.filterType === "failed") {
+    return data.webhooks.filter((webhook) => webhook.statusCode >= 400);
+  }
+  return data.webhooks;
+};
+
+export const getWebhookPayloadById = (webhooks, id) => {
+  const webhook = webhooks.find((w) => w.id === id);
+  return webhook ? webhook : null;
+};

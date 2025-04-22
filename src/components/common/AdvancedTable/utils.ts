@@ -149,22 +149,48 @@ export const formatListViewsFromGroups = (data, views) => {
   ); // Flatten meta arrays from all groups
 };
 
+// export const updateMetaItemInGroup = (
+//   groups: any[],
+//   metaNames: string[],
+//   newProperties: {
+//     operator: any;
+//     values: any[];
+//     listColumnMeta: { name: string };
+//     isSelected?: boolean;
+//   }
+// ) => {
+//   return groups.map((group) => {
+//     return {
+//       ...group,
+//       meta: group.meta.map((metaItem) => {
+//         if (metaNames.includes(metaItem.name)) {
+//           return { ...metaItem, ...newProperties };
+//         }
+//         return metaItem;
+//       }),
+//     };
+//   });
+// };
+
 export const updateMetaItemInGroup = (
   groups: any[],
-  metaNames: string[],
-  newProperties: {
-    operator: any;
-    values: any[];
-    listColumnMeta: { name: string };
-    isSelected?: boolean;
-  }
+  updates: Record<
+    string,
+    {
+      operator: any;
+      values: any[];
+      listColumnMeta: { name: string };
+      isSelected?: boolean;
+    }
+  >
 ) => {
   return groups.map((group) => {
     return {
       ...group,
       meta: group.meta.map((metaItem) => {
-        if (metaNames.includes(metaItem.name)) {
-          return { ...metaItem, ...newProperties };
+        const update = updates[metaItem?.name];
+        if (update) {
+          return { ...metaItem, ...update };
         }
         return metaItem;
       }),
@@ -183,7 +209,7 @@ export const getFilterState = (columnName: string, filterColsArray: any[]) => {
   const filterState = filterColsArray.find(
     (item) => item?.listColumnMeta?.name == columnName
   );
-  console.log({ filterState });
+
   return filterState;
 };
 
@@ -247,13 +273,6 @@ export const getPaginationPages = (
 
   const showLeftEllipsis = leftSiblingIndex > 2;
   const showRightEllipsis = rightSiblingIndex < totalPages - 1;
-
-  console.log({
-    leftSiblingIndex,
-    rightSiblingIndex,
-    showLeftEllipsis,
-    showRightEllipsis,
-  });
 
   if (showLeftEllipsis) {
     pages.push("..."); // Left ellipsis

@@ -140,14 +140,14 @@ const Integrations = () => {
         refreshHandler={callListApi}
         toggleHandler={toggleCreateModal}
       />
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 md:block hidden">
+      <h3 className="hidden md:block font-semibold text-blackGrey-100 text-h3.5">
         Integrations
       </h3>
 
-      <div className="rounded-medium mt-8">
-        <div className="flex justify-between lg:items-center sm:items-start gap-y-6 lg:flex-row flex-col overflow-hidden text-ellipsis">
+      <div className="mt-8 rounded-medium">
+        <div className="flex lg:flex-row flex-col justify-between sm:items-start lg:items-center gap-y-6 overflow-hidden text-ellipsis">
           <div className="flex flex-col gap-3 text-black-100">
-            <h4 className="text-button sm:text-p122 font-semibold">
+            <h4 className="font-semibold text-button sm:text-p122">
               Webhook
             </h4>
 
@@ -155,20 +155,20 @@ const Integrations = () => {
             <LoadingApi loading={iswebhookDetailsLoading}>
               <div className="flex items-center gap-3">
 
-                <h4 className="text-button sm:text-button font-semibold w-16">
+                <h4 className="w-16 font-semibold text-button sm:text-button">
                   URL
                 </h4>
-                <span className="font-medium max-w-[100%] overflow-hidden text-ellipsis whitespace-nowrap">
+                <span className="max-w-[100%] overflow-hidden font-medium text-ellipsis whitespace-nowrap">
                   {webhookURL?.webhook_url}
                 </span>
               </div>
               <div className="flex items-center gap-3">
 
                 {webhookURL?.secret && (<>
-                  <h4 className="text-button sm:text-button font-semibold w-16">
+                  <h4 className="w-16 font-semibold text-button sm:text-button">
                     Secret
                   </h4>
-                  <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1 text-ellipsis" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => console.log('hello')} disabled value={webhookURL?.secret} />
+                  <IconField type="password" inputClassName="!border-0 !p-0 font-medium flex-1 text-ellipsis" inputContainerClassName="flex gap-4" iconClassName="!static !block !ml-4" wrapperClassName="!m-0 !flex-1" onChange={() => {}} disabled value={webhookURL?.secret} />
 
                 </>)}
 
@@ -190,13 +190,13 @@ const Integrations = () => {
         </div>
       </div>
 
-      <div className="rounded-medium mt-8">
+      <div className="mt-8 rounded-medium">
         <CustomTable
           tableWrapper={null}
           loading={isKeyListLoading}
           actions={
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-button sm:text-p122 font-semibold text-black-100">
+              <h2 className="font-semibold text-black-100 text-button sm:text-p122">
                 API Keys
               </h2>
 

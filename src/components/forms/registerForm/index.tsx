@@ -110,7 +110,6 @@ const IndividualForm = ({ activeForm }) => {
   };
   const onSubmitError = () => {
     window.scrollTo(0, 500);
-    console.log("Form Not submitted successfully!");
   };
 
   useEffect(() => {
@@ -119,7 +118,7 @@ const IndividualForm = ({ activeForm }) => {
   }, [activeForm]);
 
   return (
-    <div className="register_form mt-10">
+    <div className="mt-10 register_form">
       <form
         onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}
         className="flex flex-col gap-3"
@@ -247,28 +246,28 @@ const IndividualForm = ({ activeForm }) => {
             You and Alphaspay. Please read these legal documents carefully. To
             confirm your understanding and acceptance of the{" "}
             <Link
-              className="text-purple-500 underline font-medium"
+              className="font-medium text-purple-500 underline"
               href={"/privacy-policy"}
             >
               Privacy Policy
             </Link>
             ,
             <Link
-              className="text-purple-500 underline font-medium"
+              className="font-medium text-purple-500 underline"
               href={"/terms&conditions"}
             >
               Terms and Conditions
             </Link>
             ,{" "}
             <Link
-              className="text-purple-500 underline font-medium"
+              className="font-medium text-purple-500 underline"
               href={"/user-agreement"}
             >
               User Agreement
             </Link>{" "}
             and{" "}
             <Link
-              className="text-purple-500 underline font-medium"
+              className="font-medium text-purple-500 underline"
               href={"/custody-agreement"}
             >
               Custody Agreement
@@ -277,7 +276,7 @@ const IndividualForm = ({ activeForm }) => {
           </p>
         </div>
 
-        <div className="footer mt-10">
+        <div className="mt-10 footer">
           <ErrorApiText error={isRegisterError} />
 
           <LoaderButton
@@ -287,9 +286,9 @@ const IndividualForm = ({ activeForm }) => {
             type="submit"
           />
         </div>
-        <p className="mt-6 text-center text-button">
+        <p className="mt-6 text-button text-center">
           Got an account? Proceed to{" "}
-          <Link href="/login" className="text-purple-500 font-medium">
+          <Link href="/login" className="font-medium text-purple-500">
             login
           </Link>{" "}
         </p>

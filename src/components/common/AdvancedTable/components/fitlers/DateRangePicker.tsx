@@ -13,7 +13,7 @@ const DateRangeField = ({ dateRange, setDateRange }) => {
 
   const handleSelect = (ranges: any) => {
     setDateRange([ranges.selection]);
-    console.log({ ranges });
+
   };
 
   // Close the calendar when clicked outside
@@ -44,7 +44,7 @@ const DateRangeField = ({ dateRange, setDateRange }) => {
         <span className="mr-3">
           <CalenderGrayIcon />
         </span>
-        <div className=" flex items-center gap-2 overflow-hidden text-ellipsis">
+        <div className="flex items-center gap-2 overflow-hidden text-ellipsis">
           <span>
             {" "}
             {dateRange[0].startDate
@@ -62,7 +62,7 @@ const DateRangeField = ({ dateRange, setDateRange }) => {
       {showCalendar && (
         <div
           ref={calendarRef}
-          className="absolute z-10 mt-2 mb-2 right-0 shadow-lg"
+          className="right-0 z-10 absolute shadow-lg mt-2 mb-2"
         >
           <DateRangePicker
             onChange={handleSelect}

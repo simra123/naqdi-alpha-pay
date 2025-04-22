@@ -5,6 +5,8 @@ import { usePathname, useRouter } from "next/navigation";
 import useAuth from "@/hooks/useAuth";
 import Sidebar from "@/components/common/Sidebar";
 
+import Cookies from "js-cookie";
+
 import useLocalStorage from "@/hooks/useLocalStorage";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import Header from "@/components/common/Header";
@@ -38,8 +40,8 @@ const DashboardLayout = ({ children }) => {
       await callApiHook({
         apiCall: callUserDetailsApi(userDetailsApi()),
         successCallBack: (response) => {
-
-          updatedOnboardingCookies(response?.userDetails);
+          // updatedOnboardingCookies(response?.userDetails);
+          Cookies.set("user", JSON.stringify(response));
           dispatch(setUser(response));
           dispatch(validateSteps(response));
         },

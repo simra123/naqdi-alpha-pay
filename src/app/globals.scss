@@ -29,15 +29,15 @@
 }
 
 .res-4-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 items-center;
+  @apply items-center gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
 }
 
 .res-3-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-center;
+  @apply items-center gap-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3;
 }
 
 .res-2-grid {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-4 items-center xl:w-[calc(100%-200px)] xl:ml-auto;
+  @apply items-center gap-4 grid grid-cols-1 md:grid-cols-2 xl:ml-auto xl:w-[calc(100%-200px)];
 }
 
 .rotate-infinite {
@@ -106,7 +106,7 @@
 }
 
 .pink-gradient-button {
-  @apply bg-pink-gradient text-white text-button rounded-[10px] py-[14px];
+  @apply bg-purple-gradient py-[14px] rounded-[10px] text-button text-white;
 }
 
 @keyframes l15 {
@@ -154,12 +154,12 @@ input[type="number"] {
 }
 
 /* On mouse-over, add a grey background color */
-.custom-checkbox:hover input[type="checkbox"]~.checkmark {
+.custom-checkbox:hover input[type="checkbox"] ~ .checkmark {
   background-color: #ccc;
 }
 
 /* When the checkbox is checked */
-.custom-checkbox input[type="checkbox"]:checked~.checkmark {
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
   @apply bg-purple-100;
   border: none;
 }
@@ -172,7 +172,7 @@ input[type="number"] {
 }
 
 /* Show the checkmark when checked */
-.custom-checkbox input[type="checkbox"]:checked~.checkmark:after {
+.custom-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
   display: block;
 }
 
@@ -222,7 +222,6 @@ input[type="number"] {
 
 button:disabled {
   &.disabled {
-
     @apply bg-gray-300 !important;
   }
 }
@@ -241,3 +240,37 @@ button:disabled {
 // .special-label {
 //   position: static !important;
 // }
+
+.thinScrollbarPadded {
+  scrollbar-color: #f1f1f1;
+  
+  /* For WebKit browsers */
+  &::-webkit-scrollbar {
+    width: 13px;
+    background: #f1f1f1;
+    border-radius: 100px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Ensures track color matches */
+    margin: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c4c4c4;
+    border-radius: 4px;
+    box-shadow: inset 3px 0 0 0 #f1f1f1, inset -3px 0 0 0 #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+}
+
+
+.short-scrollbar{
+
+  &::-webkit-scrollbar-track {
+    margin: 40px 0;
+  }
+}

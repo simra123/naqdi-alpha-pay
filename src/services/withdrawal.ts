@@ -14,6 +14,17 @@ export const createWithdrawalApi = (data: {
   return () => api.post(`wallet/withdrawal`, data);
 };
 
+export const createAdminWithdrawalApi = (data: {
+  blockchain: string;
+  amount: string | number;
+  recipient_address: string;
+  notes?: string;
+  standard?: string;
+  token: string;
+}) => {
+  return () => api.post(`wallet/fee-withdrawal`, data);
+};
+
 export const getAdminWithdrawalsListApi = () => {
   return () => api.get(`wallet/withdrawals`);
 };
@@ -22,7 +33,10 @@ export const getWithdrawableCurrenciesListApi = () => {
   return () => api.get(`wallet/withdrawal/balance`);
 };
 
-export const getUserWithdrawalsListApi = (data?: {}, params?: { limit: number, page: number }) => {
+export const getUserWithdrawalsListApi = (
+  data?: {},
+  params?: { limit: number; page: number }
+) => {
   return () => api.post(`withdrawal/list`, data, { params });
 };
 
@@ -38,21 +52,23 @@ export const withdrawalRejectAdminApi = (data: {
 };
 
 export const withdrawalApproveAdminApi = (data: {
-  withdrawal_mode: Withdrawal_Type;
   withdraw_id: number;
   addresses?: string[];
 }) => {
-  if (data.withdrawal_mode == Withdrawal_Type.AUTOMATIC) {
-    return () =>
-      api.post(`wallet/auto-withdraw-approval`, {
-        withdraw_id: data.withdraw_id,
-      });
-  }
   return () =>
-    api.post(`/wallet/withdraw-approval`, {
+    api.post(`wallet/withdraw-approval`, {
       withdraw_id: data.withdraw_id,
       addresses: data.addresses,
     });
+};
+
+export const externalWithdrawalApproveAdminApi = (data: {
+  withdraw_id: number;
+  transaction_hash: string;
+  sender_address: string;
+  internal_note?: string;
+}) => {
+  return () => api.post(`/wallet/external-withdraw`, data);
 };
 
 export const getWithdrawalWalletsApi = (

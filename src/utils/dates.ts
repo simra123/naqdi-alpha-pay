@@ -25,14 +25,20 @@ export function formatCustomDate(date) {
 export const formatDateToUserTimeZone = (value: string): [string, string] => {
   const currentTimeZone = momentTZ.tz.guess();
 
-  console.log({ currentTimeZone });
+
 
   let date: string | string[] = momentTZ(value)
     .tz(currentTimeZone)
     .format("DD-MM-YYYY.hh:mm A");
 
-  console.log({ date });
 
   let [day, time] = date.split(".");
   return [day, time];
+};
+
+export const formatLocalDate = (utcDate: string) => {
+  if (!utcDate) return "";
+
+  const userTimeZone = moment.tz.guess(); // Get user's timezone
+  return moment.utc(utcDate).tz(userTimeZone).format("DD MMM YYYY HH:mm z");
 };

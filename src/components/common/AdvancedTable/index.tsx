@@ -54,6 +54,8 @@ const AdvancedTable = ({
   onRowClick,
 }: AdvancedTableProps) => {
   const headerRef = useRef<HTMLTableRowElement>(null);
+  const scrollContainerRef = useRef(null); // Add this for the scrollable div
+  const [isHovered, setIsHovered] = useState(false); // Track mouse hover
   const [selectedRows, setSelectedRows] = useState<any[]>([]);
   const [columnWidths, setColumnWidths] = useState<number[]>([]);
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -87,11 +89,11 @@ const AdvancedTable = ({
         pageValue: 1,
       });
     }
-    console.log(column, value, filteredColsData);
+
   };
 
   const onFiltersApply = (filtersData, closeAfter?: boolean) => {
-    console.log({ filtersData });
+ 
     setFilterData(filtersData);
     setPage(1);
     fetchData({
@@ -116,7 +118,7 @@ const AdvancedTable = ({
   };
 
   const onViewsApply = (viewData) => {
-    console.log({ viewData });
+
     setColumns(viewData);
     let newConfig = replaceColumns(listConfig, viewData);
     setListConfig(newConfig);
@@ -124,7 +126,7 @@ const AdvancedTable = ({
   };
 
   const onSearchKeyDown = (event) => {
-    console.log(event.key);
+
     if (event.key == "Enter") {
       fetchData({
         sort: sortData,
@@ -138,7 +140,7 @@ const AdvancedTable = ({
   const onSort = (sortValues) => {
     const colsToSort = updateColumnSortState(sortValues, sortData);
     setSortData(colsToSort);
-    console.log({ colsToSort });
+
     fetchData({
       sort: colsToSort,
       filters: filtersData,
@@ -211,6 +213,28 @@ const AdvancedTable = ({
     }
   }, [headerRef, columns, rows]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!scrollContainerRef.current || !isHovered) return;
+
+      const scrollAmount = 100; // Customize this
+      if (e.key === "ArrowRight") {
+        scrollContainerRef.current.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
+      } else if (e.key === "ArrowLeft") {
+        scrollContainerRef.current.scrollBy({
+          left: -scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isHovered]);
+
   const handleRowSelection = (row: any) => {
     const updatedSelection = selectedRows.includes(row)
       ? selectedRows.filter((r) => r !== row)
@@ -251,6 +275,9 @@ const AdvancedTable = ({
         />
 
         <div
+          ref={scrollContainerRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
           className={`overflow-x-auto pr-96 ${
             pagination && "min-h-[calc(100vh-350px)]"
           } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
@@ -276,7 +303,7 @@ const AdvancedTable = ({
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={columns?.length} className="text-center py-4">
+                  <td colSpan={columns?.length} className="py-4 text-center">
                     Loading...
                   </td>
                 </tr>
@@ -296,7 +323,7 @@ const AdvancedTable = ({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns?.length} className="text-center py-4">
+                  <td colSpan={columns?.length} className="py-4 text-center">
                     No Rows Found
                   </td>
                 </tr>

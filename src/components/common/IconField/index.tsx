@@ -49,17 +49,17 @@ const IconField = ({
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`}>
       {label && (
-        <div className="flex gap-2 items-center">
+        <div className="flex items-center gap-2">
           <label className="block mb-2 font-medium">{label}</label>
           {info && (
-            <div className="relative flex items-center group">
-              <Info className="text-blue-info mb-1 text-[18px]" />
+            <div className="group relative flex items-center">
+              <Info className="mb-1 text-[18px] text-blue-info" />
 
-              <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+              <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                 <div className="relative p-2">
                   <p className="w-full text-center">{info}</p>
 
-                  <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                  <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
                 </div>
               </div>
             </div>
@@ -70,7 +70,7 @@ const IconField = ({
         className={`relative rounded-large bg-white ${inputContainerClassName}`}
       >
         {Icon && (
-          <Icon className="absolute left-4 top-0 flex !h-full items-center text-gray-400" />
+          <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
         )}
         <input
           type={isPasswordField ? (!showPassword ? "password" : "text") : type}
@@ -84,8 +84,8 @@ const IconField = ({
           className={`w-full p-4 bg-transparent ${inputClassName} ${Icon ? "pl-12" : "pl-4"
             } border-[1.5px] ${error
               ? "border-error-dark"
-              : "border-grey-100 focus:border-purple"
-            } border-light-gray focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
+              : "border-gray focus:border-purple"
+            }  focus:border-purple rounded-large focus:outline-none  placeholder:text-blackGrey-placeholder`}
         />
         {isPasswordField && (
           <div
@@ -97,7 +97,7 @@ const IconField = ({
         )}
       </div>
       {error && (
-        <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+        <p className="mt-[4px] ml-4 text-red-error-dark text-subtitle">
           {error}
         </p>
       )}

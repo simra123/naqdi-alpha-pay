@@ -75,7 +75,7 @@ const Account = () => {
     await callApiHook({
       apiCall: callClientFeeApi(setClientFeeApi({ amount: values?.clientFee })),
       successCallBack: (response) => {
-        console.log("Setting Client Fee ", response);
+
         SetFeeValues(values?.clientFee);
         dispatch(
           setNotification({
@@ -91,7 +91,7 @@ const Account = () => {
     await callApiHook({
       apiCall: callGetClientFeeApi(getClientFeeApi()),
       successCallBack: (response) => {
-        console.log("Getting Client Fee ", response);
+
         SetFeeValues(response?.fee);
       },
     });
@@ -126,8 +126,8 @@ const Account = () => {
         setIsMfaVerified={setIsMfaVerified}
       />
 
-      <div className="items-center justify-between mb-8 hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">Account</h3>
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Account</h3>
 
         <LoaderButton
           content={"Change Password"}
@@ -137,9 +137,9 @@ const Account = () => {
         />
       </div>
       <div className="flex flex-col">
-        <div className="flex items-center gap-2 border-b border-light-gray pb-4">
+        <div className="flex items-center gap-2 pb-4 border-b border-light-gray">
           <FolderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="ID" value={user?.id} />
@@ -152,9 +152,9 @@ const Account = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <ContactMailOutlined className="text-purple-500" />
-          <h5 className="text-purple-500 text-h5 font-semibold">Contacts</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Contacts</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="Email" value={user?.email} />
@@ -164,9 +164,9 @@ const Account = () => {
         </div>
 
         <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
-          <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+          <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
             <LocationOnOutlined className="text-purple-500" />
-            <h5 className="text-purple-500 text-h5 font-semibold">
+            <h5 className="font-semibold text-h5 text-purple-500">
               Addressess
             </h5>
           </div>
@@ -185,12 +185,12 @@ const Account = () => {
           </div>
         </RenderRoleBased>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <StatusIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Status</h5>
         </div>
-        <div className="res-2-grid !items-baseline py-6">
-          <div className="flex gap-4 items-center">
+        <div className="!items-baseline res-2-grid py-6">
+          <div className="flex items-center gap-4">
             <Details
               label="MFA"
               value={user?.userDetails?.mfa ? "Enabled" : "Disabled"}
@@ -199,9 +199,9 @@ const Account = () => {
               (!localUser?.userDetails?.mfa || !isMFaVerified) && (
                 <LoaderButton
                   content={
-                    <div className="flex gap-2 text-[14px] font-semibold items-center">
+                    <div className="flex items-center gap-2 font-semibold text-[14px]">
                       <span>Setup MFA</span>
-                      <ErrorOutlineOutlined className="text-purple-100 text-[18px]" />
+                      <ErrorOutlineOutlined className="text-[18px] text-purple-100" />
                     </div>
                   }
                   variant="text"
@@ -260,7 +260,7 @@ const Account = () => {
         </div>
       </div>
 
-      <div className="mt-16 max-w-[360px] pb-8 md:hidden">
+      <div className="md:hidden mt-16 pb-8 max-w-[360px]">
         <LoaderButton
           content={"Change Password"}
           onClick={changePasswordModalToggler}

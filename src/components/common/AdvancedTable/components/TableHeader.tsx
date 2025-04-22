@@ -48,7 +48,7 @@ const TableHeader = React.forwardRef(
     ref: ForwardedRef<HTMLTableRowElement>
   ) => {
     const sortedColumns = sortBySequence(columns || []);
-    console.log({ sortedColumns });
+
 
     return (
       <thead className="font-medium">
@@ -56,7 +56,7 @@ const TableHeader = React.forwardRef(
         <tr ref={ref} className="bg-table-header">
           {selectable && (
             <th
-              className="py-3 c text-left z-10 bg-table-header"
+              className="bg-table-header z-10 py-3 text-left c"
               style={{ left: 0 }}
             >
               <label className="custom-checkbox">
@@ -65,7 +65,7 @@ const TableHeader = React.forwardRef(
                   checked={selectAll}
                   onChange={onSelectAll}
                 />
-                <span className="checkmark !static block"></span>
+                <span className="block !static checkmark"></span>
               </label>
             </th>
           )}
@@ -91,7 +91,7 @@ const TableHeader = React.forwardRef(
                 }
               >
                 <div className="flex items-center">
-                  <span className="text-nowrap text-ellipsis overflow-hidden">
+                  <span className="overflow-hidden text-ellipsis text-nowrap">
                     {column.listColumnsMeta.label}
                   </span>
 
@@ -146,7 +146,7 @@ const TableHeader = React.forwardRef(
                         })
                       }
                       name={column.listColumnsMeta.name}
-                      className="focus:border-b border-purple"
+                      className="border-purple focus:border-b"
                     />
                   ) : (
                     <SearchInput
