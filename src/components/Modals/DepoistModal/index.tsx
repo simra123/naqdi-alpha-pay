@@ -1,10 +1,10 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import Modal from "../Modal";
 import { callApiHook, sendPaymentInvoiceWhatsapp } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
-import { createDepoistAddressApi } from "@/services/wallet";
+
 import Image from "next/image";
 import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
@@ -27,7 +27,7 @@ import IconField from "@/components/common/IconField";
 import { roundToPrecision } from "@/utils/math";
 import Checkbox from "@/components/common/CheckBox";
 import useFormValidation from "@/hooks/useFormValidation";
-import { DepoistSchema } from "@/models/Deposit";
+import { DepoistSchema } from "@/models/deposit";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 

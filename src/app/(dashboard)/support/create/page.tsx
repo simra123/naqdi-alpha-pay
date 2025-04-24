@@ -4,8 +4,7 @@ import React, { useRef, useState } from "react";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
-import { Add, Mail } from "@mui/icons-material";
-import { MdClose } from "react-icons/md";
+import { MdAdd, MdClose, MdEmail } from "react-icons/md";
 import { getUrlOrObjectUrl } from "@/utils/getImageSrcType";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
@@ -94,23 +93,23 @@ const Support = () => {
 
   return (
     <>
-      <div className="rounded-medium flex flex-col">
-        <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-12">
+      <div className="flex flex-col rounded-medium">
+        <h3 className="mb-12 font-semibold text-blackGrey-100 text-h3.5">
           Need Help
         </h3>
 
-        <div className="grid grid-cols-2 gap-x-10 flex-wrap mb-2">
+        <div className="flex-wrap gap-x-10 grid grid-cols-2 mb-2">
           <IconField
             value={`${user?.first_name} ${user?.last_name}`}
             label="Name"
             disabled
-            icon={Mail}
+            icon={MdEmail}
             onChange={handleChange}
             name="name"
           />
           <IconField
             value={user?.email}
-            icon={Mail}
+            icon={MdEmail}
             label="Email"
             disabled
             onChange={handleChange}
@@ -149,15 +148,15 @@ const Support = () => {
           />
         </div>
 
-        {/* <div className="flex gap-4 items-center mt-20 flex-wrap mb-8">
-        <div className="max-w-full w-[310px]">
+        {/* <div className="flex flex-wrap items-center gap-4 mt-20 mb-8">
+        <div className="w-[310px] max-w-full">
         <LoaderButton content="Contact Support" variant="contained" />
         </div>
         </div> */}
       </div>
 
-      <div className="rounded-medium flex flex-col mt-10">
-        <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-12">
+      <div className="flex flex-col mt-10 rounded-medium">
+        <h3 className="mb-12 font-semibold text-blackGrey-100 text-h3.5">
           Upload Attachments
         </h3>
 
@@ -171,30 +170,30 @@ const Support = () => {
             hidden
             accept="image/*"
           />
-          <p className="my-2 font-semibold text-input text-black-100">Images</p>
+          <p className="my-2 font-semibold text-black-100 text-input">Images</p>
           {!supportData?.attachments   ? (
-            <div className="flex flex-col gap-3 items-start justify-center mb-2">
+            <div className="flex flex-col justify-center items-start gap-3 mb-2">
               <button
                 type="button"
-                className="border w-[470px] max-w-full justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
+                className="flex justify-center items-center gap-2 bg-blackGrey-filled-input p-3 px-8 border border-light-gray border-dashed rounded-full w-[470px] max-w-full"
                 onClick={() => front?.current?.click()}
               >
-                <Add className="text-purple-500" />
+                <MdAdd className="text-purple-500" />
                 <span className="text-blackGrey-placeholder text-input">
                   Drop Files Here Or Click To Upload
                 </span>
               </button>
             </div>
           ) : (
-            <div className="flex gap-6 flex-wrap">
+            <div className="flex flex-wrap gap-6">
               {/* {supportData?.attachments?.map((item) => (
-                <div className="text-center flex flex-col gap-2 w-[320px]">
+                <div className="flex flex-col gap-2 w-[320px] text-center">
                   <img
                     src={getUrlOrObjectUrl(item)}
                     alt="front side"
                     className="max-w-full object-contain"
                   />
-                  <span className="text-caption text-custom-title-gray font-medium">
+                  <span className="font-medium text-caption text-custom-title-gray">
                     {item?.name}
                   </span>
                 </div>
@@ -202,16 +201,16 @@ const Support = () => {
               {supportData?.attachments?.map((item, index) => (
                 <div
                   key={index}
-                  className="relative text-center flex flex-col gap-2 w-[320px]"
+                  className="relative flex flex-col gap-2 w-[320px] text-center"
                 >
                   <img
                     src={getUrlOrObjectUrl(item)}
                     alt="attachment"
                     className="max-w-full object-contain"
                   />
-                  <span className="text-caption font-medium">{item.name}</span>
+                  <span className="font-medium text-caption">{item.name}</span>
                   <button
-                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                    className="top-0 right-0 absolute bg-red-500 p-1 rounded-full text-white"
                     onClick={() => handleRemoveFile(index)}
                   >
                     <MdClose />
@@ -235,7 +234,7 @@ const Support = () => {
 
       <ErrorApiText error={isTicketError} />
 
-      <div className="mt-16 max-w-[360px] pb-8">
+      <div className="mt-16 pb-8 max-w-[360px]">
         <LoaderButton
           loading={isTicketLoading}
           content={"Submit"}

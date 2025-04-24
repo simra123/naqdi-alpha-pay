@@ -2,8 +2,8 @@
 
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Check } from "@mui/icons-material";
 import { setNotification } from "@/store/slices/modal.Slice";
+import { MdCheck } from "react-icons/md";
 
 const Notification = () => {
   const notification = useSelector((state: any) => state.modal.notification);
@@ -32,9 +32,9 @@ const Notification = () => {
             : "bg-red-400 text-red-700"
         } font-bold px-5 py-3 rounded-md`}
       >
-        <div className="flex gap-3 items-center justify-between">
+        <div className="flex justify-between items-center gap-3">
           <div className="icon">
-            <Check />
+            <MdCheck />
           </div>
           <div className="message">
             <p>{notification?.message}</p>

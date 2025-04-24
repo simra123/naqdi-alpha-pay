@@ -1,6 +1,7 @@
 // components/IconField.js
-import { Info, Visibility, VisibilityOff } from "@mui/icons-material";
+
 import React, { ChangeEventHandler, useState } from "react";
+import { MdInfo, MdVisibility, MdVisibilityOff } from "react-icons/md";
 
 interface Props {
   label?: string;
@@ -53,7 +54,7 @@ const IconField = ({
           <label className="block mb-2 font-medium">{label}</label>
           {info && (
             <div className="group relative flex items-center">
-              <Info className="mb-1 text-[18px] text-blue-info" />
+              <MdInfo className="mb-1 text-[18px] text-blue-info" />
 
               <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                 <div className="relative p-2">
@@ -70,7 +71,7 @@ const IconField = ({
         className={`relative rounded-large bg-white ${inputContainerClassName}`}
       >
         {Icon && (
-          <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
+          <Icon className="top-0 left-4 absolute flex items-center w-[16px] !h-full text-gray-400" />
         )}
         <input
           type={isPasswordField ? (!showPassword ? "password" : "text") : type}
@@ -92,7 +93,7 @@ const IconField = ({
             className={`absolute right-4 top-0 cursor-pointer flex !h-full items-center text-gray-400 ${iconClassName}`}
             onClick={togglePasswordVisibility}
           >
-            {showPassword ? <VisibilityOff /> : <Visibility />}
+            {showPassword ? <MdVisibilityOff /> : <MdVisibility />}
           </div>
         )}
       </div>

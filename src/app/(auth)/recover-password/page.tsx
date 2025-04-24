@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
-import { ForgotSchema } from "@/models/Forgot";
+import { ForgotSchema } from "@/models/forgot";
 import useFormValidation from "@/hooks/useFormValidation";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { recoverPasswordApi } from "@/services/auth";
 import IconField from "@/components/common/IconField";
-import { Mail } from "@mui/icons-material";
+import { MdEmail } from "react-icons/md";
+
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoaderButton from "@/components/common/LoaderButton";
 
@@ -60,7 +61,7 @@ const ForgotPassword = () => {
           onChange={handleChange}
           value={values.email}
           error={errors.email}
-          icon={Mail}
+          icon={MdEmail}
           label="Email"
           placeholder="Enter Your Email"
         />

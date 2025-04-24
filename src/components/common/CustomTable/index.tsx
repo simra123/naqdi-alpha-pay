@@ -1,17 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import FilterDropdown from "./FilterDropdown";
-import {
-  ArrowUpward,
-  ArrowDownward,
-  Search,
-  Tune,
-  NavigateNext,
-  LastPage,
-  NavigateBefore,
-  FirstPage,
-  Add,
-} from "@mui/icons-material"; // Import MUI icons
-import { MdCopyAll } from "react-icons/md";
+
+import { MdAdd, MdArrowDownward, MdArrowUpward, MdCopyAll, MdFirstPage, MdLastPage, MdNavigateBefore, MdNavigateNext, MdSearch } from "react-icons/md";
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
 import IconButton from "../IconButton";
@@ -229,12 +218,12 @@ const CustomTable = ({
               <IconField
                 onChange={(event) => setSearchQuery(event.target.value)}
                 value={searchQuery}
-                icon={Search}
+                icon={MdSearch}
                 wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
                 inputClassName="py-3"
               />
               <button className="lg:hidden block bg-transparent hover:bg-white bg-none hover:shadow-md p-3 border-0 rounded-full outline-0 w-12 h-12 transition-all">
-                <Search />
+                <MdSearch />
               </button>
             </div>
           </div>
@@ -280,9 +269,9 @@ const CustomTable = ({
                       {sortConfig?.key === column.field && (
                         <span className="ml-2">
                           {sortConfig.direction === "ascending" ? (
-                            <ArrowUpward />
+                            <MdArrowUpward />
                           ) : (
-                            <ArrowDownward />
+                            <MdArrowDownward />
                           )}
                         </span>
                       )}
@@ -507,7 +496,7 @@ const Pagination = ({
             onClick={() => onChangePage(1)}
             disabled={currentPage === 1}
           >
-            <FirstPage />
+            <MdFirstPage />
           </IconButton>
           <IconButton
             className={
@@ -518,7 +507,7 @@ const Pagination = ({
             onClick={() => onChangePage(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <NavigateBefore />
+            <MdNavigateBefore />
           </IconButton>
           {pages.map((item, index) =>
             item == "..." ? (
@@ -545,7 +534,7 @@ const Pagination = ({
             onClick={() => onChangePage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            <NavigateNext />
+            <MdNavigateNext />
           </IconButton>
           <IconButton
             className={
@@ -556,13 +545,13 @@ const Pagination = ({
             onClick={() => onChangePage(totalPages)}
             disabled={currentPage === totalPages}
           >
-            <LastPage />
+            <MdLastPage />
           </IconButton>
         </div>
         {createHandler && (
           <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
             <LoaderButton
-              content={<Add className="!text-h2" />}
+              content={<MdAdd className="!text-h2" />}
               className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
               variant="contained"
               onClick={createHandler}
@@ -596,7 +585,7 @@ const Pagination = ({
       {createHandler && (
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
           <LoaderButton
-            content={<Add className="!text-h2" />}
+            content={<MdAdd className="!text-h2" />}
             className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
             variant="contained"
             onClick={createHandler}

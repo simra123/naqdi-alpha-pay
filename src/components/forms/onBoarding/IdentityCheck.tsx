@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import countriesJson from "@/constants/countries.json";
 import useFormValidation from "@/hooks/useFormValidation";
 import { IDENTITY_FORMATS, STEPS } from "@/constants/onboarding";
-import { IdentityCheckSchema } from "@/models/IdentityCheck";
+import { IdentityCheckSchema } from "@/models/identityCheck";
 import { useApi } from "@/hooks/useApi";
 import { useDispatch, useSelector } from "react-redux";
 import { callApiHook } from "@/utils/apifuncs";
@@ -17,9 +17,9 @@ import LoadingApi from "@/components/common/LoadindApi";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import { getUrlOrObjectUrl, urlToFile } from "@/utils/getImageSrcType";
 import IconSelectBox from "@/components/common/IconSelectBox";
-import { Add, LocationOn } from "@mui/icons-material";
 import { DocumentFormat } from "@/assets/Svgs";
 import LoaderButton from "@/components/common/LoaderButton";
+import { MdAdd, MdLocationOn } from "react-icons/md";
 
 const IdentityCheck = () => {
   const dispatch = useDispatch();
@@ -121,23 +121,23 @@ const IdentityCheck = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-      <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
-        <h4 className="text-black-100 text-h3.5 font-semibold">
+      <div className="flex flex-col gap-5 bg-white mt-8 p-12 rounded-small">
+        <h4 className="font-semibold text-black-100 text-h3.5">
           Identity Check
         </h4>
         <LoadingApi loading={updateLoading}>
-          <p className="text-button text-black-100">
+          <p className="text-black-100 text-button">
             Please fill in the details so we can proceed with you Identity
             Confirmation
           </p>
 
-          <div className="max-w-[360px] mt-3">
+          <div className="mt-3 max-w-[360px]">
             <IconSelectBox
               options={countriesJson}
               onChange={handleChange}
               searchable
               error={errors.country}
-              icon={LocationOn}
+              icon={MdLocationOn}
               label="Country"
               name="country"
               placeholder="Select your country"
@@ -153,7 +153,7 @@ const IdentityCheck = () => {
                   Select Document Format
                 </h4>
               </div>
-              <div className="mt-4 flex gap-3 flex-wrap">
+              <div className="flex flex-wrap gap-3 mt-4">
                 {documentFormatsList.map(({ format, name }) => (
                   <DocumentFormatCard
                     format={format}
@@ -164,7 +164,7 @@ const IdentityCheck = () => {
                 ))}
               </div>
               {errors.documentFormat && (
-                <p className="text-red-error-dark text-caption mt-[4px] ml-4">
+                <p className="mt-[4px] ml-4 text-caption text-red-error-dark">
                   {errors.documentFormat}
                 </p>
               )}
@@ -174,16 +174,16 @@ const IdentityCheck = () => {
           <div className="mt-8"></div>
 
           {values.document.back && values.document.front && (
-            <h4 className="text-black-100 font-semibold text-p120">Images</h4>
+            <h4 className="font-semibold text-black-100 text-p120">Images</h4>
           )}
 
           {values.documentFormat && (
             <>
-              <div className="flex gap-6 flex-wrap">
+              <div className="flex flex-wrap gap-6">
                 <div className="mb-2">
                   {!values.document.front ? (
                     <>
-                      <p className="my-2 font-semibold text-input text-black-100">
+                      <p className="my-2 font-semibold text-black-100 text-input">
                         Choose Front Side
                       </p>
                       <input
@@ -195,19 +195,19 @@ const IdentityCheck = () => {
                         hidden
                         accept="image/*"
                       />
-                      <div className="flex gap-6 items-center mb-2">
+                      <div className="flex items-center gap-6 mb-2">
                         <button
                           type="button"
-                          className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
+                          className="flex justify-center items-center gap-2 bg-blackGrey-filled-input p-3 px-8 border border-light-gray border-dashed rounded-full min-w-[470px]"
                           onClick={() => front?.current?.click()}
                         >
-                          <Add className="text-purple-500" />
+                          <MdAdd className="text-purple-500" />
                           <span className="text-blackGrey-placeholder text-input">
                             {" "}
                             Drop Files Here Or Click To Upload{" "}
                           </span>
                         </button>
-                        <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
+                        <span className="max-w-[100%] overflow-hidden text-ellipsis text-nowrap">
                           {values.document?.front?.name}
                         </span>
                       </div>
@@ -224,7 +224,7 @@ const IdentityCheck = () => {
                 <div>
                   {!values.document.back ? (
                     <>
-                      <p className="my-2 font-semibold text-input text-black-100">
+                      <p className="my-2 font-semibold text-black-100 text-input">
                         Choose Back Side
                       </p>
                       <input
@@ -236,19 +236,19 @@ const IdentityCheck = () => {
                         hidden
                         accept="image/*"
                       />
-                      <div className="flex gap-6 items-center mb-2">
+                      <div className="flex items-center gap-6 mb-2">
                         <button
                           type="button"
-                          className="border min-w-[470px] justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
+                          className="flex justify-center items-center gap-2 bg-blackGrey-filled-input p-3 px-8 border border-light-gray border-dashed rounded-full min-w-[470px]"
                           onClick={() => back?.current?.click()}
                         >
-                          <Add className="text-purple-500" />
+                          <MdAdd className="text-purple-500" />
                           <span className="text-blackGrey-placeholder text-input">
                             {" "}
                             Drop Files Here Or Click To Upload{" "}
                           </span>
                         </button>
-                        <span className="text-ellipsis max-w-[100%] text-nowrap overflow-hidden">
+                        <span className="max-w-[100%] overflow-hidden text-ellipsis text-nowrap">
                           {values.document?.back?.name}
                         </span>
                       </div>
@@ -273,7 +273,7 @@ const IdentityCheck = () => {
               )}
 
               {errors.document && (
-                <p className="text-red-error-dark text-caption mt-[4px] ml-4">
+                <p className="mt-[4px] ml-4 text-caption text-red-error-dark">
                   {errors.document}
                 </p>
               )}
@@ -323,7 +323,7 @@ export const DocumentFormatCard = ({
           fill={value == format ? "rgba(119, 53, 227, 1)" : "#AFAFAF"}
         />
       </div>
-      <div className="name flex flex-col gap-0">
+      <div className="flex flex-col gap-0 name">
         <span className="font-semibold">{name}</span>
         <span>Front & Back</span>
       </div>

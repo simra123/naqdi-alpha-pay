@@ -4,10 +4,8 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAllPaymentsByAdminApi,
-  getClientPaymentsListApi,
-} from "@/services/payments";
+import { getAllPaymentsByAdminApi } from "@/services/admin/payments";
+import { getClientPaymentsListApi } from "@/services/payments";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";

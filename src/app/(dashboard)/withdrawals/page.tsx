@@ -8,10 +8,8 @@ import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAdminWithdrawalsListApi,
-  getUserWithdrawalsListApi,
-} from "@/services/withdrawal";
+import { getUserWithdrawalsListApi } from "@/services/withdrawal";
+import { getAdminWithdrawalsListApi } from "@/services/admin/withdrawal";
 import { formatWithdrawals } from "@/utils/dataFormatters";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";

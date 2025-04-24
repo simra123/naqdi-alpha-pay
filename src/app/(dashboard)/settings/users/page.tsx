@@ -11,7 +11,8 @@ import { generateCSVApi } from "@/services/common";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
-import { getSubAdminsApi, getSubusersApi } from "@/services/auth";
+import { getSubusersApi } from "@/services/auth";
+import { getSubAdminsApi } from "@/services/admin/auth";
 import {
   AccessLevelEnum,
   ModalType,
@@ -86,10 +87,10 @@ const Users = () => {
         toggleHandler={createToggleHandler}
       />
 
-      <div className="items-center justify-between mb-8 hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Users</h3>
         <div className="flex items-center gap-3">
-          <span className="bg-purple-400 text-white font-semibold px-3 py-1 rounded-full">
+          <span className="bg-purple-400 px-3 py-1 rounded-full font-semibold text-white">
             {subUsersList.users.length} of {subUsersList.limit} users created
           </span>
           {PermissionAccess(

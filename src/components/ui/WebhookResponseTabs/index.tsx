@@ -4,9 +4,7 @@ import "react-tabs/style/react-tabs.css";
 import clsx from "clsx";
 import Checkbox from "@/components/common/CheckBox";
 import { formatLocalDate } from "@/utils/dates";
-import Chip from "@/components/common/Chip";
-import LoaderButton from "@/components/common/LoaderButton";
-import { Sync } from "@mui/icons-material";
+
 import { RefreshIcon } from "@/assets/Svgs";
 import { filterWebhooks, getWebhookPayloadById } from "@/utils/dataFormatters";
 import humanizeString from "humanize-string";
@@ -66,7 +64,6 @@ const ResponeData = ({ responses }) => {
     getWebhookPayloadById(responses, responses[0]?.id)
   );
 
-
   return responses && responses?.length > 0 ? (
     <div className="gap-4 grid grid-cols-1 lg:grid-cols-2 mt-4">
       <div className="space-y-2 pr-5 sm:pr-[42px] max-h-[340px] overflow-auto thinScrollbarPadded">
@@ -118,22 +115,22 @@ const ResponeData = ({ responses }) => {
             {selectedWebhook?.statusCode}
           </div>
 
-          <p className="mt-5 mb-2 font-semibold text-input">
-            Webhook Url
-          </p>
-          <Link href={selectedWebhook?.userWebhookUrl} target="_blank" className="text-blue-600">
-            {selectedWebhook?.userWebhookUrl || 'N/A'}
+          <p className="mt-5 mb-2 font-semibold text-input">Webhook Url</p>
+          <Link
+            href={selectedWebhook?.userWebhookUrl}
+            target="_blank"
+            className="text-blue-600"
+          >
+            {selectedWebhook?.userWebhookUrl || "N/A"}
           </Link>
-          <p className="mt-4 mb-2 font-semibold text-input">
-            Response Text
-          </p>
-          <p  className="text-[#666666]">
+          <p className="mt-4 mb-2 font-semibold text-input">Response Text</p>
+          <p className="text-[#666666]">
             {selectedWebhook?.responseText || "N/A"}
           </p>
           <p className="mt-4 font-bold text-[#666666] text-input">
             HTTP Response
           </p>
-         
+
           <div className="overflow-x-hidden">
             <pre className="mt-2 p-2 rounded overflow-x-auto font-medium text-[#666666] text-input">
               {JSON.stringify(selectedWebhook?.payload, null, 2)}

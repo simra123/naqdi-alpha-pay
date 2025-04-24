@@ -3,12 +3,7 @@ import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { capitalize } from "@/utils/dataFormatters";
-import {
-  KeyboardArrowDown,
-  Menu,
-  Notifications,
-  Search,
-} from "@mui/icons-material";
+
 import IconField from "../IconField";
 import {
   LogoutDoorIcon,

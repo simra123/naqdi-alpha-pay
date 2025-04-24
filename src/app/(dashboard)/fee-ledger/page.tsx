@@ -23,11 +23,10 @@ import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
-import {
-  getAdminLedgerListApi,
-  getUserLedgerListApi,
-} from "@/services/feeLedger";
-import { getPermission, hasMinAccess } from "@/utils/cookies";
+import { getUserLedgerListApi } from "@/services/feeLedger";
+import { getAdminLedgerListApi } from "@/services/admin/feeLedger";
+import {  hasMinAccess } from "@/utils/cookies";
+
 
 const FeeLedger = () => {
   const router = useRouter();

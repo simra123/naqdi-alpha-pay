@@ -3,17 +3,15 @@ import React, { useEffect, useState } from "react";
 import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import { ContactMailOutlined } from "@mui/icons-material";
 import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
+import { getWithdrawalDetilsApi } from "@/services/withdrawal";
 import {
-  getWithdrawalDetilsApi,
   getWithdrawalWalletsApi,
   withdrawalApproveAdminApi,
-  withdrawalRejectAdminApi,
-} from "@/services/withdrawal";
+} from "@/services/admin/withdrawal";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useDispatch } from "react-redux";
@@ -36,8 +34,7 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
-import { getPermission, hasMinAccess } from "@/utils/cookies";
-import { Tooltip } from "react-tooltip";
+import { hasMinAccess } from "@/utils/cookies";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
 import { blockchain_units } from "@/constants/blockchains";

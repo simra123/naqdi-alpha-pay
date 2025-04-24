@@ -6,22 +6,18 @@ import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
+import { getAllAdminWalletBalancesApi } from "@/services/admin/wallet";
 import {
-  getAllAdminWalletBalancesApi,
-  getAllWalletBalancesApi,
-} from "@/services/wallet";
-import {
-  createAdminWithdrawalApi,
   createWithdrawalApi,
   getWithdrawableCurrenciesListApi,
 } from "@/services/withdrawal";
+import { createAdminWithdrawalApi } from "@/services/admin/withdrawal";
 import { setNotification } from "@/store/slices/modal.Slice";
 import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
-import { Info } from "@mui/icons-material";
 import useFormValidation from "@/hooks/useFormValidation";
 import {
   emptySchema,
@@ -31,10 +27,11 @@ import {
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
 import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
-import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
+import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { MdInfo } from "react-icons/md";
 
 interface Props {
   isOpen: boolean;
@@ -363,7 +360,7 @@ const CreateWithdrawalModal = ({
               <div className="flex items-center gap-2">
                 <label className="block mb-2 font-medium">Enter Code</label>
                 <div className="group relative flex items-center">
-                  <Info className="mb-1 text-[18px] text-blue-info" />
+                  <MdInfo className="mb-1 text-[18px] text-blue-info" />
                 </div>
               </div>
               <OtpInput
