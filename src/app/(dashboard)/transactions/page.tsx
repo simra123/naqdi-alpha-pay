@@ -295,7 +295,7 @@ const Transactions = () => {
     },
     {
       field: "",
-      headerName: "Transacion Type",
+      headerName: "Transaction Type",
       sortable: true,
       dataValidator(value, row: any) {
         return row?.payment ? "Payment" : "Withdrawal";

@@ -21,3 +21,9 @@ export const getWithdrawalTransactionDetailsByAdminApi = (data: {
 }) => {
   return () => api.post(`wallet/withdrawtransaction-details`, data);
 };
+
+export const getMerchantTransactionByIdApi = (data: {
+  merchant_id: number;
+}) => {
+  return () => api.get(`/admin-merchant/${data.merchant_id}/transactions`);
+};
