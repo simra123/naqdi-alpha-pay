@@ -1,46 +1,47 @@
 "use client";
+// Libs
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import CountUp from "react-countup";
+import { useSelector,useDispatch } from "react-redux";
 
-import { useApi } from "@/hooks/useApi";
-import { callApiHook } from "@/utils/apifuncs";
-import {
-  getAllWalletBalancesApi,
-  getProfitPercentageApi,
-  getTotalPortfolioValueApi,
-} from "@/services/wallet";
-// import DepositModal from "@/components/Modals/DepoistModal";
-import ErrorApiText from "@/components/common/ErrorApiText";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { Role } from "@/constants/roles";
-
-import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
-
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-import { unitName } from "@/constants/blockchains";
-import PermissionAccess from "@/middleware/PermissionAccess";
-import "./dashboard.scss";
+//  Components
 import { BorderedIconButton } from "@/components/common/IconButton";
 import { ReciveIcon, SendIcon, TransferIcon } from "@/assets/Svgs";
-import LoaderButton from "@/components/common/LoaderButton";
 import PortfolioCard from "@/components/common/PortfolioCard";
 import TransactionCard from "@/components/common/TransactionCard";
 import PortfolioChart from "@/components/PortfolioChart";
-import {
-  getAllTransactionsApi,
-  getRecentTransactionsApi,
-} from "@/services/transaction";
-import LoadingApi from "@/components/common/LoadindApi";
-import CountUp from "react-countup";
+import ErrorApiText from "@/components/common/ErrorApiText";
 import DepositModal from "@/components/Modals/DepoistModal";
 import CustomTable from "@/components/common/CustomTable";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
-import Link from "next/link";
-import { removeBrackets } from "@/utils/dataFormatters";
-import { roundToPrecision } from "@/utils/math";
-import { getPermission } from "@/utils/cookies";
+import MerchantSummary from "@/components/common/MerchantSummary";
+import LoadingApi from "@/components/common/LoadindApi";
+
+// Hooks
+import { useApi } from "@/hooks/useApi";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import useMountedQueue from "@/hooks/useMountedQueue";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+
+// Services
+import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
+import { getRecentTransactionsApi } from "@/services/transaction";
+import {
+  getAllWalletBalancesApi,
+  getTotalPortfolioValueApi,
+} from "@/services/wallet";
+
+// Utils
+import PermissionAccess from "@/middleware/PermissionAccess";
+import { callApiHook } from "@/utils/apifuncs";
+import { getPermission } from "@/utils/cookies";
+
+// Constants
+import { Role } from "@/constants/roles";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import { unitName } from "@/constants/blockchains";
+
+// Store
 import {
   setBalance,
   setPortfolioData,
@@ -48,8 +49,10 @@ import {
   setLastFetch,
   setMounted,
 } from "@/store/slices/portfolio.slice";
-import { MdSync } from "react-icons/md";
-import MerchantSummary from "@/components/common/MerchantSummary";
+
+// Styles
+import "./dashboard.scss";
+
 
 const adminColumns: TableColumns = [
   {
@@ -122,6 +125,7 @@ const merchantsRows = [
 const Home = () => {
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
+
   const { portfolioData, balance, queue } = useSelector(
     (state: any) => state?.portfolio
   );
@@ -133,6 +137,7 @@ const Home = () => {
   const [isPortfolioLoading, isPorfolioError, callPortfolioApi] = useApi({
     initailLoading: false,
   });
+  
   const [
     isLastTransactionsLoading,
     isLastTransactionsError,
