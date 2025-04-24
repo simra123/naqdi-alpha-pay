@@ -39,7 +39,7 @@ const crosshairLinePlugin = {
 
 ChartJS.register(...registerables, crosshairLinePlugin);
 
-const makeChartData = (data: {
+export const makeChartData = (data: {
   sent: any[];
   received: any[];
   balances: any[];
@@ -93,47 +93,47 @@ const PortfolioChart = ({
   interval,
   setInterval,
   unit,
+  isAdmin,
+  merchantsList,
+  merchant,
+  setMerchant,
+  getChartData,
+  chartData,
+  loading,
+  error,
 }: {
   interval: string;
   setInterval: any;
   unit: string;
-}) => {
-  const user = useLocalStorage("user");
-  // State for selected interval
-  const [chartData, setChartData] = useState<{
+  isAdmin?: boolean;
+  merchantsList?: any[];
+  merchant?: string;
+  setMerchant?: any;
+  getChartData: () => void;
+  loading?: boolean;
+  error?: boolean | string;
+  chartData: {
     sent?: any[];
     received?: any[];
     balances?: any[];
     labels?: any[];
-  }>({});
-  const [
-    isPortfolioActivityLoading,
-    isPortfolioActivityError,
-    callPortfolioActivityApi,
-  ] = useApi({
-    initailLoading: user?.role == Role.ADMIN ? false : true,
-  });
-
-  const getChartData = useCallback(async () => {
-    await callApiHook({
-      apiCall: callPortfolioActivityApi(
-        getPortfolioActivityChartApi({ duration: interval, unit })
-      ),
-      successCallBack: (response: any) => {
-        setChartData(makeChartData(response));
-      },
-    });
-  }, [unit, interval]);
-
+  };
+}) => {
+  const user = useLocalStorage("user");
   useEffect(() => {
-    if (user?.role === Role.USER) {
-      getChartData();
-    }
-  }, [interval, unit]);
+    getChartData();
+  }, [interval, unit, merchant]);
+
+  console.log({ chartData, message: "Charts data" });
 
   const handleChange = (e) => {
     const { value } = e.target;
     setInterval(value);
+  };
+
+  const handleChangeMerchant = (e) => {
+    const { value } = e.target;
+    setMerchant(value);
   };
 
   const options = {
@@ -282,8 +282,10 @@ const PortfolioChart = ({
           />
           <h2 className="font-semibold text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 leading-4">
             {user?.role == Role.USER
-              ? unitName[unit?.toLowerCase()] || "Portfolio"
-              : "Crypto Wallets"}{" "}
+              ? ` ${unitName[unit?.toLowerCase()]}` || "Portfolio"
+              : merchant == "ALL"
+              ? "Crypto Wallets"
+              : "Merchant Wallets"}{" "}
             History
           </h2>
         </div>
@@ -311,34 +313,47 @@ const PortfolioChart = ({
               { label: "Lifetime", value: "lifetime" },
             ]}
             onChange={handleChange}
+            wrapperClassName="!m-0"
+            inputContainerClassName="!rounded-full py-3"
+            optionsClassName="!right-0 w-[240px]"
             value={interval}
           />
         </div>
-      </div>
-      <LoadingApi loading={isPortfolioActivityLoading}>
-        {user?.role == Role.USER ? (
-          <Chart data={chartData as any} type="line" options={options} />
-        ) : (
-          <Chart
-            data={
-              makeChartData({
-                sent: [200, 150, 100, 250, 300, 100, 50],
-                received: [400, 300, 500, 100, 200, 300, 400],
-                balances: [1000, 1150, 1300, 1150, 1050, 1250, 1600],
-                labels: Array.from({ length: 7 }).map((_, i) =>
-                  moment()
-                    .subtract(6 - i, "days")
-                    .format("MMM D")
-                ),
-              }) as any
-            }
-            type="line"
-            className="max-h-[300px] 2.5xl:max-h-[370px]"
-            options={options}
+        {isAdmin && (
+          <IconSelectBox
+            searchable
+            wrapperClassName="!m-0"
+            inputContainerClassName="!rounded-full py-3"
+            optionsClassName="!right-0 w-[240px]"
+            options={[
+              { label: "All", value: "ALL" },
+              ...merchantsList?.map((item) => {
+                return {
+                  // label: `${item?.first_name} ${item?.last_name}`,
+                  label: item?.username,
+                  value: item?.userId,
+                };
+              }),
+            ]}
+            onChange={handleChangeMerchant}
+            value={merchant}
           />
         )}
+      </div>
+      <LoadingApi loading={loading}>
+        {chartData &&
+          (user?.role == Role.USER ? (
+            <Chart data={chartData as any} type="line" options={options} />
+          ) : (
+            <Chart
+              data={chartData as any}
+              type="line"
+              options={options}
+              className="max-h-[300px] 2.5xl:max-h-[370px]"
+            />
+          ))}
       </LoadingApi>
-      <ErrorApiText error={isPortfolioActivityError} />
+      <ErrorApiText error={error} />
     </div>
   );
 };

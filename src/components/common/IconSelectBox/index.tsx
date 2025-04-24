@@ -12,6 +12,7 @@ interface Props {
   error?: string | boolean;
   info?: string;
   inputContainerClassName?: string;
+  optionsClassName?: string;
   options: { value: string; label: string }[] | any[];
   searchable?: boolean;
   disabled?: boolean;
@@ -37,6 +38,7 @@ const IconSelectBox = ({
   searchable = false, // Default to false if not provided
   inputContainerClassName,
   disabled,
+  optionsClassName,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(value);
@@ -70,11 +72,11 @@ const IconSelectBox = ({
   };
 
   const filteredOptions = searchable
-    ? options?.filter(
-        (option) =>
-          option?.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          option?.value?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+    ? options.filter((option) => {
+        const label = String(option?.label || "");
+        const query = String(searchQuery || "");
+        return label.toLowerCase().includes(query.toLowerCase());
+      })
     : options;
 
   useEffect(() => {
@@ -98,20 +100,22 @@ const IconSelectBox = ({
 
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`} ref={dropdownRef}>
-      <div className="flex items-center gap-2">
-        <label className="block mb-2 font-medium">{label}</label>
-        {info && (
-          <div className="group relative flex items-center">
-            <MdInfo className="mb-1 text-[18px] text-blue-info" />
-            <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
-              <div className="relative p-2">
-                <p className="w-full text-center">{info}</p>
-                <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
+      {label && (
+        <div className="flex items-center gap-2">
+          <label className="block mb-2 font-medium">{label}</label>
+          {info && (
+            <div className="group relative flex items-center">
+              <MdInfo className="mb-1 text-[18px] text-blue-info" />
+              <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
+                <div className="relative p-2">
+                  <p className="w-full text-center">{info}</p>
+                  <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
       <div className="relative">
         {Icon && (
           <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
@@ -125,7 +129,7 @@ const IconSelectBox = ({
             onClick={toggleOpen}
             disabled={disabled}
             onChange={handleInputChange}
-            className={`w-full p-4 cursor-pointer ${
+            className={`w-full min-w-0 p-4 cursor-pointer ${
               Icon ? "pl-12" : "pl-4"
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error
@@ -138,7 +142,7 @@ const IconSelectBox = ({
           // If not searchable, display the value as a non-editable div
           <div
             onClick={toggleOpen}
-            className={`w-full p-4 cursor-pointer capitalize ${
+            className={`w-full p-4 pr-10 cursor-pointer capitalize ${
               Icon ? "pl-12" : "pl-4"
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error
@@ -164,7 +168,9 @@ const IconSelectBox = ({
           </div>
         </div>
         {open && (
-          <div className="z-10 absolute bg-white shadow-lg mt-1 p-3 border border-light-gray rounded-large w-full max-h-80 overflow-auto">
+          <div
+            className={`z-10 absolute bg-white shadow-lg mt-1 p-3 border border-light-gray rounded-large w-full max-h-80 overflow-auto ${optionsClassName}`}
+          >
             {filteredOptions.length > 0 ? (
               filteredOptions?.map((option, index) => (
                 <div

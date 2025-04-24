@@ -1,16 +1,16 @@
 "use client";
 // Libs
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import CountUp from "react-countup";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 //  Components
 import { BorderedIconButton } from "@/components/common/IconButton";
 import { ReciveIcon, SendIcon, TransferIcon } from "@/assets/Svgs";
 import PortfolioCard from "@/components/common/PortfolioCard";
 import TransactionCard from "@/components/common/TransactionCard";
-import PortfolioChart from "@/components/PortfolioChart";
+import PortfolioChart, { makeChartData } from "@/components/PortfolioChart";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import DepositModal from "@/components/Modals/DepoistModal";
 import CustomTable from "@/components/common/CustomTable";
@@ -28,13 +28,18 @@ import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
 import { getRecentTransactionsApi } from "@/services/transaction";
 import {
   getAllWalletBalancesApi,
+  getPortfolioActivityChartApi,
   getTotalPortfolioValueApi,
 } from "@/services/wallet";
+import {
+  getDashboardBalancesAdminApi,
+  getDashboardMerchantsAdminApi,
+} from "@/services/admin/dashboard";
 
 // Utils
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { callApiHook } from "@/utils/apifuncs";
-import { getPermission } from "@/utils/cookies";
+import { hasMinAccess } from "@/utils/cookies";
 
 // Constants
 import { Role } from "@/constants/roles";
@@ -52,7 +57,7 @@ import {
 
 // Styles
 import "./dashboard.scss";
-
+import { useRouter } from "next/navigation";
 
 const adminColumns: TableColumns = [
   {
@@ -125,19 +130,49 @@ const merchantsRows = [
 const Home = () => {
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const { portfolioData, balance, queue } = useSelector(
     (state: any) => state?.portfolio
   );
-  const isWalletHasFullAccess =
-    getPermission(ModulesEnum.wallet)?.access_level == AccessLevelEnum.full;
-  const isTransactionHasMinumumAccess =
-    getPermission(ModulesEnum.transaction)?.access_level !=
-    AccessLevelEnum.none;
+
+  const isWalletHasFullAccess = hasMinAccess(
+    ModulesEnum.wallet,
+    AccessLevelEnum.full
+  );
+  const isTransactionHasMinumumAccess = hasMinAccess(
+    ModulesEnum.transaction,
+    AccessLevelEnum.full
+  );
+
+  const [hoveredButton, setHoveredButton] = useState("transfer"); // Default to "transfer"
+  const [chartUnit, setCharUnit] = useState("ALL");
+  const [interval, setInterval] = useState("monthly");
+  const [merchant, setMerchant] = useState("ALL");
+  const [userChartData, setUserChartData] = useState({});
+
+  const [depoistData, setDepositData] = useState<{
+    blockchain?: null | string;
+    standard?: null | string;
+  }>({ blockchain: null, standard: null });
+  const [withdrawData, setWithdrawData] = useState<{
+    blockchain?: null | string;
+  }>({ blockchain: null });
+  const [lastTransactions, setLastTransactions] = useState([]);
+  const [adminBalances, setAdminBalances] = useState<any>({});
+  const [adminMerchants, setAdminMerchants] = useState([]);
+  const [openDeposit, setOpenDeposit] = useState(null);
+  const [openWithdraw, setOpenWithdrawal] = useState(null);
+
   const [isPortfolioLoading, isPorfolioError, callPortfolioApi] = useApi({
     initailLoading: false,
   });
-  
+
+  const [isAdminBalancesLoading, isAdminBalancesError, callAdminBalancesApi] =
+    useApi({
+      initailLoading: false,
+    });
+
   const [
     isLastTransactionsLoading,
     isLastTransactionsError,
@@ -153,29 +188,25 @@ const Home = () => {
     initailLoading: true,
   });
 
-  const [hoveredButton, setHoveredButton] = useState("transfer"); // Default to "transfer"
+  const [
+    isUserPortfolioActivityLoading,
+    isUserPortfolioActivityError,
+    callUserPortfolioActivityApi,
+  ] = useApi({
+    initailLoading: true,
+  });
+
+  const [
+    isAdminMerchantsLoading,
+    isAdminMerchantsError,
+    callAdminMerchantsApi,
+  ] = useApi({
+    initailLoading: true,
+  });
 
   const handleMouseEnter = (buttonName) => {
     setHoveredButton(buttonName);
   };
-
-  const handleMouseLeave = () => {
-    setHoveredButton("transfer"); // Reset to "transfer" when not hovering
-  };
-
-  const [chartUnit, setCharUnit] = useState("ALL");
-  const [interval, setInterval] = useState("monthly");
-
-  const [depoistData, setDepositData] = useState<{
-    blockchain?: null | string;
-    standard?: null | string;
-  }>({ blockchain: null, standard: null });
-  const [withdrawData, setWithdrawData] = useState<{
-    blockchain?: null | string;
-  }>({ blockchain: null });
-  const [lastTransactions, setLastTransactions] = useState([]);
-  const [openDeposit, setOpenDeposit] = useState(null);
-  const [openWithdraw, setOpenWithdrawal] = useState(null);
 
   const handleDepoist = () => {
     setOpenDeposit(true);
@@ -217,8 +248,6 @@ const Home = () => {
   const getBalances = async () => {
     if (user.role == Role.USER) {
       _getUserBalance();
-    } else if (user?.role == Role.ADMIN) {
-      _getAdminBalance();
     }
   };
 
@@ -231,6 +260,15 @@ const Home = () => {
         },
       });
     }
+  };
+
+  const getAdminMerchants = async () => {
+    await callApiHook({
+      apiCall: callAdminMerchantsApi(getDashboardMerchantsAdminApi()),
+      successCallBack: (response: any) => {
+        setAdminMerchants(response?.data);
+      },
+    });
   };
 
   const getLastTransactions = async () => {
@@ -251,19 +289,47 @@ const Home = () => {
     });
   };
 
-  const _getAdminBalance = async () => {
+  const getUserChartData = useCallback(async () => {
     await callApiHook({
-      apiCall: callPortfolioApi(getAllWalletAssetsByAdminApi()),
+      apiCall: callUserPortfolioActivityApi(
+        getPortfolioActivityChartApi({ duration: interval, unit: chartUnit })
+      ),
       successCallBack: (response: any) => {
-        dispatch(setPortfolioData(response));
+        setUserChartData(makeChartData(response));
       },
     });
-  };
+  }, [chartUnit, interval, merchant]);
+
+  const getAdminChartData = useCallback(async () => {
+    await callApiHook({
+      apiCall: callAdminBalancesApi(
+        getDashboardBalancesAdminApi({
+          duration: interval,
+          unit: chartUnit,
+          all: merchant == "ALL",
+          userId: merchant != "ALL" ? merchant : undefined,
+        })
+      ),
+      successCallBack: (response: any) => {
+        console.log({ adminbalances: response?.data });
+        setAdminBalances({
+          ...response?.data,
+          portfolio: makeChartData(response?.data?.portfolio),
+        });
+      },
+    });
+  }, [chartUnit, interval, merchant]);
 
   const UserApiCalls = () => {
     // getPortfolioPLPercentage();
     if (isTransactionHasMinumumAccess) {
       getLastTransactions();
+    }
+  };
+
+  const AdminApiCalls = () => {
+    if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
+      getAdminMerchants();
     }
   };
 
@@ -274,7 +340,12 @@ const Home = () => {
   );
 
   useEffect(() => {
-    user?.role == Role.USER && UserApiCalls();
+    if (user?.role == Role.USER) {
+      UserApiCalls();
+    }
+    if (user?.role == Role.ADMIN) {
+      AdminApiCalls();
+    }
     fetchPortfolio();
   }, []);
 
@@ -299,16 +370,21 @@ const Home = () => {
             <div className="flex gap-6">
               <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
                 {/* <header className="top-0 z-10 sticky"> */}
-                <h3 className="mb-2 font-nunito text-p120 2xl:text-h4">
+                <h3
+                  className="mb-2 font-nunito text-p120 2xl:text-h4 cursor-pointer"
+                  onClick={() => setCharUnit("ALL")}
+                >
                   Crypto Wallets
                 </h3>
                 {/* </header> */}
 
-                <div className="flex flex-col flex-1 gap-[14px] pr-4 overflow-y-auto portfolio-body">
-                  {portfolioData?.length > 0 ? (
-                    portfolioData?.map((asset) => {
+                <div className="flex flex-col flex-1 gap-[14px] pr-4 3.75xl:w-[500px] overflow-y-auto portfolio-body">
+                  {adminBalances?.userBalances?.length > 0 ? (
+                    adminBalances?.userBalances?.map((asset) => {
                       let unit = asset?.unit;
-                      let tokenName = `${unit} (${asset?.standard})`;
+                      let tokenName = `${unit} ${
+                        asset?.standard ? `(${asset?.standard})` : ""
+                      }`;
                       let coinName = unitName[unit?.toLowerCase()] || "Unknown";
                       let currencyTicker =
                         asset?.type == "coin" ? unit : tokenName;
@@ -321,7 +397,7 @@ const Home = () => {
                       return (
                         <PortfolioCard
                           isAdmin={user?.role == Role.ADMIN}
-                          Balance={asset?.totalAmount}
+                          Balance={asset?.amount}
                           IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
                           ChartLineData={currencyHistoryData}
                           CurrencyName={coinName}
@@ -330,16 +406,6 @@ const Home = () => {
                           onClick={() =>
                             handleAssetSelection(unit?.toUpperCase())
                           }
-                          onRecieve={() =>
-                            handleDepoistAndCreateAddress(
-                              depoistBlockchain,
-                              asset?.standard
-                            )
-                          }
-                          onSend={() =>
-                            handleWithdrawAndSetBlockchain(currencyTicker)
-                          }
-                          onTransfer={() => {}}
                         />
                       );
                     })
@@ -354,9 +420,17 @@ const Home = () => {
 
               <div className="hidden xs:block flex-1">
                 <PortfolioChart
+                  isAdmin={user?.role == Role.ADMIN}
                   interval={interval}
                   setInterval={setInterval}
+                  chartData={adminBalances?.portfolio}
                   unit={chartUnit}
+                  loading={isAdminBalancesLoading}
+                  error={isAdminBalancesError}
+                  merchantsList={adminMerchants}
+                  merchant={merchant}
+                  setMerchant={setMerchant}
+                  getChartData={getAdminChartData}
                 />
               </div>
             </div>
@@ -366,18 +440,40 @@ const Home = () => {
             <div className="w-[70%]">
               <CustomTable
                 columns={merchantsColumns}
-                rows={merchantsRows}
-                ExpandComponent={({ row }) => <div>{row?.id}</div>}
-                initialPageSize={10}
+                rows={adminMerchants}
+                expandRowIDKey="userId"
+                ExpandComponent={({ row }) => (
+                  <div className="justify-between items-center gap-6 grid grid-cols-5">
+                    {row?.balances && row?.balances?.length > 0 ? (
+                      row.balances.map((item) => (
+                        <div className="flex flex-col gap-2">
+                          <h3 className="font-semibold text-purple-500 text-base">
+                            {item?.unit}{" "}
+                            {item?.standard ? ` - ${item?.standard}` : ""}
+                          </h3>
+                          <span className="font-semibold text-base">
+                            {item?.amount}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No Wallets Found.</p>
+                    )}
+                  </div>
+                )}
+                initialPageSize={5}
                 rowClickHandler={(row: any) => {
-                  console.log(row);
+                  router.push(`/merchants/details/${row?.userId}`);
                 }}
                 actions={
                   <div className="flex justify-between items-end mb-6">
                     <h3 className="font-nunito text-p120 2xl:text-h4">
                       Merchants Wallet Summary
                     </h3>
-                    <Link className="text-caption" href={"/merchants"}>
+                    <Link
+                      className="font-semibold text-caption text-purple-500 underline"
+                      href={"/merchants"}
+                    >
                       View All
                     </Link>
                   </div>
@@ -385,11 +481,12 @@ const Home = () => {
                 tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
                 pagination
                 columnClassName="max-w-[250px]"
-                // loading={isUsersListLoading}
+                loading={isAdminMerchantsLoading}
               />
+              <ErrorApiText error={isAdminMerchantsError} />
             </div>
             <div className="flex-1">
-              <div className="xxs:px-5 xxs:py-[30px] xxs:border border-purple-10 rounded-[28px]">
+              {/* <div className="xxs:px-5 xxs:py-[30px] xxs:border border-purple-10 rounded-[28px]">
                 <div className="flex justify-between items-end mb-2">
                   <h3 className="font-nunito text-p120 2xl:text-h4">
                     Last Transactions
@@ -424,14 +521,14 @@ const Home = () => {
                   </LoadingApi>
                   <ErrorApiText error={isLastTransactionsError} />
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
           <div className="flex gap-6">
-            <div className="w-[70%]">
+            {/* <div className="w-[70%]">
               <MerchantSummary />
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -605,6 +702,10 @@ const Home = () => {
             <div className="hidden xs:block history">
               <PortfolioChart
                 interval={interval}
+                chartData={userChartData}
+                error={isUserPortfolioActivityError}
+                loading={isUserPortfolioActivityLoading}
+                getChartData={getUserChartData}
                 setInterval={setInterval}
                 unit={chartUnit}
               />

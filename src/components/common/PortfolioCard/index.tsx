@@ -15,9 +15,9 @@ type PortfolioProps = {
   ChartLineData: any;
   Balance: number;
   isWalletHasFullAccess: boolean;
-  onSend: () => void;
-  onRecieve: () => void;
-  onTransfer: () => void;
+  onSend?: () => void;
+  onRecieve?: () => void;
+  onTransfer?: () => void;
   onClick: () => void;
   isAdmin?: boolean;
 };
@@ -56,12 +56,14 @@ const PortfolioCard = ({
             <span>{CurrencyTicker}</span>
           </div>
         </div>
-        <div className="hidden xxs:block chart-data">
-          <SimpleLineChart
-            dataPoints={ChartLineData}
-            className="w-[60px] xs:w-[80px] 2.5xl:w-[120px] 3.75xl:w-[150px]"
-          />
-        </div>
+        {!isAdmin && (
+          <div className="hidden xxs:block chart-data">
+            <SimpleLineChart
+              dataPoints={ChartLineData}
+              className="w-[60px] xs:w-[80px] 2.5xl:w-[120px] 3.75xl:w-[150px]"
+            />
+          </div>
+        )}
 
         <div className="flex flex-col w-[100px] md:w-[130px] text-end balance">
           <span className="text-subtitle">Available Balance</span>

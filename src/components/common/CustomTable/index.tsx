@@ -43,6 +43,7 @@ interface TableProps {
   createHandler?: any;
   tableClassName?: string;
   tableWrapperClassName?: string;
+  expandRowIDKey?: string;
   ExpandComponent?: any;
 }
 
@@ -67,6 +68,7 @@ const CustomTable = ({
   tableClassName,
   tableWrapperClassName,
   ExpandComponent,
+  expandRowIDKey,
 }: TableProps) => {
   const [expandedRows, setExpandedRows] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
@@ -368,24 +370,31 @@ const CustomTable = ({
                       >
                         <button
                           onClick={(e) => {
-                            e.preventDefault();
-                            toggleExpand(row.id);
+                            e.stopPropagation();
+                            toggleExpand(row[expandRowIDKey || "id"]);
                           }}
-                          className="text-blue-500"
+                          className={`px-4 py-1 rounded-md hover:bg-purple-gradient hover:text-white transition-all ${
+                            expandedRows[row[expandRowIDKey || "id"]]
+                              ? "text-white bg-purple-gradient"
+                              : "text-purple-500 border-purple border"
+                          }`}
                         >
-                          {expandedRows[row.id] ? "Collapse" : "Expand"}
+                          {expandedRows[row[expandRowIDKey || "id"]]
+                            ? "Unexpand"
+                            : "Expand"}
                         </button>
                       </td>
                     )}
                   </tr>
 
-                  {expandedRows[row.id] && ExpandComponent && (
-                    <tr className="border-b">
-                      <td colSpan={columns.length + 1} className="p-4">
-                        <ExpandComponent row={row} />
-                      </td>
-                    </tr>
-                  )}
+                  {expandedRows[row[expandRowIDKey || "id"]] &&
+                    ExpandComponent && (
+                      <tr className="border-b">
+                        <td colSpan={columns.length + 1} className="p-4">
+                          <ExpandComponent row={row} />
+                        </td>
+                      </tr>
+                    )}
                 </>
               ))}
             </tbody>
