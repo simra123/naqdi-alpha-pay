@@ -162,7 +162,7 @@ const IconSelectBox = ({
         <div className="top-0 right-4 absolute flex items-center h-full text-gray-400 cursor-pointer">
           <div
             onClick={toggleOpen}
-            className="hover:bg-light-gray p-1 rounded-full h-2-w-2"
+            className="hover:bg-light-gray p-1 rounded-full h-2-w-2 text-black-60 text-xl"
           >
             {open ? <MdArrowDropUp /> : <MdArrowDropDown />}
           </div>

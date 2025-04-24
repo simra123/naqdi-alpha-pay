@@ -263,6 +263,8 @@ const PortfolioChart = ({
     },
   };
 
+  console.log({ PortiflioChart: unitName[unit?.toLowerCase()], unit: unit });
+
   return (
     <div className="p-6 border border-purple-10 rounded-[28px]">
       <div className="flex justify-between items-center mb-4">
@@ -282,7 +284,7 @@ const PortfolioChart = ({
           />
           <h2 className="font-semibold text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 leading-4">
             {user?.role == Role.USER
-              ? ` ${unitName[unit?.toLowerCase()]}` || "Portfolio"
+              ? unitName[unit?.toLowerCase()] || "Portfolio"
               : merchant == "ALL"
               ? "Crypto Wallets"
               : "Merchant Wallets"}{" "}
