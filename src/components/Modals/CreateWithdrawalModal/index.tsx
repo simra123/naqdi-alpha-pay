@@ -378,6 +378,7 @@ const CreateWithdrawalModal = ({
                   <input
                     {...props}
                     className="bg-blackGrey-filled-input p-2 md:p-4 py-4 border border-light-gray rounded-large outline-none !w-14 max-w-full"
+                    disabled={!user?.userDetails?.mfa}
                   />
                 )}
                 onChange={(otp) => setValues((pre) => ({ ...pre, token: otp }))}
@@ -391,12 +392,19 @@ const CreateWithdrawalModal = ({
             )}
 
             <div className="flex flex-col justify-end mt-4">
-              <LoaderButton
-                type="submit"
-                content="Confirm Withdrawal"
-                loading={isWithdrawalLoading}
-                variant="contained"
-              />
+              {!user?.userDetails?.mfa ? (
+                <div className="mt-2 text-button text-red-error-dark">
+                  To create a withdrawal request, please enable MFA in your
+                  account settings.
+                </div>
+              ) : (
+                <LoaderButton
+                  type="submit"
+                  content="Confirm Withdrawal"
+                  loading={isWithdrawalLoading}
+                  variant="contained"
+                />
+              )}
               {!isWithdrawalLoading && (
                 <LoaderButton
                   content="Back"
