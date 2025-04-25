@@ -59,6 +59,7 @@ import {
 
 // Styles
 import "./dashboard.scss";
+import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
 
 const merchantsColumns: TableColumns = [
   { field: "username", headerName: "Username" },
@@ -425,14 +426,21 @@ const Home = () => {
             )}
 
             {isTransactionHasMinumumAccess && (
-              <div className="flex-1">{/* <RecentTransactions/> */}</div>
+              <div className="flex-1">
+                <RecentTransactions />
+              </div>
             )}
           </div>
 
           <div className="flex gap-6">
-            {/* {isMerchantHasMinimumAccess && <div className="w-[70%]">
-              <MerchantSummary />
-            </div>} */}
+            {isMerchantHasMinimumAccess && (
+              <div className="w-[50%]">
+                <MerchantSummary />
+              </div>
+            )}
+            <div className="w-[50%]">
+              <FeeSummaryGraph />
+            </div>
           </div>
         </div>
       </RenderRoleBased>

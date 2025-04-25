@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Chart as ChartJS, registerables } from "chart.js";
+import React, { useEffect } from "react";
+import { Chart as ChartJS, ChartOptions, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import moment from "moment";
-import { callApiHook } from "@/utils/apifuncs";
-import { getPortfolioActivityChartApi } from "@/services/wallet";
-import { useApi } from "@/hooks/useApi";
 import ErrorApiText from "../common/ErrorApiText";
 import LoadingApi from "../common/LoadindApi";
 import { unitName } from "@/constants/blockchains";
@@ -139,6 +135,9 @@ const PortfolioChart = ({
   const options = {
     responsive: true,
     plugins: {
+      datalabels: {
+        display: false, // Turn off for this chart
+      },
       legend: {
         display: true,
         position: "bottom" as const,
@@ -282,14 +281,14 @@ const PortfolioChart = ({
             width={50}
             className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
           />
-          <h2 className="font-semibold text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 leading-4">
+         <h3 className="font-nunito text-p120 2xl:text-h4">
             {user?.role == Role.USER
               ? unitName[unit?.toLowerCase()] || "Portfolio"
               : merchant == "ALL"
               ? "Crypto Wallets"
               : "Merchant Wallets"}{" "}
             History
-          </h2>
+          </h3>
         </div>
         <div className="hidden lg:flex gap-2 md:gap-4">
           {["daily", "weekly", "monthly", "lifetime"].map((int) => (
