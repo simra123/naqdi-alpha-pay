@@ -62,7 +62,7 @@ const usersList_table_columns: TableColumns = [
   },
 ];
 
-const Users = () => {
+const Merchants = () => {
   const router = useRouter();
   const [users, setUsers] = useState([]);
   const [isUsersLoading, isUsersError, callUsersApi] = useApi({
@@ -125,7 +125,7 @@ const Users = () => {
 };
 
 export default PermissionAccess(
-  Users,
+  Merchants,
   ModulesEnum.merchant,
   AccessLevelEnum.read
 );

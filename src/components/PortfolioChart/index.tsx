@@ -12,6 +12,8 @@ import LoadingApi from "../common/LoadindApi";
 import { unitName } from "@/constants/blockchains";
 import Image from "next/image";
 import IconSelectBox from "../common/IconSelectBox";
+import { Role } from "@/constants/roles";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 // Custom plugin for the vertical dashed line
 const crosshairLinePlugin = {
@@ -37,11 +39,11 @@ const crosshairLinePlugin = {
 
 ChartJS.register(...registerables, crosshairLinePlugin);
 
-const makeChartData = (data: {
-  sent: [];
-  received: [];
-  balances: [];
-  labels: [];
+export const makeChartData = (data: {
+  sent: any[];
+  received: any[];
+  balances: any[];
+  labels: any[];
 }) => {
   let greenColor = "#CFECE1";
   let redColor = "#F7CAD8";
@@ -91,40 +93,47 @@ const PortfolioChart = ({
   interval,
   setInterval,
   unit,
+  isAdmin,
+  merchantsList,
+  merchant,
+  setMerchant,
+  getChartData,
+  chartData,
+  loading,
+  error,
 }: {
   interval: string;
   setInterval: any;
   unit: string;
+  isAdmin?: boolean;
+  merchantsList?: any[];
+  merchant?: string;
+  setMerchant?: any;
+  getChartData: () => void;
+  loading?: boolean;
+  error?: boolean | string;
+  chartData: {
+    sent?: any[];
+    received?: any[];
+    balances?: any[];
+    labels?: any[];
+  };
 }) => {
-  // State for selected interval
-
-  const [chartData, setChartData] = useState<{}>({});
-  const [
-    isPortfolioActivityLoading,
-    isPortfolioActivityError,
-    callPortfolioActivityApi,
-  ] = useApi({
-    initailLoading: true,
-  });
-
+  const user = useLocalStorage("user");
   useEffect(() => {
     getChartData();
-  }, [interval, unit]);
+  }, [interval, unit, merchant]);
 
-  const getChartData = useCallback(async () => {
-    await callApiHook({
-      apiCall: callPortfolioActivityApi(
-        getPortfolioActivityChartApi({ duration: interval, unit })
-      ),
-      successCallBack: (response: any) => {
-        setChartData(makeChartData(response));
-      },
-    });
-  }, [unit, interval]);
+  console.log({ chartData, message: "Charts data" });
 
   const handleChange = (e) => {
     const { value } = e.target;
     setInterval(value);
+  };
+
+  const handleChangeMerchant = (e) => {
+    const { value } = e.target;
+    setMerchant(value);
   };
 
   const options = {
@@ -254,8 +263,10 @@ const PortfolioChart = ({
     },
   };
 
+  console.log({ PortiflioChart: unitName[unit?.toLowerCase()], unit: unit });
+
   return (
-    <div className="p-6 rounded-[28px] border border-purple-10">
+    <div className="p-6 border border-purple-10 rounded-[28px]">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <Image
@@ -269,13 +280,18 @@ const PortfolioChart = ({
             alt="Currency"
             height={50}
             width={50}
-            className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] rounded-full"
+            className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
           />
-          <h2 className="text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold leading-4">
-            {unitName[unit?.toLowerCase()] || "Portfolio"} History
+          <h2 className="font-semibold text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 leading-4">
+            {user?.role == Role.USER
+              ? unitName[unit?.toLowerCase()] || "Portfolio"
+              : merchant == "ALL"
+              ? "Crypto Wallets"
+              : "Merchant Wallets"}{" "}
+            History
           </h2>
         </div>
-        <div className="hidden gap-2 md:gap-4 lg:flex ">
+        <div className="hidden lg:flex gap-2 md:gap-4">
           {["daily", "weekly", "monthly", "lifetime"].map((int) => (
             <button
               key={int}
@@ -290,7 +306,7 @@ const PortfolioChart = ({
             </button>
           ))}
         </div>
-        <div className="block lg:hidden w-32">
+        <div className="lg:hidden block w-32">
           <IconSelectBox
             options={[
               { label: "Daily", value: "daily" },
@@ -299,14 +315,47 @@ const PortfolioChart = ({
               { label: "Lifetime", value: "lifetime" },
             ]}
             onChange={handleChange}
+            wrapperClassName="!m-0"
+            inputContainerClassName="!rounded-full py-3"
+            optionsClassName="!right-0 w-[240px]"
             value={interval}
           />
         </div>
+        {isAdmin && (
+          <IconSelectBox
+            searchable
+            wrapperClassName="!m-0"
+            inputContainerClassName="!rounded-full py-3"
+            optionsClassName="!right-0 w-[240px]"
+            options={[
+              { label: "All", value: "ALL" },
+              ...merchantsList?.map((item) => {
+                return {
+                  // label: `${item?.first_name} ${item?.last_name}`,
+                  label: item?.username,
+                  value: item?.userId,
+                };
+              }),
+            ]}
+            onChange={handleChangeMerchant}
+            value={merchant}
+          />
+        )}
       </div>
-      <LoadingApi loading={isPortfolioActivityLoading}>
-        <Chart data={chartData as any} type="line" options={options} />
+      <LoadingApi loading={loading}>
+        {chartData &&
+          (user?.role == Role.USER ? (
+            <Chart data={chartData as any} type="line" options={options} />
+          ) : (
+            <Chart
+              data={chartData as any}
+              type="line"
+              options={options}
+              className="max-h-[300px] 2.5xl:max-h-[370px]"
+            />
+          ))}
       </LoadingApi>
-      <ErrorApiText error={isPortfolioActivityError} />
+      <ErrorApiText error={error} />
     </div>
   );
 };

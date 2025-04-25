@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 
-import { MdAdd, MdArrowDownward, MdArrowUpward, MdCopyAll, MdFirstPage, MdLastPage, MdNavigateBefore, MdNavigateNext, MdSearch } from "react-icons/md";
+import {
+  MdAdd,
+  MdArrowDownward,
+  MdArrowUpward,
+  MdCopyAll,
+  MdFirstPage,
+  MdLastPage,
+  MdNavigateBefore,
+  MdNavigateNext,
+  MdSearch,
+} from "react-icons/md";
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
 import IconButton from "../IconButton";
@@ -31,6 +41,10 @@ interface TableProps {
   selectedRows?: any[] | null;
   setSelectedRows?: any;
   createHandler?: any;
+  tableClassName?: string;
+  tableWrapperClassName?: string;
+  expandRowIDKey?: string;
+  ExpandComponent?: any;
 }
 
 const CustomTable = ({
@@ -51,8 +65,12 @@ const CustomTable = ({
   selectedRows,
   setSelectedRows,
   createHandler,
+  tableClassName,
+  tableWrapperClassName,
+  ExpandComponent,
+  expandRowIDKey,
 }: TableProps) => {
-  const [filtersOpen, setFiltersOpen] = useState(null);
+  const [expandedRows, setExpandedRows] = useState({});
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRows, setCurrentRows] = useState(rows);
@@ -73,6 +91,13 @@ const CustomTable = ({
       );
     }
   }, [currentRows, selectedRows, selectable]);
+
+  const toggleExpand = (rowId) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+  };
 
   const handleRowSelection = (row: any) => {
     if (selectable) {
@@ -105,17 +130,16 @@ const CustomTable = ({
 
   useEffect(() => {
     const filteredRows = searchQuery
-    ? rows.filter((row) =>
-        columns.some((column) => {
-          const value = getNestedValue(row, column.field);
-          return value
-            ?.toString()
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase().trim());
-        })
-      )
-    : rows;
-  
+      ? rows.filter((row) =>
+          columns.some((column) => {
+            const value = getNestedValue(row, column.field);
+            return value
+              ?.toString()
+              ?.toLowerCase()
+              .includes(searchQuery.toLowerCase().trim());
+          })
+        )
+      : rows;
 
     const sortedRows = sortConfig
       ? filteredRows.sort((a, b) => {
@@ -187,7 +211,7 @@ const CustomTable = ({
           pagination
             ? "min-h-[calc(100vh-120px)] sm:min-h-[calc(100vh-240px)]"
             : "pb-8 sm:pb-0"
-        } `
+        } ${tableWrapperClassName}`
       }
       ref={tableRef}
     >
@@ -234,7 +258,7 @@ const CustomTable = ({
           ref={scrollContainerRef}
           className={`overflow-x-auto ${
             pagination && "min-h-[calc(100vh-350px)]"
-          } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
+          } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none ${tableClassName}`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -278,6 +302,14 @@ const CustomTable = ({
                     </div>
                   </th>
                 ))}
+                {ExpandComponent && (
+                  <th
+                    style={{ width: equalColumns ? columnWidths : "auto" }}
+                    className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                  >
+                    Expand
+                  </th>
+                )}
               </tr>
             </thead>
 
@@ -285,53 +317,85 @@ const CustomTable = ({
 
             <tbody className="capitalize">
               {currentRows.map((row, index) => (
-                <tr
-                  key={index}
-                  onClick={() => rowClickHandler && rowClickHandler(row)}
-                  className="bg-white hover:bg-gray-50 border-b cursor-pointer"
-                >
-                  {selectable && (
-                    <td className="px-6 py-4">
-                      <label className="custom-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(row)}
-                          onChange={() => handleRowSelection(row)}
-                        />
-                        <span className="block !static checkmark"></span>
-                      </label>
-                    </td>
-                  )}
-                  {columns.map((column, index) => {
-                    const value = getNestedValue(row, column.field);
-                    return (
-                      <td
-                        key={column.field + index}
-                        className={`${
-                          column.dataValidator ? "py-4" : "py-6"
-                        } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
-                      >
-                        {column.dataValidator ? (
-                          <CopyButtonColumn
-                            value={column.dataValidator(value, row)}
-                            copyable={column.copyable}
-                            link={column?.link ? column?.link(row) : null}
-                            target={column?.target}
+                <>
+                  <tr
+                    key={index}
+                    onClick={() => rowClickHandler && rowClickHandler(row)}
+                    className="bg-white hover:bg-gray-50 border-b cursor-pointer"
+                  >
+                    {selectable && (
+                      <td className="px-6 py-4">
+                        <label className="custom-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(row)}
+                            onChange={() => handleRowSelection(row)}
                           />
-                        ) : value ? (
-                          <CopyButtonColumn
-                            value={value}
-                            copyable={column.copyable}
-                            link={column?.link ? column?.link(row) : null}
-                            target={column?.target}
-                          />
-                        ) : (
-                          "_"
-                        )}
+                          <span className="block !static checkmark"></span>
+                        </label>
                       </td>
-                    );
-                  })}
-                </tr>
+                    )}
+                    {columns.map((column, index) => {
+                      const value = getNestedValue(row, column.field);
+                      return (
+                        <td
+                          key={column.field + index}
+                          className={`${
+                            column.dataValidator ? "py-4" : "py-6"
+                          } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                        >
+                          {column.dataValidator ? (
+                            <CopyButtonColumn
+                              value={column.dataValidator(value, row)}
+                              copyable={column.copyable}
+                              link={column?.link ? column?.link(row) : null}
+                              target={column?.target}
+                            />
+                          ) : value ? (
+                            <CopyButtonColumn
+                              value={value}
+                              copyable={column.copyable}
+                              link={column?.link ? column?.link(row) : null}
+                              target={column?.target}
+                            />
+                          ) : (
+                            "_"
+                          )}
+                        </td>
+                      );
+                    })}
+                    {ExpandComponent && (
+                      <td
+                        className={`py-6 px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                      >
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleExpand(row[expandRowIDKey || "id"]);
+                          }}
+                          className={`px-4 py-1 rounded-md hover:bg-purple-gradient hover:text-white transition-all ${
+                            expandedRows[row[expandRowIDKey || "id"]]
+                              ? "text-white bg-purple-gradient"
+                              : "text-purple-500 border-purple border"
+                          }`}
+                        >
+                          {expandedRows[row[expandRowIDKey || "id"]]
+                            ? "Unexpand"
+                            : "Expand"}
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+
+                  {expandedRows[row[expandRowIDKey || "id"]] &&
+                    ExpandComponent && (
+                      <tr className="border-b">
+                        <td colSpan={columns.length + 1} className="p-4">
+                          <ExpandComponent row={row} />
+                        </td>
+                      </tr>
+                    )}
+                </>
               ))}
             </tbody>
           </table>
