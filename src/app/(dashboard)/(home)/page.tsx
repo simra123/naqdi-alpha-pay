@@ -1,46 +1,54 @@
 "use client";
-import React, { useEffect, useState } from "react";
+// Libs
+import React, { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import CountUp from "react-countup";
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 
-import { useApi } from "@/hooks/useApi";
-import { callApiHook } from "@/utils/apifuncs";
-import {
-  getAllWalletBalancesApi,
-  getProfitPercentageApi,
-  getTotalPortfolioValueApi,
-} from "@/services/wallet";
-// import DepositModal from "@/components/Modals/DepoistModal";
-import ErrorApiText from "@/components/common/ErrorApiText";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { Role } from "@/constants/roles";
-
-import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
-
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-import { unitName } from "@/constants/blockchains";
-import PermissionAccess from "@/middleware/PermissionAccess";
-import "./dashboard.scss";
+//  Components
 import { BorderedIconButton } from "@/components/common/IconButton";
 import { ReciveIcon, SendIcon, TransferIcon } from "@/assets/Svgs";
-import LoaderButton from "@/components/common/LoaderButton";
-import PortfolioCard from "@/components/common/PortfolioCard";
-import TransactionCard from "@/components/common/TransactionCard";
-import PortfolioChart from "@/components/PortfolioChart";
-import {
-  getAllTransactionsApi,
-  getRecentTransactionsApi,
-} from "@/services/transaction";
-import LoadingApi from "@/components/common/LoadindApi";
-import CountUp from "react-countup";
-import DepositModal from "@/components/Modals/DepoistModal";
+
+import PortfolioChart, { makeChartData } from "@/components/PortfolioChart";
+
+import ErrorApiText from "@/components/common/ErrorApiText";
 import CustomTable from "@/components/common/CustomTable";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import MerchantSummary from "@/components/common/MerchantSummary";
+
+import DepositModal from "@/components/Modals/DepoistModal";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
-import Link from "next/link";
-import { removeBrackets } from "@/utils/dataFormatters";
-import { roundToPrecision } from "@/utils/math";
-import { getPermission } from "@/utils/cookies";
+
+import Wallets from "@/components/dashboard/Wallets";
+import RecentTransactions from "@/components/dashboard/RecentTransactions";
+
+// Hooks
+import { useApi } from "@/hooks/useApi";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import useMountedQueue from "@/hooks/useMountedQueue";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+
+// Services
+import {
+  getAllWalletBalancesApi,
+  getPortfolioActivityChartApi,
+  getTotalPortfolioValueApi,
+} from "@/services/wallet";
+import {
+  getDashboardBalancesAdminApi,
+  getDashboardMerchantsAdminApi,
+} from "@/services/admin/dashboard";
+
+// Utils
+import PermissionAccess from "@/middleware/PermissionAccess";
+import { callApiHook } from "@/utils/apifuncs";
+import { hasMinAccess } from "@/utils/cookies";
+
+// Constants
+import { Role } from "@/constants/roles";
+import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+
+// Store
 import {
   setBalance,
   setPortfolioData,
@@ -48,83 +56,123 @@ import {
   setLastFetch,
   setMounted,
 } from "@/store/slices/portfolio.slice";
-import { MdSync } from "react-icons/md";
 
-const adminColumns: TableColumns = [
-  {
-    field: "unit",
-    headerName: "Currency",
-    dataValidator(value, row: { standard: string | null }) {
-      return row?.standard
-        ? `${value} (${row?.standard})`
-        : `${unitName[value.toLocaleLowerCase()]}`;
-    },
-  },
-  { field: "amount", headerName: "Balance" },
+// Styles
+import "./dashboard.scss";
+
+const merchantsColumns: TableColumns = [
+  { field: "username", headerName: "Username" },
+  { field: "first_name", headerName: "First Name" },
+  { field: "last_name", headerName: "Last Name" },
+  { field: "email", headerName: "Email" },
+  { field: "user_type", headerName: "User Type" },
 ];
 
-const columns: TableColumns = [
-  { field: "user_balance_uuid", headerName: "ID" },
-  ...adminColumns,
-];
+interface DepositState {
+  blockchain?: null | string;
+  standard?: null | string;
+}
+
+interface WithdrawState {
+  blockchain?: null | string;
+}
+
+enum ButtonNames {
+  transfer,
+  send,
+  receive,
+}
+
+type HoverButtonType = ButtonNames;
 
 const Home = () => {
   const user = useLocalStorage("user");
   const dispatch = useDispatch();
+  const router = useRouter();
+
   const { portfolioData, balance, queue } = useSelector(
     (state: any) => state?.portfolio
   );
-  const isWalletHasFullAccess =
-    getPermission(ModulesEnum.wallet)?.access_level == AccessLevelEnum.full;
-  const isTransactionHasMinumumAccess =
-    getPermission(ModulesEnum.transaction)?.access_level !=
-    AccessLevelEnum.none;
-  const [isPortfolioLoading, isPorfolioError, callPortfolioApi] = useApi({
-    initailLoading: false,
-  });
-  const [
-    isLastTransactionsLoading,
-    isLastTransactionsError,
-    callLastTransactionsApi,
-  ] = useApi({
-    initailLoading: true,
-  });
-  const [
-    isTotalPortfolioLoading,
-    isTotalPortfolioError,
-    callTotalPortfolioApi,
-  ] = useApi({
-    initailLoading: true,
-  });
 
-  const [hoveredButton, setHoveredButton] = useState("transfer"); // Default to "transfer"
+  const isWalletHasFullAccess = hasMinAccess(
+    ModulesEnum.wallet,
+    AccessLevelEnum.full
+  );
+  const isWalletHasMinimumAccess = hasMinAccess(
+    ModulesEnum.wallet,
+    AccessLevelEnum.full
+  );
+  const isTransactionHasMinumumAccess = hasMinAccess(
+    ModulesEnum.transaction,
+    AccessLevelEnum.read
+  );
+  const isMerchantHasMinimumAccess = hasMinAccess(
+    ModulesEnum.merchant,
+    AccessLevelEnum.read
+  );
 
-  const handleMouseEnter = (buttonName) => {
-    setHoveredButton(buttonName);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredButton("transfer"); // Reset to "transfer" when not hovering
-  };
+  const [adminBalances, setAdminBalances] = useState<any>({});
+  const [adminMerchants, setAdminMerchants] = useState([]);
 
   const [chartUnit, setCharUnit] = useState("ALL");
   const [interval, setInterval] = useState("monthly");
+  const [merchant, setMerchant] = useState("ALL");
+  const [userChartData, setUserChartData] = useState({});
 
-  const [depoistData, setDepositData] = useState<{
-    blockchain?: null | string;
-    standard?: null | string;
-  }>({ blockchain: null, standard: null });
-  const [withdrawData, setWithdrawData] = useState<{
-    blockchain?: null | string;
-  }>({ blockchain: null });
-  const [lastTransactions, setLastTransactions] = useState([]);
+  const [depoistData, setDepositData] = useState<DepositState>({
+    blockchain: null,
+    standard: null,
+  });
+
+  const [withdrawData, setWithdrawData] = useState<WithdrawState>({
+    blockchain: null,
+  });
+
+  const [hoveredButton, setHoveredButton] = useState<HoverButtonType>(
+    ButtonNames.transfer
+  ); // Default to "transfer"
   const [openDeposit, setOpenDeposit] = useState(null);
   const [openWithdraw, setOpenWithdrawal] = useState(null);
 
-  const handleDepoist = () => {
+  const [isPortfolioLoading, isPorfolioError, callPortfolioApi] = useApi({
+    initailLoading: false,
+  });
+
+  const [isAdminBalancesLoading, isAdminBalancesError, callAdminBalancesApi] =
+    useApi({
+      initailLoading: false,
+    });
+
+  const [_, isTotalPortfolioError, callTotalPortfolioApi] = useApi({
+    initailLoading: true,
+  });
+
+  const [
+    isUserPortfolioActivityLoading,
+    isUserPortfolioActivityError,
+    callUserPortfolioActivityApi,
+  ] = useApi({
+    initailLoading: true,
+  });
+
+  const [
+    isAdminMerchantsLoading,
+    isAdminMerchantsError,
+    callAdminMerchantsApi,
+  ] = useApi({
+    initailLoading: true,
+  });
+
+  const handleMouseEnter = (buttonName: HoverButtonType) => {
+    setHoveredButton(buttonName);
+  };
+
+  // Deposti Modal Handlers
+  const openDepoistModal = () => {
     setOpenDeposit(true);
   };
-  const closeDepoist = () => {
+
+  const closeDepoistModal = () => {
     setOpenDeposit(false);
     setDepositData({
       blockchain: null,
@@ -132,7 +180,7 @@ const Home = () => {
     });
   };
 
-  const handleDepoistAndCreateAddress = (
+  const openDepoistModalAndCreateAddress = (
     blockchain: string,
     standard: string
   ) => {
@@ -142,28 +190,22 @@ const Home = () => {
       standard,
     });
   };
-  const handleWithdrawAndSetBlockchain = (blockchain: string) => {
+
+  // Withdrawal Modal Handlers
+  const toggleWithdrawalModal = () => {
+    setOpenWithdrawal(!openWithdraw);
+    setWithdrawData({ blockchain: null });
+  };
+
+  const openWithdrawalModalAndSetBlockchain = (blockchain: string) => {
     setOpenWithdrawal(true);
     setWithdrawData({
       blockchain,
     });
   };
 
-  const handleWithdrawalToggler = () => {
-    setOpenWithdrawal(!openWithdraw);
-    setWithdrawData({ blockchain: null });
-  };
-
   const handleAssetSelection = (blockchainUnit) => {
     setCharUnit(blockchainUnit);
-  };
-
-  const getBalances = async () => {
-    if (user.role == Role.USER) {
-      _getUserBalance();
-    } else if (user?.role == Role.ADMIN) {
-      _getAdminBalance();
-    }
   };
 
   const getTotalPortfolioValue = async () => {
@@ -177,318 +219,315 @@ const Home = () => {
     }
   };
 
-  const getLastTransactions = async () => {
+  const getAdminMerchants = async () => {
     await callApiHook({
-      apiCall: callLastTransactionsApi(getRecentTransactionsApi()),
+      apiCall: callAdminMerchantsApi(getDashboardMerchantsAdminApi()),
       successCallBack: (response: any) => {
-        setLastTransactions(response?.recentTransactions);
+        setAdminMerchants(response?.data);
       },
     });
   };
 
-  const _getUserBalance = async () => {
-    await callApiHook({
-      apiCall: callPortfolioApi(getAllWalletBalancesApi()),
-      successCallBack: (response: any) => {
-        dispatch(setPortfolioData(response));
-      },
-    });
+  const getUserWallets = async () => {
+    if (user.role == Role.USER) {
+      await callApiHook({
+        apiCall: callPortfolioApi(getAllWalletBalancesApi()),
+        successCallBack: (response: any) => {
+          dispatch(setPortfolioData(response));
+        },
+      });
+    }
   };
 
-  const _getAdminBalance = async () => {
+  const getUserChartData = useCallback(async () => {
     await callApiHook({
-      apiCall: callPortfolioApi(getAllWalletAssetsByAdminApi()),
+      apiCall: callUserPortfolioActivityApi(
+        getPortfolioActivityChartApi({ duration: interval, unit: chartUnit })
+      ),
       successCallBack: (response: any) => {
-        dispatch(setPortfolioData(response));
+        setUserChartData(makeChartData(response));
       },
     });
-  };
+  }, [chartUnit, interval, merchant]);
 
-  const UserApiCalls = () => {
-    // getPortfolioPLPercentage();
-    if (isTransactionHasMinumumAccess) {
-      getLastTransactions();
+  const getAdminChartData = useCallback(async () => {
+    await callApiHook({
+      apiCall: callAdminBalancesApi(
+        getDashboardBalancesAdminApi({
+          duration: interval,
+          unit: chartUnit,
+          all: merchant == "ALL",
+          userId: merchant != "ALL" ? merchant : undefined,
+        })
+      ),
+      successCallBack: (response: any) => {
+        console.log({ adminbalances: response?.data });
+        setAdminBalances({
+          ...response?.data,
+          portfolio: makeChartData(response?.data?.portfolio),
+        });
+      },
+    });
+  }, [chartUnit, interval, merchant]);
+
+  const AdminApiCalls = () => {
+    if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
+      getAdminMerchants();
     }
   };
 
   const fetchPortfolio = useMountedQueue(
-    [getBalances, getTotalPortfolioValue],
+    [getUserWallets, getTotalPortfolioValue],
     queue,
     { enqueueCall, setLastFetch, setMounted }
   );
 
   useEffect(() => {
-    user?.role == Role.USER && UserApiCalls();
+    if (user?.role == Role.ADMIN) {
+      AdminApiCalls();
+    }
     fetchPortfolio();
   }, []);
 
+  // Button configurations
+  const actionButtons = [
+    {
+      name: ButtonNames.receive,
+      icon: <ReciveIcon className="w-4 2.5xl:w-[23px]" />,
+      label: "Receive",
+      action: isWalletHasFullAccess ? openDepoistModal : undefined,
+      disabled: !isWalletHasFullAccess,
+      tooltip:
+        !isWalletHasFullAccess &&
+        "You don't have sufficient permissions to initiate a Deposit.",
+    },
+    {
+      name: ButtonNames.send,
+      icon: <SendIcon className="w-4 2.5xl:w-[23px]" />,
+      label: "Send",
+      action: isWalletHasFullAccess ? toggleWithdrawalModal : undefined,
+      disabled: !isWalletHasFullAccess,
+      tooltip:
+        !isWalletHasFullAccess &&
+        "You don't have sufficient permissions to initiate a Withdrawal.",
+    },
+    {
+      name: ButtonNames.transfer,
+      icon: <TransferIcon className="w-4 2.5xl:w-[23px]" />,
+      label: "Transfer",
+      disabled: !isWalletHasFullAccess,
+      tooltip:
+        !isWalletHasFullAccess &&
+        "You don't have sufficient permissions to initiate a Transfer.",
+    },
+  ];
+
   return (
     <>
-      <DepositModal
-        isOpen={openDeposit}
-        setIsOpen={closeDepoist}
-        blockchain={depoistData?.blockchain}
-        standard={depoistData?.standard}
-      />
-      <CreateWithdrawalModal
-        isOpen={openWithdraw}
-        refreshHandler={() => {}}
-        blockchain={withdrawData?.blockchain}
-        toggleHandler={handleWithdrawalToggler}
-      />
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <DepositModal
+          isOpen={openDeposit}
+          setIsOpen={closeDepoistModal}
+          blockchain={depoistData?.blockchain}
+          standard={depoistData?.standard}
+        />
+        <CreateWithdrawalModal
+          isOpen={openWithdraw}
+          refreshHandler={() => {}}
+          blockchain={withdrawData?.blockchain}
+          toggleHandler={toggleWithdrawalModal}
+        />
+      </RenderRoleBased>
 
-      {user?.role == Role.ADMIN && (
-        <>
-          <CustomTable
-            columns={adminColumns}
-            rows={portfolioData}
-            loading={isPortfolioLoading}
-            initialPageSize={10}
-            actions={
-              <div className="flex justify-between items-center mb-4">
-                <h4 className="font-semibold text-black-100 sm:text-p122 text-base">
-                  Crypto Wallets
-                </h4>
-
-                <div className="flex items-center gap-2">
-                  <LoaderButton
-                    content={"Reload"}
-                    className="hidden lg:flex px-4"
-                    loading={isPortfolioLoading}
-                    onClick={fetchPortfolio}
-                    variant="outlined"
-                  />
-                  <LoaderButton
-                    content={<MdSync className="text-button" />}
-                    className="lg:hidden flex px-4"
-                    loading={isPortfolioLoading}
-                    onClick={fetchPortfolio}
-                    variant="text"
-                  />
-                </div>
+      <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+        <div className="flex flex-col gap-6">
+          {isWalletHasMinimumAccess && (
+            <div className="flex gap-6">
+              <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
+                <Wallets
+                  walletsArray={adminBalances?.userBalances}
+                  error={isAdminBalancesError}
+                  heading="Crypto Wallets"
+                  loading={isAdminBalancesLoading}
+                  onHeadingClick={() => setCharUnit("ALL")}
+                  onWalletClick={handleAssetSelection}
+                />
               </div>
-            }
-          />
-          <ErrorApiText error={isPorfolioError} />
-        </>
-      )}
-      {user?.role == Role.USER && (
-        <>
-          <div
-            className={
-              isTransactionHasMinumumAccess
-                ? "dashboard-layout"
-                : "dashboard-layout-without-transactions"
-            }
-          >
-            <div
-              className="px-4 py-[35px] 2.5xl:py-[60px] min-h-[310px] 2.5xl:min-h-[470px] wallets 2.5xlpx-8"
-              onClick={(e) => {
-                handleAssetSelection("ALL");
-              }}
-            >
-              <div className="flex flex-col justify-between gap-8 h-full">
-                <div>
-                  <h4 className="font-nunito font-bold text-h4 text-white text-center">
-                    Crypto Wallets
-                  </h4>
-                  <h3 className="overflow-hidden font-nunito font-semibold text-[60px] text-white 2.5xl:text-[92px] text-center text-ellipsis leading-[110px]">
-                    $
-                    <CountUp
-                      end={balance}
-                      separator=","
-                      decimal="."
-                      decimals={2}
-                    />
-                  </h3>
-                  <ErrorApiText error={isTotalPortfolioError} />
-                  {/* <h6 className="overflow-hidden font-nunito font-semibold text-button text-purple-light-purple xs:text-p122 md:text-h4 text-center text-ellipsis">
-                  {portfolioPercentage}% Last Week
-                  </h6> */}
-                </div>
-                <div
-                  className="flex justify-center 2.5xl:justify-between gap-4 2.5xl:gap-0 xl:px-8"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <BorderedIconButton
-                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
-                      hoveredButton !== "receive"
-                        ? "w-[57px] 2.5xl:w-[85px]"
-                        : "!w-[50%] px-4 gap-4"
-                    }`}
-                    onMouseEnter={() => handleMouseEnter("receive")}
-                    tooltip={
-                      !isWalletHasFullAccess &&
-                      "You don't have sufficient permissions to initate a Deposit."
-                    }
-                    tooltipId="r-b"
-                    onClick={isWalletHasFullAccess && handleDepoist}
-                    disabled={!isWalletHasFullAccess}
-                  >
-                    <ReciveIcon className="w-4 2.5xl:w-[23px]" />
-                    {hoveredButton === "receive" && (
-                      <span className="hidden sm:flex font-nunito text-button 2.5xl:text-h3.5">
-                        Receive
-                      </span>
-                    )}
-                  </BorderedIconButton>
-                  <BorderedIconButton
-                    tooltipId="s-b"
-                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
-                      hoveredButton !== "send"
-                        ? "w-[57px] 2.5xl:w-[85px]"
-                        : "!w-[50%] px-4 gap-4"
-                    }`}
-                    disabled={!isWalletHasFullAccess}
-                    onMouseEnter={() => handleMouseEnter("send")}
-                    tooltip={
-                      !isWalletHasFullAccess &&
-                      "You don't have sufficient permissions to initate a Withdrawal."
-                    }
-                    onClick={isWalletHasFullAccess && handleWithdrawalToggler}
-                  >
-                    <SendIcon className="w-4 2.5xl:w-[23px]" />
-                    {hoveredButton === "send" && (
-                      <span className="hidden sm:flex font-nunito text-button 2.5xl:text-h3.5">
-                        Send
-                      </span>
-                    )}
-                  </BorderedIconButton>
-                  <BorderedIconButton
-                    tooltipId="t-b"
-                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
-                      hoveredButton !== "transfer"
-                        ? "w-[57px] 2.5xl:w-[85px]"
-                        : "!w-[50%] px-4 gap-4"
-                    }`}
-                    onMouseEnter={() => handleMouseEnter("transfer")}
-                    disabled={!isWalletHasFullAccess}
-                    tooltip={
-                      !isWalletHasFullAccess &&
-                      "You don't have sufficient permissions to initate a Transfer."
-                    }
-                  >
-                    <TransferIcon className="w-4 2.5xl:w-[23px]" />
-                    {hoveredButton === "transfer" && (
-                      <span className="hidden sm:inline font-nunito text-button 2.5xl:text-h3.5">
-                        Transfer
-                      </span>
-                    )}
-                  </BorderedIconButton>
-                </div>
+
+              <div className="hidden xs:block flex-1">
+                <PortfolioChart
+                  isAdmin={user?.role == Role.ADMIN}
+                  interval={interval}
+                  setInterval={setInterval}
+                  chartData={adminBalances?.portfolio}
+                  unit={chartUnit}
+                  loading={isAdminBalancesLoading}
+                  error={isAdminBalancesError}
+                  merchantsList={adminMerchants}
+                  merchant={merchant}
+                  setMerchant={setMerchant}
+                  getChartData={getAdminChartData}
+                />
               </div>
             </div>
-            <div className="portfolio">
-              <div className="flex flex-col flex-auto">
-                <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
-                  {/* <header className="top-0 z-10 sticky"> */}
-                  <h3 className="mb-2 font-nunito text-p120 2xl:text-h4">
-                    My Portfolio
-                  </h3>
-                  {/* </header> */}
+          )}
 
-                  <div className="flex flex-col flex-1 gap-[14px] pr-4 overflow-y-auto portfolio-body">
-                    <LoadingApi loading={isPortfolioLoading}>
-                      {portfolioData?.length > 0 ? (
-                        portfolioData?.map((asset) => {
-                          let unit = asset?.unit;
-                          let tokenName = `${unit} (${asset?.standard})`;
-                          let coinName =
-                            unitName[unit?.toLowerCase()] || "Unknown";
-                          let currencyTicker =
-                            asset?.type == "coin" ? unit : tokenName;
-                          let currencyHistoryData = asset?.historyData?.map(
-                            (item) => item?.rate_open
-                          );
-                          let depoistBlockchain = asset?.standard
-                            ? unit
-                            : coinName?.toLowerCase();
-                          return (
-                            <PortfolioCard
-                              Balance={asset?.totalAmount}
-                              IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
-                              ChartLineData={currencyHistoryData}
-                              CurrencyName={coinName}
-                              isWalletHasFullAccess={isWalletHasFullAccess}
-                              CurrencyTicker={currencyTicker}
-                              onClick={() =>
-                                handleAssetSelection(unit?.toUpperCase())
-                              }
-                              onRecieve={() =>
-                                handleDepoistAndCreateAddress(
-                                  depoistBlockchain,
-                                  asset?.standard
-                                )
-                              }
-                              onSend={() =>
-                                handleWithdrawAndSetBlockchain(currencyTicker)
-                              }
-                              onTransfer={() => {}}
-                            />
-                          );
-                        })
-                      ) : !isPorfolioError ? (
-                        "No Assets Found. Deposit Assets to see them here."
-                      ) : (
-                        <></>
-                      )}
-                    </LoadingApi>
-                    <ErrorApiText error={isPorfolioError} />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="hidden xs:block history">
-              <PortfolioChart
-                interval={interval}
-                setInterval={setInterval}
-                unit={chartUnit}
-              />
-            </div>
-            {isTransactionHasMinumumAccess && (
-              <div className="transactions">
-                <div className="xxs:px-5 xxs:py-[30px] xxs:border border-purple-10 rounded-[28px]">
-                  <div className="flex justify-between items-end mb-2">
-                    <h3 className="font-nunito text-p120 2xl:text-h4">
-                      Last Transactions
-                    </h3>
-                    <Link className="text-caption" href={"/transactions"}>
-                      View All
-                    </Link>
-                  </div>
-                  <div className="flex flex-col gap-3 2xl:gap-4">
-                    <LoadingApi loading={isLastTransactionsLoading}>
-                      {lastTransactions?.length > 0 ? (
-                        lastTransactions?.map((transaction) => (
-                          <TransactionCard
-                            currencyName={
-                              unitName[transaction?.unit?.toLowerCase()]
-                            }
-                            date={transaction?.createdAt}
-                            direction={
-                              transaction?.withdrawal?.id
-                                ? "outgoing"
-                                : "incoming"
-                            }
-                            onClick={() => {}}
-                            amount={transaction?.amount}
-                          />
+          <div className="flex gap-6">
+            {isMerchantHasMinimumAccess && (
+              <div className="w-[70%]">
+                <CustomTable
+                  columns={merchantsColumns}
+                  rows={adminMerchants}
+                  expandRowIDKey="userId"
+                  ExpandComponent={({ row }) => (
+                    <div className="justify-between items-center gap-6 grid grid-cols-5">
+                      {row?.balances && row?.balances?.length > 0 ? (
+                        row.balances.map((item) => (
+                          <div className="flex flex-col gap-2">
+                            <h3 className="font-semibold text-purple-500 text-base">
+                              {item?.unit}{" "}
+                              {item?.standard ? ` - ${item?.standard}` : ""}
+                            </h3>
+                            <span className="font-semibold text-base">
+                              {item?.amount}
+                            </span>
+                          </div>
                         ))
-                      ) : !isLastTransactionsError ? (
-                        "No Transactions Found"
                       ) : (
-                        <></>
+                        <p>No Wallets Found.</p>
                       )}
-                    </LoadingApi>
-                    <ErrorApiText error={isLastTransactionsError} />
-                  </div>
-                </div>
+                    </div>
+                  )}
+                  initialPageSize={5}
+                  rowClickHandler={(row: any) => {
+                    router.push(`/merchants/details/${row?.userId}`);
+                  }}
+                  actions={
+                    <div className="flex justify-between items-end mb-6">
+                      <h3 className="font-nunito text-p120 2xl:text-h4">
+                        Merchants Wallet Summary
+                      </h3>
+                      <Link
+                        className="font-semibold text-caption text-purple-500 underline"
+                        href={"/merchants"}
+                      >
+                        View All
+                      </Link>
+                    </div>
+                  }
+                  tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
+                  pagination
+                  columnClassName="max-w-[250px]"
+                  loading={isAdminMerchantsLoading}
+                />
+                <ErrorApiText error={isAdminMerchantsError} />
               </div>
             )}
+
+            {isTransactionHasMinumumAccess && (
+              <div className="flex-1">{/* <RecentTransactions/> */}</div>
+            )}
           </div>
-        </>
-      )}
+
+          <div className="flex gap-6">
+            {/* {isMerchantHasMinimumAccess && <div className="w-[70%]">
+              <MerchantSummary />
+            </div>} */}
+          </div>
+        </div>
+      </RenderRoleBased>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <div
+          className={
+            isTransactionHasMinumumAccess
+              ? "dashboard-layout"
+              : "dashboard-layout-without-transactions"
+          }
+        >
+          <div
+            className="px-4 py-[35px] 2.5xl:py-[60px] min-h-[310px] 2.5xl:min-h-[470px] wallets 2.5xlpx-8"
+            onClick={(e) => {
+              handleAssetSelection("ALL");
+            }}
+          >
+            <div className="flex flex-col justify-between gap-8 h-full">
+              <div>
+                <h4 className="font-nunito font-bold text-h4 text-white text-center">
+                  Crypto Wallets
+                </h4>
+                <h3 className="overflow-hidden font-nunito font-semibold text-[60px] text-white 2.5xl:text-[92px] text-center text-ellipsis leading-[110px]">
+                  $
+                  <CountUp
+                    end={balance}
+                    separator=","
+                    decimal="."
+                    decimals={2}
+                  />
+                </h3>
+                <ErrorApiText error={isTotalPortfolioError} />
+              </div>
+              <div
+                className="flex justify-center 2.5xl:justify-between gap-4 2.5xl:gap-0 xl:px-8"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {actionButtons.map((button) => (
+                  <BorderedIconButton
+                    key={button.name}
+                    className={`transition-[width] overflow-hidden h-[57px] 2.5xl:h-[85px] bg-white !border-0 ${
+                      hoveredButton !== button.name
+                        ? "w-[57px] 2.5xl:w-[85px]"
+                        : "!w-[50%] px-4 gap-4"
+                    }`}
+                    onMouseEnter={() => handleMouseEnter(button.name)}
+                    tooltip={button.tooltip}
+                    tooltipId={`${button.name}-b`}
+                    onClick={button.action}
+                    disabled={button.disabled}
+                  >
+                    {button.icon}
+                    {hoveredButton === button.name && (
+                      <span className="hidden sm:flex font-nunito text-button 2.5xl:text-h3.5">
+                        {button.label}
+                      </span>
+                    )}
+                  </BorderedIconButton>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className="portfolio">
+            <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
+              <Wallets
+                walletsArray={portfolioData}
+                error={isPorfolioError}
+                heading="My Portfolio"
+                loading={isPortfolioLoading}
+                onReceive={openDepoistModalAndCreateAddress}
+                onWalletClick={handleAssetSelection}
+                onWithdraw={openWithdrawalModalAndSetBlockchain}
+              />
+            </div>
+          </div>
+
+          <div className="hidden xs:block history">
+            <PortfolioChart
+              interval={interval}
+              chartData={userChartData}
+              error={isUserPortfolioActivityError}
+              loading={isUserPortfolioActivityLoading}
+              getChartData={getUserChartData}
+              setInterval={setInterval}
+              unit={chartUnit}
+            />
+          </div>
+          {isTransactionHasMinumumAccess && (
+            <div className="transactions">
+              <RecentTransactions />
+            </div>
+          )}
+        </div>
+      </RenderRoleBased>
     </>
   );
 };
