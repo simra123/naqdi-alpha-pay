@@ -18,6 +18,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
+import { hasMinAccess } from "@/utils/cookies";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
@@ -99,7 +100,7 @@ const UserDetails = ({ params }) => {
           checked={permissionModule?.permission?.access_level == value}
           // onChange={() => handleChange(permission, value)}
         />
-        <span className="md:text-base text-[12px] whitespace-nowrap">
+        <span className="text-[12px] md:text-base whitespace-nowrap">
           {label}
         </span>
       </label>
@@ -111,7 +112,7 @@ const UserDetails = ({ params }) => {
   };
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white shadow-sm px-4 sm:p-10">
+    <div className="flex flex-col bg-white shadow-sm sm:p-10 px-4 rounded-medium">
       <DeleteModal
         handleConfirm={deleteSubUser}
         isOpen={isDeleteOpen}
@@ -129,12 +130,12 @@ const UserDetails = ({ params }) => {
         user_id={userID}
         userPermissions={userDetails?.permissions}
       />
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 hidden md:block">
+      <h3 className="hidden md:block font-semibold text-blackGrey-100 text-h3.5">
         User Details
       </h3>
 
       <LoadingApi loading={isUserDetailsLoading}>
-        <div className="res-4-grid py-6 md:mt-4 border-light-gray border-b-2">
+        <div className="res-4-grid md:mt-4 py-6 border-b-2 border-light-gray">
           <Details label="Profile ID" value={userID} />
           <Details label="First Name" value={userDetails?.first_name} />
           <Details label="Last Name" value={userDetails?.last_name} />
@@ -146,37 +147,37 @@ const UserDetails = ({ params }) => {
           />
         </div>
 
-        <div className="grid grid-cols-4 gap-4 mt-8 mb-6">
-          <div className="font-semibold text-button text-black-100">
+        <div className="gap-4 grid grid-cols-4 mt-8 mb-6">
+          <div className="font-semibold text-black-100 text-button">
             Permissions
           </div>
         </div>
-        <div className="overflow-x-auto w-full">
+        <div className="w-full overflow-x-auto">
           {userDetails?.permissions.map(
             (item, index) =>
               item?.permission?.module != ModulesEnum.payout && (
                 <div
-                  className="flex justify-between w-full min-w-max sm:grid sm:grid-cols-4 md:justify-between lg:grid-cols-5  gap-4 items-center py-5 border-light-gray border-b"
+                  className="flex justify-between md:justify-between items-center gap-4 sm:grid sm:grid-cols-4 lg:grid-cols-5 py-5 border-b border-light-gray w-full min-w-max"
                   key={item?.id}
                 >
-                  <div className="min-w-20 md:col-span-1 lg:col-span-2 text-[14px] md:text-button  text-black-100 capitalize">
+                  <div className="md:col-span-1 lg:col-span-2 min-w-20 text-[14px] text-black-100 md:text-button capitalize">
                     {item?.permission?.module}
                   </div>
-                  <div className="text-center md:col-span-1">
+                  <div className="md:col-span-1 text-center">
                     {renderRadioButton(
                       item?.permission?.module?.toLowerCase(),
                       AccessLevelEnum.none,
                       "None"
                     )}
                   </div>
-                  <div className="text-center md:col-span-1">
+                  <div className="md:col-span-1 text-center">
                     {renderRadioButton(
                       item?.permission?.module?.toLowerCase(),
                       AccessLevelEnum.read,
                       "Read Only"
                     )}
                   </div>
-                  <div className="text-center md:col-span-1">
+                  <div className="md:col-span-1 text-center">
                     {renderRadioButton(
                       item?.permission?.module?.toLowerCase(),
                       AccessLevelEnum.full,
@@ -188,20 +189,22 @@ const UserDetails = ({ params }) => {
           )}
         </div>
 
-        <div className="grid grid-cols-2 sm:flex gap-4 items-center mt-20 flex-wrap">
-          <button
-            className="border-0 py-3 text-center text-white bg-red-button rounded-medium sm:w-56 "
-            onClick={handleDeleteOpen}
-          >
-            Delete
-          </button>
-          <button
-            className="border-0 py-3 text-center text-white bg-green-button rounded-medium sm:w-56 "
-            onClick={() => setIsEditOpen(true)}
-          >
-            Edit
-          </button>
-        </div>
+        {hasMinAccess(ModulesEnum.user, AccessLevelEnum.full) && (
+          <div className="sm:flex flex-wrap items-center gap-4 grid grid-cols-2 mt-20">
+            <button
+              className="bg-red-button py-3 border-0 rounded-medium sm:w-56 text-white text-center"
+              onClick={handleDeleteOpen}
+            >
+              Delete
+            </button>
+            <button
+              className="bg-green-button py-3 border-0 rounded-medium sm:w-56 text-white text-center"
+              onClick={() => setIsEditOpen(true)}
+            >
+              Edit
+            </button>
+          </div>
+        )}
       </LoadingApi>
       <ErrorApiText error={isUserDetailsError | isUserDeleteError} />
     </div>
