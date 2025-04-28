@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./constants/roles";
 
-const adminRoutes = ["/kyc", "/users", "/wallets", "/news-signup"];
+const adminRoutes = ["/kyc", "/merchants", "/wallets", "/news-signup"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
 const nonFunctionalRoutes = ["/payouts","/wallets"];
 
@@ -29,7 +29,7 @@ export function middleware(req: NextRequest) {
 
   const userCookie = req.cookies.get("user");
 
-  console.log("Middleware is running for ", pathname);
+
 
   let user = null;
 
@@ -60,7 +60,6 @@ export function middleware(req: NextRequest) {
 
     if (user?.role == Role.USER) {
       if (isAdminRoute(pathname)) {
-        console.log("I am  admin route");
         return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
 
@@ -69,13 +68,11 @@ export function middleware(req: NextRequest) {
         (!isWithOutFeeRoute(pathname) && hasFee(user)) ||
         (isWithOutFeeRoute(pathname) && !hasFee(user))
       ) {
-        console.log("I should be able to pass");
         return NextResponse.next();
       }
 
       // Checking if is not a onboarding route and dont have fee also if is a onboarding route but has fees then blocking the user
       if (!isWithOutFeeRoute(pathname) && !hasFee(user)) {
-        console.log("I am not a fee route and dont have fee");
         if (pathname == "/") {
           return NextResponse.redirect(new URL("/onboarding", req.url));
         }
@@ -87,8 +84,6 @@ export function middleware(req: NextRequest) {
         hasFee(user) &&
         !pathname.includes("/support")
       ) {
-        console.log("I am a without fee route but still has fees");
-
         return NextResponse.redirect(new URL("/", req.url));
       }
     }

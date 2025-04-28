@@ -53,6 +53,11 @@
   border-radius: 50% !important; /* Make the selected day a circle */
 }
 
+.react-datepicker__time-list-item--selected {
+  @apply bg-purple-80 !important;
+  color: #fff !important; /* White text on selected day */
+}
+
 .react-datepicker__day:hover {
   background-color: #f0f4ff !important; /* Light purple hover color */
   border-radius: 50% !important; /* Hover effect */

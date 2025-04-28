@@ -17,9 +17,13 @@ import {
   DashboardIcon,
   DoubleLeftIcon,
   DoubleRightIcon,
+  FeeLedgerIcon,
+  KYCIcon,
   LogoutDoorIcon,
   LogoutIcon,
+  MerchantIcon,
   NeedHelpIcon,
+  NewsIcon,
   NotificationIcon,
   onBoardingIcon,
   PaymentsIcon,
@@ -38,6 +42,7 @@ import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
 import { FaUsers } from "react-icons/fa";
 import { BorderedIconButton } from "../IconButton";
+import RenderRoleBased from "../RenderRoleBased";
 
 interface NavItem {
   name: string;
@@ -67,14 +72,14 @@ const nav_items: NavItem[] = [
   },
   {
     name: "Merchants",
-    icon: FaUsers,
-    path: "/users",
+    icon: MerchantIcon,
+    path: "/merchants",
     roles: [Role.ADMIN],
     module: ModulesEnum.merchant,
   },
   {
     name: "KYC Requests",
-    icon: Assignment,
+    icon: KYCIcon,
     path: "/kyc",
     module: ModulesEnum.kyc,
     roles: [Role.ADMIN],
@@ -107,8 +112,15 @@ const nav_items: NavItem[] = [
     module: ModulesEnum.withdrawal,
   },
   {
+    name: "Fee Ledger",
+    icon: FeeLedgerIcon,
+    path: "/fee-ledger",
+    roles: [Role.ADMIN, Role.USER],
+    module: ModulesEnum.feeLedger,
+  },
+  {
     name: "News Signups",
-    icon: LuNewspaper,
+    icon: NewsIcon,
     path: "/news-signup",
     roles: [Role.ADMIN],
     module: ModulesEnum.newsletter,
@@ -231,7 +243,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     <div className="flex">
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="z-40 fixed inset-0 bg-black bg-opacity-50"
           onClick={handleOutsideClick}
         />
       )}
@@ -255,21 +267,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the sidebar
         >
           <div className="flex flex-col gap-3">
-            <div className="logo mb-12 px-6">
-              <h3 className="text-center text-white text-p120 font-bold">
+            <div className="mb-12 px-6 logo">
+              <h3 className="font-bold text-p120 text-white text-center">
                 {!isCollapsed ? (
                   <img src="/logo-new.png" className="w-[160px]" alt="Logo" />
                 ) : (
                   <img
                     src="/logo-small.png"
-                    className="w-[60px] m-auto"
+                    className="m-auto w-[60px]"
                     alt="Logo"
                   />
                 )}
               </h3>
             </div>
             <div className="max-h-[calc(100vh-230px)] md:max-h-[calc(100vh-160px)] overflow-y-auto sidebar-scrollbar">
-              <div className=" flex flex-col gap-3 px-6">
+              <div className="flex flex-col gap-3 px-[18px]">
                 {getCurrentNav().map(
                   ({ icon: Icon, name, path, sub_nav, roles, module }) =>
                     roles &&
@@ -365,10 +377,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             </div>
           </div>
 
-          <div className="items-center gap-2 md:hidden flex border-t border-light-purple py-5 mx-auto">
-            <BorderedIconButton>
-              <SupportIcon />
-            </BorderedIconButton>
+          <div className="md:hidden flex items-center gap-2 mx-auto py-5 border-t border-light-purple">
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <BorderedIconButton>
+                <SupportIcon />
+              </BorderedIconButton>
+            </RenderRoleBased>
             <BorderedIconButton>
               <ThemeChangeIcon />
             </BorderedIconButton>

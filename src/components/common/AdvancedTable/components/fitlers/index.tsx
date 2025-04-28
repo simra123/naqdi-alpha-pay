@@ -56,19 +56,28 @@ const AdvancedTableFilters = ({
 
   const ApplyHandler = () => {
     if (filterType == FilterTypesEnum.Filter) {
-      const updatedGroupWithDate =
-        dateRange[0].startDate && dateRange[0].endDate
-          ? updateMetaItemInGroup(groups, ["created_at"], {
-              listColumnMeta: { name: "created_at" },
-              operator: "BETWEEN",
-              values: [dateRange[0].startDate, dateRange[0].endDate],
-              isSelected: true,
-            })
-          : groups;
+      let updatedGroupWithDate = groups;
+
+      if (dateRange[0].startDate && dateRange[0].endDate) {
+        updatedGroupWithDate = updateMetaItemInGroup(groups, {
+          created_at: {
+            listColumnMeta: { name: "created_at" },
+            operator: "BETWEEN",
+            values: [dateRange[0].startDate, dateRange[0].endDate],
+            isSelected: true,
+          },
+          createdAt: {
+            listColumnMeta: { name: "createdAt" },
+            operator: "BETWEEN",
+            values: [dateRange[0].startDate, dateRange[0].endDate],
+            isSelected: true,
+          },
+        });
+      }
+
       setGroups(updatedGroupWithDate);
       const filteredColumnsData =
         formatFilterDataFromGroups(updatedGroupWithDate);
-      console.log({ updatedGroupWithDate });
 
       onFiltersApply(filteredColumnsData, true);
     } else {
@@ -81,19 +90,19 @@ const AdvancedTableFilters = ({
     <Modal
       isOpen={filterOpen}
       onClose={() => setFilterOpen(false)}
-      className="!w-[1200px] !p-0"
+      className="!p-0 !w-[1200px]"
     >
-      <div className="heading pr-12 py-6 max-w-[calc(100%-48px)] border-b ml-auto">
-        <h4 className="font-semibold text-p120 border-r inline-block pr-8">
+      <div className="ml-auto py-6 pr-12 border-b max-w-[calc(100%-48px)] heading">
+        <h4 className="inline-block pr-8 border-r font-semibold text-p120">
           {filterType == FilterTypesEnum.Filter
             ? "Advanced Filter"
             : "List Layout"}
         </h4>
       </div>
-      <div className="absolute -left-16 top-7 flex flex-col items-end">
+      <div className="top-7 -left-16 absolute flex flex-col items-end">
         <button
           className={clsx(
-            `min-h-[103px] font-semibold rounded-l-2xl flex items-center justify-center`,
+            `flex justify-center items-center rounded-l-2xl min-h-[103px] font-semibold`,
             {
               "w-16 bg-white": filterType == FilterTypesEnum.Filter,
               "w-14 bg-disabled-white": filterType == FilterTypesEnum.Sorting,
@@ -105,7 +114,7 @@ const AdvancedTableFilters = ({
         </button>
         <button
           className={clsx(
-            `min-h-[103px] font-semibold rounded-l-2xl flex items-center justify-center`,
+            `flex justify-center items-center rounded-l-2xl min-h-[103px] font-semibold`,
             {
               "w-16 bg-white": filterType == FilterTypesEnum.Sorting,
               "w-14 bg-disabled-white": filterType == FilterTypesEnum.Filter,
@@ -117,7 +126,7 @@ const AdvancedTableFilters = ({
         </button>
       </div>
 
-      <div className="max-h-[calc(100vh-300px)] min-h-[60vh] overflow-y-auto overflow-x-hidden px-12 py-6">
+      <div className="px-12 py-6 min-h-[60vh] max-h-[calc(100vh-300px)] overflow-x-hidden overflow-y-auto">
         {filterType == FilterTypesEnum.Filter && (
           <ColumnFiltering
             listConfig={listConfig}
@@ -140,9 +149,9 @@ const AdvancedTableFilters = ({
           />
         )}
       </div>
-      <div className="footer flex items-center justify-center gap-6 border-t-2 py-5 border-dashed">
+      <div className="flex justify-center items-center gap-6 py-5 border-t-2 border-dashed footer">
         <button
-          className="bg-blackGrey-30 w-28 rounded-[10px] py-[10px]"
+          className="bg-blackGrey-30 py-[10px] rounded-[10px] w-28"
           onClick={() => setFilterOpen(false)}
         >
           Cancel
@@ -151,7 +160,7 @@ const AdvancedTableFilters = ({
           <LoaderButton
             content={"Apply"}
             variant="contained"
-            className="!text-base !py-[10px]"
+            className="!py-[10px] !text-base"
             onClick={ApplyHandler}
           />
         </div>
@@ -160,7 +169,7 @@ const AdvancedTableFilters = ({
           <LoaderButton
             content={"Save to Filter"}
             variant="text"
-            className="!text-base !py-[10px] hover:bg-gray-100 rounded-[10px]"
+            className="hover:bg-gray-100 !py-[10px] rounded-[10px] !text-base"
           />
         </div> */}
       </div>

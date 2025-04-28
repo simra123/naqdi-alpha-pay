@@ -24,10 +24,9 @@ const page = ({ params }) => {
         })
       ),
       successCallBack: () => {
-
         setTimeout(() => {
           router.push("/login");
-        }, 3000);
+        }, 2000);
       },
     });
   };
@@ -37,21 +36,21 @@ const page = ({ params }) => {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col justify-center">
-      <h2 className="text-h2 font-semibold mb-4 text-blackGrey-100 mt-14">
+    <>
+      <h2 className="mt-[30px] mb-4 font-semibold text-blackGrey-100 text-h2 text-center">
         Email Verification !
       </h2>
 
-      <div className="flex flex-col gap-5 mt-12 max-w-xl">
+      <div className="flex flex-col gap-5 max-w-xl">
         {<ErrorApiText error={isVerificationError} />}
 
         {(isVerificationLoading || !rendered) && (
-          <p className="mx-1">Please wait we are verifying your email.</p>
+          <p className="mx-1 text-center">Please wait we are verifying your email.</p>
         )}
 
         <LoadingApi loading={isVerificationLoading || !rendered}>
           {!isVerificationError && (
-            <p className="text-green-chip">
+            <p className="mt-8 text-green-chip text-center">
               Congratulations, Your Email has been verified. Redirecting you to
               login shortly
             </p>
@@ -59,16 +58,16 @@ const page = ({ params }) => {
         </LoadingApi>
       </div>
       {isVerificationError && (
-        <div className="text-center mt-14 pb-10">
+        <div className="mt-[30px] pb-10 text-center">
           <button
-            className="btn secondary-btn max-w-fit px-6 py-1"
+            className="px-6 py-1 max-w-fit btn secondary-btn"
             onClick={() => router.push("/email-verification-required")}
           >
             resend verification email
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

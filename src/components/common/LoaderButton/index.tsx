@@ -36,7 +36,7 @@ const LoaderButton = ({
       : "";
 
     const loadingClasses = {
-      contained: "w-16 p-2 rounded-full bg-pink-gradient",
+      contained: "w-16 p-2 rounded-full bg-purple-gradient",
       outlined: "border-purple-100 border rounded-medium p-3 flex",
       text: "",
       error: "border-red-button border py-3 w-56 rounded-medium",
