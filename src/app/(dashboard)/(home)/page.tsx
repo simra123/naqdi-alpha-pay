@@ -418,7 +418,7 @@ const Home = () => {
                   }
                   tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
                   pagination
-                  columnClassName="max-w-[250px]"
+                  columnClassName="max-w-[250px] !py-[19.5px]"
                   loading={isAdminMerchantsLoading}
                 />
                 <ErrorApiText error={isAdminMerchantsError} />
@@ -432,7 +432,8 @@ const Home = () => {
             )}
           </div>
 
-          <div className="flex gap-6">
+          {/* Graphs Row */}
+          {/* <div className="flex gap-6">
             {isMerchantHasMinimumAccess && (
               <div className="w-[50%]">
                 <MerchantSummary />
@@ -441,7 +442,7 @@ const Home = () => {
             <div className="w-[50%]">
               <FeeSummaryGraph />
             </div>
-          </div>
+          </div> */}
         </div>
       </RenderRoleBased>
 
