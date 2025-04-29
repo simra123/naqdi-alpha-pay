@@ -17,6 +17,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
+import { hasMinAccess } from "@/utils/cookies";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
@@ -186,21 +187,22 @@ const UserDetails = ({ params }) => {
               )
           )}
         </div>
-
-        <div className="sm:flex flex-wrap items-center gap-4 grid grid-cols-2 mt-20">
-          <button
-            className="bg-red-button py-3 border-0 rounded-medium sm:w-56 text-white text-center"
-            onClick={handleDeleteOpen}
-          >
-            Delete
-          </button>
-          <button
-            className="bg-green-button py-3 border-0 rounded-medium sm:w-56 text-white text-center"
-            onClick={() => setIsEditOpen(true)}
-          >
-            Edit
-          </button>
-        </div>
+        {hasMinAccess(ModulesEnum.user, AccessLevelEnum.full) && (
+          <div className="sm:flex flex-wrap items-center gap-4 grid grid-cols-2 mt-20">
+            <button
+              className="bg-red-button py-3 border-0 rounded-medium sm:w-56 text-white text-center"
+              onClick={handleDeleteOpen}
+            >
+              Delete
+            </button>
+            <button
+              className="bg-green-button py-3 border-0 rounded-medium sm:w-56 text-white text-center"
+              onClick={() => setIsEditOpen(true)}
+            >
+              Edit
+            </button>
+          </div>
+        )}
       </LoadingApi>
       <ErrorApiText error={isUserDetailsError | isUserDeleteError} />
     </div>

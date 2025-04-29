@@ -6,6 +6,13 @@ export const getAllTransactionsByAdminApi = () => {
   return () => api.get(`wallet/all-transactions-by-admin`);
 };
 
+export const getLatestTransactionsByAdminApi = (params: {
+  page?: number;
+  limit?: number;
+}) => {
+  return () => api.get(`/admin-wallet/latest-transactions`, { params });
+};
+
 export const getTransactionDetailsByAdminApi = (data: { id: number }) => {
   return () => api.post(`auth/get-transaction-by-admin`, data);
 };
