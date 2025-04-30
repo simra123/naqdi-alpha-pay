@@ -59,6 +59,7 @@ import {
 
 // Styles
 import "./dashboard.scss";
+import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
 
 const merchantsColumns: TableColumns = [
   { field: "username", headerName: "Username" },
@@ -417,7 +418,7 @@ const Home = () => {
                   }
                   tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
                   pagination
-                  columnClassName="max-w-[250px]"
+                  columnClassName="max-w-[250px] !py-[19.5px]"
                   loading={isAdminMerchantsLoading}
                 />
                 <ErrorApiText error={isAdminMerchantsError} />
@@ -425,15 +426,23 @@ const Home = () => {
             )}
 
             {isTransactionHasMinumumAccess && (
-              <div className="flex-1">{/* <RecentTransactions/> */}</div>
+              <div className="flex-1">
+                <RecentTransactions />
+              </div>
             )}
           </div>
 
-          <div className="flex gap-6">
-            {/* {isMerchantHasMinimumAccess && <div className="w-[70%]">
-              <MerchantSummary />
-            </div>} */}
-          </div>
+          {/* Graphs Row */}
+          {/* <div className="flex gap-6">
+            {isMerchantHasMinimumAccess && (
+              <div className="w-[50%]">
+                <MerchantSummary />
+              </div>
+            )}
+            <div className="w-[50%]">
+              <FeeSummaryGraph />
+            </div>
+          </div> */}
         </div>
       </RenderRoleBased>
 

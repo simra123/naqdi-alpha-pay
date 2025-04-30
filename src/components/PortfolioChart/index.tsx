@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Chart as ChartJS, registerables } from "chart.js";
+import React, { useEffect } from "react";
+import { Chart as ChartJS, ChartOptions, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import moment from "moment";
-import { callApiHook } from "@/utils/apifuncs";
-import { getPortfolioActivityChartApi } from "@/services/wallet";
-import { useApi } from "@/hooks/useApi";
 import ErrorApiText from "../common/ErrorApiText";
 import LoadingApi from "../common/LoadindApi";
 import { unitName } from "@/constants/blockchains";
@@ -139,6 +135,9 @@ const PortfolioChart = ({
   const options = {
     responsive: true,
     plugins: {
+      datalabels: {
+        display: false, // Turn off for this chart
+      },
       legend: {
         display: true,
         position: "bottom" as const,
@@ -282,29 +281,14 @@ const PortfolioChart = ({
             width={50}
             className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
           />
-          <h2 className="font-semibold text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 leading-4">
+          <h3 className="font-nunito text-p120 2xl:text-h4">
             {user?.role == Role.USER
               ? unitName[unit?.toLowerCase()] || "Portfolio"
               : merchant == "ALL"
               ? "Crypto Wallets"
               : "Merchant Wallets"}{" "}
             History
-          </h2>
-        </div>
-        <div className="hidden lg:flex gap-2 md:gap-4">
-          {["daily", "weekly", "monthly", "lifetime"].map((int) => (
-            <button
-              key={int}
-              onClick={() => setInterval(int)}
-              className={`px-4 py-2 text-subtitle lg:text-base  rounded-full ${
-                interval === int
-                  ? "bg-purple-500 text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-            >
-              {int.charAt(0).toUpperCase() + int.slice(1)}
-            </button>
-          ))}
+          </h3>
         </div>
         <div className="lg:hidden block w-32">
           <IconSelectBox
@@ -321,26 +305,43 @@ const PortfolioChart = ({
             value={interval}
           />
         </div>
-        {isAdmin && (
-          <IconSelectBox
-            searchable
-            wrapperClassName="!m-0"
-            inputContainerClassName="!rounded-full py-3"
-            optionsClassName="!right-0 w-[240px]"
-            options={[
-              { label: "All", value: "ALL" },
-              ...merchantsList?.map((item) => {
-                return {
-                  // label: `${item?.first_name} ${item?.last_name}`,
-                  label: item?.username,
-                  value: item?.userId,
-                };
-              }),
-            ]}
-            onChange={handleChangeMerchant}
-            value={merchant}
-          />
-        )}
+        <div className="flex justify-end gap-2">
+          <div className="hidden lg:flex gap-2 md:gap-4">
+            {["daily", "weekly", "monthly", "lifetime"].map((int) => (
+              <button
+                key={int}
+                onClick={() => setInterval(int)}
+                className={`px-4 py-2 text-subtitle lg:text-base  rounded-full ${
+                  interval === int
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {int.charAt(0).toUpperCase() + int.slice(1)}
+              </button>
+            ))}
+          </div>
+          {isAdmin && (
+            <IconSelectBox
+              searchable
+              wrapperClassName="!m-0"
+              inputContainerClassName="!rounded-full py-3 min-w-[100px]"
+              optionsClassName="!right-0 !w-[240px]"
+              options={[
+                { label: "All", value: "ALL" },
+                ...merchantsList?.map((item) => {
+                  return {
+                    // label: `${item?.first_name} ${item?.last_name}`,
+                    label: item?.username,
+                    value: item?.userId,
+                  };
+                }),
+              ]}
+              onChange={handleChangeMerchant}
+              value={merchant}
+            />
+          )}
+        </div>
       </div>
       <LoadingApi loading={loading}>
         {chartData &&
