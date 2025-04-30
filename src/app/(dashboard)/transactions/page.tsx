@@ -338,11 +338,8 @@ const Transactions = () => {
             : transactionsList_table_columns
         }
         rows={transactions}
-        csv={{
-          handler: ExportCSVHandler,
-          loading: isCSVLoading,
-          error: isCSVError,
-        }}
+        csv={true}
+        tableName="transactions"
         initialPageSize={10}
         rowClickHandler={(row: any) => {
           router.push(

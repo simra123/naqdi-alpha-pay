@@ -160,11 +160,8 @@ const Payments = () => {
           columns={paymentsList_table_columns}
           Filters={Filters}
           rows={paymentsList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="payments"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
             router.push(`payments/details/${row?.id}`)
