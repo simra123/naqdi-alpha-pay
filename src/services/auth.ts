@@ -49,6 +49,13 @@ export const updatePasswordApi = (data) => {
   return () => api.post(`auth/reset-password`, data);
 };
 
+export const setupPasswordApi = (data: {
+  newPassword: string;
+  token: string;
+}) => {
+  return () => api.post(`auth/set-password`, data);
+};
+
 export const createSubuserApi = (data: {
   username: string;
   first_name: string;
