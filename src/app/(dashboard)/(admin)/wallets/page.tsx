@@ -183,11 +183,8 @@ const Wallets = () => {
           loading={isWalletsLoading}
           columns={wallets_table_columns()}
           rows={wallets}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="wallets"
           initialPageSize={10}
           pagination
           columnClassName="max-w-[250px]"

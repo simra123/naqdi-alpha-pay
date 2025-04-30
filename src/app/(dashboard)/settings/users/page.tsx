@@ -42,19 +42,12 @@ const Users = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const [isCreateOpen, setCreateOpen] = useState(false);
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+
   const [subUsersList, setSubUsersList] = useState({ limit: 0, users: [] });
   const [isSubUsersListLoading, isSubUsersListError, callSubUsersListApi] =
     useApi();
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(subUsersList.users)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "sub-users.csv");
-      },
-    });
-  };
+
 
   const fetchSubUsersList = async () => {
     await callApiHook({
@@ -115,11 +108,8 @@ const Users = () => {
         // Filters={Filters}
         loading={isSubUsersListLoading}
         rows={subUsersList?.users}
-        csv={{
-          handler: ExportCSVHandler,
-          loading: isCSVLoading,
-          error: isCSVError,
-        }}
+        csv={true}
+        tableName="sub-users"
         initialPageSize={10}
         rowClickHandler={(row: any) =>
           router.push(`/settings/users/details/${row?.id}`)

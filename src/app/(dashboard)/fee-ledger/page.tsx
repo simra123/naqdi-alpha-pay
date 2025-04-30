@@ -40,18 +40,6 @@ const FeeLedger = () => {
   const [isFeeLedgerListLoading, isFeeLedgerListError, callFeeLedgerListApi] =
     useApi({ initailLoading: true });
 
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
-
-
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(FeeLedgerList)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "FeeLedger.csv");
-      },
-    });
-  };
-
   const getFeeLedger = async ({
     pageValue,
     limitValue,
@@ -248,11 +236,8 @@ const FeeLedger = () => {
           // Filters={Filters}
           createHandler={toggleCreateModal}
           rows={FeeLedgerList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="fee-ledger"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
             hasMinAccess(ModulesEnum.merchant,AccessLevelEnum.read) &&
@@ -285,7 +270,7 @@ const FeeLedger = () => {
             loading={isFeeLedgerListLoading}
             totalItems={FeeLedgerList?.total}
             fetchData={getFeeLedger}
-            tableName="payments"
+            tableName="fee-ledger"
           />
         </div>
       )}
