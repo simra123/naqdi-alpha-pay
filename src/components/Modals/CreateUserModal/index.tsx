@@ -36,7 +36,6 @@ const initialValues = {
   lastName: "",
   username: "",
   email: "",
-  password: "",
 };
 
 const permissionOptions = [
@@ -338,17 +337,6 @@ const CreateUserModal = ({
             onBlur={validateField}
             name="email"
             placeholder="Enter Email"
-          />
-
-          <IconField
-            label="Password"
-            error={errors.password}
-            value={values.password}
-            onChange={handleChange}
-            onBlur={validateField}
-            name="password"
-            type="password"
-            placeholder="Enter Password"
           />
 
           <div className="flex flex-col justify-end mt-4">

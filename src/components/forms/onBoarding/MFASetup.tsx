@@ -13,6 +13,7 @@ import { setStep } from "@/store/slices/onboarding.slice";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 import LoaderButton from "@/components/common/LoaderButton";
 import { useRouter } from "next/navigation";
+import { updateMfaInCookie } from "@/utils/cookies";
 
 interface QrCode {
   secret: string | null;
@@ -42,7 +43,6 @@ const MFASetup = () => {
     await callApiHook({
       apiCall: callQrCodeApi(generateMFACodeApi()),
       successCallBack: (response) => {
-   
         setQrCode({ secret: response?.secret });
         getUserDetails();
       },
@@ -64,6 +64,7 @@ const MFASetup = () => {
         apiCall: callVerifyApi(MfaSetupApi({ token: otp })),
         successCallBack: () => {
           setIsVerfied(true);
+          updateMfaInCookie(true);
           getUserDetails();
         },
       });

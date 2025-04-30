@@ -10,6 +10,8 @@ import Image from "next/image";
 import IconSelectBox from "../common/IconSelectBox";
 import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { hasMinAccess } from "@/utils/cookies";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 // Custom plugin for the vertical dashed line
 const crosshairLinePlugin = {
@@ -321,26 +323,27 @@ const PortfolioChart = ({
               </button>
             ))}
           </div>
-          {isAdmin && (
-            <IconSelectBox
-              searchable
-              wrapperClassName="!m-0"
-              inputContainerClassName="!rounded-full py-3 min-w-[100px]"
-              optionsClassName="!right-0 !w-[240px]"
-              options={[
-                { label: "All", value: "ALL" },
-                ...merchantsList?.map((item) => {
-                  return {
-                    // label: `${item?.first_name} ${item?.last_name}`,
-                    label: item?.username,
-                    value: item?.userId,
-                  };
-                }),
-              ]}
-              onChange={handleChangeMerchant}
-              value={merchant}
-            />
-          )}
+          {hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+            isAdmin && (
+              <IconSelectBox
+                searchable
+                wrapperClassName="!m-0"
+                inputContainerClassName="!rounded-full py-3 min-w-[100px]"
+                optionsClassName="!right-0 !w-[240px]"
+                options={[
+                  { label: "All", value: "ALL" },
+                  ...merchantsList?.map((item) => {
+                    return {
+                      // label: `${item?.first_name} ${item?.last_name}`,
+                      label: item?.username,
+                      value: item?.userId,
+                    };
+                  }),
+                ]}
+                onChange={handleChangeMerchant}
+                value={merchant}
+              />
+            )}
         </div>
       </div>
       <LoadingApi loading={loading}>
