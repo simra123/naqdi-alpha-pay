@@ -333,11 +333,8 @@ const Payments = () => {
           <CustomTable
             columns={paymentsList_table_columns}
             rows={paymentsList}
-            csv={{
-              handler: ExportCSVHandler,
-              loading: isCSVLoading,
-              error: isCSVError,
-            }}
+            csv={true}
+            tableName="Payments"
             initialPageSize={10}
             rowClickHandler={(row: any) =>
               router.push(`payments/details/${row?.id}`)

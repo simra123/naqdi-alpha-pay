@@ -96,11 +96,8 @@ const Payouts = () => {
         // Filters={Filters}
         createHandler={toggleCreateModal}
         rows={payoutsList}
-        csv={{
-          handler: ExportCSVHandler,
-          loading: isCSVLoading,
-          error: isCSVError,
-        }}
+        csv={true}
+        tableName="payouts"
         initialPageSize={10}
         rowClickHandler={(row: any) =>
           router.push(`/payouts/details/${row?.id}`)

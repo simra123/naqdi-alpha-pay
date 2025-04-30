@@ -187,6 +187,7 @@ const UserDetails = ({ params }) => {
               )
           )}
         </div>
+
         {hasMinAccess(ModulesEnum.user, AccessLevelEnum.full) && (
           <div className="sm:flex flex-wrap items-center gap-4 grid grid-cols-2 mt-20">
             <button

@@ -35,6 +35,16 @@ const Wallets = ({
     ModulesEnum.wallet,
     AccessLevelEnum.full
   );
+
+  const isPaymenttHasFullAccess = hasMinAccess(
+    ModulesEnum.payment,
+    AccessLevelEnum.full
+  );
+
+  const isWithdrawalHasFullAccess = hasMinAccess(
+    ModulesEnum.withdrawal,
+    AccessLevelEnum.full
+  );
   return (
     <>
       <h3
@@ -72,6 +82,8 @@ const Wallets = ({
                   ChartLineData={currencyHistoryData}
                   CurrencyName={coinName}
                   isWalletHasFullAccess={isWalletHasFullAccess}
+                  isPaymentHasFullAccess={isPaymenttHasFullAccess}
+                  isWithdrawalHasFullAccess={isWithdrawalHasFullAccess}
                   CurrencyTicker={currencyTicker}
                   onClick={() => onWalletClick(unit?.toUpperCase())}
                   onRecieve={() =>
