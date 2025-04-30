@@ -105,11 +105,8 @@ const Users = () => {
           loading={isUsersLoading}
           columns={usersList_table_columns}
           rows={users}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="Merchants"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
             router.push(`/merchants/details/${row?.id}`)

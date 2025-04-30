@@ -1,28 +1,18 @@
 "use client";
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  ChangeEvent,
-  KeyboardEvent,
-} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TableHeader from "./components/TableHeader";
 import TableRow from "./components/TableRow";
-import { TableColumns } from "@/constants/types";
 
 import TablePagination from "./components/TablePagination";
 import TableActions from "./components/TableActions";
 import { ListData } from "./types";
-import LoadingApi from "../LoadindApi";
-import Loader from "../Loader";
+
 import {
   replaceColumns,
   updateColumnSortState,
   updateFilterState,
 } from "./utils";
-import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import { useApi } from "@/hooks/useApi";
-import { generateCSVApi } from "@/services/common";
+import { useCSVDownloader } from "@/hooks/useCSVDownloader";
 
 interface AdvancedTableProps {
   columns: ListData;
@@ -53,6 +43,7 @@ const AdvancedTable = ({
   setListConfig,
   onRowClick,
 }: AdvancedTableProps) => {
+  const { csvLoading, csvError, generateAndDownloadCSV } = useCSVDownloader();
   const headerRef = useRef<HTMLTableRowElement>(null);
   const scrollContainerRef = useRef(null); // Add this for the scrollable div
   const [isHovered, setIsHovered] = useState(false); // Track mouse hover
@@ -66,8 +57,6 @@ const AdvancedTable = ({
   const [stickyOffsets, setStickyOffsets] = useState<{ [key: string]: number }>(
     {}
   );
-
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
   const onSearch = (column, event) => {
     const { value, type } = event.target;
@@ -89,11 +78,9 @@ const AdvancedTable = ({
         pageValue: 1,
       });
     }
-
   };
 
   const onFiltersApply = (filtersData, closeAfter?: boolean) => {
- 
     setFilterData(filtersData);
     setPage(1);
     fetchData({
@@ -118,7 +105,6 @@ const AdvancedTable = ({
   };
 
   const onViewsApply = (viewData) => {
-
     setColumns(viewData);
     let newConfig = replaceColumns(listConfig, viewData);
     setListConfig(newConfig);
@@ -126,7 +112,6 @@ const AdvancedTable = ({
   };
 
   const onSearchKeyDown = (event) => {
-
     if (event.key == "Enter") {
       fetchData({
         sort: sortData,
@@ -173,12 +158,7 @@ const AdvancedTable = ({
   };
 
   const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(rows)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, tableName ? `${tableName}.csv` : "data.csv");
-      },
-    });
+    generateAndDownloadCSV(rows, `${tableName}.csv` || "data.csv");
   };
 
   useEffect(() => {
@@ -260,7 +240,8 @@ const AdvancedTable = ({
         <TableActions
           onCsvExport={{
             handler: ExportCSVHandler,
-            loading: isCSVLoading,
+            loading: csvLoading,
+            error: csvError,
           }}
           onClearFilters={onClearFilters}
           filterOpen={filterOpen}

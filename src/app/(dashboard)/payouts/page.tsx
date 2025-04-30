@@ -81,8 +81,8 @@ const Payouts = () => {
         toggleHandler={toggleCreateModal}
         refreshHandler={getAllPayouts}
       />
-      <div className="items-center justify-between mb-8  hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">Payouts</h3>
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Payouts</h3>
 
         <LoaderButton
           content={"New Payout"}
@@ -98,11 +98,8 @@ const Payouts = () => {
         // Filters={Filters}
         createHandler={toggleCreateModal}
         rows={payoutsList}
-        csv={{
-          handler: ExportCSVHandler,
-          loading: isCSVLoading,
-          error: isCSVError,
-        }}
+        csv={true}
+        tableName="payouts"
         initialPageSize={10}
         rowClickHandler={(row: any) =>
           router.push(`/payouts/details/${row?.id}`)
