@@ -15,6 +15,8 @@ type PortfolioProps = {
   ChartLineData: any;
   Balance: number;
   isWalletHasFullAccess: boolean;
+  isPaymentHasFullAccess: boolean;
+  isWithdrawalHasFullAccess: boolean;
   onSend?: () => void;
   onRecieve?: () => void;
   onTransfer?: () => void;
@@ -29,6 +31,8 @@ const PortfolioCard = ({
   CurrencyTicker,
   IconSrc,
   isWalletHasFullAccess,
+  isPaymentHasFullAccess,
+  isWithdrawalHasFullAccess,
   onRecieve,
   onSend,
   onTransfer,
@@ -82,13 +86,12 @@ const PortfolioCard = ({
             <BorderedIconButton
               tooltipId="recieve-card-button"
               className="bg-green-300 bg-opacity-20 !border-0 w-[55px] 3.75xl:w-[75px] h-[55px] 3.75xl:h-[75px]"
-              disabled={!isWalletHasFullAccess}
+              disabled={!isPaymentHasFullAccess}
               tooltip={
-                !isWalletHasFullAccess &&
                 "You don't have sufficient permissions to initate a deposit."
               }
               hoveredClasses={`hover:!bg-green-200 active:!bg-green-300`}
-              onClick={isWalletHasFullAccess && onRecieve}
+              onClick={isPaymentHasFullAccess && onRecieve}
             >
               <ReciveIconGreen />
             </BorderedIconButton>
@@ -96,14 +99,13 @@ const PortfolioCard = ({
           <div className="hidden 3xl:block">
             <BorderedIconButton
               tooltipId="send-card-button"
-              disabled={!isWalletHasFullAccess}
+              disabled={!isWithdrawalHasFullAccess}
               tooltip={
-                !isWalletHasFullAccess &&
                 "You don't have sufficient permissions to initate a withdrawal."
               }
               className="bg-red-300 bg-opacity-20 !border-0 w-[55px] 3.75xl:w-[75px] h-[55px] 3.75xl:h-[75px]"
               hoveredClasses={`hover:!bg-red-200 active:!bg-red-300`}
-              onClick={isWalletHasFullAccess && onSend}
+              onClick={isWithdrawalHasFullAccess && onSend}
             >
               <SendIconRed />
             </BorderedIconButton>
@@ -114,7 +116,6 @@ const PortfolioCard = ({
               disabled={!isWalletHasFullAccess}
               className="bg-purple-300 bg-opacity-20 !border-0 w-[55px] 3.75xl:w-[75px] h-[55px] 3.75xl:h-[75px]"
               tooltip={
-                !isWalletHasFullAccess &&
                 "You don't have sufficient permissions to initate a transfer."
               }
               hoveredClasses={`hover:!bg-purple-200 active:!bg-purple-300`}

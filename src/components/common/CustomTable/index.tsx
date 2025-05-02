@@ -22,6 +22,8 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { TableColumns } from "@/constants/types";
 import { getNestedValue } from "./utils";
 import Link from "next/link";
+import { useCSVDownloader } from "@/hooks/useCSVDownloader";
+import ErrorApiText from "../ErrorApiText";
 
 interface TableProps {
   columns: TableColumns;
@@ -29,7 +31,8 @@ interface TableProps {
   initialPageSize?: number;
   equalColumns?: boolean;
   rowClickHandler?: (row: object) => void;
-  csv?: { loading: boolean; error?: string | boolean; handler: () => void };
+  csv?: boolean;
+  tableName?: string;
   pdf?: { loading: boolean; error?: string | boolean; handler: () => void };
   Filters?: any;
   actions?: any;
@@ -54,8 +57,8 @@ const CustomTable = ({
   equalColumns,
   rowClickHandler,
   csv,
+  tableName,
   pdf,
-  Filters,
   actions,
   pagination,
   columnClassName,
@@ -71,6 +74,8 @@ const CustomTable = ({
   expandRowIDKey,
 }: TableProps) => {
   const [expandedRows, setExpandedRows] = useState({});
+  const { csvLoading, csvError, generateAndDownloadCSV } = useCSVDownloader();
+  const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRows, setCurrentRows] = useState(rows);
@@ -203,6 +208,10 @@ const CustomTable = ({
     setCurrentPage(page);
   };
 
+  const ExportCSVHandler = async () => {
+    generateAndDownloadCSV(rows, `${tableName}.csv` || "data.csv");
+  };
+
   return (
     <div
       className={
@@ -219,38 +228,43 @@ const CustomTable = ({
         {/* Table Actions defined here */}
 
         {!actions ? (
-          <div className="flex justify-between items-center mb-6">
-            <div className="left-actions flex items-center gap-3">
-              {pdf?.handler && (
-                <LoaderButton
-                  content={"Export PDF"}
-                  variant={"outlined"}
-                  onClick={pdf.handler}
-                  loading={pdf.loading}
+          <>
+            <div className="flex justify-between items-center mb-6">
+              <div className="left-actions flex items-center gap-3">
+                {pdf?.handler && (
+                  <LoaderButton
+                    content={"Export PDF"}
+                    variant={"outlined"}
+                    onClick={pdf.handler}
+                    loading={pdf.loading}
+                  />
+                )}
+                {csv && rows?.length > 0 && (
+                  <LoaderButton
+                    content={"Export CSV"}
+                    variant={"outlined"}
+                    onClick={ExportCSVHandler}
+                    loading={csvLoading}
+                  />
+                )}
+              </div>
+
+              <div className="right-actions flex items-center gap-3">
+                <IconField
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  value={searchQuery}
+                  icon={MdSearch}
+                  wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
+                  inputClassName="py-3"
                 />
-              )}
-              {csv?.handler && rows?.length > 0 && (
-                <LoaderButton
-                  content={"Export CSV"}
-                  variant={"outlined"}
-                  onClick={csv.handler}
-                  loading={csv.loading}
-                />
-              )}
+                <button className="lg:hidden block bg-transparent hover:bg-white bg-none hover:shadow-md p-3 border-0 rounded-full outline-0 w-12 h-12 transition-all">
+                  <MdSearch />
+                </button>
+              </div>
             </div>
-            <div className="right-actions flex items-center gap-3">
-              <IconField
-                onChange={(event) => setSearchQuery(event.target.value)}
-                value={searchQuery}
-                icon={MdSearch}
-                wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
-                inputClassName="py-3"
-              />
-              <button className="lg:hidden block bg-transparent hover:bg-white bg-none hover:shadow-md p-3 border-0 rounded-full outline-0 w-12 h-12 transition-all">
-                <MdSearch />
-              </button>
-            </div>
-          </div>
+
+            <ErrorApiText error={csvError} />
+          </>
         ) : (
           actions
         )}

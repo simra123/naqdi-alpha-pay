@@ -101,7 +101,7 @@ const Home = () => {
   );
   const isWalletHasMinimumAccess = hasMinAccess(
     ModulesEnum.wallet,
-    AccessLevelEnum.full
+    AccessLevelEnum.read
   );
   const isTransactionHasMinumumAccess = hasMinAccess(
     ModulesEnum.transaction,
@@ -297,19 +297,16 @@ const Home = () => {
       icon: <ReciveIcon className="w-4 2.5xl:w-[23px]" />,
       label: "Receive",
       action: isWalletHasFullAccess ? openDepoistModal : undefined,
-      disabled: !isWalletHasFullAccess,
-      tooltip:
-        !isWalletHasFullAccess &&
-        "You don't have sufficient permissions to initiate a Deposit.",
+      disabled: !hasMinAccess(ModulesEnum.payment, AccessLevelEnum.full),
+      tooltip: "You don't have sufficient permissions to initiate a Deposit.",
     },
     {
       name: ButtonNames.send,
       icon: <SendIcon className="w-4 2.5xl:w-[23px]" />,
       label: "Send",
       action: isWalletHasFullAccess ? toggleWithdrawalModal : undefined,
-      disabled: !isWalletHasFullAccess,
+      disabled: !hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.full),
       tooltip:
-        !isWalletHasFullAccess &&
         "You don't have sufficient permissions to initiate a Withdrawal.",
     },
     {
@@ -317,9 +314,7 @@ const Home = () => {
       icon: <TransferIcon className="w-4 2.5xl:w-[23px]" />,
       label: "Transfer",
       disabled: !isWalletHasFullAccess,
-      tooltip:
-        !isWalletHasFullAccess &&
-        "You don't have sufficient permissions to initiate a Transfer.",
+      tooltip: "You don't have sufficient permissions to initiate a Transfer.",
     },
   ];
 
@@ -491,7 +486,7 @@ const Home = () => {
                     }`}
                     onMouseEnter={() => handleMouseEnter(button.name)}
                     tooltip={button.tooltip}
-                    tooltipId={`${button.name}-b`}
+                    tooltipId={button.label}
                     onClick={button.action}
                     disabled={button.disabled}
                   >

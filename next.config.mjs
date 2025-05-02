@@ -15,7 +15,7 @@ const nextConfig = {
         hostname: "alpha-pay-assets-production.s3.eu-west-2.amazonaws.com",
       },
     ],
-  }
+  },
 };
 
 export default nextConfig;

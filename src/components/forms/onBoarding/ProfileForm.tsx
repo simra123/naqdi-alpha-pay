@@ -153,7 +153,7 @@ const ProfileForm = () => {
         <div className="flex flex-wrap mt-3 details">
           <div className="flex items-center gap-3 p-2 md:w-1/3">
             <div className="bg-light-gray-10 p-3 rounded-full w-12 aspect-square text-purple-500">
-              <MdPerson />
+              <MdPerson className="w-full h-full" />
             </div>
 
             <div className="flex flex-col gap-1">
@@ -168,7 +168,7 @@ const ProfileForm = () => {
 
           <div className="flex items-center gap-3 p-2">
             <div className="bg-light-gray-10 p-3 rounded-full w-12 aspect-square text-purple-500">
-              <MdMail />
+              <MdMail className="w-full h-full" />
             </div>
 
             <div className="flex flex-col gap-1">
