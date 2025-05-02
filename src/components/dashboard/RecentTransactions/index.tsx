@@ -64,10 +64,11 @@ const RecentTransactions = () => {
                   user?.role == Role.ADMIN ? (
                     <div className="max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap [direction:rtl] [text-align:left]">
                       <span className="text-p120">
-                        {transaction?.client?.first_name}{" "}
-                        {transaction?.client?.last_name}
-                      </span>
-                      {" "}
+                        {transaction?.client?.first_name ||
+                          transaction?.user?.first_name}{" "}
+                        {transaction?.client?.last_name ||
+                          transaction?.user?.last_name}
+                      </span>{" "}
                       <span className="font-medium text-caption text-custom-title-gray">
                         ({unitName[transaction?.unit?.toLowerCase()]})
                       </span>

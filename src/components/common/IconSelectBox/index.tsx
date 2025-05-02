@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { MdArrowDropDown, MdArrowDropUp, MdInfo } from "react-icons/md";
 
 interface Props {
@@ -42,8 +42,11 @@ const IconSelectBox = ({
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(value);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [selectedValue, setSelectedValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchableInputRef = useRef<HTMLInputElement>(null);
+  const optionsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (value && searchable) {
@@ -61,7 +64,13 @@ const IconSelectBox = ({
 
   const toggleOpen = (e) => {
     e.stopPropagation();
-    setOpen((prev) => !prev);
+    setOpen((prev) => {
+      if (prev == false) {
+        searchableInputRef.current.focus();
+      }
+
+      return !prev;
+    });
   };
 
   const handleSelect = (optionValue: OptionType) => {
@@ -71,13 +80,15 @@ const IconSelectBox = ({
     setOpen(false);
   };
 
-  const filteredOptions = searchable
-    ? options.filter((option) => {
-        const label = String(option?.label || "");
-        const query = String(searchQuery || "");
-        return label.toLowerCase().includes(query.toLowerCase());
-      })
-    : options;
+  const filteredOptions = useMemo(() => {
+    return searchable
+      ? options.filter((option) =>
+          String(option?.label || "")
+            .toLowerCase()
+            .includes(String(searchQuery || "").toLowerCase())
+        )
+      : options;
+  }, [searchQuery, options, searchable]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -94,9 +105,43 @@ const IconSelectBox = ({
   }, []);
 
   const handleInputChange = (e) => {
-    searchable && setSearchQuery(e.target.value);
-    setOpen(true); // Show the dropdown when typing
+    const val = e.target.value;
+    searchable && setSearchQuery(val);
+    setHighlightedIndex(0); // reset highlight
+    setOpen(true);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!open) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev < filteredOptions.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev > 0 ? prev - 1 : filteredOptions.length - 1
+      );
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const selected = filteredOptions[highlightedIndex];
+      if (selected) {
+        handleSelect(selected);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const container = optionsContainerRef.current;
+    if (!container) return;
+
+    const activeOption = container.children[highlightedIndex] as HTMLElement;
+    if (activeOption) {
+      activeOption.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex]);
 
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`} ref={dropdownRef}>
@@ -116,7 +161,7 @@ const IconSelectBox = ({
           )}
         </div>
       )}
-      <div className="relative">
+      <div className="relative" onKeyDown={handleKeyDown}>
         {Icon && (
           <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
         )}
@@ -125,6 +170,7 @@ const IconSelectBox = ({
         {searchable ? (
           <input
             type="text"
+            ref={searchableInputRef}
             value={open ? searchQuery : selectedValue}
             onClick={toggleOpen}
             disabled={disabled}
@@ -169,24 +215,29 @@ const IconSelectBox = ({
         </div>
         {open && (
           <div
+            ref={optionsContainerRef}
             className={`z-10 absolute bg-white shadow-lg mt-1 p-3 border border-light-gray rounded-large w-full max-h-80 overflow-auto ${optionsClassName}`}
           >
             {filteredOptions.length > 0 ? (
-              filteredOptions?.map((option, index) => (
+              filteredOptions.map((option, index) => (
                 <div
                   key={option.value}
                   onClick={() => handleSelect(option)}
-                  className={`p-3 cursor-pointer  ${
+                  className={`p-3 cursor-pointer ${
                     index === 0
                       ? "rounded-t-md"
-                      : index === options?.length - 1 && "rounded-b-md"
+                      : index === options.length - 1
+                      ? "rounded-b-md"
+                      : ""
                   } ${
-                    value === option.value
+                    index === highlightedIndex
+                      ? "bg-purple-100 text-white font-semibold"
+                      : value === option.value
                       ? "bg-purple-light-purple text-purple-500 font-medium"
                       : "hover:bg-purple-light-purple hover:text-black-100"
                   }`}
                 >
-                  {option?.label || option?.value}
+                  {option.label || option.value}
                 </div>
               ))
             ) : (

@@ -12,34 +12,43 @@ const data = [
 
 const columns = ["Today’s", "This Week", "This Month"];
 
-export default function MerchantSummary() {
-  const [interval, setInterval] = useState("ALL");
+interface Props {
+  merchantsList: any[];
+}
+
+export default function MerchantSummary({ merchantsList }: Props) {
+  const [selctedMerchant, setSelectedMerchant] = useState("ALL");
 
   const handleChange = (e) => {
     const { value } = e.target;
-    setInterval(value);
+    setSelectedMerchant(value);
   };
 
   return (
     <div className="px-5 py-[22px] border rounded-[28px]">
       {/* Header */}
-      <div className="flex justify-between items-center pb-4 border-b">
-      <h3 className="font-nunito text-p120 2xl:text-h4">
+      <div className="flex justify-between items-center gap-4 pb-4 border-b">
+        <h3 className="font-nunito text-p120 2xl:text-h4 whitespace-nowrap">
           Merchant Deposit - Withdrawal Summary
         </h3>
         <div className="block">
           <IconSelectBox
+            searchable
             options={[
-              { label: "Daily", value: "daily" },
-              { label: "Weekly", value: "weekly" },
-              { label: "Monthly", value: "monthly" },
               { label: "All", value: "ALL" },
+              ...merchantsList?.map((item) => {
+                return {
+                  // label: `${item?.first_name} ${item?.last_name}`,
+                  label: item?.username,
+                  value: item?.userId,
+                };
+              }),
             ]}
             onChange={handleChange}
             wrapperClassName="!m-0"
             inputContainerClassName="!rounded-full py-3"
             optionsClassName="!right-0 !w-[240px]"
-            value={interval}
+            value={selctedMerchant}
           />
         </div>
       </div>

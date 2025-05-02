@@ -433,16 +433,16 @@ const Home = () => {
           </div>
 
           {/* Graphs Row */}
-          {/* <div className="flex gap-6">
+          <div className="flex gap-6">
             {isMerchantHasMinimumAccess && (
               <div className="w-[50%]">
-                <MerchantSummary />
+                <MerchantSummary merchantsList={adminMerchants} />
               </div>
             )}
-            <div className="w-[50%]">
+            {/* <div className="w-[50%]">
               <FeeSummaryGraph />
-            </div>
-          </div> */}
+            </div> */}
+          </div>
         </div>
       </RenderRoleBased>
 
