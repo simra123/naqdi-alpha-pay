@@ -332,11 +332,8 @@ const Withdrawals = () => {
           // Filters={Filters}
           createHandler={toggleCreateModal}
           rows={withdrawalsList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="withdrawals"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
             router.push(`/withdrawals/details/${row?.id}`)
@@ -362,7 +359,7 @@ const Withdrawals = () => {
             loading={isWithdrawalsListLoading}
             totalItems={withdrawalsList?.total}
             fetchData={getWithdrawals}
-            tableName="payments"
+            tableName="withdrawals"
           />
         </div>
       )}
