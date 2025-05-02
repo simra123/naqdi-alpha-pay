@@ -172,7 +172,7 @@ const Wallets = () => {
         walletType={paymentWallet?.walletType}
       />
 
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         Wallets
       </h3>
 
@@ -183,11 +183,8 @@ const Wallets = () => {
           loading={isWalletsLoading}
           columns={wallets_table_columns()}
           rows={wallets}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="wallets"
           initialPageSize={10}
           pagination
           columnClassName="max-w-[250px]"
