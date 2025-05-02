@@ -2,79 +2,157 @@
 
 import { BsChevronDown } from "react-icons/bs";
 import IconSelectBox from "../IconSelectBox";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { hasMinAccess } from "@/utils/cookies";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { useApi } from "@/hooks/useApi";
+import { callApiHook } from "@/utils/apifuncs";
+import { getMerchantFinancialSummaryAdminApi } from "@/services/admin/dashboard";
+import LoadingApi from "../LoadindApi";
+import ErrorApiText from "../ErrorApiText";
+import useLocalStorage from "@/hooks/useLocalStorage";
+import { Role } from "@/constants/roles";
+import { getMyFinancialSummaryApi } from "@/services/dashboard";
 
-const data = [
-  { label: "Deposit", values: [20, 4000, 12000] },
-  { label: "Withdrawal", values: [40, 4700, 14000] },
-  { label: "Outstanding Balance", values: [110, 7800, 10000] },
+const columns = [
+  { label: "Today’s", key: "today" },
+  { label: "This Week", key: "thisWeek" },
+  { label: "This Month", key: "thisMonth" },
 ];
 
-const columns = ["Today’s", "This Week", "This Month"];
+interface Props {
+  merchantsList?: any[];
+}
 
-export default function MerchantSummary() {
-  const [interval, setInterval] = useState("ALL");
+export default function MerchantSummary({ merchantsList }: Props) {
+  const user = useLocalStorage("user");
+  const isAdmin = user?.role == Role.ADMIN;
+  const [selctedMerchant, setSelectedMerchant] = useState(null);
+  const [financialSummary, setFinancialSummary] = useState(null);
+  const [
+    isAdminMerchantFinancialSummaryLoading,
+    isAdminMerchantFinancialSummaryError,
+    callMerchantFinancialSummaryApi,
+  ] = useApi({
+    initailLoading: true,
+  });
+  const isMerchantHasMinimumAccess = hasMinAccess(
+    ModulesEnum.merchant,
+    AccessLevelEnum.read
+  );
+
+  const rows = useMemo(() => {
+    const baseRows = [
+      { label: "Deposit", key: "deposits" },
+      { label: "Withdrawal", key: "withdrawals" },
+      { label: "Outstanding Balance", key: "outstandingBalance" },
+    ];
+
+    if (!isAdmin) {
+      baseRows.splice(2, 0, { label: "Fee", key: "fee" }); // insert at index 2
+    }
+
+    return baseRows;
+  }, [isAdmin]);
 
   const handleChange = (e) => {
     const { value } = e.target;
-    setInterval(value);
+    setSelectedMerchant(value);
   };
+
+  const getMerchantFinancialSummary = async () => {
+    let params: { userId?: string } = {};
+    if (selctedMerchant) {
+      params.userId = selctedMerchant;
+    }
+    await callApiHook({
+      apiCall: callMerchantFinancialSummaryApi(
+        isAdmin
+          ? getMerchantFinancialSummaryAdminApi(params)
+          : getMyFinancialSummaryApi()
+      ),
+      successCallBack: (response: any) => {
+        setFinancialSummary(response?.data);
+      },
+    });
+  };
+
+  useEffect(() => {
+    getMerchantFinancialSummary();
+  }, [selctedMerchant]);
 
   return (
     <div className="px-5 py-[22px] border rounded-[28px]">
       {/* Header */}
-      <div className="flex justify-between items-center pb-4 border-b">
-      <h3 className="font-nunito text-p120 2xl:text-h4">
-          Merchant Deposit - Withdrawal Summary
+      <div className="flex justify-between items-center gap-4 pb-4 border-b">
+        <h3 className="flex-1 overflow-hidden font-nunito text-p120 2xl:text-h4 text-ellipsis whitespace-nowrap">
+          {isAdmin
+            ? "Merchant Deposit - Withdrawal Summary"
+            : "Deposit - Withdrawal Summary"}
         </h3>
-        <div className="block">
-          <IconSelectBox
-            options={[
-              { label: "Daily", value: "daily" },
-              { label: "Weekly", value: "weekly" },
-              { label: "Monthly", value: "monthly" },
-              { label: "All", value: "ALL" },
-            ]}
-            onChange={handleChange}
-            wrapperClassName="!m-0"
-            inputContainerClassName="!rounded-full py-3"
-            optionsClassName="!right-0 !w-[240px]"
-            value={interval}
-          />
-        </div>
-      </div>
-
-      {/* Grid Header */}
-      <div className="gap-2 grid grid-cols-4 mt-4 mb-4 px-1">
-        <div></div>
-        {columns.map((col) => (
-          <div
-            key={col}
-            className="w-full font-medium text-[15px] text-purple-600 text-center"
-          >
-            {col}
+        {isAdmin && isMerchantHasMinimumAccess && (
+          <div className="block w-[160px]">
+            <IconSelectBox
+              searchable
+              placeholder="Select Merchant"
+              options={merchantsList?.map((item) => {
+                return {
+                  // label: `${item?.first_name} ${item?.last_name}`,
+                  label: item?.username,
+                  value: item?.userId,
+                };
+              })}
+              clearable
+              onChange={handleChange}
+              wrapperClassName="!m-0"
+              inputContainerClassName="!rounded-full py-3"
+              optionsClassName="!right-0 !w-[240px]"
+              value={selctedMerchant}
+            />
           </div>
-        ))}
+        )}
       </div>
 
-      {/* Rows */}
-      <div className="space-y-2">
-        {data.map((item, idx) => (
-          <div key={idx} className="items-center gap-[10px] grid grid-cols-4">
-            <div className="bg-purple-gradient px-4 py-[15px] rounded-xl w-full overflow-hidden font-semibold text-[15px] text-white text-center text-ellipsis whitespace-nowrap">
-              {item.label}
+      <LoadingApi loading={isAdminMerchantFinancialSummaryLoading}>
+        {/* Grid Header */}
+        <div className="gap-2 grid grid-cols-4 mt-4 mb-4 px-1">
+          <div></div>
+          {columns.map((col) => (
+            <div
+              key={col.key}
+              className="w-full font-medium text-[15px] text-purple-600 text-center"
+            >
+              {col.label}
             </div>
-            {item.values.map((value, vIdx) => (
-              <div
-                key={vIdx}
-                className="py-[15px] border rounded-xl overflow-hidden font-semibold text-[#1F243B] text-[15px] text-center text-ellipsis whitespace-nowrap"
-              >
-                {value}
+          ))}
+        </div>
+
+        {/* Rows */}
+        <div className="space-y-2">
+          {rows.map((row, idx) => (
+            <div key={idx} className="items-center gap-[10px] grid grid-cols-4">
+              <div className="bg-purple-gradient px-4 py-[15px] rounded-xl w-full overflow-hidden font-semibold text-[15px] text-white text-center text-ellipsis whitespace-nowrap">
+                {row.label}
               </div>
-            ))}
-          </div>
-        ))}
-      </div>
+              {columns.map((col, cIdx) => (
+                <div
+                  key={cIdx}
+                  className="py-[15px] border rounded-xl overflow-hidden font-semibold text-[#1F243B] text-[15px] text-center text-ellipsis whitespace-nowrap"
+                >
+                  {financialSummary?.[col.key]?.[row.key]?.toLocaleString(
+                    undefined,
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  ) ?? "-"}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </LoadingApi>
+      <ErrorApiText error={isAdminMerchantFinancialSummaryError} />
     </div>
   );
 }

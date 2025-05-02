@@ -556,120 +556,197 @@ const Pagination = ({
   );
 
   return (
-    <div className="relative flex justify-center sm:justify-between items-center mt-4">
-      {/* Pages Indicator */}
-      <span className="hidden sm:block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
-        (currentPage - 1) * pageSize + 1
-      } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
-
-      {/* Pages Navigation */}
-      <div className="relative w-full">
-        <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
-          <IconButton
-            className={
-              currentPage === 1
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-blue-500 hover:text-white"
-            }
-            onClick={() => onChangePage(1)}
-            disabled={currentPage === 1}
-          >
-            <MdFirstPage />
-          </IconButton>
-          <IconButton
-            className={
-              currentPage === 1
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-blue-500 hover:text-white"
-            }
-            onClick={() => onChangePage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <MdNavigateBefore />
-          </IconButton>
-          {pages.map((item, index) =>
-            item == "..." ? (
-              <span key={index}>...</span>
-            ) : (
-              <IconButton
-                key={index}
-                className={
-                  currentPage === item &&
-                  "text-black-100 font-bold bg-light-gray"
-                }
-                onClick={() => onChangePage(item)}
-              >
-                {item}
-              </IconButton>
-            )
+    <div className="overflow-auto">
+      <div className="md:hidden block relative mx-auto mt-5 w-full">
+          <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
+            <IconButton
+              className={
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(1)}
+              disabled={currentPage === 1}
+            >
+              <MdFirstPage />
+            </IconButton>
+            <IconButton
+              className={
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <MdNavigateBefore />
+            </IconButton>
+            {pages.map((item, index) =>
+              item == "..." ? (
+                <span key={index}>...</span>
+              ) : (
+                <IconButton
+                  key={index}
+                  className={
+                    currentPage === item &&
+                    "text-black-100 font-bold bg-light-gray"
+                  }
+                  onClick={() => onChangePage(item)}
+                >
+                  {item}
+                </IconButton>
+              )
+            )}
+            <IconButton
+              className={
+                currentPage === totalPages
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <MdNavigateNext />
+            </IconButton>
+            <IconButton
+              className={
+                currentPage === totalPages
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <MdLastPage />
+            </IconButton>
+          </div>
+          {createHandler && (
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <LoaderButton
+                content={<MdAdd className="!text-h2" />}
+                className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
+                variant="contained"
+                onClick={createHandler}
+              />
+            </RenderRoleBased>
           )}
-          <IconButton
-            className={
-              currentPage === totalPages
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-blue-500 hover:text-white"
-            }
-            onClick={() => onChangePage(currentPage + 1)}
-            disabled={currentPage === totalPages}
+        </div>
+    
+      <div className="relative flex justify-between items-center mt-4">
+        {/* Pages Indicator */}
+        <span className="block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
+          (currentPage - 1) * pageSize + 1
+        } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
+
+        {/* Pages Navigation */}
+        <div className="hidden md:block relative w-full hideen">
+          <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
+            <IconButton
+              className={
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(1)}
+              disabled={currentPage === 1}
+            >
+              <MdFirstPage />
+            </IconButton>
+            <IconButton
+              className={
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <MdNavigateBefore />
+            </IconButton>
+            {pages.map((item, index) =>
+              item == "..." ? (
+                <span key={index}>...</span>
+              ) : (
+                <IconButton
+                  key={index}
+                  className={
+                    currentPage === item &&
+                    "text-black-100 font-bold bg-light-gray"
+                  }
+                  onClick={() => onChangePage(item)}
+                >
+                  {item}
+                </IconButton>
+              )
+            )}
+            <IconButton
+              className={
+                currentPage === totalPages
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <MdNavigateNext />
+            </IconButton>
+            <IconButton
+              className={
+                currentPage === totalPages
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              <MdLastPage />
+            </IconButton>
+          </div>
+          {createHandler && (
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <LoaderButton
+                content={<MdAdd className="!text-h2" />}
+                className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
+                variant="contained"
+                onClick={createHandler}
+              />
+            </RenderRoleBased>
+          )}
+        </div>
+
+        {/* Page Change Dropdown below */}
+
+        <div className="block">
+          <label htmlFor="page-size" className="mr-2 text-blackGrey-50 text-sm">
+            Page Size
+          </label>
+          <select
+            id="page-size"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(parseInt(e.target.value));
+              onChangePage(1);
+            }}
+            className="p-1 border-b outline-none cursor-pointer"
           >
-            <MdNavigateNext />
-          </IconButton>
-          <IconButton
-            className={
-              currentPage === totalPages
-                ? "text-gray-400 cursor-not-allowed"
-                : "hover:bg-blue-500 hover:text-white"
-            }
-            onClick={() => onChangePage(totalPages)}
-            disabled={currentPage === totalPages}
-          >
-            <MdLastPage />
-          </IconButton>
+            {[5, 10, 20, 30, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
         </div>
         {createHandler && (
           <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
             <LoaderButton
               content={<MdAdd className="!text-h2" />}
-              className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
+              className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
               variant="contained"
               onClick={createHandler}
             />
           </RenderRoleBased>
         )}
       </div>
-
-      {/* Page Change Dropdown below */}
-
-      <div className="hidden sm:block">
-        <label htmlFor="page-size" className="mr-2 text-blackGrey-50 text-sm">
-          Page Size
-        </label>
-        <select
-          id="page-size"
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(parseInt(e.target.value));
-            onChangePage(1);
-          }}
-          className="p-1 border-b outline-none cursor-pointer"
-        >
-          {[5, 10, 20, 30, 50].map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
-      </div>
-      {createHandler && (
-        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-          <LoaderButton
-            content={<MdAdd className="!text-h2" />}
-            className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
-            variant="contained"
-            onClick={createHandler}
-          />
-        </RenderRoleBased>
-      )}
     </div>
   );
 };
