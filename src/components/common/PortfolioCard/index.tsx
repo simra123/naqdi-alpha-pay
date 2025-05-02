@@ -40,8 +40,8 @@ const PortfolioCard = ({
       className="flex justify-between items-center gap-5 3.75xl:gap-8 px-3 3.75xl:px-5 py-[10px] border border-purple-10 rounded-[28px] w-full min-w-max"
       onClick={onClick}
     >
-      <div className="flex flex-auto justify-between items-center">
-        <div className="flex items-center gap-2 w-[115px] md:w-[170px] 3.5xl:w-[180px] 3.75xl:w-[220px]">
+      <div className="flex flex-auto justify-between items-center gap-3">
+        <div className="flex items-center gap-2 w-[115px] md:w-[200px] 3.75xl:w-[220px]">
           <Image
             src={IconSrc}
             alt="Currency"

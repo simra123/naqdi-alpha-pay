@@ -1,5 +1,16 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { MdArrowDropDown, MdArrowDropUp, MdInfo } from "react-icons/md";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  ChangeEvent,
+} from "react";
+import {
+  MdArrowDropDown,
+  MdArrowDropUp,
+  MdClose,
+  MdInfo,
+} from "react-icons/md";
 
 interface Props {
   label?: string | any;
@@ -16,6 +27,7 @@ interface Props {
   options: { value: string; label: string }[] | any[];
   searchable?: boolean;
   disabled?: boolean;
+  clearable?: boolean;
 }
 
 interface OptionType {
@@ -39,13 +51,15 @@ const IconSelectBox = ({
   inputContainerClassName,
   disabled,
   optionsClassName,
+  clearable,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(value);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [selectedValue, setSelectedValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const searchableInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const optionsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,13 +76,15 @@ const IconSelectBox = ({
     }
   }, [value]);
 
-  const toggleOpen = (e) => {
+  useEffect(() => {
+    if (open && searchable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open, searchable]);
+
+  const toggleOpen = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     setOpen((prev) => {
-      if (prev == false) {
-        searchableInputRef.current.focus();
-      }
-
       return !prev;
     });
   };
@@ -104,33 +120,42 @@ const IconSelectBox = ({
     };
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     const val = e.target.value;
     searchable && setSearchQuery(val);
     setHighlightedIndex(0); // reset highlight
     setOpen(true);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (!open) return;
 
-    if (e.key === "ArrowDown") {
+    if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
       e.preventDefault();
+    }
+
+    if (e.key === "ArrowDown") {
       setHighlightedIndex((prev) =>
         prev < filteredOptions.length - 1 ? prev + 1 : 0
       );
     } else if (e.key === "ArrowUp") {
-      e.preventDefault();
       setHighlightedIndex((prev) =>
         prev > 0 ? prev - 1 : filteredOptions.length - 1
       );
     } else if (e.key === "Enter") {
-      e.preventDefault();
       const selected = filteredOptions[highlightedIndex];
       if (selected) {
         handleSelect(selected);
       }
     }
+  };
+
+  const handleClear = (e) => {
+    e.stopPropagation();
+    setSearchQuery("");
+    setSelectedValue("");
+    onChange({ target: { value: "", name } });
   };
 
   useEffect(() => {
@@ -161,7 +186,7 @@ const IconSelectBox = ({
           )}
         </div>
       )}
-      <div className="relative" onKeyDown={handleKeyDown}>
+      <div className="group relative min-w-[150px]" onKeyDown={handleKeyDown}>
         {Icon && (
           <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
         )}
@@ -170,7 +195,7 @@ const IconSelectBox = ({
         {searchable ? (
           <input
             type="text"
-            ref={searchableInputRef}
+            ref={inputRef}
             value={open ? searchQuery : selectedValue}
             onClick={toggleOpen}
             disabled={disabled}
@@ -180,7 +205,7 @@ const IconSelectBox = ({
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error
                 ? "border-error-dark"
-                : "border-light-gray focus:border-purple-100"
+                : "border-light-gray focus:border-purple"
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
             placeholder={placeholder}
           />
@@ -193,7 +218,7 @@ const IconSelectBox = ({
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error
                 ? "border-error-dark"
-                : "border-light-gray focus:border-purple-100"
+                : "border-light-gray focus:border-purple"
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
           >
             {value ? (
@@ -213,6 +238,17 @@ const IconSelectBox = ({
             {open ? <MdArrowDropUp /> : <MdArrowDropDown />}
           </div>
         </div>
+
+        {clearable && selectedValue && (
+          <div className="hidden top-0 right-10 absolute group-hover:flex items-center h-full text-gray-400 cursor-pointer">
+            <div
+              onClick={handleClear}
+              className="bg-light-gray-20 hover:bg-light-gray p-1 rounded-full h-2-w-2 text-black-100 text-xl"
+            >
+              <MdClose />
+            </div>
+          </div>
+        )}
         {open && (
           <div
             ref={optionsContainerRef}
@@ -231,7 +267,7 @@ const IconSelectBox = ({
                       : ""
                   } ${
                     index === highlightedIndex
-                      ? "bg-purple-100 text-white font-semibold"
+                      ? "bg-purple-500 text-white font-semibold"
                       : value === option.value
                       ? "bg-purple-light-purple text-purple-500 font-medium"
                       : "hover:bg-purple-light-purple hover:text-black-100"

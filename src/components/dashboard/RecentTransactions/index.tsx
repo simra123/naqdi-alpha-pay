@@ -62,8 +62,8 @@ const RecentTransactions = () => {
               <TransactionCard
                 currencyName={
                   user?.role == Role.ADMIN ? (
-                    <div className="max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap [direction:rtl] [text-align:left]">
-                      <span className="text-p120">
+                    <div className="2xl:max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap max-w=[180px] [direction:rtl] [text-align:left]">
+                      <span className="text-button 2xl:text-p120">
                         {transaction?.client?.first_name ||
                           transaction?.user?.first_name}{" "}
                         {transaction?.client?.last_name ||
