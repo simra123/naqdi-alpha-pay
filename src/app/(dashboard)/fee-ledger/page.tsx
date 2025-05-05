@@ -141,7 +141,7 @@ const FeeLedger = () => {
       target: "_self",
     },
     {
-      field: "createdAt",
+      field: "created_at",
       headerName: "Created At",
       sortable: true,
       dataValidator: (value) => {
