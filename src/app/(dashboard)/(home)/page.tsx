@@ -26,7 +26,6 @@ import RecentTransactions from "@/components/dashboard/RecentTransactions";
 // Hooks
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import useMountedQueue from "@/hooks/useMountedQueue";
 
 // Services
 import {
@@ -47,15 +46,6 @@ import { hasMinAccess } from "@/utils/cookies";
 // Constants
 import { Role } from "@/constants/roles";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-
-// Store
-import {
-  setBalance,
-  setPortfolioData,
-  enqueueCall,
-  setLastFetch,
-  setMounted,
-} from "@/store/slices/portfolio.slice";
 
 // Styles
 import "./dashboard.scss";
@@ -91,10 +81,6 @@ const Home = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  const { portfolioData, balance, queue } = useSelector(
-    (state: any) => state?.portfolio
-  );
-
   const isWalletHasFullAccess = hasMinAccess(
     ModulesEnum.wallet,
     AccessLevelEnum.full
@@ -114,6 +100,8 @@ const Home = () => {
 
   const [adminBalances, setAdminBalances] = useState<any>({});
   const [adminMerchants, setAdminMerchants] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [portfolioData, setPortfolioData] = useState([]);
 
   const [chartUnit, setCharUnit] = useState("ALL");
   const [interval, setInterval] = useState("monthly");
@@ -212,9 +200,12 @@ const Home = () => {
   const getTotalPortfolioValue = async () => {
     if (user?.role == Role.USER) {
       await callApiHook({
-        apiCall: callTotalPortfolioApi(getTotalPortfolioValueApi()),
+        apiCall: callTotalPortfolioApi(getTotalPortfolioValueApi(), {
+          enableCache: true,
+          cacheKey: "user-total-balance",
+        }),
         successCallBack: (response: any) => {
-          dispatch(setBalance(response?.totalUSDT));
+          setBalance(response?.totalUSDT);
         },
       });
     }
@@ -232,9 +223,12 @@ const Home = () => {
   const getUserWallets = async () => {
     if (user.role == Role.USER) {
       await callApiHook({
-        apiCall: callPortfolioApi(getAllWalletBalancesApi()),
+        apiCall: callPortfolioApi(getAllWalletBalancesApi(), {
+          enableCache: true,
+          cacheKey: "user-wallets",
+        }),
         successCallBack: (response: any) => {
-          dispatch(setPortfolioData(response));
+          setPortfolioData(response);
         },
       });
     }
@@ -277,17 +271,12 @@ const Home = () => {
     }
   };
 
-  const fetchPortfolio = useMountedQueue(
-    [getUserWallets, getTotalPortfolioValue],
-    queue,
-    { enqueueCall, setLastFetch, setMounted }
-  );
-
   useEffect(() => {
     if (user?.role == Role.ADMIN) {
       AdminApiCalls();
     }
-    fetchPortfolio();
+    getUserWallets();
+    getTotalPortfolioValue();
   }, []);
 
   // Button configurations

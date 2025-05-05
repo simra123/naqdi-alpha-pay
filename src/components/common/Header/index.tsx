@@ -21,6 +21,7 @@ import { useDispatch } from "react-redux";
 import Link from "next/link";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
+import { clearApiCache } from "@/store/slices/apiCache.slice";
 
 const Header = ({ navHandler }) => {
   const user = useLocalStorage("user");
@@ -53,6 +54,7 @@ const Header = ({ navHandler }) => {
     Cookies.remove("token");
     Cookies.remove("user");
     router.replace("/login");
+    dispatch(clearApiCache());
     dispatch(resetSteps({}));
     dispatch(setUser(null));
   };
