@@ -113,5 +113,5 @@ export const useApi = ({ initailLoading, notify }: Props = {}) => {
     }
   };
 
-  return [isLoading, error, makeApiCall, setError] as const;
+  return [isLoading, error, makeApiCall, setError];
 };
