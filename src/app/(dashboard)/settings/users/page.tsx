@@ -41,19 +41,12 @@ const Users = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const [isCreateOpen, setCreateOpen] = useState(false);
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+
   const [subUsersList, setSubUsersList] = useState({ limit: 0, users: [] });
   const [isSubUsersListLoading, isSubUsersListError, callSubUsersListApi] =
     useApi();
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(subUsersList.users)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "sub-users.csv");
-      },
-    });
-  };
+
 
   const fetchSubUsersList = async () => {
     await callApiHook({
@@ -86,10 +79,10 @@ const Users = () => {
         toggleHandler={createToggleHandler}
       />
 
-      <div className="items-center justify-between mb-8 hidden md:flex">
-        <h3 className="text-h3 font-semibold text-blackGrey-100">Users</h3>
+      <div className="hidden md:flex justify-between items-center mb-8">
+        <h3 className="font-semibold text-blackGrey-100 text-h3">Users</h3>
         <div className="flex items-center gap-3">
-          <span className="bg-purple-400 text-white font-semibold px-3 py-1 rounded-full">
+          <span className="bg-purple-400 px-3 py-1 rounded-full font-semibold text-white">
             {subUsersList.users.length} of {subUsersList.limit} users created
           </span>
           {PermissionAccess(
@@ -114,11 +107,8 @@ const Users = () => {
         // Filters={Filters}
         loading={isSubUsersListLoading}
         rows={subUsersList?.users}
-        csv={{
-          handler: ExportCSVHandler,
-          loading: isCSVLoading,
-          error: isCSVError,
-        }}
+        csv={true}
+        tableName="sub-users"
         initialPageSize={10}
         rowClickHandler={(row: any) =>
           router.push(`/settings/users/details/${row?.id}`)

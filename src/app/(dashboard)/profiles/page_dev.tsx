@@ -43,7 +43,7 @@ const Profiles = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+      <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3">
         Profiles
       </h3>
 
@@ -52,11 +52,8 @@ const Profiles = () => {
           columns={profilesList_table_columns}
           // Filters={Filters}
           rows={rows}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="profiles"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
             router.push(`/profiles/details/${row?.id}`)

@@ -32,7 +32,7 @@ const columns: TableColumns = [
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
-          <span className="text-subtitle text-custom-title-gray">{time}</span>
+          <span className="text-custom-title-gray text-subtitle">{time}</span>
         </div>
       );
     },
@@ -103,7 +103,7 @@ const KYCUsersPage = () => {
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8 md:block hidden">
+      <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
         KYC Requests
       </h3>
 
@@ -113,11 +113,8 @@ const KYCUsersPage = () => {
         <CustomTable
           columns={columns}
           rows={usersList}
-          csv={{
-            handler: ExportCSVHandler,
-            loading: isCSVLoading,
-            error: isCSVError,
-          }}
+          csv={true}
+          tableName="kyc-requests"
           initialPageSize={10}
           rowClickHandler={(row: any) => {
             if (
