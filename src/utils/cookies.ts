@@ -38,11 +38,19 @@ export const debounce = (func: Function, delay: number) => {
 
 export const getPermission = (moduleName: ModulesEnum) => {
   const userCookie = Cookies.get("user");
-  const currentUser = JSON.parse(userCookie || "");
-  const permissionObj = currentUser?.permissions?.find(
-    (perm) => perm?.permission?.module == moduleName
-  );
-  return permissionObj?.permission;
+
+  if (!userCookie) return null;
+
+  try {
+    const currentUser = JSON.parse(userCookie);
+    const permissionObj = currentUser?.permissions?.find(
+      (perm) => perm?.permission?.module === moduleName
+    );
+    return permissionObj?.permission || null;
+  } catch (err) {
+    console.error("Failed to parse user cookie", err);
+    return null;
+  }
 };
 
 export const hasMinAccess = (

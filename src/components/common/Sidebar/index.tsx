@@ -33,6 +33,7 @@ import { resetSteps } from "@/store/slices/onboarding.slice";
 import { BorderedIconButton } from "../IconButton";
 import RenderRoleBased from "../RenderRoleBased";
 import { MdAccountBalance, MdKey, MdPerson2 } from "react-icons/md";
+import { clearApiCache } from "@/store/slices/apiCache.slice";
 
 interface NavItem {
   name: string;
@@ -220,6 +221,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     Cookies.remove("token");
     Cookies.remove("user");
     router.replace("/login");
+    dispatch(clearApiCache());
     dispatch(resetSteps({}));
     dispatch(setUser(null));
   };
