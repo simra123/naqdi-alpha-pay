@@ -3,13 +3,14 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/userSlice";
 import modalReducer from "./slices/modal.Slice";
 import onboardingReducer from "./slices/onboarding.slice";
-import portfolioReducer from "./slices/portfolio.slice";
+
+import apiCacheReducer from "./slices/apiCache.slice";
 
 const rootReducer = combineReducers({
   user: userReducer,
   modal: modalReducer,
   onboarding: onboardingReducer,
-  portfolio: portfolioReducer,
+  apiCache: apiCacheReducer,
 });
 
 let store = configureStore({
@@ -17,3 +18,6 @@ let store = configureStore({
 });
 
 export default store;
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

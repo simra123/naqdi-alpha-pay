@@ -18,7 +18,7 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
-import {  hasMinAccess } from "@/utils/cookies";
+import { hasMinAccess } from "@/utils/cookies";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -301,10 +301,16 @@ const Transactions = () => {
         return row?.payment ? "Payment" : "Withdrawal";
       },
       link(row: any) {
-        if (row?.payment && hasMinAccess(ModulesEnum.transaction,AccessLevelEnum.read)) {
+        if (
+          row?.payment &&
+          hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
+        ) {
           return `payments/details/${row?.payment?.id}`;
         }
-        if (row?.withdrawal && hasMinAccess(ModulesEnum.withdrawal,AccessLevelEnum.read)) {
+        if (
+          row?.withdrawal &&
+          hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
+        ) {
           return `withdrawals/details/${row?.withdrawal?.id}`;
         }
       },
