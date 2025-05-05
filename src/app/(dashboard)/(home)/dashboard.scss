@@ -2,7 +2,8 @@
   display: grid;
   grid-template-areas:
     "wallets portfolio portfolio portfolio"
-    "history history history transactions";
+    "history history history transactions"
+    "financialSummary financialSummary financialSummary empty";
   grid-template-columns: 552px 1fr 1fr 412px;
   gap: 24px;
 
@@ -27,13 +28,17 @@
   .history {
     grid-area: history;
   }
+  .financialSummary {
+    grid-area: financialSummary;
+  }
 
   @media (max-width: 1420px) {
     display: grid;
     grid-template-areas:
       "wallets wallets"
       "portfolio transactions"
-      "history history";
+      "history history"
+      "financialSummary financialSummary";
     grid-template-columns: 1fr 1fr; /* Two equal-width columns */
     gap: 22px;
     .portfolio div div {
@@ -50,13 +55,70 @@
   }
 }
 
+.admin-dashboard-layout {
+  display: grid;
+  grid-template-areas:
+    "wallets history history history"
+    "merchants merchants merchants transactions"
+    "financialSummary financialSummary feeSummary feeSummary";
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 24px;
 
+  // Wallets Section
+  .wallets {
+    grid-area: wallets;
+  }
+
+  // Merchants Section
+  .merchants {
+    grid-area: merchants;
+  }
+
+  // transactions Section
+  .transactions {
+    grid-area: transactions;
+  }
+
+  // History Section
+  .history {
+    grid-area: history;
+  }
+  .financialSummary {
+    grid-area: financialSummary;
+  }
+  .feeSummary {
+    grid-area: feeSummary;
+  }
+
+  @media (max-width: 1470px) {
+    display: grid;
+    grid-template-areas:
+      "wallets transactions"
+      "history history"
+      "merchants merchants"
+      "financialSummary financialSummary"
+      "feeSummary feeSummary";
+    grid-template-columns: 1fr 1fr; /* Two equal-width columns */
+    gap: 22px;
+    .wallets div div {
+      max-height: 100%;
+      .portfolio-body {
+        padding: 0;
+      }
+    }
+  }
+  @media (max-width: 1150px) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
 
 .dashboard-layout-without-transactions {
   display: grid;
   grid-template-areas:
     "wallets portfolio portfolio portfolio"
-    "history history history history";
+    "history history financialSummary financialSummary";
   grid-template-columns: 552px 1fr 1fr 412px;
   gap: 24px;
 
@@ -80,6 +142,11 @@
   // History Section
   .history {
     grid-area: history;
+  }
+
+  // History Section
+  .financialSummary {
+    grid-area: financialSummary;
   }
 
   @media (max-width: 1420px) {

@@ -292,23 +292,23 @@ const PortfolioChart = ({
             History
           </h3>
         </div>
-        <div className="lg:hidden block w-32">
-          <IconSelectBox
-            options={[
-              { label: "Daily", value: "daily" },
-              { label: "Weekly", value: "weekly" },
-              { label: "Monthly", value: "monthly" },
-              { label: "Lifetime", value: "lifetime" },
-            ]}
-            onChange={handleChange}
-            wrapperClassName="!m-0"
-            inputContainerClassName="!rounded-full py-3"
-            optionsClassName="!right-0 w-[240px]"
-            value={interval}
-          />
-        </div>
         <div className="flex justify-end gap-2">
-          <div className="hidden lg:flex gap-2 md:gap-4">
+          <div className="2xl:hidden block">
+            <IconSelectBox
+              options={[
+                { label: "Daily", value: "daily" },
+                { label: "Weekly", value: "weekly" },
+                { label: "Monthly", value: "monthly" },
+                { label: "Lifetime", value: "lifetime" },
+              ]}
+              onChange={handleChange}
+              wrapperClassName="!m-0"
+              inputContainerClassName="!rounded-full py-3"
+              optionsClassName="!right-0 w-[240px]"
+              value={interval}
+            />
+          </div>
+          <div className="hidden 2xl:flex gap-2 md:gap-4">
             {["daily", "weekly", "monthly", "lifetime"].map((int) => (
               <button
                 key={int}
@@ -349,7 +349,12 @@ const PortfolioChart = ({
       <LoadingApi loading={loading}>
         {chartData &&
           (user?.role == Role.USER ? (
-            <Chart data={chartData as any} type="line" options={options} />
+            <Chart
+              data={chartData as any}
+              type="line"
+              options={options}
+              className="max-h-[300px] 2xl:max-h-[514px]"
+            />
           ) : (
             <Chart
               data={chartData as any}

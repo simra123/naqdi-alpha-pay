@@ -14,3 +14,12 @@ export const getDashboardBalancesAdminApi = (params: {
 }) => {
   return () => api.get(`admin-dashboard/crypto-wallet-graph`, { params });
 };
+
+export const getMerchantFinancialSummaryAdminApi = (
+  params: {
+    userId?: number | string;
+  } = {}
+) => {
+  return () =>
+    api.get(`admin-dashboard/merchant-financial-summary`, { params });
+};

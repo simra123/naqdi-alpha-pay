@@ -336,108 +336,109 @@ const Home = () => {
       </RenderRoleBased>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        <div className="flex flex-col gap-6">
+        <div className="admin-dashboard-layout">
           {isWalletHasMinimumAccess && (
-            <div className="flex gap-6">
-              <div className="relative flex flex-col max-h-[400px] 2.5xl:max-h-[470px] height-box">
-                <Wallets
-                  walletsArray={adminBalances?.userBalances}
-                  error={isAdminBalancesError}
-                  heading="Crypto Wallets"
-                  loading={isAdminBalancesLoading}
-                  onHeadingClick={() => setCharUnit("ALL")}
-                  onWalletClick={handleAssetSelection}
-                />
+            <>
+              <div className="wallets">
+                <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
+                  <Wallets
+                    walletsArray={adminBalances?.userBalances}
+                    error={isAdminBalancesError}
+                    heading="Crypto Wallets"
+                    loading={isAdminBalancesLoading}
+                    onHeadingClick={() => setCharUnit("ALL")}
+                    onWalletClick={handleAssetSelection}
+                  />
+                </div>
               </div>
+              <div className="history">
+                <div className="hidden xs:block">
+                  <PortfolioChart
+                    isAdmin={user?.role == Role.ADMIN}
+                    interval={interval}
+                    setInterval={setInterval}
+                    chartData={adminBalances?.portfolio}
+                    unit={chartUnit}
+                    loading={isAdminBalancesLoading}
+                    error={isAdminBalancesError}
+                    merchantsList={adminMerchants}
+                    merchant={merchant}
+                    setMerchant={setMerchant}
+                    getChartData={getAdminChartData}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
-              <div className="hidden xs:block flex-1">
-                <PortfolioChart
-                  isAdmin={user?.role == Role.ADMIN}
-                  interval={interval}
-                  setInterval={setInterval}
-                  chartData={adminBalances?.portfolio}
-                  unit={chartUnit}
-                  loading={isAdminBalancesLoading}
-                  error={isAdminBalancesError}
-                  merchantsList={adminMerchants}
-                  merchant={merchant}
-                  setMerchant={setMerchant}
-                  getChartData={getAdminChartData}
-                />
-              </div>
+          {isMerchantHasMinimumAccess && (
+            <div className="merchants">
+              <CustomTable
+                columns={merchantsColumns}
+                rows={adminMerchants}
+                expandRowIDKey="userId"
+                ExpandComponent={({ row }) => (
+                  <div className="justify-between items-center gap-6 grid grid-cols-5">
+                    {row?.balances && row?.balances?.length > 0 ? (
+                      row.balances.map((item) => (
+                        <div className="flex flex-col gap-2">
+                          <h3 className="font-semibold text-purple-500 text-base">
+                            {item?.unit}{" "}
+                            {item?.standard ? ` - ${item?.standard}` : ""}
+                          </h3>
+                          <span className="font-semibold text-base">
+                            {item?.amount}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No Wallets Found.</p>
+                    )}
+                  </div>
+                )}
+                initialPageSize={5}
+                rowClickHandler={(row: any) => {
+                  router.push(`/merchants/details/${row?.userId}`);
+                }}
+                actions={
+                  <div className="flex justify-between items-end mb-6">
+                    <h3 className="font-nunito text-p120 2xl:text-h4">
+                      Merchants Wallet Summary
+                    </h3>
+                    <Link
+                      className="font-semibold text-caption text-purple-500 underline"
+                      href={"/merchants"}
+                    >
+                      View All
+                    </Link>
+                  </div>
+                }
+                tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
+                pagination
+                columnClassName="max-w-[250px] !py-[19.5px]"
+                loading={isAdminMerchantsLoading}
+              />
+              <ErrorApiText error={isAdminMerchantsError} />
             </div>
           )}
 
-          <div className="flex gap-6">
-            {isMerchantHasMinimumAccess && (
-              <div className="w-[70%]">
-                <CustomTable
-                  columns={merchantsColumns}
-                  rows={adminMerchants}
-                  expandRowIDKey="userId"
-                  ExpandComponent={({ row }) => (
-                    <div className="justify-between items-center gap-6 grid grid-cols-5">
-                      {row?.balances && row?.balances?.length > 0 ? (
-                        row.balances.map((item) => (
-                          <div className="flex flex-col gap-2">
-                            <h3 className="font-semibold text-purple-500 text-base">
-                              {item?.unit}{" "}
-                              {item?.standard ? ` - ${item?.standard}` : ""}
-                            </h3>
-                            <span className="font-semibold text-base">
-                              {item?.amount}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <p>No Wallets Found.</p>
-                      )}
-                    </div>
-                  )}
-                  initialPageSize={5}
-                  rowClickHandler={(row: any) => {
-                    router.push(`/merchants/details/${row?.userId}`);
-                  }}
-                  actions={
-                    <div className="flex justify-between items-end mb-6">
-                      <h3 className="font-nunito text-p120 2xl:text-h4">
-                        Merchants Wallet Summary
-                      </h3>
-                      <Link
-                        className="font-semibold text-caption text-purple-500 underline"
-                        href={"/merchants"}
-                      >
-                        View All
-                      </Link>
-                    </div>
-                  }
-                  tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
-                  pagination
-                  columnClassName="max-w-[250px] !py-[19.5px]"
-                  loading={isAdminMerchantsLoading}
-                />
-                <ErrorApiText error={isAdminMerchantsError} />
-              </div>
-            )}
-
-            {isTransactionHasMinumumAccess && (
-              <div className="flex-1">
-                <RecentTransactions />
-              </div>
-            )}
-          </div>
+          {isTransactionHasMinumumAccess && (
+            <div className="transactions">
+              <RecentTransactions />
+            </div>
+          )}
 
           {/* Graphs Row */}
-          {/* <div className="flex gap-6">
-            {isMerchantHasMinimumAccess && (
-              <div className="w-[50%]">
-                <MerchantSummary />
-              </div>
-            )}
-            <div className="w-[50%]">
-              <FeeSummaryGraph />
+
+          {isMerchantHasMinimumAccess && (
+            <div className="financialSummary">
+              <MerchantSummary merchantsList={adminMerchants} />
             </div>
-          </div> */}
+          )}
+
+          {/* <div className="feeSummary">
+              <FeeSummaryGraph />
+            </div> */}
         </div>
       </RenderRoleBased>
 
@@ -530,6 +531,9 @@ const Home = () => {
               <RecentTransactions />
             </div>
           )}
+          <div className="financialSummary">
+            <MerchantSummary />
+          </div>
         </div>
       </RenderRoleBased>
     </>
