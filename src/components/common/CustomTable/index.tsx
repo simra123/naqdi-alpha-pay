@@ -75,7 +75,6 @@ const CustomTable = ({
 }: TableProps) => {
   const [expandedRows, setExpandedRows] = useState({});
   const { csvLoading, csvError, generateAndDownloadCSV } = useCSVDownloader();
-  const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRows, setCurrentRows] = useState(rows);
@@ -84,7 +83,9 @@ const CustomTable = ({
   const [columnWidths, setColumnWidths]: any = useState();
   const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
-  const totalPages = Math.ceil(rows?.length / pageSize);
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(rows?.length / pageSize)
+  );
   const scrollContainerRef = useRef(null); // Add this for the scrollable div
   const [isHovered, setIsHovered] = useState(false); // Track mouse hover
 
@@ -146,6 +147,10 @@ const CustomTable = ({
         )
       : rows;
 
+    if (searchQuery) {
+      setCurrentPage(1);
+    }
+
     const sortedRows = sortConfig
       ? filteredRows.sort((a, b) => {
           if (sortConfig.direction === "ascending") {
@@ -162,6 +167,7 @@ const CustomTable = ({
     setCurrentRows(
       sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
     );
+    setTotalPages(Math.ceil(filteredRows?.length / pageSize));
   }, [searchQuery, rows, sortConfig, currentPage, pageSize]);
 
   const handleSort = (column) => {
@@ -555,83 +561,85 @@ const Pagination = ({
     [currentPage, pageSize, totalPages]
   );
 
+  console.log({ totalPages });
+
   return (
     <div className="overflow-auto">
       <div className="md:hidden block relative mx-auto mt-5 w-full">
-          <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
-            <IconButton
-              className={
-                currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(1)}
-              disabled={currentPage === 1}
-            >
-              <MdFirstPage />
-            </IconButton>
-            <IconButton
-              className={
-                currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <MdNavigateBefore />
-            </IconButton>
-            {pages.map((item, index) =>
-              item == "..." ? (
-                <span key={index}>...</span>
-              ) : (
-                <IconButton
-                  key={index}
-                  className={
-                    currentPage === item &&
-                    "text-black-100 font-bold bg-light-gray"
-                  }
-                  onClick={() => onChangePage(item)}
-                >
-                  {item}
-                </IconButton>
-              )
-            )}
-            <IconButton
-              className={
-                currentPage === totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <MdNavigateNext />
-            </IconButton>
-            <IconButton
-              className={
-                currentPage === totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              <MdLastPage />
-            </IconButton>
-          </div>
-          {createHandler && (
-            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-              <LoaderButton
-                content={<MdAdd className="!text-h2" />}
-                className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
-                variant="contained"
-                onClick={createHandler}
-              />
-            </RenderRoleBased>
+        <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
+          <IconButton
+            className={
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(1)}
+            disabled={currentPage === 1}
+          >
+            <MdFirstPage />
+          </IconButton>
+          <IconButton
+            className={
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <MdNavigateBefore />
+          </IconButton>
+          {pages.map((item, index) =>
+            item == "..." ? (
+              <span key={index}>...</span>
+            ) : (
+              <IconButton
+                key={index}
+                className={
+                  currentPage === item &&
+                  "text-black-100 font-bold bg-light-gray"
+                }
+                onClick={() => onChangePage(item)}
+              >
+                {item}
+              </IconButton>
+            )
           )}
+          <IconButton
+            className={
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <MdNavigateNext />
+          </IconButton>
+          <IconButton
+            className={
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(totalPages)}
+            disabled={currentPage === totalPages || totalPages == 0}
+          >
+            <MdLastPage />
+          </IconButton>
         </div>
-    
+        {createHandler && (
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <LoaderButton
+              content={<MdAdd className="!text-h2" />}
+              className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
+              variant="contained"
+              onClick={createHandler}
+            />
+          </RenderRoleBased>
+        )}
+      </div>
+
       <div className="relative flex justify-between items-center mt-4">
         {/* Pages Indicator */}
         <span className="block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
@@ -681,23 +689,23 @@ const Pagination = ({
             )}
             <IconButton
               className={
-                currentPage === totalPages
+                currentPage === totalPages || totalPages == 0
                   ? "text-gray-400 cursor-not-allowed"
                   : "hover:bg-blue-500 hover:text-white"
               }
               onClick={() => onChangePage(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages == 0}
             >
               <MdNavigateNext />
             </IconButton>
             <IconButton
               className={
-                currentPage === totalPages
+                currentPage === totalPages || totalPages == 0
                   ? "text-gray-400 cursor-not-allowed"
                   : "hover:bg-blue-500 hover:text-white"
               }
               onClick={() => onChangePage(totalPages)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages == 0}
             >
               <MdLastPage />
             </IconButton>
