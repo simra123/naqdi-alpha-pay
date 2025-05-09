@@ -77,7 +77,6 @@ const CustomTable = ({
 }: TableProps) => {
   const [expandedRows, setExpandedRows] = useState({});
   const { csvLoading, csvError, generateAndDownloadCSV } = useCSVDownloader();
-  const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRows, setCurrentRows] = useState(rows);
@@ -86,7 +85,9 @@ const CustomTable = ({
   const [columnWidths, setColumnWidths]: any = useState();
   const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
-  const totalPages = Math.ceil(rows?.length / pageSize);
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(rows?.length / pageSize)
+  );
   const scrollContainerRef = useRef(null); // Add this for the scrollable div
   const [isHovered, setIsHovered] = useState(false); // Track mouse hover
 
@@ -148,6 +149,10 @@ const CustomTable = ({
         )
       : rows;
 
+    if (searchQuery) {
+      setCurrentPage(1);
+    }
+
     const sortedRows = sortConfig
       ? filteredRows.sort((a, b) => {
           if (sortConfig.direction === "ascending") {
@@ -164,6 +169,7 @@ const CustomTable = ({
     setCurrentRows(
       sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
     );
+    setTotalPages(Math.ceil(filteredRows?.length / pageSize));
   }, [searchQuery, rows, sortConfig, currentPage, pageSize]);
 
   const handleSort = (column) => {
@@ -561,6 +567,8 @@ const Pagination = ({
     [currentPage, pageSize, totalPages]
   );
 
+  console.log({ totalPages });
+
   return (
     <div className="overflow-auto">
       <div className="md:hidden block relative mx-auto mt-5 w-full">
@@ -621,7 +629,7 @@ const Pagination = ({
                 : "hover:bg-blue-500 hover:text-white"
             }
             onClick={() => onChangePage(totalPages)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages == 0}
           >
             <MdLastPage />
           </IconButton>
@@ -687,23 +695,23 @@ const Pagination = ({
             )}
             <IconButton
               className={
-                currentPage === totalPages
+                currentPage === totalPages || totalPages == 0
                   ? "text-gray-400 cursor-not-allowed"
                   : "hover:bg-blue-500 hover:text-white"
               }
               onClick={() => onChangePage(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages == 0}
             >
               <MdNavigateNext />
             </IconButton>
             <IconButton
               className={
-                currentPage === totalPages
+                currentPage === totalPages || totalPages == 0
                   ? "text-gray-400 cursor-not-allowed"
                   : "hover:bg-blue-500 hover:text-white"
               }
               onClick={() => onChangePage(totalPages)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalPages == 0}
             >
               <MdLastPage />
             </IconButton>

@@ -41,7 +41,7 @@ const paymentsList_table_columns: TableColumns = [
     headerName: "ID",
   },
   {
-    field: "createdAt",
+    field: "created_at",
     headerName: "Created At",
 
     dataValidator: (value) => {
@@ -55,7 +55,7 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "updatedAt",
+    field: "updated_at",
     headerName: "Updated At",
 
     dataValidator: (value) => {
