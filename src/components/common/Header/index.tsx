@@ -116,10 +116,10 @@ const Header = ({ navHandler }) => {
               </BorderedIconButton>
             </Link>
           </RenderRoleBased>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <ThemeChangeIcon />
           </BorderedIconButton>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <NotificationIcon />
           </BorderedIconButton>
           <BorderedIconButton onClick={logoutHandler}>

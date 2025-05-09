@@ -25,6 +25,8 @@ import Link from "next/link";
 import { useCSVDownloader } from "@/hooks/useCSVDownloader";
 import ErrorApiText from "../ErrorApiText";
 
+const noCapitalizeFields = ["email","id"];
+
 interface TableProps {
   columns: TableColumns;
   rows: any[];
@@ -329,7 +331,7 @@ const CustomTable = ({
 
             {/* Rows Mapped Below */}
 
-            <tbody className="capitalize">
+            <tbody>
               {currentRows.map((row, index) => (
                 <>
                   <tr
@@ -351,6 +353,14 @@ const CustomTable = ({
                     )}
                     {columns.map((column, index) => {
                       const value = getNestedValue(row, column.field);
+                      const computedValue = column.dataValidator
+                        ? column.dataValidator(value, row)
+                        : value;
+                      const shouldCapitalize = !noCapitalizeFields.some(
+                        (item) => column.field.includes(item)
+                      );
+                      const link = column.link?.(row) || null;
+
                       return (
                         <td
                           key={column.field + index}
@@ -358,19 +368,13 @@ const CustomTable = ({
                             column.dataValidator ? "py-4" : "py-6"
                           } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                         >
-                          {column.dataValidator ? (
+                          {computedValue ? (
                             <CopyButtonColumn
-                              value={column.dataValidator(value, row)}
+                              value={computedValue}
                               copyable={column.copyable}
-                              link={column?.link ? column?.link(row) : null}
-                              target={column?.target}
-                            />
-                          ) : value ? (
-                            <CopyButtonColumn
-                              value={value}
-                              copyable={column.copyable}
-                              link={column?.link ? column?.link(row) : null}
-                              target={column?.target}
+                              link={link}
+                              target={column.target}
+                              className={shouldCapitalize ? "capitalize" : ""}
                             />
                           ) : (
                             "_"
@@ -442,11 +446,13 @@ const CopyButtonColumn = ({
   copyable,
   link,
   target,
+  className,
 }: {
   value: string;
   copyable: boolean;
   link: string;
   target: string;
+  className?: string;
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -464,7 +470,7 @@ const CopyButtonColumn = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-2 ${className}`}>
       {link ? (
         <Link
           onClick={(event) => event.stopPropagation()}
@@ -558,80 +564,80 @@ const Pagination = ({
   return (
     <div className="overflow-auto">
       <div className="md:hidden block relative mx-auto mt-5 w-full">
-          <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
-            <IconButton
-              className={
-                currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(1)}
-              disabled={currentPage === 1}
-            >
-              <MdFirstPage />
-            </IconButton>
-            <IconButton
-              className={
-                currentPage === 1
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              <MdNavigateBefore />
-            </IconButton>
-            {pages.map((item, index) =>
-              item == "..." ? (
-                <span key={index}>...</span>
-              ) : (
-                <IconButton
-                  key={index}
-                  className={
-                    currentPage === item &&
-                    "text-black-100 font-bold bg-light-gray"
-                  }
-                  onClick={() => onChangePage(item)}
-                >
-                  {item}
-                </IconButton>
-              )
-            )}
-            <IconButton
-              className={
-                currentPage === totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              <MdNavigateNext />
-            </IconButton>
-            <IconButton
-              className={
-                currentPage === totalPages
-                  ? "text-gray-400 cursor-not-allowed"
-                  : "hover:bg-blue-500 hover:text-white"
-              }
-              onClick={() => onChangePage(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              <MdLastPage />
-            </IconButton>
-          </div>
-          {createHandler && (
-            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-              <LoaderButton
-                content={<MdAdd className="!text-h2" />}
-                className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
-                variant="contained"
-                onClick={createHandler}
-              />
-            </RenderRoleBased>
+        <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
+          <IconButton
+            className={
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(1)}
+            disabled={currentPage === 1}
+          >
+            <MdFirstPage />
+          </IconButton>
+          <IconButton
+            className={
+              currentPage === 1
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <MdNavigateBefore />
+          </IconButton>
+          {pages.map((item, index) =>
+            item == "..." ? (
+              <span key={index}>...</span>
+            ) : (
+              <IconButton
+                key={index}
+                className={
+                  currentPage === item &&
+                  "text-black-100 font-bold bg-light-gray"
+                }
+                onClick={() => onChangePage(item)}
+              >
+                {item}
+              </IconButton>
+            )
           )}
+          <IconButton
+            className={
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <MdNavigateNext />
+          </IconButton>
+          <IconButton
+            className={
+              currentPage === totalPages
+                ? "text-gray-400 cursor-not-allowed"
+                : "hover:bg-blue-500 hover:text-white"
+            }
+            onClick={() => onChangePage(totalPages)}
+            disabled={currentPage === totalPages}
+          >
+            <MdLastPage />
+          </IconButton>
         </div>
-    
+        {createHandler && (
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <LoaderButton
+              content={<MdAdd className="!text-h2" />}
+              className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
+              variant="contained"
+              onClick={createHandler}
+            />
+          </RenderRoleBased>
+        )}
+      </div>
+
       <div className="relative flex justify-between items-center mt-4">
         {/* Pages Indicator */}
         <span className="block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
