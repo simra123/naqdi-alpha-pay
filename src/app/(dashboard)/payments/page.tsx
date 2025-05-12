@@ -367,7 +367,6 @@ const Payments = () => {
             loading={isPaymentLoading}
             totalItems={paymentsList?.total}
             fetchData={getPayments}
-            csvData={formatCsvData}
             tableName="payments"
           />
         </div>
