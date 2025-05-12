@@ -18,6 +18,7 @@ interface AdvancedTableProps {
   columns: ListData;
   setColumns: any;
   rows: any[];
+  csvData?: any[];
   selectable?: boolean;
   pagination?: boolean;
   listConfig: any;
@@ -32,6 +33,7 @@ interface AdvancedTableProps {
 const AdvancedTable = ({
   columns,
   rows,
+  csvData,
   selectable,
   pagination,
   listConfig,
@@ -158,7 +160,7 @@ const AdvancedTable = ({
   };
 
   const ExportCSVHandler = async () => {
-    generateAndDownloadCSV(rows, `${tableName}.csv` || "data.csv");
+    generateAndDownloadCSV(csvData || rows, `${tableName}.csv` || "data.csv");
   };
 
   useEffect(() => {
