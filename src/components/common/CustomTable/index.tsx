@@ -29,6 +29,7 @@ import ErrorApiText from "../ErrorApiText";
 interface TableProps {
   columns: TableColumns;
   rows: any[];
+  csvData?: any[];
   initialPageSize?: number;
   equalColumns?: boolean;
   rowClickHandler?: (row: object) => void;
@@ -50,6 +51,7 @@ interface TableProps {
 const CustomTable = ({
   columns,
   rows,
+  csvData,
   initialPageSize = 10,
   equalColumns,
   rowClickHandler,
@@ -194,7 +196,7 @@ const CustomTable = ({
   };
 
   const ExportCSVHandler = async () => {
-    generateAndDownloadCSV(rows, `${tableName}.csv` || "data.csv");
+    generateAndDownloadCSV(csvData || rows, `${tableName}.csv` || "data.csv");
   };
 
   return (
