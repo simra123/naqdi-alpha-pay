@@ -90,13 +90,7 @@ const Support = () => {
 
   return (
     <>
-      <form
-        onSubmit={(event) =>
-          handleSubmit(event, createTicketHandler, () =>
-            console.log("Error Validating Form")
-          )
-        }
-      >
+      <form onSubmit={(event) => handleSubmit(event, createTicketHandler)}>
         <div className="flex flex-col rounded-medium">
           <h3 className="mb-12 font-semibold text-blackGrey-100 text-h3.5">
             Need Help

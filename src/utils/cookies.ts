@@ -48,7 +48,6 @@ export const getPermission = (moduleName: ModulesEnum) => {
     );
     return permissionObj?.permission || null;
   } catch (err) {
-    console.error("Failed to parse user cookie", err);
     return null;
   }
 };
@@ -59,9 +58,6 @@ export const hasMinAccess = (
 ): boolean => {
   // I have added this line to make sure no one passess --none-- as minAccessLevel
   if (minAccess === AccessLevelEnum.none) {
-    console.warn(
-      "hasMinAccess() was called with 'none' as minimum access. This is likely unintended."
-    );
     return false;
   }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../Modal";
 import { callApiHook, sendPaymentInvoiceWhatsapp } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
@@ -204,21 +204,13 @@ const DepositModal = ({
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
 
-  console.log({ values });
-
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <h2 className="mb-6 font-bold text-xl">
         {type == "payment" ? "Add Payment" : "Deposit Address"}
       </h2>
       {!depositAddress && (
-        <form
-          onSubmit={(event) =>
-            handleSubmit(event, createDepoistAddress, () =>
-              console.log("Invalid Form Data")
-            )
-          }
-        >
+        <form onSubmit={(event) => handleSubmit(event, createDepoistAddress)}>
           <IconSelectBox
             label="Select a Blockchain"
             options={blockchains}
@@ -320,9 +312,7 @@ const DepositModal = ({
                 loading={isDepoistLoading}
                 className="mt-6"
                 content={
-                  type == "payment"
-                    ? "Create"
-                    : `Create Deposit Address`
+                  type == "payment" ? "Create" : `Create Deposit Address`
                 }
                 variant="contained"
               />

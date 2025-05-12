@@ -32,13 +32,13 @@ const TableRow: React.FC<TableRowProps> = ({
     <tr
       key={index}
       onClick={() => onRowClick && onRowClick(row)}
-      className="bg-white border-b hover:bg-gray-50 cursor-pointer"
+      className="bg-white hover:bg-gray-50 border-b cursor-pointer"
     >
       {selectable && (
-        <td className="py-4 pl-2 pr-6">
+        <td className="py-4 pr-6 pl-2">
           <label className="custom-checkbox">
             <input type="checkbox" onChange={() => onRowSelection(row)} />
-            <span className="checkmark !static block"></span>
+            <span className="block !static checkmark"></span>
           </label>
         </td>
       )}
@@ -114,9 +114,7 @@ const CopyButtonColumn = ({
 
       // Reset the copied state after 1 second
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -128,12 +126,12 @@ const CopyButtonColumn = ({
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-blue-700 hover:underline transition-all text-black-100 font-semibold text-ellipsis overflow-hidden capitalize"
+          className="overflow-hidden font-semibold text-black-100 hover:text-blue-700 hover:underline text-ellipsis capitalize transition-all"
         >
           {isCopied ? "Copied" : value}
         </a>
       ) : (
-        <span className="flex-grow overflow-hidden text-ellipsis whitespace-nowrap max-w-max">
+        <span className="flex-grow max-w-max overflow-hidden text-ellipsis whitespace-nowrap">
           {isCopied ? "Copied" : value}
         </span>
       )}
@@ -142,7 +140,7 @@ const CopyButtonColumn = ({
       {copyable && (
         <button
           onClick={copyToClipboard(value)}
-          className="bg-transparent flex items-center justify-center border-0 outline-0 text-[14px] hover:text-white hover:bg-purple-100 active:bg-purple-200 transition-all min-w-8 h-8 rounded-full p-1"
+          className="flex justify-center items-center bg-transparent hover:bg-purple-100 active:bg-purple-200 p-1 border-0 rounded-full outline-0 min-w-8 h-8 text-[14px] hover:text-white transition-all"
         >
           <MdCopyAll className="text-[16px]" />
         </button>

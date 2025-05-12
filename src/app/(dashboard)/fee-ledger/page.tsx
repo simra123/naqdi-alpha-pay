@@ -74,13 +74,12 @@ const FeeLedger = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-                    console.log({ currentTimeZone });
+   
 
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
 
-                    console.log({ date });
 
                     let [day, time] = date.split(".");
                     return (
@@ -109,7 +108,7 @@ const FeeLedger = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-          console.log({ modifiedColumns });
+      
 
           setColumns(modifiedColumns);
 
@@ -204,7 +203,6 @@ const FeeLedger = () => {
     getFeeLedger({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
-  console.log({ colsState: columns });
 
   const toggleCreateModal = () => {
     setIsCreateOpen(!isCreateOpen);
@@ -258,7 +256,6 @@ const FeeLedger = () => {
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-              console.log({ row });
               if (row?.payment && hasMinAccess(ModulesEnum.payment,AccessLevelEnum.read)) {
                 router.push(`payments/details/${row.payment?.id}`);
               }

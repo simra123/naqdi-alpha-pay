@@ -92,9 +92,7 @@ const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
 
       <form
         className="flex flex-col gap-2 mt-8"
-        onSubmit={(e) =>
-          handleSubmit(e, onSubmit, () => console.log("Something went wrong"))
-        }
+        onSubmit={(e) => handleSubmit(e, onSubmit)}
       >
         <IconField
           label="Current Password"

@@ -5,7 +5,7 @@ import { Role } from "./constants/roles";
 
 const adminRoutes = ["/kyc", "/merchants", "/wallets", "/news-signup"];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
-const nonFunctionalRoutes = ["/payouts","/wallets"];
+const nonFunctionalRoutes = ["/payouts", "/wallets"];
 
 const NOT_FOUND_URL = "/not-found";
 
@@ -29,16 +29,12 @@ export function middleware(req: NextRequest) {
 
   const userCookie = req.cookies.get("user");
 
-
-
   let user = null;
 
   if (userCookie) {
     try {
       user = JSON.parse(userCookie.value);
-    } catch (e) {
-      console.error("Invalid localUser cookie");
-    }
+    } catch (e) {}
 
     // Blocking user only routes for admin
     if (user?.role == Role.ADMIN) {

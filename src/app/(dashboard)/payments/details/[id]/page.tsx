@@ -115,9 +115,7 @@ const PaymentDetails = ({ params }) => {
         try {
           const parsedData = JSON.parse(response.passthrough);
           setOrderInfo(parsedData);
-        } catch (error) {
-          console.error("Failed to parse JSON:", error);
-        }
+        } catch (error) {}
         setPayment(response);
 
         // Handling Webhooks Below

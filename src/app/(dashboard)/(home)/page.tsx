@@ -256,7 +256,6 @@ const Home = () => {
         })
       ),
       successCallBack: (response: any) => {
-        console.log({ adminbalances: response?.data });
         setAdminBalances({
           ...response?.data,
           portfolio: makeChartData(response?.data?.portfolio),

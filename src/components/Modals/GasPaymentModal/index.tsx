@@ -53,7 +53,6 @@ const GasPaymentModal = ({
   let blockchainUnit;
   if (isOpen) {
     blockchainUnit = blockchain_units[blockchain?.toLowerCase()];
-
   }
 
   const {
@@ -118,11 +117,7 @@ const GasPaymentModal = ({
       {walletType == WalletType.Virtual && (
         <form
           className="flex flex-col gap-2 mt-8"
-          onSubmit={(e) =>
-            handleSubmit(e, createVirtualGasPayment, () =>
-              console.log("Something went wrong")
-            )
-          }
+          onSubmit={(e) => handleSubmit(e, createVirtualGasPayment)}
         >
           <LoadingApi loading={isGasPaymentLoading}>
             {!paymentDetails?.qr_code && (
