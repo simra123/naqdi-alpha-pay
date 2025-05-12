@@ -107,7 +107,7 @@ const TransactionDetails = ({ params }) => {
     await callApiHook({
       apiCall: callWebhookApi(
         resendWebhookAPI({
-          payment_id: transactionDetails?.transactionDetails?.id,
+          payment_id: transactionDetails?.payment?.id,
           transaction_id: +tranascionId,
         })
       ),
