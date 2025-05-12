@@ -317,26 +317,27 @@ const TransactionDetails = ({ params }) => {
 
         <div className="res-2-grid py-6">
           <Details
-            label="Payment Amount"
-            value={`${transactionDetails?.requested_amount} ${transactionDetails?.requested_currency}`}
-          />
-          <Details
-            label="Payment Currency Amount "
-            value={`${transactionDetails?.payment_currency_amount} ${transactionDetails?.payment_currency}`}
-          />
-          <Details
-            label="Amount"
-            value={`${roundToPrecision(
-              +transactionDetails?.transaction_amount ||
-                +transactionDetails?.amount,
+            label="Total Amount"
+            value={` ${roundToPrecision(
+              transactionDetails?.total_amount || transactionDetails?.total_amount_received,
               10
             )} ${transactionDetails?.unit}`}
           />
+
           <Details
             label="Alphaspay Fees"
             value={`${roundToPrecision(
               +transactionDetails?.withdrawal?.alphaspay_fee ||
                 +transactionDetails?.alphaspay_fees,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+
+          <Details
+            label="Net Amount"
+            value={`${roundToPrecision(
+              +transactionDetails?.transaction_amount ||
+                +transactionDetails?.amount,
               10
             )} ${transactionDetails?.unit}`}
           />
