@@ -294,7 +294,7 @@ const Payments = () => {
   const formatCsvData = useMemo(() => {
     const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
     const formattedData = rows?.map(
-      ({ wallet,alphaspay_fees, paymentTransaction, ...rest }) => ({
+      ({ wallet,alphaspay_fees, paymentTransaction,client, ...rest }) => ({
         ...rest,
         wallet: wallet?.address ?? "",
       })
@@ -344,6 +344,7 @@ const Payments = () => {
             pagination
             columnClassName="max-w-[250px]"
             loading={isPaymentLoading}
+            csvData={formatCsvData}
           />
         </div>
       </RenderRoleBased>
