@@ -78,7 +78,7 @@ const Header = ({ navHandler }) => {
           {/* <div className="icon">
             <Notifications />
           </div> */}
-          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full cursor-pointer avatar">
+          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full avatar">
             <div>
               <img
                 src="/avatar.png"
@@ -116,10 +116,10 @@ const Header = ({ navHandler }) => {
               </BorderedIconButton>
             </Link>
           </RenderRoleBased>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <ThemeChangeIcon />
           </BorderedIconButton>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <NotificationIcon />
           </BorderedIconButton>
           <BorderedIconButton onClick={logoutHandler}>

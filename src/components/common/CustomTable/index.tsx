@@ -25,6 +25,8 @@ import Link from "next/link";
 import { useCSVDownloader } from "@/hooks/useCSVDownloader";
 import ErrorApiText from "../ErrorApiText";
 
+const noCapitalizeFields = ["email","id"];
+
 interface TableProps {
   columns: TableColumns;
   rows: any[];
@@ -335,7 +337,7 @@ const CustomTable = ({
 
             {/* Rows Mapped Below */}
 
-            <tbody className="capitalize">
+            <tbody>
               {currentRows.map((row, index) => (
                 <>
                   <tr
@@ -357,6 +359,14 @@ const CustomTable = ({
                     )}
                     {columns.map((column, index) => {
                       const value = getNestedValue(row, column.field);
+                      const computedValue = column.dataValidator
+                        ? column.dataValidator(value, row)
+                        : value;
+                      const shouldCapitalize = !noCapitalizeFields.some(
+                        (item) => column.field.includes(item)
+                      );
+                      const link = column.link?.(row) || null;
+
                       return (
                         <td
                           key={column.field + index}
@@ -364,19 +374,13 @@ const CustomTable = ({
                             column.dataValidator ? "py-4" : "py-6"
                           } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
                         >
-                          {column.dataValidator ? (
+                          {computedValue ? (
                             <CopyButtonColumn
-                              value={column.dataValidator(value, row)}
+                              value={computedValue}
                               copyable={column.copyable}
-                              link={column?.link ? column?.link(row) : null}
-                              target={column?.target}
-                            />
-                          ) : value ? (
-                            <CopyButtonColumn
-                              value={value}
-                              copyable={column.copyable}
-                              link={column?.link ? column?.link(row) : null}
-                              target={column?.target}
+                              link={link}
+                              target={column.target}
+                              className={shouldCapitalize ? "capitalize" : ""}
                             />
                           ) : (
                             "_"
@@ -448,11 +452,13 @@ const CopyButtonColumn = ({
   copyable,
   link,
   target,
+  className,
 }: {
   value: string;
   copyable: boolean;
   link: string;
   target: string;
+  className?: string;
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -470,7 +476,7 @@ const CopyButtonColumn = ({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-2 ${className}`}>
       {link ? (
         <Link
           onClick={(event) => event.stopPropagation()}

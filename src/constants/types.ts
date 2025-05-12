@@ -31,7 +31,7 @@ export enum ModulesEnum {
   payout = "payout",
   user = "user",
   newsletter = "newsletter",
-  feeLedger='fee-ledger'
+  feeLedger = "fee-ledger",
 }
 
 export const ModuleRoutes = {
@@ -68,3 +68,12 @@ export enum ModalType {
   EDIT = "edit",
   CREATE = "create",
 }
+
+export const supportOptions = [
+  { label: "Incident", value: "Incident" },
+  { label: "Question", value: "Question" },
+  { label: "Problem", value: "Problem" },
+  { label: "Refund", value: "Refund" },
+  { label: "Transaction Issue", value: "Transaction Issue" },
+  { label: "Loan", value: "Loan" },
+];
