@@ -21,7 +21,11 @@ import { getClientFeeApi, setClientFeeApi } from "@/services/user";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import LoadingApi from "@/components/common/LoadindApi";
-import { MdOutlineContactMail, MdOutlineErrorOutline, MdOutlineLocationOn } from "react-icons/md";
+import {
+  MdOutlineContactMail,
+  MdOutlineErrorOutline,
+  MdOutlineLocationOn,
+} from "react-icons/md";
 
 let initalFormValues = {
   clientFee: 0,
@@ -69,7 +73,6 @@ const Account = () => {
     await callApiHook({
       apiCall: callClientFeeApi(setClientFeeApi({ amount: values?.clientFee })),
       successCallBack: (response) => {
-
         SetFeeValues(values?.clientFee);
         dispatch(
           setNotification({
@@ -85,7 +88,6 @@ const Account = () => {
     await callApiHook({
       apiCall: callGetClientFeeApi(getClientFeeApi()),
       successCallBack: (response) => {
-
         SetFeeValues(response?.fee);
       },
     });
@@ -212,13 +214,7 @@ const Account = () => {
                   label="Admin Fees"
                   value={user?.userDetails?.fees + "%"}
                 />
-                <form
-                  onSubmit={(e) =>
-                    handleSubmit(e, setClientFeeHandler, () =>
-                      console.log("Something went wrong")
-                    )
-                  }
-                >
+                <form onSubmit={(e) => handleSubmit(e, setClientFeeHandler)}>
                   <Details
                     label="Client Fees"
                     className={!isClientFeeLoading && "items-baseline"}

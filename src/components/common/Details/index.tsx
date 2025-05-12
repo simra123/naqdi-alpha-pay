@@ -30,9 +30,7 @@ const Details = ({
 
       // Reset the copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+    } catch (err) {}
   };
 
   return (

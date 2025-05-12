@@ -23,7 +23,7 @@ interface Props {
   toggleHandler: () => void;
   refreshHandler: () => void;
   withdrawId: any;
-  blockchain:string
+  blockchain: string;
 }
 
 const initalFormValues = {
@@ -37,7 +37,7 @@ const ExternalWithdrawalModal = ({
   toggleHandler,
   withdrawId,
   refreshHandler,
-  blockchain
+  blockchain,
 }: Props) => {
   const dispatch = useDispatch();
   const [
@@ -76,7 +76,7 @@ const ExternalWithdrawalModal = ({
             status: "success",
           })
         );
-        toggleHandler()
+        toggleHandler();
       },
     });
   };
@@ -87,11 +87,7 @@ const ExternalWithdrawalModal = ({
 
       <form
         className="flex flex-col gap-2 mt-8"
-        onSubmit={(e) =>
-          handleSubmit(e, handleExternalWithdrawal, () =>
-            console.log("Something went wrong")
-          )
-        }
+        onSubmit={(e) => handleSubmit(e, handleExternalWithdrawal)}
       >
         <IconField
           value={values.transactionHash}
@@ -125,7 +121,12 @@ const ExternalWithdrawalModal = ({
         </div>
 
         <div className="flex flex-col justify-end mt-4">
-          <LoaderButton type="submit" content="Approve" variant="contained" loading={isWithdrawalLoading}/>
+          <LoaderButton
+            type="submit"
+            content="Approve"
+            variant="contained"
+            loading={isWithdrawalLoading}
+          />
         </div>
       </form>
 

@@ -64,15 +64,11 @@ const WebhookURLModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
-      <h2 className="text-h3.5 font-semibold mb-4">Add Webhook URL</h2>
+      <h2 className="mb-4 font-semibold text-h3.5">Add Webhook URL</h2>
 
       <form
-        className="mt-8 flex flex-col gap-2"
-        onSubmit={(e) =>
-          handleSubmit(e, handleWebhook, () =>
-            console.log("Something went wrong")
-          )
-        }
+        className="flex flex-col gap-2 mt-8"
+        onSubmit={(e) => handleSubmit(e, handleWebhook)}
       >
         <IconField
           value={values.url}
@@ -93,7 +89,7 @@ const WebhookURLModal = ({
 
           {/* <button
             type="button"
-            className="text-black-100 px-4 py-2 mt-2"
+            className="mt-2 px-4 py-2 text-black-100"
             onClick={toggleHandler}
           >
             Cancel

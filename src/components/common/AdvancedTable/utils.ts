@@ -307,8 +307,6 @@ export const replaceColumns = (data, newColumns) => {
   if (data && data.views && data.views[0]) {
     // Replace the columns array in the first view
     data.views[0].localColumns = newColumns;
-  } else {
-    console.error("Invalid data structure");
   }
   return data;
 };
