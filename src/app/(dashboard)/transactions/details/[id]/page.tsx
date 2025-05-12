@@ -20,7 +20,6 @@ import { roundToPrecision } from "@/utils/math";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 
-
 import Details from "@/components/common/Details";
 import {
   CalenderIcon,
@@ -108,7 +107,7 @@ const TransactionDetails = ({ params }) => {
     await callApiHook({
       apiCall: callWebhookApi(
         resendWebhookAPI({
-          payment_id: transactionDetails?.payment?.id,
+          payment_id: transactionDetails?.transactionDetails?.id,
           transaction_id: +tranascionId,
         })
       ),
@@ -171,31 +170,6 @@ const TransactionDetails = ({ params }) => {
               hash: transactionDetails?.transaction_hash,
             })}
             copyable
-          />
-          <Details
-            label="Amount"
-            value={`${roundToPrecision(
-              +transactionDetails?.transaction_amount ||
-                +transactionDetails?.amount,
-              10
-            )} ${transactionDetails?.unit}`}
-          />
-          <Details
-            label="Alphaspay Fees"
-            value={`${roundToPrecision(
-              +transactionDetails?.withdrawal?.alphaspay_fee ||
-                +transactionDetails?.alphaspay_fees,
-              10
-            )} ${transactionDetails?.unit}`}
-          />
-
-          <Details
-            label="Client Fees"
-            value={
-              transactionDetails?.client_fee
-                ? `${transactionDetails?.client_fee} ${transactionDetails?.unit}`
-                : "0"
-            }
           />
 
           {transactionType == TransactionType.Payment && (
@@ -331,6 +305,49 @@ const TransactionDetails = ({ params }) => {
               type: "address",
               address: transactionDetails?.sender_address,
             })}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+          <PaymentIcon active={false} />
+          <h5 className="font-semibold text-h5 text-purple-500">
+            Transaction Amount
+          </h5>
+        </div>
+
+        <div className="res-2-grid py-6">
+          <Details
+            label="Payment Amount"
+            value={`${transactionDetails?.requested_amount} ${transactionDetails?.requested_currency}`}
+          />
+          <Details
+            label="Payment Currency Amount "
+            value={`${transactionDetails?.payment_currency_amount} ${transactionDetails?.payment_currency}`}
+          />
+          <Details
+            label="Amount"
+            value={`${roundToPrecision(
+              +transactionDetails?.transaction_amount ||
+                +transactionDetails?.amount,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+          <Details
+            label="Alphaspay Fees"
+            value={`${roundToPrecision(
+              +transactionDetails?.withdrawal?.alphaspay_fee ||
+                +transactionDetails?.alphaspay_fees,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+
+          <Details
+            label="Client Fees"
+            value={
+              transactionDetails?.client_fee
+                ? `${transactionDetails?.client_fee} ${transactionDetails?.unit}`
+                : "0"
+            }
           />
         </div>
 
