@@ -180,7 +180,6 @@ const Payments = () => {
   const [columns, setColumns] = useState([]);
   const [listConfig, setListConfig] = useState(null);
 
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
@@ -278,7 +277,6 @@ const Payments = () => {
     });
   };
 
-
   const toggelPaymentModal = () => {
     setIsPaymentOpen(!isPaymentOpen);
   };
@@ -294,9 +292,12 @@ const Payments = () => {
   const formatCsvData = useMemo(() => {
     const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
     const formattedData = rows?.map(
-      ({ wallet,alphaspay_fees, paymentTransaction,client, ...rest }) => ({
+      ({ wallet, paymentTransaction, client, ...rest }) => ({
         ...rest,
         wallet: wallet?.address ?? "",
+        alphaspay_fees: paymentTransaction.reduce((sum, transaction) => {
+          return sum + (transaction.alphaspay_fees || 0);
+        }, 0),
       })
     );
 
