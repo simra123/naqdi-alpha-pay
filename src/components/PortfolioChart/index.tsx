@@ -122,8 +122,6 @@ const PortfolioChart = ({
     getChartData();
   }, [interval, unit, merchant]);
 
-  console.log({ chartData, message: "Charts data" });
-
   const handleChange = (e) => {
     const { value } = e.target;
     setInterval(value);
@@ -264,7 +262,6 @@ const PortfolioChart = ({
     },
   };
 
-  console.log({ PortiflioChart: unitName[unit?.toLowerCase()], unit: unit });
 
   return (
     <div className="p-6 border border-purple-10 rounded-[28px]">

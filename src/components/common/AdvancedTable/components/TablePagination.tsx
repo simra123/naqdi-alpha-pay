@@ -68,7 +68,7 @@ const TablePagination = ({
           </IconButton>
           {pages.map((item) =>
             item == "..." ? (
-              <span>...</span>
+              <span key={item}>...</span>
             ) : (
               <IconButton
                 key={item}

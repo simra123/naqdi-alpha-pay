@@ -34,17 +34,12 @@ export const downloadCSV = (csvContent, fileName) => {
 
 function openInNewTab(url) {
   if (!url) {
-    console.error("URL is required to open a new tab.");
     return;
   }
 
   const newTab = window.open(url, "_blank");
   if (newTab) {
     newTab.focus(); // Focus on the new tab if it was successfully opened
-  } else {
-    console.error(
-      "Failed to open the new tab. It might be blocked by the browser."
-    );
   }
 }
 

@@ -203,11 +203,7 @@ const CreateWithdrawalModal = ({
         {currentStep == 1 && (
           <form
             className="flex flex-col gap-2 mt-8"
-            onSubmit={(e) =>
-              handleSubmit(e, handleStepChange(2), () =>
-                console.log("Something went wrong")
-              )
-            }
+            onSubmit={(e) => handleSubmit(e, handleStepChange(2))}
           >
             <IconSelectBox
               wrapperClassName="!mb-2"
@@ -282,11 +278,7 @@ const CreateWithdrawalModal = ({
         <LoadingApi loading={isFeeLoading}>
           <form
             className="flex flex-col gap-2 mt-8"
-            onSubmit={(e) =>
-              handleSubmit(e, handleWithdrawal, () =>
-                console.log("Something went wrong")
-              )
-            }
+            onSubmit={(e) => handleSubmit(e, handleWithdrawal)}
           >
             <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
               <div>

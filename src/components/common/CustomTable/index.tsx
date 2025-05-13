@@ -25,7 +25,7 @@ import Link from "next/link";
 import { useCSVDownloader } from "@/hooks/useCSVDownloader";
 import ErrorApiText from "../ErrorApiText";
 
-const noCapitalizeFields = ["email","id"];
+const noCapitalizeFields = ["email", "id"];
 
 interface TableProps {
   columns: TableColumns;
@@ -472,9 +472,7 @@ const CopyButtonColumn = ({
 
       // Reset the copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -569,7 +567,6 @@ const Pagination = ({
     [currentPage, pageSize, totalPages]
   );
 
-  console.log({ totalPages });
 
   return (
     <div className="overflow-auto">

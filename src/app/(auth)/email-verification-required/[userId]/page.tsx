@@ -29,7 +29,6 @@ const page = ({ params }) => {
         })
       ),
       successCallBack: (response) => {
-        console.log({ response });
         dispatch(
           setNotification({
             message: !response?.setPassword

@@ -20,7 +20,6 @@ import { roundToPrecision } from "@/utils/math";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 
-
 import Details from "@/components/common/Details";
 import {
   CalenderIcon,
@@ -172,31 +171,6 @@ const TransactionDetails = ({ params }) => {
             })}
             copyable
           />
-          <Details
-            label="Amount"
-            value={`${roundToPrecision(
-              +transactionDetails?.transaction_amount ||
-                +transactionDetails?.amount,
-              10
-            )} ${transactionDetails?.unit}`}
-          />
-          <Details
-            label="Alphaspay Fees"
-            value={`${roundToPrecision(
-              +transactionDetails?.withdrawal?.alphaspay_fee ||
-                +transactionDetails?.alphaspay_fees,
-              10
-            )} ${transactionDetails?.unit}`}
-          />
-
-          <Details
-            label="Client Fees"
-            value={
-              transactionDetails?.client_fee
-                ? `${transactionDetails?.client_fee} ${transactionDetails?.unit}`
-                : "0"
-            }
-          />
 
           {transactionType == TransactionType.Payment && (
             <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
@@ -331,6 +305,50 @@ const TransactionDetails = ({ params }) => {
               type: "address",
               address: transactionDetails?.sender_address,
             })}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
+          <PaymentIcon active={false} />
+          <h5 className="font-semibold text-h5 text-purple-500">
+            Transaction Amount
+          </h5>
+        </div>
+
+        <div className="res-2-grid py-6">
+          <Details
+            label="Total Amount"
+            value={` ${roundToPrecision(
+              transactionDetails?.total_amount || transactionDetails?.total_amount_received,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+
+          <Details
+            label="Alphaspay Fees"
+            value={`${roundToPrecision(
+              +transactionDetails?.withdrawal?.alphaspay_fee ||
+                +transactionDetails?.alphaspay_fees,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+
+          <Details
+            label="Net Amount"
+            value={`${roundToPrecision(
+              +transactionDetails?.transaction_amount ||
+                +transactionDetails?.amount,
+              10
+            )} ${transactionDetails?.unit}`}
+          />
+
+          <Details
+            label="Client Fees"
+            value={
+              transactionDetails?.client_fee
+                ? `${transactionDetails?.client_fee} ${transactionDetails?.unit}`
+                : "0"
+            }
           />
         </div>
 
