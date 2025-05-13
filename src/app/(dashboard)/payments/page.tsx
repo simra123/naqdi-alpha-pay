@@ -298,7 +298,7 @@ const Payments = () => {
         ...rest,
         wallet: wallet?.address ?? "",
         alphaspay_fees: paymentTransaction.reduce((sum, transaction) => {
-          return sum + (transaction.alphaspay_fees || 0);
+          return +sum + (+transaction.alphaspay_fees || 0);
         }, 0),
       })
     );
