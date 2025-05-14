@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
@@ -25,7 +25,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import LoaderButton from "@/components/common/LoaderButton";
 import DepositModal from "@/components/Modals/DepoistModal";
-import {  hasMinAccess } from "@/utils/cookies";
+import { hasMinAccess } from "@/utils/cookies";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -35,7 +35,6 @@ interface PaymentAPi {
   sort?: any;
   filters?: any;
 }
-
 
 const paymentsList_table_columns: TableColumns = [
   {
@@ -75,7 +74,7 @@ const paymentsList_table_columns: TableColumns = [
     headerName: "Merchant ID",
     target: "_self",
     link: (row: any) => {
-      if (hasMinAccess(ModulesEnum.merchant,AccessLevelEnum.read)) {
+      if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
         return `/merchants/details/${row?.client?.id}`;
       }
     },
@@ -174,7 +173,6 @@ const paymentsList_table_columns: TableColumns = [
   },
 ];
 
-
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
@@ -184,7 +182,6 @@ const Payments = () => {
   const [columns, setColumns] = useState([]);
   const [listConfig, setListConfig] = useState(null);
 
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
 
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
@@ -282,15 +279,6 @@ const Payments = () => {
     });
   };
 
-
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(paymentsList)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "payments.csv");
-      },
-    });
-  };
   const toggelPaymentModal = () => {
     setIsPaymentOpen(!isPaymentOpen);
   };
@@ -302,6 +290,21 @@ const Payments = () => {
   useEffect(() => {
     getPayments({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
+
+  const formatCsvData = useMemo(() => {
+    const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
+    const formattedData = rows?.map(
+      ({ wallet, paymentTransaction, client, ...rest }) => ({
+        ...rest,
+        wallet: wallet?.address ?? "",
+        alphaspay_fees: paymentTransaction.reduce((sum, transaction) => {
+          return +sum + (+transaction.alphaspay_fees || 0);
+        }, 0),
+      })
+    );
+
+    return formattedData;
+  }, [paymentsList]);
 
   return (
     <>
@@ -344,6 +347,7 @@ const Payments = () => {
             pagination
             columnClassName="max-w-[250px]"
             loading={isPaymentLoading}
+            csvData={formatCsvData}
           />
         </div>
       </RenderRoleBased>
@@ -364,6 +368,7 @@ const Payments = () => {
             loading={isPaymentLoading}
             totalItems={paymentsList?.total}
             fetchData={getPayments}
+            csvData={formatCsvData}
             tableName="payments"
           />
         </div>
