@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { getAllUsersByAdminApi } from "@/services/admin/users";
@@ -18,6 +18,7 @@ import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const usersList_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
@@ -79,14 +80,25 @@ const Merchants = () => {
     });
   };
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(users)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "users.csv");
-      },
-    });
-  };
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "user_uuid" },
+      { key: "first_name" },
+      { key: "middle_name" },
+      { key: "last_name" },
+      { key: "legal_name" },
+      { key: "legal_type" },
+      { key: "email" },
+      { key: "username" },
+      { key: "user_type" },
+      { key: "verified" },
+      { key: "created_at" },
+      { key: "updated_at" },
+    ];
+
+    return formatCSVDataByColumnOrder(users, columnOrder);
+  }, [users]);
 
   useEffect(() => {
     getAllUsersAdmin();
@@ -113,6 +125,7 @@ const Merchants = () => {
           }
           pagination
           columnClassName="max-w-[250px]"
+          csvData={formatCsvData}
         />
 
         <ErrorApiText error={isUsersError} />

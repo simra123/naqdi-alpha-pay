@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
@@ -19,6 +19,7 @@ import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { hasMinAccess } from "@/utils/cookies";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -330,6 +331,39 @@ const Transactions = () => {
     getTransactions();
   }, [selectedStatus]);
 
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "payment_transaction_uuid" },
+      { key: "withdraw_transaction_uuid" },
+      { key: "transaction_type" },
+      { key: "transaction_hash" },
+      { key: "sender_address" },
+      // { key: "transaction_amount" },
+      { key: "amount" },
+      { key: "unit" },
+      { key: "total_amount_received" },
+      { key: "alphaspay_fees" },
+      { key: "client_fee" },
+      { key: "status" },
+      { key: "createdAt" },
+      { key: "updatedAt" },
+      { key: "client" },
+      { key: "payment" },
+      { key: "withdrawal" },
+      {
+        key: "wallet",
+        format(value, row) {
+          return row?.wallet || row?.clientWallet
+            ? JSON.stringify(row?.wallet || row?.clientWallet)
+            : "-";
+        },
+      },
+    ];
+
+    return formatCSVDataByColumnOrder(transactions, columnOrder);
+  }, [transactions]);
+
   return (
     <>
       <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
@@ -355,6 +389,7 @@ const Transactions = () => {
           );
         }}
         pagination
+        csvData={formatCsvData}
         columnClassName="max-w-[200px]"
       />
 
