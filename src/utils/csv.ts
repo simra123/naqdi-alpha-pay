@@ -14,7 +14,6 @@ export const formatCSVDataByColumnOrder = <T>(
     columns.forEach(({ key, label, format }) => {
       let value = (row as any)[key];
 
-      console.log(`[${key}] : ${value}` , row);
 
       if (format) {
         // ✅ Custom formatting with full row access
