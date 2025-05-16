@@ -321,6 +321,10 @@ const Payments = () => {
       { key: "updated_at" },
     ];
 
+    if (user?.role == Role.ADMIN) {
+      columnOrder.push({ key: "client" });
+    }
+
     const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
 
     return formatCSVDataByColumnOrder(rows, columnOrder);
@@ -361,6 +365,7 @@ const Payments = () => {
             csv={true}
             tableName="Payments"
             initialPageSize={10}
+            
             rowClickHandler={(row: any) =>
               router.push(`payments/details/${row?.id}`)
             }

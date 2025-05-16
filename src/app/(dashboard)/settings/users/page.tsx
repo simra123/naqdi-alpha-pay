@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import LoaderButton from "@/components/common/LoaderButton";
@@ -22,6 +22,7 @@ import Chip from "@/components/common/Chip";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { Role } from "@/constants/roles";
 import { Tooltip } from "react-tooltip";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const userSettings_table_columns: TableColumns = [
   { field: "user_uuid", headerName: "ID" },
@@ -46,8 +47,6 @@ const Users = () => {
   const [isSubUsersListLoading, isSubUsersListError, callSubUsersListApi] =
     useApi();
 
-
-
   const fetchSubUsersList = async () => {
     await callApiHook({
       apiCall: callSubUsersListApi(
@@ -61,6 +60,27 @@ const Users = () => {
       },
     });
   };
+
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "user_uuid" },
+      { key: "first_name" },
+      { key: "middle_name" },
+      { key: "last_name" },
+      { key: "legal_name" },
+      { key: "legal_type" },
+      { key: "username" },
+      { key: "email" },
+      { key: "role" },
+      { key: "user_type" },
+      { key: "verified" },
+      { key: "created_at" },
+      { key: "updated_at" },
+    ];
+
+    return formatCSVDataByColumnOrder(subUsersList?.users, columnOrder);
+  }, [subUsersList]);
 
   useEffect(() => {
     fetchSubUsersList();
@@ -107,6 +127,7 @@ const Users = () => {
         // Filters={Filters}
         loading={isSubUsersListLoading}
         rows={subUsersList?.users}
+        csvData={formatCsvData}
         csv={true}
         tableName="sub-users"
         initialPageSize={10}

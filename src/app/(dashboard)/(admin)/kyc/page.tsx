@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
@@ -18,6 +18,7 @@ import PermissionAccess from "@/middleware/PermissionAccess";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { getPermission } from "@/utils/cookies";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const columns: TableColumns = [
   {
@@ -69,6 +70,7 @@ const KYCUsersPage = () => {
       successCallBack: (response) => {
         const filteredData = response?.map((data) => {
           return {
+            ...data,
             id: data?.id,
             user_details_uuid: data?.user_details_uuid,
             createdAt: data?.user?.created_at,
@@ -88,14 +90,32 @@ const KYCUsersPage = () => {
     });
   };
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(usersList)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "kyc-requests.csv");
-      },
-    });
-  };
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "user_details_uuid" },
+      { key: "country" },
+      { key: "state" },
+      { key: "city" },
+      { key: "postal_code" },
+      { key: "phone_number" },
+      { key: "mfa" },
+      { key: "address_line_1" },
+      { key: "address_line_2" },
+      { key: "file_type" },
+      { key: "front_image" },
+      { key: "back_image" },
+      { key: "kyc_status" },
+      { key: "kyc_approved" },
+      { key: "reason" },
+      { key: "fees" },
+      { key: "merchant_fees" },
+      { key: "client_fees" },
+      { key: "user" },
+    ];
+
+    return formatCSVDataByColumnOrder(usersList, columnOrder);
+  }, [usersList]);
 
   useEffect(() => {
     getUsersList();
@@ -127,6 +147,7 @@ const KYCUsersPage = () => {
           pagination
           columnClassName="max-w-[250px]"
           loading={isUsersListLoading}
+          csvData={formatCsvData}
         />
 
         <ErrorApiText error={isUsersListError} />

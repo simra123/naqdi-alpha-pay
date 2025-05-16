@@ -274,7 +274,7 @@ const Withdrawals = () => {
   };
 
   const formatCsvData = useMemo(() => {
-    const columnOrder: ColumnConfig<any>[] = [
+    const columnOrderUser: ColumnConfig<any>[] = [
       { key: "id" },
       { key: "withdrawal_uuid" },
       { key: "requested_amount" },
@@ -293,10 +293,34 @@ const Withdrawals = () => {
       { key: "updated_at" },
     ];
 
+    const columnOrderAdmin: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "withdrawal_uuid" },
+      { key: "requested_amount" },
+      { key: "type" },
+      { key: "alphaspay_fee" },
+      { key: "total_requested_amount" },
+      { key: "unit" },
+      { key: "standard" },
+      { key: "recipient_address" },
+      { key: "transaction_type" },
+      { key: "notes" },
+      { key: "reason" },
+      { key: "status" },
+      { key: "user_id" },
+      { key: "withdrawalTransactions" },
+      { key: "created_at" },
+      { key: "updated_at" },
+      { key: "user" },
+    ];
+
     const rows =
       user?.role == Role.ADMIN ? withdrawalsList : withdrawalsList?.result;
 
-    return formatCSVDataByColumnOrder(rows, columnOrder);
+    return formatCSVDataByColumnOrder(
+      rows,
+      user?.role == Role.ADMIN ? columnOrderAdmin : columnOrderUser
+    );
   }, [withdrawalsList]);
 
   useEffect(() => {
