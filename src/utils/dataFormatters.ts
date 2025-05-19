@@ -211,9 +211,11 @@ export const formatPayouts = (response: []) => {
 
 // Webhooks Data Formatters
 export const mergeWebhookResponses = (data) => {
-  return data.flatMap((tx) => tx.webhookRequests) // Merge all webhook arrays
-  .sort((a, b) => moment(b.updatedAt).valueOf() - moment(a.updatedAt).valueOf()); // Sort by date (newest first)
-
+  return data
+    .flatMap((tx) => tx.webhookRequests) // Merge all webhook arrays
+    .sort(
+      (a, b) => moment(b.updatedAt).valueOf() - moment(a.updatedAt).valueOf()
+    ); // Sort by date (newest first)
 };
 
 export const filterWebhooks = (data: {
