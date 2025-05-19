@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
@@ -23,7 +23,8 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
-import {  hasMinAccess } from "@/utils/cookies";
+import { hasMinAccess } from "@/utils/cookies";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -306,10 +307,16 @@ const Transactions = () => {
         return row?.payment ? "Payment" : "Withdrawal";
       },
       link(row: any) {
-        if (row?.payment && hasMinAccess(ModulesEnum.transaction,AccessLevelEnum.read)) {
+        if (
+          row?.payment &&
+          hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
+        ) {
           return `payments/details/${row?.payment?.id}`;
         }
-        if (row?.withdrawal && hasMinAccess(ModulesEnum.withdrawal,AccessLevelEnum.read)) {
+        if (
+          row?.withdrawal &&
+          hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
+        ) {
           return `withdrawals/details/${row?.withdrawal?.id}`;
         }
       },
@@ -328,6 +335,39 @@ const Transactions = () => {
   useEffect(() => {
     getTransactions();
   }, [selectedStatus]);
+
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "payment_transaction_uuid" },
+      { key: "withdraw_transaction_uuid" },
+      { key: "transaction_type" },
+      { key: "transaction_hash" },
+      { key: "sender_address" },
+      // { key: "transaction_amount" },
+      { key: "amount" },
+      { key: "unit" },
+      { key: "total_amount_received" },
+      { key: "alphaspay_fees" },
+      { key: "client_fee" },
+      { key: "status" },
+      { key: "createdAt" },
+      { key: "updatedAt" },
+      { key: "client" },
+      { key: "payment" },
+      { key: "withdrawal" },
+      {
+        key: "wallet",
+        format(value, row) {
+          return row?.wallet || row?.clientWallet
+            ? JSON.stringify(row?.wallet || row?.clientWallet)
+            : "-";
+        },
+      },
+    ];
+
+    return formatCSVDataByColumnOrder(transactions, columnOrder);
+  }, [transactions]);
 
   return (
     <>
@@ -354,6 +394,7 @@ const Transactions = () => {
           );
         }}
         pagination
+        csvData={formatCsvData}
         columnClassName="max-w-[200px]"
       />
 

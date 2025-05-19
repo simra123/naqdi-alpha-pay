@@ -26,6 +26,7 @@ import { formatDateToUserTimeZone } from "@/utils/dates";
 import LoaderButton from "@/components/common/LoaderButton";
 import DepositModal from "@/components/Modals/DepoistModal";
 import { hasMinAccess } from "@/utils/cookies";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -292,18 +293,41 @@ const Payments = () => {
   }, []);
 
   const formatCsvData = useMemo(() => {
-    const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
-    const formattedData = rows?.map(
-      ({ wallet, paymentTransaction, client, ...rest }) => ({
-        ...rest,
-        wallet: wallet?.address ?? "",
-        alphaspay_fees: paymentTransaction.reduce((sum, transaction) => {
-          return +sum + (+transaction.alphaspay_fees || 0);
-        }, 0),
-      })
-    );
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "payment_uuid" },
+      { key: "client_id" },
+      { key: "wallet_id" },
+      { key: "payment_type" },
+      { key: "requested_currency" },
+      { key: "requested_amount" },
+      { key: "payment_currency" },
+      { key: "total_amount" },
+      {
+        key: "alphaspay_fees",
+        format(_, row) {
+          return row?.paymentTransaction?.reduce((sum, transaction) => {
+            return +sum + (+transaction.alphaspay_fees || 0);
+          }, 0);
+        },
+      },
+      { key: "payment_currency_amount" },
+      { key: "passthrough" },
+      { key: "notes" },
+      { key: "status" },
+      { key: "wallet" },
+      { key: "paymentTransaction" },
+      { key: "created_at" },
+      { key: "updated_at" },
+    ];
 
-    return formattedData;
+    if (user?.role == Role.ADMIN) {
+      columnOrder.push({ key: "client" });
+    }
+
+    const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
+
+    return formatCSVDataByColumnOrder(rows, columnOrder);
   }, [paymentsList]);
 
   return (
@@ -341,6 +365,7 @@ const Payments = () => {
             csv={true}
             tableName="Payments"
             initialPageSize={10}
+            
             rowClickHandler={(row: any) =>
               router.push(`payments/details/${row?.id}`)
             }
