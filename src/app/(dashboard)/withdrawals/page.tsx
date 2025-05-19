@@ -1,20 +1,18 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { useApi } from "@/hooks/useApi";
-import { callApiHook, downloadCSV } from "@/utils/apifuncs";
+import { callApiHook } from "@/utils/apifuncs";
 import { getUserWithdrawalsListApi } from "@/services/withdrawal";
 import { getAdminWithdrawalsListApi } from "@/services/admin/withdrawal";
-import { formatWithdrawals } from "@/utils/dataFormatters";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import LoadingApi from "@/components/common/LoadindApi";
 import LoaderButton from "@/components/common/LoaderButton";
-import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
@@ -160,16 +158,6 @@ const Withdrawals = () => {
   );
   const [columns, setColumns] = useState([]);
   const [listConfig, setListConfig] = useState(null);
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
-
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(withdrawalsList)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "withdrawals.csv");
-      },
-    });
-  };
 
   const getWithdrawals = async ({
     pageValue,
@@ -281,6 +269,56 @@ const Withdrawals = () => {
     // }
   };
 
+  const formatCsvData = useMemo(() => {
+    const columnOrderUser: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "withdrawal_uuid" },
+      { key: "requested_amount" },
+      { key: "type" },
+      { key: "alphaspay_fee" },
+      { key: "total_requested_amount" },
+      { key: "unit" },
+      { key: "standard" },
+      { key: "recipient_address" },
+      { key: "transaction_type" },
+      { key: "notes" },
+      { key: "reason" },
+      { key: "status" },
+      { key: "user_id" },
+      { key: "created_at" },
+      { key: "updated_at" },
+    ];
+
+    const columnOrderAdmin: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "withdrawal_uuid" },
+      { key: "requested_amount" },
+      { key: "type" },
+      { key: "alphaspay_fee" },
+      { key: "total_requested_amount" },
+      { key: "unit" },
+      { key: "standard" },
+      { key: "recipient_address" },
+      { key: "transaction_type" },
+      { key: "notes" },
+      { key: "reason" },
+      { key: "status" },
+      { key: "user_id" },
+      { key: "withdrawalTransactions" },
+      { key: "created_at" },
+      { key: "updated_at" },
+      { key: "user" },
+    ];
+
+    const rows =
+      user?.role == Role.ADMIN ? withdrawalsList : withdrawalsList?.result;
+
+    return formatCSVDataByColumnOrder(
+      rows,
+      user?.role == Role.ADMIN ? columnOrderAdmin : columnOrderUser
+    );
+  }, [withdrawalsList]);
+
   useEffect(() => {
     getWithdrawals({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
@@ -338,6 +376,7 @@ const Withdrawals = () => {
           }
           pagination
           columnClassName="max-w-[200px]"
+          csvData={formatCsvData}
         />
       )}
 
@@ -358,6 +397,7 @@ const Withdrawals = () => {
             totalItems={withdrawalsList?.total}
             fetchData={getWithdrawals}
             tableName="withdrawals"
+            csvData={formatCsvData}
           />
         </div>
       )}

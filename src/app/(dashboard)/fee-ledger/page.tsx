@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
@@ -25,8 +25,9 @@ import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { getUserLedgerListApi } from "@/services/feeLedger";
 import { getAdminLedgerListApi } from "@/services/admin/feeLedger";
-import {  hasMinAccess } from "@/utils/cookies";
+import { hasMinAccess } from "@/utils/cookies";
 
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const FeeLedger = () => {
   const router = useRouter();
@@ -74,12 +75,9 @@ const FeeLedger = () => {
                   dataValidator: (value: string) => {
                     const currentTimeZone = momentTZ.tz.guess();
 
-   
-
                     let date: string | string[] = momentTZ(value)
                       .tz(currentTimeZone)
                       .format("DD-MM-YYYY.hh:mm A");
-
 
                     let [day, time] = date.split(".");
                     return (
@@ -108,8 +106,6 @@ const FeeLedger = () => {
 
           response.listConfig.views[0].columns = modifiedColumns;
 
-      
-
           setColumns(modifiedColumns);
 
           setListConfig(response.listConfig);
@@ -130,10 +126,16 @@ const FeeLedger = () => {
       field: "type",
       headerName: "Transaction Type",
       link(row: any) {
-        if (row?.payment_id && hasMinAccess(ModulesEnum.payment,AccessLevelEnum.read)) {
+        if (
+          row?.payment_id &&
+          hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
+        ) {
           return `/payments/details/${row?.payment_id}`;
         }
-        if (row?.withdraw_id && hasMinAccess(ModulesEnum.withdrawal,AccessLevelEnum.read)) {
+        if (
+          row?.withdraw_id &&
+          hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
+        ) {
           return `/withdrawals/details/${row?.withdraw_id}`;
         }
       },
@@ -203,6 +205,57 @@ const FeeLedger = () => {
     getFeeLedger({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
+  const formatCsvData = useMemo(() => {
+    const columnOrderUser: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "type" },
+      { key: "unit" },
+      { key: "received_amount" },
+      { key: "paid_amount" },
+      { key: "fee_amount" },
+      { key: "fee" },
+      { key: "fee_type" },
+      { key: "transaction_type" },
+      { key: "standard" },
+      { key: "createdAt" },
+      { key: "updatedAt" },
+      { key: "merchant" },
+      { key: "payment" },
+      { key: "withdraw" },
+    ];
+
+    const columnOrderAdmin: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "created_at" },
+      { key: "updated_at" },
+      { key: "fee" },
+      { key: "fee_amount" },
+      { key: "fee_type" },
+      { key: "paid_amount" },
+      { key: "received_amount" },
+      { key: "standard" },
+      { key: "type" },
+      { key: "unit" },
+      { key: "transaction_type" },
+      { key: "merchant_id" },
+      { key: "owner_id" },
+      { key: "owner_first_name" },
+      { key: "owner_last_name" },
+      { key: "owner_email" },
+      { key: "owner_user_type" },
+      { key: "payment_id" },
+      { key: "withdraw_id" },
+    ];
+
+    const isAdmin = user?.role == Role.ADMIN;
+
+    const rows = isAdmin ? FeeLedgerList : FeeLedgerList?.result;
+
+    return formatCSVDataByColumnOrder(
+      rows,
+      isAdmin ? columnOrderAdmin : columnOrderUser
+    );
+  }, [FeeLedgerList]);
 
   const toggleCreateModal = () => {
     setIsCreateOpen(!isCreateOpen);
@@ -238,11 +291,12 @@ const FeeLedger = () => {
           tableName="fee-ledger"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            hasMinAccess(ModulesEnum.merchant,AccessLevelEnum.read) &&
+            hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
             router.push(`/merchants/details/${row?.owner_id}`)
           }
           pagination
           columnClassName="max-w-[200px]"
+          csvData={formatCsvData}
         />
       )}
 
@@ -256,10 +310,16 @@ const FeeLedger = () => {
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-              if (row?.payment && hasMinAccess(ModulesEnum.payment,AccessLevelEnum.read)) {
+              if (
+                row?.payment &&
+                hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
+              ) {
                 router.push(`payments/details/${row.payment?.id}`);
               }
-              if (row?.withdraw && hasMinAccess(ModulesEnum.withdrawal,AccessLevelEnum.read)) {
+              if (
+                row?.withdraw &&
+                hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
+              ) {
                 router.push(`withdrawals/details/${row.withdraw?.id}`);
               }
             }}
@@ -268,6 +328,7 @@ const FeeLedger = () => {
             totalItems={FeeLedgerList?.total}
             fetchData={getFeeLedger}
             tableName="fee-ledger"
+            csvData={formatCsvData}
           />
         </div>
       )}
