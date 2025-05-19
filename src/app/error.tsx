@@ -12,6 +12,7 @@ const Error = ({
 }) => {
   useEffect(() => {
     // Log the error to an error reporting service
+    console.log({error, message: "React Error Boundry"})
   }, [error]);
 
   return (
