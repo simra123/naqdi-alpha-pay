@@ -25,6 +25,7 @@ import LoaderButton from "@/components/common/LoaderButton";
 import DepositModal from "@/components/Modals/DepoistModal";
 import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import CustomTableV2 from "@/components/common/CustomTableV2";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
@@ -37,13 +38,12 @@ interface PaymentAPi {
 
 const paymentsList_table_columns: TableColumns = [
   {
-    field: "payment_uuid",
+    field: "id",
     headerName: "ID",
   },
   {
     field: "created_at",
     headerName: "Created At",
-
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -57,7 +57,6 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "updated_at",
     headerName: "Updated At",
-
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -69,33 +68,33 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "client.id",
+    field: "user.id",
     headerName: "Merchant ID",
     target: "_self",
     link: (row: any) => {
       if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
-        return `/merchants/details/${row?.client?.id}`;
+        return `/merchants/details/${row?.user?.id}`;
       }
     },
   },
   {
-    field: "client.first_name",
+    field: "user.first_name",
     headerName: "Merchant First Name",
   },
   {
-    field: "client.last_name",
+    field: "user.last_name",
     headerName: "Merchant Last Name",
   },
   {
-    field: "client.email",
+    field: "user.email",
     headerName: "Merchant Email",
   },
   {
-    field: "client.username",
+    field: "user.username",
     headerName: "Merchant Username",
   },
   {
-    field: "client.user_type",
+    field: "user.user_type",
     headerName: "Merchant Type",
   },
 
@@ -104,8 +103,8 @@ const paymentsList_table_columns: TableColumns = [
     headerName: "Blockchain",
   },
   {
-    field: "payment_currency",
-    headerName: "Currency",
+    field: "unit",
+    headerName: "Unit",
   },
 
   {
@@ -122,35 +121,31 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "requestedPaymentAmount",
+    field: "fiat_initial_amount",
     headerName: "Requested Payment Amount",
     dataValidator(value, row: any) {
-      return `${row?.requested_amount} ${row?.requested_currency}`;
+      return `${value} ${row?.fiat_currency}`;
     },
   },
   {
-    field: "amountToPay",
+    field: "initial_fee",
+    headerName: "Alphaspay Fee",
+    dataValidator(value: any, row: any) {
+      return `${roundToPrecision(value, 6)} ${row?.unit}`;
+    },
+  },
+  {
+    field: "initial_amount",
     headerName: "Amount to Pay",
-    dataValidator(value, row: any) {
-      return `${roundToPrecision(row?.payment_currency_amount, 6)} ${
-        row?.payment_currency
-      }`;
+    dataValidator(value: any, row: any) {
+      return `${roundToPrecision(value, 6)} ${row?.unit}`;
     },
   },
   {
-    field: "amountPaid",
+    field: "paid_amount",
     headerName: "Amount Paid",
-    dataValidator(value, row: any) {
-      return (
-        roundToPrecision(
-          row?.paymentTransaction?.reduce((acc, transaction) => {
-            return acc + parseFloat(transaction.transaction_amount);
-          }, 0),
-          6
-        ) +
-        " " +
-        row?.payment_currency
-      );
+    dataValidator(value: any, row: any) {
+      return roundToPrecision(value, 10) + row?.payment_currency;
     },
   },
   {
@@ -165,7 +160,6 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "status",
     headerName: "Status",
-
     dataValidator: (value) => {
       return <Chip status={value} />;
     },
@@ -175,9 +169,9 @@ const paymentsList_table_columns: TableColumns = [
 const Payments = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
-  const [paymentsList, setPaymentsList] = useState<ListApiResponse | any>(
-    user?.role == Role.USER ? null : []
-  );
+  const [paymentsList, setPaymentsList] = useState<ListApiResponse | any>({
+    result: [],
+  });
   const [columns, setColumns] = useState([]);
   const [listConfig, setListConfig] = useState(null);
 
@@ -199,14 +193,13 @@ const Payments = () => {
             { sort, filters },
             { limit: limitValue, page: pageValue }
           )
-        : getAllPaymentsByAdminApi();
+        : getAllPaymentsByAdminApi({ limit: limitValue, page: pageValue });
     };
 
     await callApiHook({
       apiCall: callPaymentApi(paymentCall()),
       successCallBack: (response: any) => {
-
-        console.log({response})
+        console.log({ response });
         if (user?.role == Role.USER) {
           const modifiedColumns = response?.listConfig.views[0].columns.map(
             (column) => {
@@ -325,13 +318,10 @@ const Payments = () => {
       columnOrder.push({ key: "client" });
     }
 
-    const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
-
-    return formatCSVDataByColumnOrder(rows, columnOrder);
+    return formatCSVDataByColumnOrder(paymentsList?.result, columnOrder);
   }, [paymentsList]);
 
-
-  console.log({paymentsList})
+  console.log({ paymentsList });
 
   return (
     <>
@@ -362,17 +352,24 @@ const Payments = () => {
       {/* Table Actions Below */}
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
         <div>
-          <CustomTable
+          <CustomTableV2
             columns={paymentsList_table_columns}
-            rows={paymentsList}
+            rows={paymentsList?.result}
             csv={true}
             tableName="Payments"
             initialPageSize={10}
-            
             rowClickHandler={(row: any) =>
               router.push(`payments/details/${row?.id}`)
             }
             pagination
+            onPageChange={(page, pageSize) =>
+              getPayments({ pageValue: page, limitValue: pageSize })
+            }
+            onPageSizeChange={(pageSize) =>
+              getPayments({ pageValue: 1, limitValue: pageSize })
+            }
+            serverSidePagination
+            totalItems={paymentsList?.total}
             columnClassName="max-w-[250px]"
             loading={isPaymentLoading}
             csvData={formatCsvData}

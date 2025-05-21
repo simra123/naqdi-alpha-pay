@@ -3,14 +3,14 @@
 import api from "@/config/api";
 
 export const createWithdrawalApi = (data: {
-  blockchain: string;
+  unit: string;
   amount: string | number;
   recipient_address: string;
   notes?: string;
   standard?: string;
   token: string;
 }) => {
-  return () => api.post(`wallet/withdrawal`, data);
+  return () => api.post(`transaction/withdraw`, data);
 };
 
 export const getWithdrawableCurrenciesListApi = () => {
@@ -21,7 +21,7 @@ export const getUserWithdrawalsListApi = (
   data?: {},
   params?: { limit: number; page: number }
 ) => {
-  return () => api.post(`withdrawal/list`, data, { params });
+  return () => api.post(`transaction/withdraw-list`, data, { params });
 };
 
 export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {

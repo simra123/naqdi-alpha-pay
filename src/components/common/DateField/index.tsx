@@ -31,7 +31,7 @@ export default function DateField({
   if (!isMounted) return null;
 
   return (
-    <div className="flex">
+    <div className="bg-white">
       <DatePicker
         value={value}
         name={name}

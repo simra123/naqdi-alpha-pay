@@ -2,10 +2,12 @@
 
 import api from "@/config/api";
 
-export const getAllPaymentsByAdminApi = () => {
-  return () => api.get(`v1/admin/payments-by-admin`);
+export const getAllPaymentsByAdminApi = (params: {
+  limit: number;
+  page: number;
+}) => {
+  return () => api.get(`admin/transaction/payments`, { params });
 };
-
 
 export const getPaymentDetailsByAdminApi = (id: number) => {
   return () => api.get(`v1/admin/payments/${id}`);

@@ -20,6 +20,10 @@ import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import { ListApiResponse } from "@/components/common/AdvancedTable/types";
+import momentTZ from "moment-timezone";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import AdvancedTable from "@/components/common/AdvancedTable";
 
 const transactionsList_table_columns: TableColumns = [
   {
@@ -129,18 +133,91 @@ const Transactions = () => {
   const router = useRouter();
 
   const user = useLocalStorage("user");
-  const [transactions, setTransactions] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [transactonsList, setTransactionsList] = useState<
+    ListApiResponse | any
+  >(user?.role == Role.USER ? null : []);
+  const [columns, setColumns] = useState([]);
+  const [listConfig, setListConfig] = useState(null);
   const [isTransactionsLoading, isTransactionsError, callTransactionsApi] =
     useApi({ initailLoading: true });
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
-  const getTransactions = async () => {
+  const getTransactions = async ({ pageValue, limitValue, sort, filters }) => {
     if (user?.role == Role.USER) {
       await callApiHook({
-        apiCall: callTransactionsApi(getAllTransactionsApi({})),
+        apiCall: callTransactionsApi(
+          getAllTransactionsApi(
+            { sort, filters },
+            { limit: limitValue, page: pageValue }
+          )
+        ),
         successCallBack: (response: any) => {
-          setTransactions(response);
+          console.log({ response });
+          if (user?.role == Role.USER) {
+            const modifiedColumns = response?.listConfig.views[0].columns.map(
+              (column) => {
+                if (column.listColumnsMeta.name === "wallet.address") {
+                  return {
+                    ...column,
+                    copyable: true,
+                    link: (row: {
+                      wallet: { blockchain: string; address: string };
+                    }) => {
+                      return showExplorerDetailsByChain({
+                        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+                        blockchain: row?.wallet?.blockchain,
+                        type: "address",
+                        address: row?.wallet.address,
+                      });
+                    },
+                  };
+                }
+
+                if (
+                  ["created_at", "updated_at"].includes(
+                    column.listColumnsMeta.name
+                  )
+                ) {
+                  return {
+                    ...column,
+                    dataValidator: (value: string) => {
+                      const currentTimeZone = momentTZ.tz.guess();
+
+                      let date: string | string[] = momentTZ(value)
+                        .tz(currentTimeZone)
+                        .format("DD-MM-YYYY.hh:mm A");
+
+                      let [day, time] = date.split(".");
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-caption">{day}</span>
+                          <span className="text-custom-title-gray text-subtitle">
+                            {time}
+                          </span>
+                        </div>
+                      );
+                    },
+                  };
+                }
+
+                if (column.listColumnsMeta.name === "status") {
+                  return {
+                    ...column,
+                    dataValidator: (value: string) => <Chip status={value} />,
+                  };
+                }
+
+                return column;
+              }
+            );
+
+            response.listConfig.views[0].columns = modifiedColumns;
+
+            setColumns(modifiedColumns);
+
+            setListConfig(response.listConfig);
+
+            setTransactionsList(response);
+          }
         },
       });
     }
@@ -148,19 +225,10 @@ const Transactions = () => {
       await callApiHook({
         apiCall: callTransactionsApi(getAllTransactionsByAdminApi()),
         successCallBack: (response: any) => {
-          setTransactions(response);
+          setTransactionsList(response);
         },
       });
     }
-  };
-
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(transactions)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "transactions.csv");
-      },
-    });
   };
 
   const transactionsList_Admin_table_columns: TableColumns = [
@@ -328,8 +396,8 @@ const Transactions = () => {
   ];
 
   useEffect(() => {
-    getTransactions();
-  }, [selectedStatus]);
+    getTransactions({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
+  }, []);
 
   const formatCsvData = useMemo(() => {
     const columnOrder: ColumnConfig<any>[] = [
@@ -361,8 +429,11 @@ const Transactions = () => {
       },
     ];
 
-    return formatCSVDataByColumnOrder(transactions, columnOrder);
-  }, [transactions]);
+    return formatCSVDataByColumnOrder(
+      user?.role == Role.ADMIN ? transactonsList : transactonsList?.result,
+      columnOrder
+    );
+  }, [transactonsList]);
 
   return (
     <>
@@ -370,28 +441,52 @@ const Transactions = () => {
         Transactions
       </h3>
 
-      <CustomTable
-        loading={isTransactionsLoading}
-        columns={
-          user?.role == Role.ADMIN
-            ? transactionsList_Admin_table_columns
-            : transactionsList_table_columns
-        }
-        rows={transactions}
-        csv={true}
-        tableName="transactions"
-        initialPageSize={10}
-        rowClickHandler={(row: any) => {
-          router.push(
-            `/transactions/details/${row?.id}?type=${
-              row?.payment ? "Payment" : "Withdrawal"
-            }`
-          );
-        }}
-        pagination
-        csvData={formatCsvData}
-        columnClassName="max-w-[200px]"
-      />
+      <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+        <CustomTable
+          loading={isTransactionsLoading}
+          columns={
+            user?.role == Role.ADMIN
+              ? transactionsList_Admin_table_columns
+              : transactionsList_table_columns
+          }
+          rows={transactonsList}
+          csv={true}
+          tableName="transactions"
+          initialPageSize={10}
+          rowClickHandler={(row: any) => {
+            router.push(
+              `/transactions/details/${row?.id}?type=${
+                row?.payment ? "Payment" : "Withdrawal"
+              }`
+            );
+          }}
+          pagination
+          csvData={formatCsvData}
+          columnClassName="max-w-[200px]"
+        />
+      </RenderRoleBased>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <div>
+          <AdvancedTable
+            columns={columns}
+            setColumns={setColumns}
+            rows={transactonsList?.result}
+            listConfig={listConfig}
+            setListConfig={setListConfig}
+            onRowClick={(row) => {
+              router.push(`payments/details/${row?.id}`);
+            }}
+            selectable={false}
+            pagination
+            csvData={formatCsvData}
+            loading={isTransactionsLoading}
+            totalItems={transactonsList?.total}
+            fetchData={getTransactions}
+            tableName="payments"
+          />
+        </div>
+      </RenderRoleBased>
 
       <ErrorApiText error={isTransactionsError} />
     </>

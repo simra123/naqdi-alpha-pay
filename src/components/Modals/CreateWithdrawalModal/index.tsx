@@ -147,8 +147,9 @@ const CreateWithdrawalModal = ({
     const withdraw_request_payload = {
       ...values,
       // standard: networks_available[values.blockchain] ? values.standard : null,
-      blockchain: currentAsset?.unit,
+      unit: currentAsset?.unit,
       standard: currentAsset?.standard || null,
+      amount: +values?.amount,
     };
 
     if (withdraw_request_payload.standard == null) {

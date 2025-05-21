@@ -2,14 +2,11 @@
 
 import api from "@/config/api";
 
-export const getAllTransactionsApi = ({
-  count,
-  limit,
-}: {
-  count?: number;
-  limit?: number;
-}) => {
-  return () => api.get(`wallet/transaction`, { params: { count, limit } });
+export const getAllTransactionsApi = (
+  data?: {},
+  params?: { limit: number; page: number }
+) => {
+  return () => api.post(`transaction/transaction-list`, data, { params });
 };
 
 export const getTransactionDetailsByUserApi = (data: { id: number }) => {
