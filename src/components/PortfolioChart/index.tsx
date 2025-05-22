@@ -262,6 +262,7 @@ const PortfolioChart = ({
     },
   };
 
+  console.log({ chartData });
 
   return (
     <div className="p-6 border border-purple-10 rounded-[28px]">
@@ -344,7 +345,7 @@ const PortfolioChart = ({
         </div>
       </div>
       <LoadingApi loading={loading}>
-        {chartData &&
+        {chartData?.balances &&
           (user?.role == Role.USER ? (
             <Chart
               data={chartData as any}

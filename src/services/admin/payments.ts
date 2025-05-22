@@ -5,6 +5,7 @@ import api from "@/config/api";
 export const getAllPaymentsByAdminApi = (params: {
   limit: number;
   page: number;
+  all?: true;
 }) => {
   return () => api.get(`admin/transaction/payments`, { params });
 };

@@ -1,7 +1,7 @@
 // File: components/table/TableHeader.tsx
-import React from 'react';
-import { MdArrowDownward, MdArrowUpward } from 'react-icons/md';
-import { TableColumns } from '@/constants/types';
+import React from "react";
+import { MdArrowDownward, MdArrowUpward } from "react-icons/md";
+import { TableColumns } from "@/constants/types";
 
 interface Props {
   columns: TableColumns;
@@ -28,11 +28,12 @@ const TableHeader = ({
   setSelectedRows,
   currentRows = [],
   ExpandComponent,
-  expandRowIDKey = 'id',
+  expandRowIDKey = "id",
 }: Props) => {
-  const columnWidth = equalColumns ? `${100 / columns.length}%` : 'auto';
+  const columnWidth = equalColumns ? `${100 / columns.length}%` : "auto";
   const selectAll =
-    selectable && currentRows.length > 0 &&
+    selectable &&
+    currentRows.length > 0 &&
     currentRows.every((row) => selectedRows.includes(row));
 
   const handleSelectAll = () => {
@@ -59,7 +60,7 @@ const TableHeader = ({
         {columns.map((column, index) => (
           <th
             key={column.field + index}
-            style={{ width: columnWidth }}
+            style={{ width: "auto" }}
             className={`py-3 px-6 cursor-pointer text-left ${columnClassName}`}
             onClick={() => onSort(column)}
           >
@@ -69,7 +70,7 @@ const TableHeader = ({
               </span>
               {sortConfig?.key === column.field && (
                 <span className="ml-2">
-                  {sortConfig.direction === 'ascending' ? (
+                  {sortConfig.direction === "ascending" ? (
                     <MdArrowUpward />
                   ) : (
                     <MdArrowDownward />
@@ -79,7 +80,7 @@ const TableHeader = ({
             </div>
           </th>
         ))}
-        {ExpandComponent && <th style={{ width: columnWidth }}>Expand</th>}
+        {ExpandComponent && <th style={{ width: "auto" }}>Expand</th>}
       </tr>
     </thead>
   );

@@ -2,8 +2,12 @@
 
 import api from "@/config/api";
 
-export const getAllTransactionsByAdminApi = () => {
-  return () => api.get(`wallet/all-transactions-by-admin`);
+export const getAllTransactionsByAdminApi = (params: {
+  limit: number;
+  page: number;
+  all?: true;
+}) => {
+  return () => api.get(`admin/transaction/transaction`, { params });
 };
 
 export const getLatestTransactionsByAdminApi = (params: {

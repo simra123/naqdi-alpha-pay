@@ -13,8 +13,12 @@ export const createAdminWithdrawalApi = (data: {
   return () => api.post(`wallet/fee-withdrawal`, data);
 };
 
-export const getAdminWithdrawalsListApi = () => {
-  return () => api.get(`wallet/withdrawals`);
+export const getAdminWithdrawalsListApi = (params: {
+  limit: number;
+  page: number;
+  all?: boolean;
+}) => {
+  return () => api.get(`admin/transaction/withdrawals`, { params });
 };
 
 export const withdrawalRejectAdminApi = (data: {

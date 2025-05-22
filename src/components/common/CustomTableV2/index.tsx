@@ -10,6 +10,7 @@ import Loader from "../Loader";
 import ErrorApiText from "../ErrorApiText";
 
 import type { TableColumns } from "@/constants/types";
+import LoadingApi from "../LoadindApi";
 
 interface TableProps {
   columns: TableColumns;
@@ -114,7 +115,7 @@ const CustomTableV2 = ({
           })
         );
 
-        console.log("Searchned ", temp);
+
       }
 
       if (sortConfig) {
@@ -227,17 +228,19 @@ const CustomTableV2 = ({
               ExpandComponent={ExpandComponent}
               expandRowIDKey={expandRowIDKey}
             />
-            <TableBody
-              rows={currentRows}
-              columns={columns}
-              rowClickHandler={rowClickHandler}
-              columnClassName={columnClassName}
-              selectable={selectable}
-              selectedRows={selectedRows}
-              setSelectedRows={setSelectedRows}
-              ExpandComponent={ExpandComponent}
-              expandRowIDKey={expandRowIDKey}
-            />
+            {!loading && (
+              <TableBody
+                rows={currentRows}
+                columns={columns}
+                rowClickHandler={rowClickHandler}
+                columnClassName={columnClassName}
+                selectable={selectable}
+                selectedRows={selectedRows}
+                setSelectedRows={setSelectedRows}
+                ExpandComponent={ExpandComponent}
+                expandRowIDKey={expandRowIDKey}
+              />
+            )}
           </table>
           {loading && (
             <Loader bg wrapperClassName="w-full flex justify-center my-8" />

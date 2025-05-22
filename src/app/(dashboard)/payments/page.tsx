@@ -193,7 +193,11 @@ const Payments = () => {
             { sort, filters },
             { limit: limitValue, page: pageValue }
           )
-        : getAllPaymentsByAdminApi({ limit: limitValue, page: pageValue });
+        : getAllPaymentsByAdminApi({
+            limit: limitValue,
+            page: pageValue,
+            all: true,
+          });
     };
 
     await callApiHook({
@@ -362,14 +366,14 @@ const Payments = () => {
               router.push(`payments/details/${row?.id}`)
             }
             pagination
-            onPageChange={(page, pageSize) =>
-              getPayments({ pageValue: page, limitValue: pageSize })
-            }
-            onPageSizeChange={(pageSize) =>
-              getPayments({ pageValue: 1, limitValue: pageSize })
-            }
-            serverSidePagination
-            totalItems={paymentsList?.total}
+            // onPageChange={(page, pageSize) =>
+            //   getPayments({ pageValue: page, limitValue: pageSize })
+            // }
+            // onPageSizeChange={(pageSize) =>
+            //   getPayments({ pageValue: 1, limitValue: pageSize })
+            // }
+            // serverSidePagination
+            // totalItems={paymentsList?.total}
             columnClassName="max-w-[250px]"
             loading={isPaymentLoading}
             csvData={formatCsvData}

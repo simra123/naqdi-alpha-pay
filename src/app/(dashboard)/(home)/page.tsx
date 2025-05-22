@@ -341,7 +341,7 @@ const Home = () => {
               </div>
               <div className="history">
                 <div className="hidden xs:block">
-                  {/* <PortfolioChart
+                  <PortfolioChart
                     isAdmin={user?.role == Role.ADMIN}
                     interval={interval}
                     setInterval={setInterval}
@@ -353,7 +353,7 @@ const Home = () => {
                     merchant={merchant}
                     setMerchant={setMerchant}
                     getChartData={getAdminChartData}
-                  /> */}
+                  />
                 </div>
               </div>
             </>
@@ -504,7 +504,7 @@ const Home = () => {
           </div>
 
           <div className="hidden xs:block history">
-            {/* <PortfolioChart
+            <PortfolioChart
               interval={interval}
               chartData={userChartData}
               error={isUserPortfolioActivityError}
@@ -512,7 +512,7 @@ const Home = () => {
               getChartData={getUserChartData}
               setInterval={setInterval}
               unit={chartUnit}
-            /> */}
+            />
           </div>
           {isTransactionHasMinumumAccess && (
             <div className="transactions">
