@@ -6,7 +6,11 @@ import { useDispatch } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
-import { getAllAdminWalletBalancesApi } from "@/services/admin/wallet";
+import {
+  getAdminFiatBalanceApi,
+  getAdminSupportedCryptoApi,
+  getAllAdminWalletBalancesApi,
+} from "@/services/admin/wallet";
 import {
   createWithdrawalApi,
   getWithdrawableCurrenciesListApi,
@@ -27,11 +31,14 @@ import {
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
 import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
-import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallet";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { MdInfo } from "react-icons/md";
+import {
+  getMerchantFiatBalanceApi,
+  getMerchantSupportedCryptoApi,
+} from "@/services/wallet";
 
 interface Props {
   isOpen: boolean;
@@ -61,7 +68,8 @@ const CreateWithdrawalModal = ({
 }: Props) => {
   const dispatch = useDispatch();
   const user = useLocalStorage("user");
-  const [balance, setBalance] = useState([]);
+  const [supportedCurrencies, setSupportedCurrencies] = useState<any>([]);
+  const [balance, setBalance] = useState<any>({});
   const [fee, setFee] = useState<null | FeeState>(null);
   const [currentSchema, setCurrentSchema] = useState(emptySchema);
   const [currentStep, setCurrentStep] = useState(1);
@@ -78,10 +86,6 @@ const CreateWithdrawalModal = ({
     });
   const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
-  const getCurrentAssetAmount = (value) => {
-    return balance.find((item) => item.value == value)?.amount;
-  };
-
   // Initialize useFormValidation
   const {
     errors,
@@ -95,39 +99,54 @@ const CreateWithdrawalModal = ({
 
   useEffect(() => {
     if (currentStep == 1) {
-      const maxAmount = getCurrentAssetAmount(values?.blockchain);
-      setCurrentSchema(getWithdrawalSchema(+maxAmount || 0));
+      setCurrentSchema(
+        getWithdrawalSchema(
+          +balance?.available_amount,
+          getSelectedCurrency(values?.blockchain)?.blockchain
+        )
+      );
     }
     if (currentStep == 2) {
       setCurrentSchema(otpSchema);
     }
   }, [values?.blockchain, currentStep]);
 
+  const getSelectedCurrency = (id: number) => {
+    return supportedCurrencies?.find((item) => item?.id == id);
+  };
+
+  const getSupportedCurrencies = async () => {
+    await callApiHook({
+      apiCall: callBalanceApi(
+        user?.role == Role.USER
+          ? getMerchantSupportedCryptoApi()
+          : getAdminSupportedCryptoApi()
+      ),
+      successCallBack: (response: any) => {
+        let data = response?.data || response;
+        setSupportedCurrencies(
+          data?.map((item) => ({
+            ...item,
+            label:
+              item?.is_token && item?.standard
+                ? `${item?.unit} (${item?.standard})`
+                : capitalize(item?.blockchain_name),
+            value: item?.id,
+          }))
+        );
+      },
+    });
+  };
+
   const getBalance = async () => {
     await callApiHook({
       apiCall: callBalanceApi(
         user?.role == Role.USER
-          ? getWithdrawableCurrenciesListApi()
-          : getAllAdminWalletBalancesApi()
+          ? getMerchantFiatBalanceApi()
+          : getAdminFiatBalanceApi()
       ),
       successCallBack: (response: any) => {
-        const withdraw_currency_options = response.map((item) => {
-          return {
-            label: item?.standard
-              ? `${item?.unit} (${item?.standard})`
-              : unitName[item?.unit?.toLowerCase()],
-            value: item?.standard
-              ? `${capitalize(item?.unit)} (${item?.standard})`
-              : item?.unit,
-            standard: item?.standard,
-            unit: item?.unit,
-            amount: item?.totalAmount || item?.amount,
-          };
-        });
-        setBalance(withdraw_currency_options);
-        if (blockchain) {
-          setValues((pre) => ({ ...pre, blockchain }));
-        }
+        setBalance(response?.data || response);
       },
     });
   };
@@ -139,16 +158,14 @@ const CreateWithdrawalModal = ({
     }
   };
 
-  const getcurrentAsset = () =>
-    balance.find((item) => item?.value == values?.blockchain);
-
   const handleWithdrawal = async () => {
-    const currentAsset = getcurrentAsset();
+    const currency = getSelectedCurrency(values?.blockchain);
+
+    console.log({ currency });
+
     const withdraw_request_payload = {
       ...values,
-      // standard: networks_available[values.blockchain] ? values.standard : null,
-      unit: currentAsset?.unit,
-      standard: currentAsset?.standard || null,
+
       amount: +values?.amount,
     };
 
@@ -190,6 +207,7 @@ const CreateWithdrawalModal = ({
       setWithdrawalError(null);
       getBalance();
       setCurrentStep(1);
+      getSupportedCurrencies();
       setValues(initalFormValues); // Reset form values
     }
   }, [isOpen]);
@@ -209,7 +227,7 @@ const CreateWithdrawalModal = ({
             <IconSelectBox
               wrapperClassName="!mb-2"
               label="Source Currency"
-              options={balance}
+              options={supportedCurrencies}
               name="blockchain"
               value={values.blockchain}
               placeholder="Select a Blockchain"
@@ -217,13 +235,10 @@ const CreateWithdrawalModal = ({
               error={errors.blockchain}
             />
 
-            {values.blockchain && (
+            {balance?.currency && (
               <div className="mb-1">
                 <p className="font-medium text-black-100">
-                  {
-                    balance.find((item) => item.value === values.blockchain)
-                      ?.amount
-                  }
+                  {balance?.available_amount} {balance?.currency}
                 </p>
                 <p className="font-semibold text-[13px] text-custom-title-gray">
                   {user?.role == Role.USER
@@ -287,13 +302,13 @@ const CreateWithdrawalModal = ({
                   Blockchain
                 </p>
                 <p className="font-medium text-black-100">
-                  {formattedBlockchainName(values?.blockchain)
+                  {/* {formattedBlockchainName(values?.blockchain)
                     ?.standardBlockchain
                     ? capitalize(
                         formattedBlockchainName(values?.blockchain)
                           ?.standardBlockchain
                       )
-                    : formattedBlockchainName(values?.blockchain)?.name}
+                    : formattedBlockchainName(values?.blockchain)?.name} */}
                 </p>
               </div>
               <div>
@@ -301,7 +316,7 @@ const CreateWithdrawalModal = ({
                   Currency
                 </p>
                 <p className="font-medium text-black-100">
-                  {formattedBlockchainName(values?.blockchain)?.ticker}
+                  {/* {formattedBlockchainName(values?.blockchain)?.ticker} */}
                 </p>
               </div>
               <div>

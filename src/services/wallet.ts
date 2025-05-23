@@ -13,7 +13,6 @@ export const getAllWalletBalancesApi = () => {
   return () => api.get(`wallet/balance`);
 };
 
-
 export const getTotalPortfolioValueApi = () => {
   return () => api.get(`dashboard/total-portfolio-amount`);
 };
@@ -24,11 +23,20 @@ export const getProfitPercentageApi = () => {
 
 export const getPortfolioActivityChartApi = ({
   duration,
-  unit
+  unit,
 }: {
   duration: string;
-  unit: string
+  unit: string;
 }) => {
   return () =>
     api.get(`/dashboard/portfolio-activity`, { params: { duration, unit } });
+};
+
+export const getMerchantSupportedCryptoApi = () => {
+  return () => api.get(`merchant/company-wallet/supported-crypto`);
+};
+
+
+export const getMerchantFiatBalanceApi = () => {
+  return () => api.get(`merchant/company-wallet/balance`);
 };

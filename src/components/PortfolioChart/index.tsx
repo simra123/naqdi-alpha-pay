@@ -262,7 +262,8 @@ const PortfolioChart = ({
     },
   };
 
-  console.log({ chartData });
+  
+  console.log({chartData})
 
   return (
     <div className="p-6 border border-purple-10 rounded-[28px]">

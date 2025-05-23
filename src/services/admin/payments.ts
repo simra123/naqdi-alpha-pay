@@ -10,9 +10,6 @@ export const getAllPaymentsByAdminApi = (params: {
   return () => api.get(`admin/transaction/payments`, { params });
 };
 
-export const getPaymentDetailsByAdminApi = (id: number) => {
-  return () => api.get(`v1/admin/payments/${id}`);
-};
 
 export const addFeeStaticWalletAdminApi = (data: {
   wallet_address: string;

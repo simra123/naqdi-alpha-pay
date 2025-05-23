@@ -10,17 +10,11 @@ export const getAllTransactionsApi = (
 };
 
 export const getTransactionDetailsByUserApi = (data: { id: number }) => {
-  return () => api.post(`auth/get-transaction-by-user`, data);
+  return () => api.get(`transaction/${data.id}/details`);
 };
 
-export const getPaymentTransactionDetailsByUserApi = (data: { id: number }) => {
-  return () => api.get(`v1/client/payment_transaction/${data?.id}`);
-};
-
-export const getWithdrawalTransactionDetailsByUserApi = (data: {
-  transaction_id: number;
-}) => {
-  return () => api.post(`wallet/withdrawtransaction-details`, data);
+export const getTransactionRequestDetailsByUserApi = (data: { id: number }) => {
+  return () => api.get(`transaction/request-details/${data.id}`);
 };
 
 export const getRecentTransactionsApi = () => {

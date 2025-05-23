@@ -322,11 +322,7 @@ const Transactions = () => {
           tableName="transactions"
           initialPageSize={10}
           rowClickHandler={(row: any) => {
-            router.push(
-              `/transactions/details/${row?.id}?type=${
-                row?.payment ? "Payment" : "Withdrawal"
-              }`
-            );
+            router.push(`/transactions/details/${row?.id}`);
           }}
           pagination
           csvData={formatCsvData}
@@ -343,7 +339,7 @@ const Transactions = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             onRowClick={(row) => {
-              router.push(`payments/details/${row?.id}`);
+              router.push(`/transactions/details/${row?.id}`);
             }}
             selectable={false}
             pagination

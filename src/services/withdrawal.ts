@@ -23,7 +23,3 @@ export const getUserWithdrawalsListApi = (
 ) => {
   return () => api.post(`transaction/withdraw-list`, data, { params });
 };
-
-export const getWithdrawalDetilsApi = (data: { withdraw_id: number }) => {
-  return () => api.post(`wallet/withdrawal-details`, data);
-};
