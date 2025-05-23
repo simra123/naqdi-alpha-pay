@@ -471,50 +471,13 @@ const WithdrawalDetails = ({ params }) => {
       </div>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        {/* <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
-          <h3 className="font-semibold text-blackGrey-100 text-h3.5">
-            User Details
-          </h3>
-
-          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
-            <FolderIcon />
-            <h5 className="font-semibold text-h5 text-purple-500">General</h5>
-          </div>
-          <div className="res-2-grid py-6">
-            <Details
-              label="First Name"
-              value={withdrawalDetails?.user?.first_name}
-            />
-
-            <Details
-              label="Last Name"
-              value={withdrawalDetails?.user?.last_name}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
-            <ContactMailOutlined className="text-purple-500" />
-            <h5 className="font-semibold text-h5 text-purple-500">Contact</h5>
-          </div>
-          <div className="res-2-grid py-6">
-            <Details
-              label="First Name"
-              value={withdrawalDetails?.user?.email}
-            />
-
-            <Details
-              label="Last Name"
-              value={withdrawalDetails?.user?.userDetails?.phone_number}
-            />
-          </div>
-        </div> */}
         <div className="mt-8"></div>
 
-        {withdrawalDetails?.status == "pending" &&
+        {withdrawalDetails?.status == "New" &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.full) && (
             <>
               {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
-              <div className="flex flex-col bg-white shadow-sm p-10 rounded-medium">
+              <div className="flex flex-col rounded-medium">
                 <h3 className="font-semibold text-blackGrey-100 text-h3.5">
                   Withdraw
                 </h3>

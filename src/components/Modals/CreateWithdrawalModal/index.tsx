@@ -101,7 +101,7 @@ const CreateWithdrawalModal = ({
     if (currentStep == 1) {
       setCurrentSchema(
         getWithdrawalSchema(
-          +balance?.available_amount,
+          +balance?.total_amount,
           getSelectedCurrency(values?.blockchain)?.blockchain
         )
       );
@@ -165,7 +165,8 @@ const CreateWithdrawalModal = ({
 
     const withdraw_request_payload = {
       ...values,
-
+      unit: currency?.unit,
+      standard: currency?.standard,
       amount: +values?.amount,
     };
 
@@ -238,7 +239,7 @@ const CreateWithdrawalModal = ({
             {balance?.currency && (
               <div className="mb-1">
                 <p className="font-medium text-black-100">
-                  {balance?.available_amount} {balance?.currency}
+                  {balance?.total_amount} {balance?.currency}
                 </p>
                 <p className="font-semibold text-[13px] text-custom-title-gray">
                   {user?.role == Role.USER
@@ -301,14 +302,8 @@ const CreateWithdrawalModal = ({
                 <p className="font-bold text-caption text-custom-title-gray">
                   Blockchain
                 </p>
-                <p className="font-medium text-black-100">
-                  {/* {formattedBlockchainName(values?.blockchain)
-                    ?.standardBlockchain
-                    ? capitalize(
-                        formattedBlockchainName(values?.blockchain)
-                          ?.standardBlockchain
-                      )
-                    : formattedBlockchainName(values?.blockchain)?.name} */}
+                <p className="font-medium text-black-100 capitalize">
+                  {getSelectedCurrency(values.blockchain)?.blockchain_name}
                 </p>
               </div>
               <div>
@@ -316,7 +311,7 @@ const CreateWithdrawalModal = ({
                   Currency
                 </p>
                 <p className="font-medium text-black-100">
-                  {/* {formattedBlockchainName(values?.blockchain)?.ticker} */}
+                  {getSelectedCurrency(values.blockchain)?.unit}
                 </p>
               </div>
               <div>

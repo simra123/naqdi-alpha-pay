@@ -147,7 +147,7 @@ const ProfileForm = () => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e, onSubmit, onSubmitError)}>
-      <div className="flex flex-col gap-5 bg-white mt-8 p-12 rounded-small">
+      <div className="flex flex-col gap-5 bg-white mt-8 p-8 rounded-small">
         <h4 className="font-semibold text-blackGrey-100 text-h3.5">Trader</h4>
 
         <div className="flex flex-wrap mt-3 details">
@@ -183,7 +183,7 @@ const ProfileForm = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 bg-white mt-8 p-12">
+      <div className="flex flex-col gap-3 bg-white mt-8 p-8">
         <div className="register_form__trader__heading">
           <h4 className="font-semibold text-blackGrey-100 text-h3.5">
             Contry of Domicile Details

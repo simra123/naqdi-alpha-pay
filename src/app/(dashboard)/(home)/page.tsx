@@ -205,7 +205,7 @@ const Home = () => {
           cacheKey: "user-total-balance",
         }),
         successCallBack: (response: any) => {
-          setBalance(response?.totalUSDT);
+          setBalance(response?.totalUSD);
         },
       });
     }
