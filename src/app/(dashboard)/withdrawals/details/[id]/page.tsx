@@ -79,13 +79,11 @@ const WithdrawalDetails = ({ params }) => {
   ] = useApi();
 
   const handleApprove = async () => {
-    const addresses = selectedWallets?.map(
-      (item) => item?.wallet_address || item?.address
-    );
+    const wallets = selectedWallets?.map((item) => item?.id);
 
     const internalData = {
       withdraw_id: withdraw_id,
-      addresses,
+      wallets,
     };
 
     await callApiHook({
