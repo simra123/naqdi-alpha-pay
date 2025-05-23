@@ -90,7 +90,7 @@ const DepositModal = ({
             values?.blockchain?.toLowerCase()
           ]?.toUpperCase(),
           standard: values?.standard,
-          amount: values.amount,
+          amount: +values.amount,
           customer_email: values?.client_email,
           customer_name: values?.client_name,
           customer_phone_number: values?.client_phone_number,

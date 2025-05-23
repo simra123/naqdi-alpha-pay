@@ -84,7 +84,8 @@ const useFormValidation = (
       callback();
     } catch (validationErrors) {
       const formattedErrors = {};
-      validationErrors.inner.forEach((error) => {
+      console.log(validationErrors)
+      validationErrors?.inner?.forEach((error) => {
         formattedErrors[error.path] = error.message;
       });
       setErrors(formattedErrors);

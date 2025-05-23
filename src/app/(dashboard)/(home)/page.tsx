@@ -99,7 +99,7 @@ const Home = () => {
   );
 
   const [adminBalances, setAdminBalances] = useState<any>({});
-  const [adminMerchants, setAdminMerchants] = useState([]);
+  const [adminMerchants, setAdminMerchants] = useState({ result: [] });
   const [balance, setBalance] = useState(0);
   const [portfolioData, setPortfolioData] = useState([]);
 
@@ -240,7 +240,7 @@ const Home = () => {
         getPortfolioActivityChartApi({ duration: interval, unit: chartUnit })
       ),
       successCallBack: (response: any) => {
-        setUserChartData(makeChartData(response));
+        setUserChartData(makeChartData(response) || []);
       },
     });
   }, [chartUnit, interval, merchant]);
@@ -349,7 +349,7 @@ const Home = () => {
                     unit={chartUnit}
                     loading={isAdminBalancesLoading}
                     error={isAdminBalancesError}
-                    merchantsList={adminMerchants}
+                    merchantsList={adminMerchants?.result}
                     merchant={merchant}
                     setMerchant={setMerchant}
                     getChartData={getAdminChartData}
@@ -363,12 +363,12 @@ const Home = () => {
             <div className="merchants">
               <CustomTable
                 columns={merchantsColumns}
-                rows={adminMerchants}
+                rows={adminMerchants?.result}
                 expandRowIDKey="userId"
                 ExpandComponent={({ row }) => (
                   <div className="justify-between items-center gap-6 grid grid-cols-5">
                     {row?.balances && row?.balances?.length > 0 ? (
-                      row.balances.map((item) => (
+                      row?.balances?.map((item) => (
                         <div className="flex flex-col gap-2">
                           <h3 className="font-semibold text-purple-500 text-base">
                             {item?.unit}{" "}
@@ -420,7 +420,7 @@ const Home = () => {
 
           {isMerchantHasMinimumAccess && (
             <div className="financialSummary">
-              <MerchantSummary merchantsList={adminMerchants} />
+              <MerchantSummary merchantsList={adminMerchants?.result} />
             </div>
           )}
 

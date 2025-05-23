@@ -3,15 +3,8 @@ import React, { useEffect, useState } from "react";
 
 import { callApiHook } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
-import {
-  getPaymentTransactionDetailsByAdminApi,
-  getTransactionDetailsByAdminApi,
-} from "@/services/admin/transaction";
-import {
-  getPaymentTransactionDetailsByUserApi,
-  getTransactionDetailsByUserApi,
-  getWithdrawalTransactionDetailsByUserApi,
-} from "@/services/transaction";
+import { getTransactionDetailsByAdminApi } from "@/services/admin/transaction";
+import { getTransactionDetailsByUserApi } from "@/services/transaction";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
@@ -28,7 +21,6 @@ import {
   PaymentIcon,
   StatusIcon,
 } from "@/assets/Svgs";
-import { notFound, useSearchParams } from "next/navigation";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import LoaderButton from "@/components/common/LoaderButton";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
@@ -39,7 +31,7 @@ import { hasMinAccess } from "@/utils/cookies";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 enum TransactionType {
-  Deposit = "Self Deposit",
+  Deposit = "Deposit",
   Withdrawal = "Withdrawal",
   Payment = "Payment",
 }
@@ -47,12 +39,6 @@ enum TransactionType {
 const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
   const dispatch = useDispatch();
-  const URLParams = useSearchParams();
-  const transactionType = URLParams.get("type");
-
-  if (!transactionType) {
-    return notFound();
-  }
 
   const user = useLocalStorage("user");
   const [transactionDetails, setTransactionDetails] = useState<any>({});
@@ -65,33 +51,10 @@ const TransactionDetails = ({ params }) => {
 
   const _getTransactionByType = () => {
     if (user?.role == Role.USER) {
-      if (transactionType == TransactionType.Deposit) {
-        return getTransactionDetailsByUserApi({ id: tranascionId });
-      }
-      if (transactionType == TransactionType.Payment) {
-        return getPaymentTransactionDetailsByUserApi({ id: tranascionId });
-      }
-      if (transactionType == TransactionType.Withdrawal) {
-        return getWithdrawalTransactionDetailsByUserApi({
-          transaction_id: +tranascionId,
-        });
-      }
+      return getTransactionDetailsByUserApi({ id: tranascionId });
     }
     if (user?.role == Role.ADMIN) {
-      if (transactionType == TransactionType.Deposit) {
-        return getTransactionDetailsByAdminApi({ id: tranascionId });
-      }
-      if (transactionType == TransactionType.Payment) {
-        return getPaymentTransactionDetailsByAdminApi({ id: tranascionId });
-      }
-
-      // TODO: Need Admin api for now commenting this
-
-      if (transactionType == TransactionType.Withdrawal) {
-        return getWithdrawalTransactionDetailsByUserApi({
-          transaction_id: +tranascionId,
-        });
-      }
+      return getTransactionDetailsByAdminApi({ id: tranascionId });
     }
   };
 
@@ -107,8 +70,7 @@ const TransactionDetails = ({ params }) => {
     await callApiHook({
       apiCall: callWebhookApi(
         resendWebhookAPI({
-          payment_id: transactionDetails?.payment?.id,
-          transaction_id: +tranascionId,
+          id: tranascionId,
         })
       ),
       successCallBack: (response: any) => {
@@ -139,40 +101,30 @@ const TransactionDetails = ({ params }) => {
           <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="!items-start res-2-grid py-6">
-          <Details
-            label="ID"
-            value={
-              transactionDetails?.payment_transaction_uuid ||
-              transactionDetails?.withdraw_transaction_uuid ||
-              transactionDetails?.transaction_uuid
-            }
-          />
+          <Details label="ID" value={transactionDetails?.id} />
           <Details
             label="Blockchain"
-            value={
-              transactionDetails?.wallet?.blockchain ||
-              transactionDetails?.clientWallet?.blockchain
-            }
+            value={transactionDetails?.transaction_request?.wallet?.blockchain}
           />
           <Details
             label="Transaction Type"
-            value={transactionDetails?.transaction_type}
+            value={transactionDetails?.transaction_request?.type}
           />
           <Details
             label="Transaction Hash"
-            value={transactionDetails?.transaction_hash}
+            value={transactionDetails?.hash}
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.wallet?.blockchain ||
-                transactionDetails?.clientWallet?.blockchain,
+                transactionDetails?.transaction_request?.wallet?.blockchain,
               type: "hash",
-              hash: transactionDetails?.transaction_hash,
+              hash: transactionDetails?.hash,
             })}
             copyable
           />
+          <div></div>
 
-          {transactionType == TransactionType.Payment && (
+          {transactionDetails?.transaction_request?.request_via == "API" && (
             <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
               <div className="max-w-[240px]">
                 <LoaderButton
@@ -194,73 +146,47 @@ const TransactionDetails = ({ params }) => {
           <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
             <Details
               label="ID"
-              value={
-                transactionDetails?.client?.id ||
-                transactionDetails?.withdrawal?.user?.id
-              }
+              value={transactionDetails?.transaction_request?.user?.id}
               link={
                 hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
-                `/merchants/details/${
-                  transactionDetails?.client?.id ||
-                  transactionDetails?.withdrawal?.user?.id
-                }`
+                `/merchants/details/${transactionDetails?.transaction_request?.user?.id}`
               }
               target="_self"
             />
             <Details
               label="First Name"
-              value={
-                transactionDetails?.client?.first_name ||
-                transactionDetails?.withdrawal?.user?.first_name
-              }
+              value={transactionDetails?.transaction_request?.user?.first_name}
             />
             <Details
               label="Last Name"
-              value={
-                transactionDetails?.client?.last_name ||
-                transactionDetails?.withdrawal?.user?.last_name
-              }
+              value={transactionDetails?.transaction_request?.user?.last_name}
             />
             <Details
               label="Username"
-              value={
-                transactionDetails?.client?.username ||
-                transactionDetails?.withdrawal?.user?.username
-              }
+              value={transactionDetails?.transaction_request?.user?.username}
             />
             <Details
               label="Email"
-              value={
-                transactionDetails?.client?.email ||
-                transactionDetails?.withdrawal?.user?.email
-              }
+              value={transactionDetails?.transaction_request?.user?.email}
             />
             <Details
               label="Role"
-              value={
-                transactionDetails?.client?.role ||
-                transactionDetails?.withdrawal?.user?.role
-              }
+              value={transactionDetails?.transaction_request?.user?.role}
             />
             <Details
               label="User Type"
-              value={
-                transactionDetails?.client?.user_type ||
-                transactionDetails?.withdrawal?.user?.user_type
-              }
+              value={transactionDetails?.transaction_request?.user?.user_type}
             />
             <Details
               label="Created Date"
               value={moment(
-                transactionDetails?.client?.created_at ||
-                  transactionDetails?.withdrawal?.user?.created_at
+                transactionDetails?.transaction_request?.user?.created_at
               ).format("DD-MM-YYYY")}
             />
             <Details
               label="Updated Date"
               value={moment(
-                transactionDetails?.client?.updated_at ||
-                  transactionDetails?.withdrawal?.user?.updated_at
+                transactionDetails?.transaction_request?.user?.updated_at
               ).format("DD-MM-YYYY")}
             />
           </div>
@@ -274,23 +200,13 @@ const TransactionDetails = ({ params }) => {
           <Details
             label="Reciever Wallet Address"
             copyable
-            value={
-              transactionType == "Withdrawal"
-                ? transactionDetails?.withdrawal?.recipient_address
-                : transactionDetails?.wallet?.wallet_address ||
-                  transactionDetails?.wallet?.address
-            }
+            value={transactionDetails?.receiver_address}
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.wallet?.blockchain ||
-                transactionDetails?.clientWallet?.blockchain,
+                transactionDetails?.transaction_request?.wallet?.blockchain,
               type: "address",
-              address:
-                transactionType == "Withdrawal"
-                  ? transactionDetails?.withdrawal?.recipient_address
-                  : transactionDetails?.wallet?.wallet_address ||
-                    transactionDetails?.wallet?.address,
+              address: transactionDetails?.receiver_address,
             })}
           />
           <Details
@@ -300,8 +216,7 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.wallet?.blockchain ||
-                transactionDetails?.clientWallet?.blockchain,
+                transactionDetails?.transaction_request?.wallet?.blockchain,
               type: "address",
               address: transactionDetails?.sender_address,
             })}
@@ -317,38 +232,59 @@ const TransactionDetails = ({ params }) => {
 
         <div className="res-2-grid py-6">
           <Details
-            label="Total Amount"
+            label="Total Fiat Amount Received"
             value={` ${roundToPrecision(
-              transactionDetails?.total_amount || transactionDetails?.total_amount_received,
+              transactionDetails?.fiat_paid_amount,
               10
-            )} ${transactionDetails?.unit}`}
+            )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+          />
+          <Details
+            label="Total Crypto Amount Received"
+            value={` ${roundToPrecision(transactionDetails?.paid_amount, 10)} ${
+              transactionDetails?.transaction_request?.unit
+            }`}
           />
 
           <Details
-            label="Alphaspay Fees"
+            label="Fiat Alphaspay Fee"
+            value={` ${roundToPrecision(transactionDetails?.fiat_fee, 10)} ${
+              transactionDetails?.transaction_request?.fiat_currency
+            }`}
+          />
+
+          <Details
+            label="Crypto Alphaspay Fee"
+            value={` ${roundToPrecision(transactionDetails?.fee, 10)} ${
+              transactionDetails?.transaction_request?.unit
+            }`}
+          />
+          <Details
+            label="Fiat Client Fee"
+            value={` ${roundToPrecision(
+              transactionDetails?.fiat_client_fee,
+              10
+            )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+          />
+
+          <Details
+            label="Crypto Client Fee"
+            value={` ${roundToPrecision(transactionDetails?.client_fee, 10)} ${
+              transactionDetails?.transaction_request?.unit
+            }`}
+          />
+
+          <Details
+            label="Fiat Net Amount"
             value={`${roundToPrecision(
-              +transactionDetails?.withdrawal?.alphaspay_fee ||
-                +transactionDetails?.alphaspay_fees,
+              +transactionDetails?.fiat_net_amount,
               10
-            )} ${transactionDetails?.unit}`}
+            )} ${transactionDetails?.transaction_request?.fiat_currency}`}
           />
-
           <Details
-            label="Net Amount"
-            value={`${roundToPrecision(
-              +transactionDetails?.transaction_amount ||
-                +transactionDetails?.amount,
-              10
-            )} ${transactionDetails?.unit}`}
-          />
-
-          <Details
-            label="Client Fees"
-            value={
-              transactionDetails?.client_fee
-                ? `${transactionDetails?.client_fee} ${transactionDetails?.unit}`
-                : "0"
-            }
+            label="Crypto Net Amount"
+            value={`${roundToPrecision(+transactionDetails?.net_amount, 10)} ${
+              transactionDetails?.transaction_request?.unit
+            }`}
           />
         </div>
 
@@ -360,11 +296,11 @@ const TransactionDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Created Date"
-            value={moment(transactionDetails?.createdAt).format("DD-MM-YYYY")}
+            value={moment(transactionDetails?.created_at).format("DD-MM-YYYY")}
           />
           <Details
             label="Updated Date"
-            value={moment(transactionDetails?.updatedAt).format("DD-MM-YYYY")}
+            value={moment(transactionDetails?.updated_at).format("DD-MM-YYYY")}
           />
         </div>
 

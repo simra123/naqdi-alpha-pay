@@ -2,31 +2,29 @@
 
 import api from "@/config/api";
 
-export const getAllTransactionsByAdminApi = () => {
-  return () => api.get(`wallet/all-transactions-by-admin`);
+export const getAllTransactionsByAdminApi = (params: {
+  limit: number;
+  page: number;
+  all?: true;
+}) => {
+  return () => api.get(`admin/transaction/transaction`, { params });
 };
 
 export const getLatestTransactionsByAdminApi = (params: {
   page?: number;
   limit?: number;
 }) => {
-  return () => api.get(`/admin-wallet/latest-transactions`, { params });
+  return () => api.get(`admin-wallet/latest-transactions`, { params });
 };
 
 export const getTransactionDetailsByAdminApi = (data: { id: number }) => {
-  return () => api.post(`auth/get-transaction-by-admin`, data);
+  return () => api.get(`admin/transaction/${data.id}/details`);
 };
 
-export const getPaymentTransactionDetailsByAdminApi = (data: {
+export const getTransactionRequestDetailsByAdminApi = (data: {
   id: number;
 }) => {
-  return () => api.get(`v1/admin/payment_transaction/${data?.id}`);
-};
-
-export const getWithdrawalTransactionDetailsByAdminApi = (data: {
-  transaction_id: number;
-}) => {
-  return () => api.post(`wallet/withdrawtransaction-details`, data);
+  return () => api.get(`admin/transaction/request-details/${data.id}`);
 };
 
 export const getMerchantTransactionByIdApi = (data: {

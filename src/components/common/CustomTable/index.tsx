@@ -156,7 +156,7 @@ const CustomTable = ({
     }
 
     const sortedRows = sortConfig
-      ? filteredRows.sort((a, b) => {
+      ? filteredRows?.sort((a, b) => {
           if (sortConfig.direction === "ascending") {
             if (a[sortConfig.key] < b[sortConfig.key]) return -1;
             if (a[sortConfig.key] > b[sortConfig.key]) return 1;
@@ -169,7 +169,7 @@ const CustomTable = ({
       : filteredRows;
 
     setCurrentRows(
-      sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      sortedRows?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
     );
     setTotalPages(Math.ceil(filteredRows?.length / pageSize));
   }, [searchQuery, rows, sortConfig, currentPage, pageSize]);
@@ -279,10 +279,10 @@ const CustomTable = ({
           actions
         )}
         <div
-          ref={scrollContainerRef}
           className={`overflow-x-auto ${
             pagination && "min-h-[calc(100vh-350px)]"
           } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none ${tableClassName}`}
+          ref={scrollContainerRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -302,7 +302,7 @@ const CustomTable = ({
                     </label>
                   </th>
                 )}
-                {columns.map((column, index) => (
+                {columns?.map((column, index) => (
                   <th
                     key={column.field + index}
                     style={{ width: equalColumns ? columnWidths : "auto" }}
@@ -340,7 +340,7 @@ const CustomTable = ({
             {/* Rows Mapped Below */}
 
             <tbody>
-              {currentRows.map((row, index) => (
+              {currentRows?.map((row, index) => (
                 <>
                   <tr
                     key={index}
@@ -359,7 +359,7 @@ const CustomTable = ({
                         </label>
                       </td>
                     )}
-                    {columns.map((column, index) => {
+                    {columns?.map((column, index) => {
                       const value = getNestedValue(row, column.field);
                       const computedValue = column.dataValidator
                         ? column.dataValidator(value, row)
@@ -567,7 +567,6 @@ const Pagination = ({
     [currentPage, pageSize, totalPages]
   );
 
-
   return (
     <div className="overflow-auto">
       <div className="md:hidden block relative mx-auto mt-5 w-full">
@@ -594,7 +593,7 @@ const Pagination = ({
           >
             <MdNavigateBefore />
           </IconButton>
-          {pages.map((item, index) =>
+          {pages?.map((item, index) =>
             item == "..." ? (
               <span key={index}>...</span>
             ) : (

@@ -22,9 +22,5 @@ export const getClientPaymentsListApi = (
   data?: {},
   params?: { limit: number; page: number }
 ) => {
-  return () => api.post(`v1/payment-list`, data, { params });
-};
-
-export const getPaymentDetailsApi = (id: number) => {
-  return () => api.get(`v1/client/payments/${id}`);
+  return () => api.post(`transaction/payment-list`, data, { params });
 };
