@@ -18,5 +18,5 @@ export const getTransactionRequestDetailsByUserApi = (data: { id: number }) => {
 };
 
 export const getRecentTransactionsApi = () => {
-  return () => api.get(`wallet/recent-transactions`);
+  return () => api.get(`merchant-dashboard/recent-transactions`);
 };

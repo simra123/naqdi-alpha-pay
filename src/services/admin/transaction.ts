@@ -14,7 +14,7 @@ export const getLatestTransactionsByAdminApi = (params: {
   page?: number;
   limit?: number;
 }) => {
-  return () => api.get(`admin-wallet/latest-transactions`, { params });
+  return () => api.get(`admin-dashboard/latest-transactions`, { params });
 };
 
 export const getTransactionDetailsByAdminApi = (data: { id: number }) => {
