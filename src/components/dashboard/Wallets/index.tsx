@@ -3,7 +3,7 @@ import LoadingApi from "@/components/common/LoadindApi";
 import PortfolioCard from "@/components/common/PortfolioCard";
 import { unitName } from "@/constants/blockchains";
 import { Role } from "@/constants/roles";
-import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { AccessLevelEnum, balanceType, ModulesEnum } from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { hasMinAccess } from "@/utils/cookies";
 import React from "react";
@@ -61,7 +61,7 @@ const Wallets = ({
       >
         <LoadingApi loading={loading}>
           {walletsArray?.length > 0 ? (
-            walletsArray?.map((asset) => {
+            walletsArray?.filter((asset) => asset?.type !== balanceType.fiat)?.map((asset) => {
               let unit = asset?.unit;
               let tokenName = `${unit} ${
                 asset?.standard ? `(${asset?.standard})` : ""

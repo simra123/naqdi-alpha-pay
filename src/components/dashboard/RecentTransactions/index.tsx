@@ -4,6 +4,7 @@ import LoadingApi from "@/components/common/LoadindApi";
 import TransactionCard from "@/components/common/TransactionCard";
 import { unitName } from "@/constants/blockchains";
 import { Role } from "@/constants/roles";
+import { transactionTypes } from "@/constants/types";
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { getLatestTransactionsByAdminApi } from "@/services/admin/transaction";
@@ -14,7 +15,7 @@ import React, { useEffect, useState } from "react";
 
 const RecentTransactions = () => {
   const user = useLocalStorage("user");
-  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [recentTransactions, setRecentTransactions] = useState<[]>([]);
   const [
     isRecentTransactionsLoading,
     isRecentTransactionsError,
@@ -33,7 +34,7 @@ const RecentTransactions = () => {
       successCallBack: (response: any) => {
         setRecentTransactions(
           user?.role == Role.USER
-            ? response?.recentTransactions
+            ? response
             : response?.data?.recentTransactions
         );
       },
@@ -58,7 +59,7 @@ const RecentTransactions = () => {
       <div className="flex flex-col gap-3 2xl:gap-4">
         <LoadingApi loading={isRecentTransactionsLoading}>
           {recentTransactions?.length > 0 ? (
-            recentTransactions?.map((transaction) => (
+            recentTransactions?.map((transaction: any) => (
               <TransactionCard
                 currencyName={
                   user?.role == Role.ADMIN ? (
@@ -70,19 +71,17 @@ const RecentTransactions = () => {
                           transaction?.user?.last_name}
                       </span>{" "}
                       <span className="font-medium text-caption text-custom-title-gray">
-                        ({unitName[transaction?.unit?.toLowerCase()]})
+                        ({unitName[transaction?.transaction_request?.unit?.toLowerCase()]})
                       </span>
                     </div>
                   ) : (
-                    unitName[transaction?.unit?.toLowerCase()]
+                    unitName[transaction?.transaction_request?.unit?.toLowerCase()]
                   )
                 }
-                date={transaction?.createdAt}
-                direction={
-                  transaction?.withdrawal?.id ? "outgoing" : "incoming"
-                }
-                onClick={() => {}}
-                amount={transaction?.amount}
+                date={transaction?.created_at}
+                direction={transaction?.transaction_request?.type == transactionTypes.Deposit ? "incoming" : "outgoing"}
+                onClick={() => { }}
+                amount={parseFloat(user?.role == Role.ADMIN ? transaction?.paid_amount : transaction?.net_amount).toFixed(3)?.toString()}
               />
             ))
           ) : !isRecentTransactionsError ? (
