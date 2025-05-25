@@ -266,7 +266,7 @@ const IconSelectBox = ({
                       ? "rounded-b-md"
                       : ""
                   } ${
-                    index === highlightedIndex
+                    index === highlightedIndex && searchable
                       ? "bg-purple-500 text-white font-semibold"
                       : value === option.value
                       ? "bg-purple-light-purple text-purple-500 font-medium"

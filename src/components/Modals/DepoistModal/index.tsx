@@ -53,7 +53,7 @@ const initalFormValues = {
   client_name: "",
   client_email: "",
   client_phone_number: "",
-  email_notification: false,
+  send_email: false,
 };
 
 const DepositModal = ({
@@ -86,21 +86,15 @@ const DepositModal = ({
     await callApiHook({
       apiCall: callDeposistApi(
         createPaymentDepositApi({
-          passthrough: JSON.stringify({
-            userid: user?.id,
-            username: user.username,
-            paymentType: "Self",
-          }),
-          requested_currency: "USD",
-          payment_currency:
-            blockchain_units[values?.blockchain?.toLowerCase()]?.toUpperCase(),
-          payment_currency_standard: values?.standard,
-          requested_amount: values.amount,
-          notes: "Merchant Created This Payment Deposit",
+          unit: blockchain_units[
+            values?.blockchain?.toLowerCase()
+          ]?.toUpperCase(),
+          standard: values?.standard,
+          amount: +values.amount,
           customer_email: values?.client_email,
           customer_name: values?.client_name,
           customer_phone_number: values?.client_phone_number,
-          email_notification: values?.email_notification,
+          send_email: values?.send_email,
         })
       ),
       statusCode: 201,
@@ -272,8 +266,8 @@ const DepositModal = ({
 
           <Checkbox
             label="Send Invoice Email"
-            name="email_notification"
-            checked={values?.email_notification}
+            name="send_email"
+            checked={values?.send_email}
             onChange={handleChange}
           />
           <div className="mt-4">
@@ -329,52 +323,59 @@ const DepositModal = ({
                 Currency
               </p>
               <p className="font-medium text-black-100">
-                {unitName[depositAddress?.payment_currency?.toLowerCase()]}
+                {depositAddress?.unit}
               </p>
             </div>
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Requested Amount (USD)
+                Requested Amount ({depositAddress?.fiat_currency})
+              </p>
+              <p className="font-medium text-black-100">{depositAddress?.fiat_initial_amount}</p>
+            </div>
+            <div>
+              <p className="font-bold text-caption text-custom-title-gray">
+                Alphaspay Fee ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
-                {depositAddress?.requested_amount}
+                {roundToPrecision(+depositAddress?.initial_fee, 10)}
               </p>
             </div>
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Alphaspay Fee
+                Alphaspay Fee ({depositAddress?.fiat_currency})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.alphaspay_fees, 10)}
+                {roundToPrecision(+depositAddress?.fiat_initial_fee, 10)}
               </p>
             </div>
 
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Payment Amount ({depositAddress?.payment_currency})
+                Payment Amount ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.payment_amount, 10)}
+                {roundToPrecision(+depositAddress?.initial_amount, 10)}
               </p>
             </div>
           </div>
 
           <div className="flex flex-col items-center overflow-hidden">
             <Image
-              src={depositAddress?.qrcode}
+              src={depositAddress?.wallet?.qr_code}
               height={250}
               width={250}
               alt="Depoist"
             />
 
-            <Details copyable value={depositAddress?.address} />
+            <Details copyable value={depositAddress?.wallet?.address} />
           </div>
 
           <p className="mt-6 text-button text-custom-caption-gray">
-            This Address is generated for depositing{" "}
-            {unitName[depositAddress?.payment_currency?.toLowerCase()]} on the{" "}
-            {values?.network ||
-              blockchain_standards[depositAddress?.payment_currency]}{" "}
+            This Address is generated for depositing {depositAddress?.unit} on
+            the{" "}
+            <span className="capitalize">
+              {depositAddress?.wallet?.blockchain}
+            </span>{" "}
             network.
           </p>
         </>

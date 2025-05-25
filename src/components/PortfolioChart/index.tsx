@@ -262,7 +262,6 @@ const PortfolioChart = ({
     },
   };
 
-
   return (
     <div className="p-6 border border-purple-10 rounded-[28px]">
       <div className="flex justify-between items-center mb-4">
@@ -344,7 +343,7 @@ const PortfolioChart = ({
         </div>
       </div>
       <LoadingApi loading={loading}>
-        {chartData &&
+        {chartData?.labels &&
           (user?.role == Role.USER ? (
             <Chart
               data={chartData as any}

@@ -20,162 +20,128 @@ import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
-
-const transactionsList_table_columns: TableColumns = [
-  {
-    field: "uuid",
-    headerName: "ID",
-    sortable: true,
-    dataValidator(value, row: any) {
-      return row?.withdraw_transaction_uuid || row?.payment_transaction_uuid;
-    },
-  },
-  {
-    field: "createdAt",
-    headerName: "Date Received",
-    sortable: true,
-    dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
-      return (
-        <div className="flex flex-col gap-1">
-          <span className="text-caption">{day}</span>
-          <span className="text-custom-title-gray text-subtitle">{time}</span>
-        </div>
-      );
-    },
-  },
-  { field: "transaction_type", headerName: "Currency Type", sortable: true },
-  { field: "unit", headerName: "Currency", sortable: true },
-  {
-    field: "blockchain",
-    headerName: "Blockchain",
-    sortable: true,
-    dataValidator(value, row: any) {
-      return row?.clientWallet?.blockchain || row?.wallet?.blockchain;
-    },
-  },
-  {
-    field: "transaction_hash",
-    headerName: "Transaction Hash",
-    sortable: true,
-    link: (row: any) => {
-      const transactionExplorerLink = showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.wallet?.blockchain || row?.clientWallet?.blockchain,
-        type: "hash",
-        hash: row?.transaction_hash,
-      });
-      return transactionExplorerLink;
-    },
-  },
-  { field: "amount", headerName: "Amount", sortable: true },
-  { field: "alphaspay_fees", headerName: "Fee", sortable: true },
-  {
-    field: "sender_address",
-    headerName: "Sender Address",
-    sortable: true,
-    copyable: true,
-    link: (row: any) => {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
-        type: "address",
-        address: row?.sender_address,
-      });
-    },
-  },
-  {
-    field: "receiveAddress",
-    headerName: "Receiver Address",
-    sortable: true,
-    copyable: true,
-    dataValidator(value, row: any) {
-      return row?.withdrawal?.recipient_address || row?.wallet?.address;
-    },
-    link: (row: any) => {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
-        type: "address",
-        address: row?.withdrawal?.recipient_address || row?.wallet?.address,
-      });
-    },
-  },
-  {
-    field: "",
-    headerName: "Transacion Type",
-    sortable: true,
-    dataValidator(value, row: any) {
-      return row?.payment ? "Payment" : "Withdrawal";
-    },
-    link(row: any) {
-      return row?.payment
-        ? `payments/details/${row?.payment?.id}`
-        : `withdrawals/details/${row?.withdrawal?.id}`;
-    },
-    target: "_self",
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    sortable: true,
-    dataValidator: (value) => {
-      return <Chip status={value} />;
-    },
-  },
-];
+import { ListApiResponse } from "@/components/common/AdvancedTable/types";
+import momentTZ from "moment-timezone";
+import RenderRoleBased from "@/components/common/RenderRoleBased";
+import AdvancedTable from "@/components/common/AdvancedTable";
+import CustomTableV2 from "@/components/common/CustomTableV2";
 
 const Transactions = () => {
   const router = useRouter();
 
   const user = useLocalStorage("user");
-  const [transactions, setTransactions] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [transactonsList, setTransactionsList] = useState<
+    ListApiResponse | any
+  >({ result: [] });
+  const [columns, setColumns] = useState([]);
+  const [listConfig, setListConfig] = useState(null);
   const [isTransactionsLoading, isTransactionsError, callTransactionsApi] =
     useApi({ initailLoading: true });
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
-  const getTransactions = async () => {
+  const getTransactions = async ({ pageValue, limitValue, sort, filters }) => {
     if (user?.role == Role.USER) {
       await callApiHook({
-        apiCall: callTransactionsApi(getAllTransactionsApi({})),
+        apiCall: callTransactionsApi(
+          getAllTransactionsApi(
+            { sort, filters },
+            { limit: limitValue, page: pageValue }
+          )
+        ),
         successCallBack: (response: any) => {
-          setTransactions(response);
+          console.log({ response });
+          if (user?.role == Role.USER) {
+            const modifiedColumns = response?.listConfig.views[0].columns.map(
+              (column) => {
+                if (column.listColumnsMeta.name === "wallet.address") {
+                  return {
+                    ...column,
+                    copyable: true,
+                    link: (row: {
+                      wallet: { blockchain: string; address: string };
+                    }) => {
+                      return showExplorerDetailsByChain({
+                        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+                        blockchain: row?.wallet?.blockchain,
+                        type: "address",
+                        address: row?.wallet.address,
+                      });
+                    },
+                  };
+                }
+
+                if (
+                  ["created_at", "updated_at"].includes(
+                    column.listColumnsMeta.name
+                  )
+                ) {
+                  return {
+                    ...column,
+                    dataValidator: (value: string) => {
+                      const currentTimeZone = momentTZ.tz.guess();
+
+                      let date: string | string[] = momentTZ(value)
+                        .tz(currentTimeZone)
+                        .format("DD-MM-YYYY.hh:mm A");
+
+                      let [day, time] = date.split(".");
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <span className="text-caption">{day}</span>
+                          <span className="text-custom-title-gray text-subtitle">
+                            {time}
+                          </span>
+                        </div>
+                      );
+                    },
+                  };
+                }
+
+                if (column.listColumnsMeta.name === "status") {
+                  return {
+                    ...column,
+                    dataValidator: (value: string) => <Chip status={value} />,
+                  };
+                }
+
+                return column;
+              }
+            );
+
+            response.listConfig.views[0].columns = modifiedColumns;
+
+            setColumns(modifiedColumns);
+
+            setListConfig(response.listConfig);
+
+            setTransactionsList(response);
+          }
         },
       });
     }
     if (user?.role == Role.ADMIN) {
       await callApiHook({
-        apiCall: callTransactionsApi(getAllTransactionsByAdminApi()),
+        apiCall: callTransactionsApi(
+          getAllTransactionsByAdminApi({
+            limit: limitValue,
+            page: pageValue,
+            all: true,
+          })
+        ),
         successCallBack: (response: any) => {
-          setTransactions(response);
+          setTransactionsList(response);
         },
       });
     }
   };
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(transactions)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "transactions.csv");
-      },
-    });
-  };
-
   const transactionsList_Admin_table_columns: TableColumns = [
     {
-      field: "uuid",
+      field: "id",
       headerName: "ID",
-      sortable: true,
-      dataValidator(value, row: any) {
-        return row?.withdraw_transaction_uuid || row?.payment_transaction_uuid;
-      },
     },
     {
-      field: "createdAt",
+      field: "created_at",
       headerName: "Date Received",
-      sortable: true,
       dataValidator: (value) => {
         let [day, time] = formatDateToUserTimeZone(value);
         return (
@@ -187,132 +153,110 @@ const Transactions = () => {
       },
     },
     {
-      field: "client.id",
+      field: "transaction_request.user.id",
       headerName: "Merchant ID",
-      dataValidator(value, row: any) {
-        return row?.client?.id || row?.withdrawal?.user?.id;
-      },
       target: "_self",
       link: (row: any) => {
         if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
-          return `/merchants/details/${
-            row?.client?.id || row?.withdrawal?.user?.id
-          }`;
+          return `/merchants/details/${row?.transaction_request.user.id}`;
         }
       },
     },
     {
-      field: "client.first_name",
+      field: "transaction_request.user.first_name",
       headerName: "Merchant First Name",
-      dataValidator(value, row: any) {
-        return row?.client?.first_name || row?.withdrawal?.user?.first_name;
-      },
     },
     {
-      field: "client.last_name",
+      field: "transaction_request.user.last_name",
       headerName: "Merchant Last Name",
-      dataValidator(value, row: any) {
-        return row?.client?.last_name || row?.withdrawal?.user?.last_name;
-      },
     },
     {
-      field: "client.email",
+      field: "transaction_request.user.email",
       headerName: "Merchant Email",
-      dataValidator(value, row: any) {
-        return row?.client?.email || row?.withdrawal?.user?.email;
-      },
     },
     {
-      field: "client.username",
+      field: "transaction_request.user.username",
       headerName: "Merchant Username",
-      dataValidator(value, row: any) {
-        return row?.client?.username || row?.withdrawal?.user?.username;
-      },
     },
     {
-      field: "client.user_type",
+      field: "transaction_request.user.user_type",
       headerName: "Merchant Type",
-      dataValidator(value, row: any) {
-        return row?.client?.user_type || row?.withdrawal?.user?.user_type;
+    },
+    {
+      field: "transaction_request.contract_address.is_token",
+      headerName: "Currency Type",
+      dataValidator(value, row) {
+        return value ? "Token" : "Coin";
       },
     },
-    { field: "transaction_type", headerName: "Currency Type", sortable: true },
-    { field: "unit", headerName: "Currency", sortable: true },
+    { field: "transaction_request.unit", headerName: "Currency" },
     {
-      field: "blockchain",
+      field: "transaction_request.contract_address.blockchain_name",
       headerName: "Blockchain",
-      sortable: true,
-      dataValidator(value, row: any) {
-        return row?.clientWallet?.blockchain || row?.wallet?.blockchain;
-      },
     },
     {
-      field: "transaction_hash",
+      field: "hash",
       headerName: "Transaction Hash",
-      sortable: true,
       link: (row: any) => {
         const transactionExplorerLink = showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.wallet?.blockchain || row?.clientWallet?.blockchain,
+          blockchain: row?.transaction_request.contract_address.blockchain_name,
           type: "hash",
-          hash: row?.transaction_hash,
+          hash: row?.hash,
         });
         return transactionExplorerLink;
       },
     },
-    { field: "amount", headerName: "Amount", sortable: true },
-    { field: "alphaspay_fees", headerName: "Fee", sortable: true },
+    { field: "paid_amount", headerName: "Received Amount", sortable: true },
+    { field: "fee", headerName: "Fee Amount", sortable: true },
+    { field: "net_amount", headerName: "Received Net Amount ", sortable: true },
 
     {
       field: "sender_address",
       headerName: "Sender Address",
-      sortable: true,
       copyable: true,
       link: (row: any) => {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
+          blockchain: row?.transaction_request.contract_address.blockchain_name,
           type: "address",
           address: row?.sender_address,
         });
       },
     },
     {
-      field: "receiveAddress",
+      field: "transaction_request.wallet.address",
       headerName: "Receiver Address",
-      sortable: true,
       copyable: true,
       dataValidator(value, row: any) {
-        return row?.withdrawal?.recipient_address || row?.wallet?.address;
+        return value || row?.transaction_request.recipient_address;
       },
       link: (row: any) => {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
+          blockchain: row?.transaction_request.contract_address.blockchain_name,
           type: "address",
-          address: row?.withdrawal?.recipient_address || row?.wallet?.address,
+          address:
+            row?.transaction_request.recipient_address ||
+            row?.transaction_request.wallet?.address,
         });
       },
     },
     {
-      field: "",
+      field: "transaction_request.type",
       headerName: "Transaction Type",
-      sortable: true,
-      dataValidator(value, row: any) {
-        return row?.payment ? "Payment" : "Withdrawal";
-      },
       link(row: any) {
         if (
-          row?.payment &&
+          row?.transaction_request.type == "Depoist" &&
           hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
         ) {
-          return `payments/details/${row?.payment?.id}`;
+          return `payments/details/${row?.id}`;
         }
         if (
-          row?.withdrawal &&
+          row?.transaction_request.type == "Withdraw" &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
         ) {
-          return `withdrawals/details/${row?.withdrawal?.id}`;
+          return `withdrawals/details/${row?.id}`;
         }
       },
       target: "_self",
@@ -320,7 +264,6 @@ const Transactions = () => {
     {
       field: "status",
       headerName: "Status",
-      sortable: true,
       dataValidator: (value) => {
         return <Chip status={value} />;
       },
@@ -328,8 +271,8 @@ const Transactions = () => {
   ];
 
   useEffect(() => {
-    getTransactions();
-  }, [selectedStatus]);
+    getTransactions({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
+  }, []);
 
   const formatCsvData = useMemo(() => {
     const columnOrder: ColumnConfig<any>[] = [
@@ -361,8 +304,8 @@ const Transactions = () => {
       },
     ];
 
-    return formatCSVDataByColumnOrder(transactions, columnOrder);
-  }, [transactions]);
+    return formatCSVDataByColumnOrder(transactonsList?.result, columnOrder);
+  }, [transactonsList]);
 
   return (
     <>
@@ -370,28 +313,44 @@ const Transactions = () => {
         Transactions
       </h3>
 
-      <CustomTable
-        loading={isTransactionsLoading}
-        columns={
-          user?.role == Role.ADMIN
-            ? transactionsList_Admin_table_columns
-            : transactionsList_table_columns
-        }
-        rows={transactions}
-        csv={true}
-        tableName="transactions"
-        initialPageSize={10}
-        rowClickHandler={(row: any) => {
-          router.push(
-            `/transactions/details/${row?.id}?type=${
-              row?.payment ? "Payment" : "Withdrawal"
-            }`
-          );
-        }}
-        pagination
-        csvData={formatCsvData}
-        columnClassName="max-w-[200px]"
-      />
+      <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
+        <CustomTableV2
+          loading={isTransactionsLoading}
+          columns={transactionsList_Admin_table_columns}
+          rows={transactonsList?.result}
+          csv={true}
+          tableName="transactions"
+          initialPageSize={10}
+          rowClickHandler={(row: any) => {
+            router.push(`/transactions/details/${row?.id}`);
+          }}
+          pagination
+          csvData={formatCsvData}
+          columnClassName="max-w-[250px]"
+        />
+      </RenderRoleBased>
+
+      <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+        <div>
+          <AdvancedTable
+            columns={columns}
+            setColumns={setColumns}
+            rows={transactonsList?.result}
+            listConfig={listConfig}
+            setListConfig={setListConfig}
+            onRowClick={(row) => {
+              router.push(`/transactions/details/${row?.id}`);
+            }}
+            selectable={false}
+            pagination
+            csvData={formatCsvData}
+            loading={isTransactionsLoading}
+            totalItems={transactonsList?.total}
+            fetchData={getTransactions}
+            tableName="payments"
+          />
+        </div>
+      </RenderRoleBased>
 
       <ErrorApiText error={isTransactionsError} />
     </>
