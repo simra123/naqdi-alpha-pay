@@ -77,3 +77,13 @@ export const supportOptions = [
   { label: "Transaction Issue", value: "Transaction Issue" },
   { label: "Loan", value: "Loan" },
 ];
+
+export const transactionTypes = {
+  Deposit: "Deposit",
+  Withdraw: "Withdraw",
+}
+
+export const balanceType = {
+  fiat: "Fiat",
+  crypto: "Crypto",
+}
