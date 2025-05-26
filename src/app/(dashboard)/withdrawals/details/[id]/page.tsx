@@ -471,7 +471,7 @@ const WithdrawalDetails = ({ params }) => {
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
         <div className="mt-8"></div>
 
-        {withdrawalDetails?.status == "New" &&
+        {withdrawalDetails?.status == "Pending Approval" &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.full) && (
             <>
               {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
