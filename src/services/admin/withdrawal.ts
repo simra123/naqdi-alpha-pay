@@ -30,12 +30,11 @@ export const withdrawalRejectAdminApi = (data: {
 
 export const withdrawalApproveAdminApi = (data: {
   withdraw_id: number;
-  addresses?: string[];
+  wallets?: string[];
 }) => {
   return () =>
-    api.post(`wallet/withdraw-approval`, {
-      withdraw_id: data.withdraw_id,
-      addresses: data.addresses,
+    api.patch(`admin/transaction/withdraw/${data.withdraw_id}/approve`, {
+      wallets: data.wallets,
     });
 };
 

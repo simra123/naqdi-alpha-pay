@@ -12,7 +12,7 @@ const Error = ({
 }) => {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.log({error, message: "React Error Boundry"})
+    console.log({ error, message: "React Error Boundry" });
   }, [error]);
 
   return (
@@ -27,10 +27,7 @@ const Error = ({
           <p className="mt-16 font-medium text-h3">
             Oops! <span className="text-red-button"> {error.message} </span>
           </p>
-          <p className="mt-4 font-medium text-p122">
-            Remote developers with strong technical and communication skills at
-            unbeatable prices, ready to work in your timezone.
-          </p>
+          <p className="mt-4 font-medium text-p122">Something went wrong</p>
           <div className="mx-auto mt-12 w-[310px]">
             <LoaderButton
               content={"Reset"}
