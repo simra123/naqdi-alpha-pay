@@ -69,7 +69,7 @@ const Merchants = () => {
   const [isUsersLoading, isUsersError, callUsersApi] = useApi({
     initailLoading: true,
   });
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+
 
   const getAllUsersAdmin = async () => {
     await callApiHook({

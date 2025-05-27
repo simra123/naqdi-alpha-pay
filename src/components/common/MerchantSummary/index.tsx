@@ -95,13 +95,7 @@ export default function MerchantSummary({ merchantsList }: Props) {
             <IconSelectBox
               searchable
               placeholder="Select Merchant"
-              options={merchantsList?.map((item) => {
-                return {
-                  // label: `${item?.first_name} ${item?.last_name}`,
-                  label: item?.username,
-                  value: item?.userId,
-                };
-              })}
+              options={merchantsList}
               clearable
               onChange={handleChange}
               wrapperClassName="!m-0"

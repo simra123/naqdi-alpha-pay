@@ -90,7 +90,7 @@ export const makeChartData = (data: {
 const PortfolioChart = ({
   interval,
   setInterval,
-  unit,
+
   isAdmin,
   merchantsList,
   merchant,
@@ -102,7 +102,7 @@ const PortfolioChart = ({
 }: {
   interval: string;
   setInterval: any;
-  unit: string;
+
   isAdmin?: boolean;
   merchantsList?: any[];
   merchant?: string;
@@ -120,7 +120,7 @@ const PortfolioChart = ({
   const user = useLocalStorage("user");
   useEffect(() => {
     getChartData();
-  }, [interval, unit, merchant]);
+  }, [interval, merchant]);
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -267,13 +267,7 @@ const PortfolioChart = ({
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
           <Image
-            src={
-              unitName[unit?.toLowerCase()]
-                ? `/currencies/${unitName[
-                    unit?.toLowerCase()
-                  ]?.toLowerCase()}.png`
-                : `/avatar.png`
-            }
+            src={`/avatar.png`}
             alt="Currency"
             height={50}
             width={50}
@@ -281,7 +275,7 @@ const PortfolioChart = ({
           />
           <h3 className="font-nunito text-p120 2xl:text-h4">
             {user?.role == Role.USER
-              ? unitName[unit?.toLowerCase()] || "Portfolio"
+              ? "Portfolio"
               : merchant == "ALL"
               ? "Crypto Wallets"
               : "Merchant Wallets"}{" "}
@@ -326,16 +320,7 @@ const PortfolioChart = ({
                 wrapperClassName="!m-0"
                 inputContainerClassName="!rounded-full py-3 min-w-[100px]"
                 optionsClassName="!right-0 !w-[240px]"
-                options={[
-                  { label: "All", value: "ALL" },
-                  ...merchantsList?.map((item) => {
-                    return {
-                      // label: `${item?.first_name} ${item?.last_name}`,
-                      label: item?.username,
-                      value: item?.userId,
-                    };
-                  }),
-                ]}
+                options={[{ label: "All", value: "ALL" }, ...merchantsList]}
                 onChange={handleChangeMerchant}
                 value={merchant}
               />

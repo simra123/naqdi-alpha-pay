@@ -48,7 +48,7 @@ const Wallets = ({
   return (
     <>
       <h3
-        className="mb-2 font-nunito text-p120 2xl:text-h4 cursor-pointer"
+        className="mb-2 font-nunito text-p120 2xl:text-h4"
         onClick={onHeadingClick}
       >
         {heading}
@@ -61,39 +61,42 @@ const Wallets = ({
       >
         <LoadingApi loading={loading}>
           {walletsArray?.length > 0 ? (
-            walletsArray?.filter((asset) => asset?.type !== balanceType.fiat)?.map((asset) => {
-              let unit = asset?.unit;
-              let tokenName = `${unit} ${
-                asset?.standard ? `(${asset?.standard})` : ""
-              }`;
-              let coinName = unitName[unit?.toLowerCase()] || "Unknown";
-              let currencyTicker = asset?.standard == "coin" ? unit : tokenName;
-              let currencyHistoryData = asset?.historyData?.map(
-                (item) => item?.rate_open
-              );
-              let depoistBlockchain = asset?.standard
-                ? unit
-                : coinName?.toLowerCase();
-              return (
-                <PortfolioCard
-                  isAdmin={user?.role == Role.ADMIN}
-                  Balance={asset?.totalAmount || asset?.amount}
-                  IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
-                  ChartLineData={currencyHistoryData}
-                  CurrencyName={coinName}
-                  isWalletHasFullAccess={isWalletHasFullAccess}
-                  isPaymentHasFullAccess={isPaymenttHasFullAccess}
-                  isWithdrawalHasFullAccess={isWithdrawalHasFullAccess}
-                  CurrencyTicker={currencyTicker}
-                  onClick={() => onWalletClick(unit?.toUpperCase())}
-                  onRecieve={() =>
-                    onReceive(depoistBlockchain, asset?.standard)
-                  }
-                  onSend={() => onWithdraw(currencyTicker)}
-                  onTransfer={() => {}}
-                />
-              );
-            })
+            walletsArray
+              ?.filter((asset) => asset?.type !== balanceType.fiat)
+              ?.map((asset) => {
+                let unit = asset?.unit;
+                let tokenName = `${unit} ${
+                  asset?.standard ? `(${asset?.standard})` : ""
+                }`;
+                let coinName = unitName[unit?.toLowerCase()] || "Unknown";
+                let currencyTicker =
+                  asset?.standard == "coin" ? unit : tokenName;
+                let currencyHistoryData = asset?.historyData?.map(
+                  (item) => item?.rate_open
+                );
+                let depoistBlockchain = asset?.standard
+                  ? unit
+                  : coinName?.toLowerCase();
+                return (
+                  <PortfolioCard
+                    isAdmin={user?.role == Role.ADMIN}
+                    Balance={asset?.totalAmount || asset?.amount}
+                    IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
+                    ChartLineData={currencyHistoryData}
+                    CurrencyName={coinName}
+                    isWalletHasFullAccess={isWalletHasFullAccess}
+                    isPaymentHasFullAccess={isPaymenttHasFullAccess}
+                    isWithdrawalHasFullAccess={isWithdrawalHasFullAccess}
+                    CurrencyTicker={currencyTicker}
+                    onClick={() => onWalletClick(unit?.toUpperCase())}
+                    onRecieve={() =>
+                      onReceive(depoistBlockchain, asset?.standard)
+                    }
+                    onSend={() => onWithdraw(currencyTicker)}
+                    onTransfer={() => {}}
+                  />
+                );
+              })
           ) : !error ? (
             "No Assets Found. Deposit Assets to see them here."
           ) : (

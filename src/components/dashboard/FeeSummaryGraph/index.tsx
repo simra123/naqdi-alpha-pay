@@ -13,6 +13,7 @@ import {
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar } from "react-chartjs-2";
 import { useRef, useEffect, useState } from "react";
+import { useApi } from "@/hooks/useApi";
 
 ChartJS.register(
   CategoryScale,
@@ -25,6 +26,12 @@ ChartJS.register(
 
 const FeeSummaryGraph = () => {
   const chartRef = useRef<any>(null);
+  const [isFeeSummaryLoading, isFeeSummaryError, callFeeSummaryApi] = useApi({
+    initailLoading: true,
+  });
+
+
+  
 
   const data = {
     labels: ["Total Fee", "Withdrawn Fee", "Balance Fee"],
@@ -96,7 +103,7 @@ const FeeSummaryGraph = () => {
         ticks: {
           color: "#4D2C91",
           font: {
-            size: 15
+            size: 15,
           },
         },
       },
@@ -106,7 +113,7 @@ const FeeSummaryGraph = () => {
   return (
     <div className="px-5 pt-[30px] pb-[12px] border rounded-[28px]">
       <div className="flex justify-between items-center pb-[22px] border-b">
-      <h3 className="font-nunito text-p120 2xl:text-h4">Fee Summary</h3>
+        <h3 className="font-nunito text-p120 2xl:text-h4">Fee Summary</h3>
       </div>
       <div style={{ width: "100%", height: "245px" }}>
         <Bar ref={chartRef} data={data as any} options={options} height={300} />
