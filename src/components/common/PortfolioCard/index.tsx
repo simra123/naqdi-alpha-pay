@@ -20,7 +20,7 @@ type PortfolioProps = {
   onSend?: () => void;
   onRecieve?: () => void;
   onTransfer?: () => void;
-  onClick: () => void;
+  onClick?: () => void;
   isAdmin?: boolean;
 };
 

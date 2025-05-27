@@ -12,7 +12,8 @@ export const getDashboardBalancesAdminApi = (params: {
   userId?: number | string;
   all?: boolean;
 }) => {
-  return () => api.get(`admin-dashboard/crypto-wallet-graph`, { params });
+  return () =>
+    api.get(`admin-dashboard/crypto-wallet-graph-fiat-dashboard`, { params });
 };
 
 export const getMerchantFinancialSummaryAdminApi = (
