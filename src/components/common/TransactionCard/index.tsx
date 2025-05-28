@@ -23,11 +23,15 @@ const TransactionCard = ({
   onClick,
 }: Props) => {
   return (
-    <div className="flex justify-between items-center gap-8 px-3 2xl:px-5 py-[10px] 2xl:py-[13px] border border-purple-10 rounded-[28px] w-full">
+    <div
+      className="flex justify-between items-center gap-8 hover:bg-light-gray px-3 2xl:px-5 py-[10px] 2xl:py-[13px] border border-purple-10 rounded-[28px] w-full transition-all cursor-pointer"
+      onClick={onClick}
+    >
       <div className="flex items-center gap-2">
         <div
-          className={`w-[35px] h-[35px] md:w-[50px] md:h-[50px] xl:w-[63px] xl:h-[63px] bg-opacity-20 flex items-center justify-center rounded-full ${direction == "incoming" ? "bg-green-300" : "bg-red-300"
-            }`}
+          className={`w-[35px] h-[35px] md:w-[50px] md:h-[50px] xl:w-[63px] xl:h-[63px] bg-opacity-20 flex items-center justify-center rounded-full ${
+            direction == "incoming" ? "bg-green-300" : "bg-red-300"
+          }`}
         >
           {direction == "incoming" ? (
             <ReciveIconGreen className="w-[14px] xl:w-[20px] h-[15px] xl:h-[21px]" />

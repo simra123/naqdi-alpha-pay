@@ -35,7 +35,8 @@ import {
 } from "@/services/wallet";
 import {
   getDashboardBalancesAdminApi,
-  getDashboardMerchantsAdminApi,
+  getDashboardFeeSummaryAdminApi,
+  getDashboardMerchantsWalletSummaryAdminApi,
 } from "@/services/admin/dashboard";
 
 // Utils
@@ -50,13 +51,16 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 // Styles
 import "./dashboard.scss";
 import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
+import { getAllUsersByAdminApi } from "@/services/admin/users";
+import CustomTableV2 from "@/components/common/CustomTableV2";
 
 const merchantsColumns: TableColumns = [
-  { field: "username", headerName: "Username" },
-  { field: "first_name", headerName: "First Name" },
-  { field: "last_name", headerName: "Last Name" },
-  { field: "email", headerName: "Email" },
-  { field: "user_type", headerName: "User Type" },
+  { field: "wallet.company.owner.first_name", headerName: "First Name" },
+  { field: "wallet.company.owner.last_name", headerName: "Last Name" },
+  { field: "wallet.company.owner.user_type", headerName: "User Type" },
+  { field: "total_amount", headerName: "Current Balance" },
+  { field: "total_deposit", headerName: "Deposit" },
+  { field: "total_withdraw", headerName: "Withdrawal" },
 ];
 
 interface DepositState {
@@ -99,14 +103,18 @@ const Home = () => {
   );
 
   const [adminBalances, setAdminBalances] = useState<any>({});
-  const [adminMerchants, setAdminMerchants] = useState({ result: [] });
+  const [adminMerchantsWalletSummary, setAdminMerchantsWalletSummary] =
+    useState({ result: [], total: 0 });
   const [balance, setBalance] = useState(0);
   const [portfolioData, setPortfolioData] = useState([]);
 
-  const [chartUnit, setCharUnit] = useState("ALL");
   const [interval, setInterval] = useState("monthly");
+  const [merchantsList, setMerchantList] = useState<[]>([]);
   const [merchant, setMerchant] = useState("ALL");
   const [userChartData, setUserChartData] = useState({});
+
+  const [merchantPage, setMerchantPage] = useState(1);
+  const [merchantPageSize, setMerchantPageSize] = useState(5);
 
   const [depoistData, setDepositData] = useState<DepositState>({
     blockchain: null,
@@ -127,6 +135,11 @@ const Home = () => {
     initailLoading: false,
   });
 
+  const [isMerchantsListLoading, isMerchantsListError, callMerchantsListApi] =
+    useApi({
+      initailLoading: false,
+    });
+
   const [isAdminBalancesLoading, isAdminBalancesError, callAdminBalancesApi] =
     useApi({
       initailLoading: false,
@@ -145,9 +158,9 @@ const Home = () => {
   });
 
   const [
-    isAdminMerchantsLoading,
-    isAdminMerchantsError,
-    callAdminMerchantsApi,
+    isAdminMerchantsWalletSummaryLoading,
+    isAdminMerchantsWalletSummaryError,
+    callAdminMerchantsWalletSummaryApi,
   ] = useApi({
     initailLoading: true,
   });
@@ -193,10 +206,6 @@ const Home = () => {
     });
   };
 
-  const handleAssetSelection = (blockchainUnit) => {
-    setCharUnit(blockchainUnit);
-  };
-
   const getTotalPortfolioValue = async () => {
     if (user?.role == Role.USER) {
       await callApiHook({
@@ -211,11 +220,28 @@ const Home = () => {
     }
   };
 
-  const getAdminMerchants = async () => {
+  const getAdminMerchantsWalletSummry = async (limit: number, page: number) => {
+    setAdminMerchantsWalletSummary((pre) => ({ ...pre, result: [] }));
     await callApiHook({
-      apiCall: callAdminMerchantsApi(getDashboardMerchantsAdminApi()),
+      apiCall: callAdminMerchantsWalletSummaryApi(
+        getDashboardMerchantsWalletSummaryAdminApi({
+          limit,
+          page,
+        })
+      ),
       successCallBack: (response: any) => {
-        setAdminMerchants(response?.data);
+        setAdminMerchantsWalletSummary(response?.data);
+      },
+    });
+  };
+
+  const getAllMerchants = async () => {
+    await callApiHook({
+      apiCall: callMerchantsListApi(getAllUsersByAdminApi()),
+      successCallBack: (response) => {
+        setMerchantList(
+          response?.map((item) => ({ label: item?.username, value: item?.id }))
+        );
       },
     });
   };
@@ -237,20 +263,19 @@ const Home = () => {
   const getUserChartData = useCallback(async () => {
     await callApiHook({
       apiCall: callUserPortfolioActivityApi(
-        getPortfolioActivityChartApi({ duration: interval, unit: chartUnit })
+        getPortfolioActivityChartApi({ duration: interval })
       ),
       successCallBack: (response: any) => {
         setUserChartData(makeChartData(response) || []);
       },
     });
-  }, [chartUnit, interval, merchant]);
+  }, [interval, merchant]);
 
   const getAdminChartData = useCallback(async () => {
     await callApiHook({
       apiCall: callAdminBalancesApi(
         getDashboardBalancesAdminApi({
           duration: interval,
-          unit: chartUnit,
           all: merchant == "ALL",
           userId: merchant != "ALL" ? merchant : undefined,
         })
@@ -262,11 +287,12 @@ const Home = () => {
         });
       },
     });
-  }, [chartUnit, interval, merchant]);
+  }, [interval, merchant]);
 
   const AdminApiCalls = () => {
     if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
-      getAdminMerchants();
+      getAdminMerchantsWalletSummry(merchantPageSize, merchantPage);
+      getAllMerchants();
     }
   };
 
@@ -324,109 +350,164 @@ const Home = () => {
       </RenderRoleBased>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        <div className="admin-dashboard-layout">
+        <div className="flex flex-col gap-6 admin-dashboard-layout">
           {isWalletHasMinimumAccess && (
-            <>
-              <div className="wallets">
+            <div className="hidden 2.5xl:flex gap-6">
+              <div className="w-[504px] wallets">
                 <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
+                  <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
+                    <h4 className="font-nunito font-bold text-h4 text-white text-center">
+                      Fiat Wallet
+                    </h4>
+                    <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
+                      $
+                      <CountUp
+                        end={adminBalances?.fiatAmount?.totalFiat}
+                        separator=","
+                        decimal="."
+                        decimals={2}
+                      />
+                    </h3>
+                    <ErrorApiText error={isTotalPortfolioError} />
+                  </div>
+
                   <Wallets
                     walletsArray={adminBalances?.userBalances}
                     error={isAdminBalancesError}
                     heading="Crypto Wallets"
                     loading={isAdminBalancesLoading}
-                    onHeadingClick={() => setCharUnit("ALL")}
-                    onWalletClick={handleAssetSelection}
                   />
                 </div>
               </div>
-              <div className="history">
+              <div className="flex-1 history">
                 <div className="hidden xs:block">
                   <PortfolioChart
                     isAdmin={user?.role == Role.ADMIN}
                     interval={interval}
                     setInterval={setInterval}
                     chartData={adminBalances?.portfolio}
-                    unit={chartUnit}
                     loading={isAdminBalancesLoading}
                     error={isAdminBalancesError}
-                    merchantsList={adminMerchants?.result}
+                    merchantsList={merchantsList}
                     merchant={merchant}
                     setMerchant={setMerchant}
                     getChartData={getAdminChartData}
                   />
                 </div>
               </div>
-            </>
-          )}
-
-          {isMerchantHasMinimumAccess && (
-            <div className="merchants">
-              <CustomTable
-                columns={merchantsColumns}
-                rows={adminMerchants?.result}
-                expandRowIDKey="userId"
-                ExpandComponent={({ row }) => (
-                  <div className="justify-between items-center gap-6 grid grid-cols-5">
-                    {row?.balances && row?.balances?.length > 0 ? (
-                      row?.balances?.map((item) => (
-                        <div className="flex flex-col gap-2">
-                          <h3 className="font-semibold text-purple-500 text-base">
-                            {item?.unit}{" "}
-                            {item?.standard ? ` - ${item?.standard}` : ""}
-                          </h3>
-                          <span className="font-semibold text-base">
-                            {item?.amount}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p>No Wallets Found.</p>
-                    )}
-                  </div>
-                )}
-                initialPageSize={5}
-                rowClickHandler={(row: any) => {
-                  router.push(`/merchants/details/${row?.userId}`);
-                }}
-                actions={
-                  <div className="flex justify-between items-end mb-6">
-                    <h3 className="font-nunito text-p120 2xl:text-h4">
-                      Merchants Wallet Summary
-                    </h3>
-                    <Link
-                      className="font-semibold text-caption text-purple-500 underline"
-                      href={"/merchants"}
-                    >
-                      View All
-                    </Link>
-                  </div>
-                }
-                tableWrapperClassName="!min-h-[auto] border  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
-                pagination
-                columnClassName="max-w-[250px] !py-[19.5px]"
-                loading={isAdminMerchantsLoading}
-              />
-              <ErrorApiText error={isAdminMerchantsError} />
             </div>
           )}
 
-          {isTransactionHasMinumumAccess && (
-            <div className="transactions">
+          <div className="2.5xl:hidden flex flex-wrap gap-6">
+            <div className="flex-1 wallets">
+              <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
+                <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
+                  <h4 className="font-nunito font-bold text-h4 text-white text-center">
+                    Fiat Wallet
+                  </h4>
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
+                    $
+                    <CountUp
+                      end={adminBalances?.fiatAmount?.totalFiat}
+                      separator=","
+                      decimal="."
+                      decimals={2}
+                    />
+                  </h3>
+                  <ErrorApiText error={isTotalPortfolioError} />
+                </div>
+
+                <Wallets
+                  walletsArray={adminBalances?.userBalances}
+                  error={isAdminBalancesError}
+                  heading="Crypto Wallets"
+                  loading={isAdminBalancesLoading}
+                />
+              </div>
+            </div>
+            <div className="2.5xl:hidden flex-1 transactions">
               <RecentTransactions />
             </div>
-          )}
+          </div>
+          <div className="2.5xl:hidden">
+            <PortfolioChart
+              isAdmin={user?.role == Role.ADMIN}
+              interval={interval}
+              setInterval={setInterval}
+              chartData={adminBalances?.portfolio}
+              loading={isAdminBalancesLoading}
+              error={isAdminBalancesError}
+              merchantsList={merchantsList}
+              merchant={merchant}
+              setMerchant={setMerchant}
+              getChartData={getAdminChartData}
+            />
+          </div>
 
           {/* Graphs Row */}
 
-          {isMerchantHasMinimumAccess && (
-            <div className="financialSummary">
-              <MerchantSummary merchantsList={adminMerchants?.result} />
-            </div>
-          )}
+          <div className="flex xl:flex-row flex-col gap-6">
+            {isMerchantHasMinimumAccess && (
+              <div className="xl:w-1/2 financialSummary">
+                <MerchantSummary merchantsList={merchantsList} />
+              </div>
+            )}
 
-          {/* <div className="feeSummary">
+            <div className="xl:w-1/2 feeSummary">
               <FeeSummaryGraph />
-            </div> */}
+            </div>
+          </div>
+
+          <div className="2.5xl:flex items-stretch gap-6">
+            {isMerchantHasMinimumAccess && (
+              <div className="2.5xl:w-[60%] merchants">
+                <CustomTableV2
+                  columns={merchantsColumns}
+                  rows={adminMerchantsWalletSummary?.result}
+                  initialPageSize={merchantPageSize}
+                  rowClickHandler={(row: any) => {
+                    router.push(
+                      `/merchants/details/${row?.wallet?.company?.owner?.id}`
+                    );
+                  }}
+                  actions={
+                    <div className="flex justify-between items-end mb-12">
+                      <h3 className="font-nunito text-p120 2xl:text-h4">
+                        Merchants Wallet Summary
+                      </h3>
+                      <Link
+                        className="font-semibold text-caption text-purple-500 underline"
+                        href={"/merchants"}
+                      >
+                        View All
+                      </Link>
+                    </div>
+                  }
+                  tableWrapperClassName="!min-h-[auto] border h-full  !px-5 py-[30px] !rounded-[28px]"
+                  pagination
+                  serverSidePagination
+                  totalItems={adminMerchantsWalletSummary?.total}
+                  onPageChange={(page) => {
+                    setMerchantPage(page);
+                    getAdminMerchantsWalletSummry(merchantPageSize, page);
+                  }}
+                  onPageSizeChange={(pageSize) => {
+                    setMerchantPageSize(pageSize);
+                    getAdminMerchantsWalletSummry(pageSize, merchantPage);
+                  }}
+                  columnClassName="max-w-[250px] !py-[19.5px]"
+                  loading={isAdminMerchantsWalletSummaryLoading}
+                />
+                <ErrorApiText error={isAdminMerchantsWalletSummaryError} />
+              </div>
+            )}
+
+            {isTransactionHasMinumumAccess && (
+              <div className="hidden 2.5xl:block w-[38%] transactions">
+                <RecentTransactions />
+              </div>
+            )}
+          </div>
         </div>
       </RenderRoleBased>
 
@@ -438,12 +519,7 @@ const Home = () => {
               : "dashboard-layout-without-transactions"
           }
         >
-          <div
-            className="px-4 py-[35px] 2.5xl:py-[60px] min-h-[310px] 2.5xl:min-h-[470px] wallets 2.5xlpx-8"
-            onClick={(e) => {
-              handleAssetSelection("ALL");
-            }}
-          >
+          <div className="px-4 py-[35px] 2.5xl:py-[60px] min-h-[310px] 2.5xl:min-h-[470px] wallets 2.5xlpx-8">
             <div className="flex flex-col justify-between gap-8 h-full">
               <div>
                 <h4 className="font-nunito font-bold text-h4 text-white text-center">
@@ -497,7 +573,6 @@ const Home = () => {
                 heading="My Portfolio"
                 loading={isPortfolioLoading}
                 onReceive={openDepoistModalAndCreateAddress}
-                onWalletClick={handleAssetSelection}
                 onWithdraw={openWithdrawalModalAndSetBlockchain}
               />
             </div>
@@ -511,7 +586,6 @@ const Home = () => {
               loading={isUserPortfolioActivityLoading}
               getChartData={getUserChartData}
               setInterval={setInterval}
-              unit={chartUnit}
             />
           </div>
           {isTransactionHasMinumumAccess && (

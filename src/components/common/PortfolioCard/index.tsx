@@ -20,7 +20,7 @@ type PortfolioProps = {
   onSend?: () => void;
   onRecieve?: () => void;
   onTransfer?: () => void;
-  onClick: () => void;
+  onClick?: () => void;
   isAdmin?: boolean;
 };
 
@@ -53,7 +53,7 @@ const PortfolioCard = ({
             width={63}
             className="rounded-full w-[35px] md:w-[50px] 2xl:w-[55px] 3.75xl:w-[63px] h-[35px] md:h-[50px] 2xl:h-[55px] 3.75xl:h-[63px]"
           />
-          <div className="overflow-hidden text-ellipsis">
+          <div className="overflow-hidden text-ellipsis whitespace-nowrap">
             <h5 className="overflow-hidden font-semibold md:text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 text-base text-ellipsis leading-[28px]">
               {CurrencyName}
             </h5>

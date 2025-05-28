@@ -65,7 +65,7 @@ const KYCUserID = ({ params }) => {
       apiCall: callUserDetailsApi(getUserDetailsApi({ userId: +userId })),
       successCallBack: (response) => {
         setUserDetails(response);
-        setFee(response?.fees ? response.fees : null);
+        setFee(response?.user?.company?.fee || null);
         setSelectedRole({
           client: response?.client_fees,
           merchant: response?.merchant_fees,
@@ -73,8 +73,6 @@ const KYCUserID = ({ params }) => {
       },
     });
   };
-
-
 
   const handleSubmit = (status) => async () => {
     await callApiHook({
