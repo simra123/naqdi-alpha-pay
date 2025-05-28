@@ -68,12 +68,14 @@ const Pagination = ({
           <IconButton
             disabled={currentPage === 1}
             onClick={() => onChangePage(1)}
+            className="disabled:text-gray-400"
           >
             <MdFirstPage />
           </IconButton>
           <IconButton
             disabled={currentPage === 1}
             onClick={() => onChangePage(currentPage - 1)}
+            className="disabled:text-gray-400"
           >
             <MdNavigateBefore />
           </IconButton>
@@ -97,11 +99,13 @@ const Pagination = ({
           <IconButton
             disabled={currentPage === totalPages}
             onClick={() => onChangePage(currentPage + 1)}
+            className="disabled:text-gray-400"
           >
             <MdNavigateNext />
           </IconButton>
           <IconButton
             disabled={currentPage === totalPages}
+            className="disabled:text-gray-400"
             onClick={() => onChangePage(totalPages)}
           >
             <MdLastPage />

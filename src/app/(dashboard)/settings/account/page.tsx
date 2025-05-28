@@ -212,7 +212,7 @@ const Account = () => {
                 <Details label="KYC" value={user?.userDetails?.kyc_status} />
                 <Details
                   label="Admin Fees"
-                  value={user?.userDetails?.fees + "%"}
+                  value={user?.company?.fee + "%"}
                 />
                 <form onSubmit={(e) => handleSubmit(e, setClientFeeHandler)}>
                   <Details

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef, useEffect, useState, useMemo } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,8 +13,11 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Bar } from "react-chartjs-2";
-import { useRef, useEffect, useState } from "react";
 import { useApi } from "@/hooks/useApi";
+import { getDashboardFeeSummaryAdminApi } from "@/services/admin/dashboard";
+import { callApiHook } from "@/utils/apifuncs";
+import LoadingApi from "@/components/common/LoadindApi";
+import ErrorApiText from "@/components/common/ErrorApiText";
 
 ChartJS.register(
   CategoryScale,
@@ -26,42 +30,62 @@ ChartJS.register(
 
 const FeeSummaryGraph = () => {
   const chartRef = useRef<any>(null);
+  const [adminFeeSummary, setAdminFeeSummary] = useState({
+    total_deposit: "0.00",
+    total_withdraw: "0.00",
+    total_amount: "0.00",
+  });
   const [isFeeSummaryLoading, isFeeSummaryError, callFeeSummaryApi] = useApi({
     initailLoading: true,
   });
 
+  const getAdminFeeSummary = async () => {
+    await callApiHook({
+      apiCall: callFeeSummaryApi(getDashboardFeeSummaryAdminApi()),
+      successCallBack: (response: any) => {
+        setAdminFeeSummary(response?.data?.balanceFee);
+      },
+    });
+  };
 
-  
-
-  const data = {
-    labels: ["Total Fee", "Withdrawn Fee", "Balance Fee"],
-    datasets: [
-      {
-        data: [195, 115, 55],
-        backgroundColor: ["#471F5E", "#623680", "#803EE5"],
-        hoverBackgroundColor: ["#7735E3", "#6F29CF", "#8A45F7"],
-        borderRadius: 12,
-        barThickness: 9,
-        datalabels: {
-          align: "end",
-          anchor: "end",
+  const data = useMemo(() => {
+    return {
+      labels: ["Total Fee", "Withdrawn Fee", "Balance Fee"],
+      datasets: [
+        {
+          // Index: 0 ----> Total Fee Amount
+          // Index: 1 ----> Withdrawn Fee Amount
+          // Index: 2 ----> Balance Fee Amount
+          data: [
+            +parseFloat(adminFeeSummary.total_deposit).toFixed(2),
+            +parseFloat(adminFeeSummary.total_withdraw).toFixed(2),
+            +parseFloat(adminFeeSummary.total_amount).toFixed(2),
+          ],
           backgroundColor: ["#471F5E", "#623680", "#803EE5"],
+          hoverBackgroundColor: ["#7735E3", "#6F29CF", "#8A45F7"],
           borderRadius: 12,
-          color: "#fff",
-          padding: {
-            left: 8,
-            right: 8,
-            top: 4,
-            bottom: 4,
-          },
-          font: {
-            weight: "bold",
-            size: 10,
+          barThickness: 9,
+          datalabels: {
+            align: "end",
+            anchor: "end",
+            backgroundColor: ["#471F5E", "#623680", "#803EE5"],
+            borderRadius: 12,
+            color: "#fff",
+            padding: {
+              left: 8,
+              right: 8,
+              top: 4,
+              bottom: 4,
+            },
+            font: {
+              weight: "bold",
+              size: 10,
+            },
           },
         },
-      },
-    ],
-  };
+      ],
+    };
+  }, [adminFeeSummary]);
 
   const options: ChartOptions<"bar"> = {
     indexAxis: "y" as const,
@@ -110,14 +134,26 @@ const FeeSummaryGraph = () => {
     },
   };
 
+  useEffect(() => {
+    getAdminFeeSummary();
+  }, []);
+
   return (
     <div className="px-5 pt-[30px] pb-[12px] border rounded-[28px]">
       <div className="flex justify-between items-center pb-[22px] border-b">
         <h3 className="font-nunito text-p120 2xl:text-h4">Fee Summary</h3>
       </div>
       <div style={{ width: "100%", height: "245px" }}>
-        <Bar ref={chartRef} data={data as any} options={options} height={300} />
+        <LoadingApi loading={isFeeSummaryLoading}>
+          <Bar
+            ref={chartRef}
+            data={data as any}
+            options={options}
+            height={300}
+          />
+        </LoadingApi>
       </div>
+      <ErrorApiText error={isFeeSummaryError} />
     </div>
   );
 };

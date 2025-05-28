@@ -35,6 +35,7 @@ import {
 } from "@/services/wallet";
 import {
   getDashboardBalancesAdminApi,
+  getDashboardFeeSummaryAdminApi,
   getDashboardMerchantsWalletSummaryAdminApi,
 } from "@/services/admin/dashboard";
 
@@ -51,6 +52,7 @@ import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import "./dashboard.scss";
 import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
 import { getAllUsersByAdminApi } from "@/services/admin/users";
+import CustomTableV2 from "@/components/common/CustomTableV2";
 
 const merchantsColumns: TableColumns = [
   { field: "wallet.company.owner.first_name", headerName: "First Name" },
@@ -102,7 +104,7 @@ const Home = () => {
 
   const [adminBalances, setAdminBalances] = useState<any>({});
   const [adminMerchantsWalletSummary, setAdminMerchantsWalletSummary] =
-    useState({ result: [] });
+    useState({ result: [], total: 0 });
   const [balance, setBalance] = useState(0);
   const [portfolioData, setPortfolioData] = useState([]);
 
@@ -110,6 +112,9 @@ const Home = () => {
   const [merchantsList, setMerchantList] = useState<[]>([]);
   const [merchant, setMerchant] = useState("ALL");
   const [userChartData, setUserChartData] = useState({});
+
+  const [merchantPage, setMerchantPage] = useState(1);
+  const [merchantPageSize, setMerchantPageSize] = useState(5);
 
   const [depoistData, setDepositData] = useState<DepositState>({
     blockchain: null,
@@ -215,10 +220,14 @@ const Home = () => {
     }
   };
 
-  const getAdminMerchantsWalletSummry = async () => {
+  const getAdminMerchantsWalletSummry = async (limit: number, page: number) => {
+    setAdminMerchantsWalletSummary((pre) => ({ ...pre, result: [] }));
     await callApiHook({
       apiCall: callAdminMerchantsWalletSummaryApi(
-        getDashboardMerchantsWalletSummaryAdminApi()
+        getDashboardMerchantsWalletSummaryAdminApi({
+          limit,
+          page,
+        })
       ),
       successCallBack: (response: any) => {
         setAdminMerchantsWalletSummary(response?.data);
@@ -282,7 +291,7 @@ const Home = () => {
 
   const AdminApiCalls = () => {
     if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
-      getAdminMerchantsWalletSummry();
+      getAdminMerchantsWalletSummry(merchantPageSize, merchantPage);
       getAllMerchants();
     }
   };
@@ -343,7 +352,7 @@ const Home = () => {
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
         <div className="flex flex-col gap-6 admin-dashboard-layout">
           {isWalletHasMinimumAccess && (
-            <div className="flex gap-6">
+            <div className="hidden 2.5xl:flex gap-6">
               <div className="w-[504px] wallets">
                 <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
                   <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
@@ -353,7 +362,7 @@ const Home = () => {
                     <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
                       $
                       <CountUp
-                        end={balance}
+                        end={adminBalances?.fiatAmount?.totalFiat}
                         separator=","
                         decimal="."
                         decimals={2}
@@ -389,27 +398,73 @@ const Home = () => {
             </div>
           )}
 
+          <div className="2.5xl:hidden flex flex-wrap gap-6">
+            <div className="flex-1 wallets">
+              <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
+                <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
+                  <h4 className="font-nunito font-bold text-h4 text-white text-center">
+                    Fiat Wallet
+                  </h4>
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
+                    $
+                    <CountUp
+                      end={adminBalances?.fiatAmount?.totalFiat}
+                      separator=","
+                      decimal="."
+                      decimals={2}
+                    />
+                  </h3>
+                  <ErrorApiText error={isTotalPortfolioError} />
+                </div>
+
+                <Wallets
+                  walletsArray={adminBalances?.userBalances}
+                  error={isAdminBalancesError}
+                  heading="Crypto Wallets"
+                  loading={isAdminBalancesLoading}
+                />
+              </div>
+            </div>
+            <div className="2.5xl:hidden flex-1 transactions">
+              <RecentTransactions />
+            </div>
+          </div>
+          <div className="2.5xl:hidden">
+            <PortfolioChart
+              isAdmin={user?.role == Role.ADMIN}
+              interval={interval}
+              setInterval={setInterval}
+              chartData={adminBalances?.portfolio}
+              loading={isAdminBalancesLoading}
+              error={isAdminBalancesError}
+              merchantsList={merchantsList}
+              merchant={merchant}
+              setMerchant={setMerchant}
+              getChartData={getAdminChartData}
+            />
+          </div>
+
           {/* Graphs Row */}
 
-          <div className="flex gap-6">
+          <div className="flex xl:flex-row flex-col gap-6">
             {isMerchantHasMinimumAccess && (
-              <div className="flex-1 financialSummary">
+              <div className="xl:w-1/2 financialSummary">
                 <MerchantSummary merchantsList={merchantsList} />
               </div>
             )}
 
-            <div className="flex-1 feeSummary">
+            <div className="xl:w-1/2 feeSummary">
               <FeeSummaryGraph />
             </div>
           </div>
 
-          <div className="flex items-stretch gap-6">
+          <div className="2.5xl:flex items-stretch gap-6">
             {isMerchantHasMinimumAccess && (
-              <div className="flex-1 merchants">
-                <CustomTable
+              <div className="2.5xl:w-[60%] merchants">
+                <CustomTableV2
                   columns={merchantsColumns}
                   rows={adminMerchantsWalletSummary?.result}
-                  // initialPageSize={5}
+                  initialPageSize={merchantPageSize}
                   rowClickHandler={(row: any) => {
                     router.push(
                       `/merchants/details/${row?.wallet?.company?.owner?.id}`
@@ -428,8 +483,18 @@ const Home = () => {
                       </Link>
                     </div>
                   }
-                  tableWrapperClassName="!min-h-[auto] border h-full  bg-white shadow-md !px-5 py-[30px] !rounded-[28px]"
-                  // pagination
+                  tableWrapperClassName="!min-h-[auto] border h-full  !px-5 py-[30px] !rounded-[28px]"
+                  pagination
+                  serverSidePagination
+                  totalItems={adminMerchantsWalletSummary?.total}
+                  onPageChange={(page) => {
+                    setMerchantPage(page);
+                    getAdminMerchantsWalletSummry(merchantPageSize, page);
+                  }}
+                  onPageSizeChange={(pageSize) => {
+                    setMerchantPageSize(pageSize);
+                    getAdminMerchantsWalletSummry(pageSize, merchantPage);
+                  }}
                   columnClassName="max-w-[250px] !py-[19.5px]"
                   loading={isAdminMerchantsWalletSummaryLoading}
                 />
@@ -438,7 +503,7 @@ const Home = () => {
             )}
 
             {isTransactionHasMinumumAccess && (
-              <div className="w-[504px] transactions">
+              <div className="hidden 2.5xl:block w-[38%] transactions">
                 <RecentTransactions />
               </div>
             )}

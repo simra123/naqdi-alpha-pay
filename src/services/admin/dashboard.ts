@@ -2,8 +2,12 @@
 
 import api from "@/config/api";
 
-export const getDashboardMerchantsWalletSummaryAdminApi = () => {
-  return () => api.get(`admin-dashboard/merchants-wallet-summary`);
+export const getDashboardMerchantsWalletSummaryAdminApi = (params?: {
+  limit?: number;
+  page?: number;
+  all?: boolean;
+}) => {
+  return () => api.get(`admin-dashboard/merchants-wallet-summary`, { params });
 };
 
 export const getDashboardFeeSummaryAdminApi = () => {
