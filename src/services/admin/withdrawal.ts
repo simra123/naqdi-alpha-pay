@@ -52,7 +52,7 @@ export const externalWithdrawalApproveAdminApi = (
   }
 ) => {
   return () =>
-    api.post(`admin/transaction/withdraw/${id}/approve-external`, data);
+    api.patch(`admin/transaction/withdraw/${id}/approve-external`, data);
 };
 
 export const getWithdrawalWalletsApi = (
