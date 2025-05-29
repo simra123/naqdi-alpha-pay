@@ -61,10 +61,9 @@ const ExternalWithdrawalModal = ({
   const handleExternalWithdrawal = async () => {
     await callApiHook({
       apiCall: callWithdrawalApi(
-        externalWithdrawalApproveAdminApi({
-          withdraw_id: withdrawId,
+        externalWithdrawalApproveAdminApi(withdrawId, {
           sender_address: values?.senderAddress,
-          transaction_hash: values?.transactionHash,
+          hash: values?.transactionHash,
           internal_note: values?.internalNote,
         })
       ),

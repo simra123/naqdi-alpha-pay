@@ -236,18 +236,32 @@ const CreateWithdrawalModal = ({
               error={errors.blockchain}
             />
 
-            {balance?.currency && (
-              <div className="mb-1">
-                <p className="font-medium text-black-100">
-                  {balance?.total_amount} {balance?.currency}
-                </p>
-                <p className="font-semibold text-[13px] text-custom-title-gray">
-                  {user?.role == Role.USER
-                    ? "Available Balance"
-                    : "Available Fee"}
-                </p>
-              </div>
-            )}
+            <div className="flex items-center gap-8">
+              {balance?.currency && (
+                <>
+                  <div className="mb-1">
+                    <p className="font-medium text-black-100">
+                      {parseFloat(balance?.total_amount) -
+                        parseFloat(balance.on_hold_amount)}{" "}
+                      {balance?.currency}
+                    </p>
+                    <p className="font-semibold text-[13px] text-custom-title-gray">
+                      {user?.role == Role.USER
+                        ? "Available Balance"
+                        : "Available Fee"}
+                    </p>
+                  </div>
+                  <div className="mb-1">
+                    <p className="font-medium text-black-100">
+                      {balance.on_hold_amount} {balance?.currency}
+                    </p>
+                    <p className="font-semibold text-[13px] text-custom-title-gray">
+                      On Hold Amount
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
 
             <IconField
               value={values.amount}

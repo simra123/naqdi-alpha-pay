@@ -21,6 +21,7 @@ const Chip = ({ status }: Props) => {
     capStatus == "cancel" ||
     capStatus == "cancelled" ||
     capStatus == "withdrawn" ||
+    capStatus == "rejected" ||
     capStatus == "reject"
   ) {
     statusColor = "text-red-chip";
@@ -31,6 +32,7 @@ const Chip = ({ status }: Props) => {
     capStatus == "verified" ||
     capStatus == "confirm" ||
     capStatus == "approved" ||
+    capStatus == "partial completed" ||
     capStatus == "accepted" ||
     capStatus == "200 ok" ||
     capStatus == "resolved"
@@ -47,6 +49,7 @@ const Chip = ({ status }: Props) => {
   if (
     capStatus == "incomplete" ||
     capStatus == "in-progress" ||
+    capStatus == "partial approved" ||
     capStatus == "unverified" ||
     capStatus == "unapproved"
   ) {
