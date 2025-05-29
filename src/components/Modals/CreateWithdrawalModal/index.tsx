@@ -101,7 +101,8 @@ const CreateWithdrawalModal = ({
     if (currentStep == 1) {
       setCurrentSchema(
         getWithdrawalSchema(
-          +balance?.total_amount,
+          parseFloat(balance?.total_amount) -
+            parseFloat(balance.on_hold_amount),
           getSelectedCurrency(values?.blockchain)?.blockchain
         )
       );
