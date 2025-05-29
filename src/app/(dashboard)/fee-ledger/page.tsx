@@ -16,7 +16,12 @@ import CustomTable from "@/components/common/CustomTable";
 
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import {
+  AccessLevelEnum,
+  ModulesEnum,
+  TableColumns,
+  transactionTypes,
+} from "@/constants/types";
 
 import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
@@ -28,6 +33,7 @@ import { getAdminLedgerListApi } from "@/services/admin/feeLedger";
 import { hasMinAccess } from "@/utils/cookies";
 
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import { standardBlockchain, unitName } from "@/constants/blockchains";
 
 const FeeLedger = () => {
   const router = useRouter();
@@ -113,7 +119,7 @@ const FeeLedger = () => {
           setFeeLedgerList(response);
         }
         if (user?.role == Role.ADMIN) {
-          setFeeLedgerList(response);
+          setFeeLedgerList(response?.result);
         }
       },
     });
@@ -121,22 +127,22 @@ const FeeLedger = () => {
   };
 
   const feeLedger_table_columns: TableColumns = [
-    { field: "id", headerName: "ID", sortable: true },
+    { field: "id", headerName: "ID" },
     {
-      field: "type",
+      field: "transaction_request.type",
       headerName: "Transaction Type",
       link(row: any) {
         if (
-          row?.payment_id &&
+          row?.transaction_request?.type == transactionTypes.Deposit &&
           hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
         ) {
-          return `/payments/details/${row?.payment_id}`;
+          return `/payments/details/${row?.transaction_request?.id}`;
         }
         if (
-          row?.withdraw_id &&
+          row?.transaction_request?.type == transactionTypes.Withdraw &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
         ) {
-          return `/withdrawals/details/${row?.withdraw_id}`;
+          return `/withdrawals/details/${row?.transaction_request?.id}`;
         }
       },
       target: "_self",
@@ -169,14 +175,28 @@ const FeeLedger = () => {
         );
       },
     },
-    { field: "transaction_type", headerName: "Currency Type", sortable: true },
-    { field: "unit", headerName: "Currency", sortable: true },
-
-    { field: "received_amount", headerName: "Received Amount", sortable: true },
-    { field: "paid_amount", headerName: "Paid Amount", sortable: true },
-    { field: "fee_amount", headerName: "Fee Amount", sortable: true },
+    { field: "transaction_request.fiat_currency", headerName: "Fiat Currency" },
+    { field: "transaction_request.unit", headerName: "Crypto Currency" },
     {
-      field: "fee",
+      field: "transaction_request.standard",
+      headerName: "Blockchain",
+      dataValidator(value, row: any) {
+        if (value) {
+          return standardBlockchain[value];
+        }
+
+        return unitName[row?.transaction_request?.unit?.toLowerCase()];
+      },
+    },
+
+    { field: "transaction.paid_amount", headerName: "Crypto Paid Amount" },
+    { field: "transaction.net_amount", headerName: "Crypto Net Amount" },
+    { field: "transaction.fee", headerName: "Crypto Fee Amount" },
+    { field: "transaction.fiat_paid_amount", headerName: "Fiat Paid Amount" },
+    { field: "transaction.fiat_net_amount", headerName: "Fiat Net Amount" },
+    { field: "transaction.fiat_fee", headerName: "Fiat Fee Amount" },
+    {
+      field: "transaction_request.fee_value",
       headerName: "Fee (%)",
       sortable: true,
       dataValidator(value, row) {
@@ -184,20 +204,68 @@ const FeeLedger = () => {
       },
     },
     {
-      field: "owner_first_name",
+      field: "fiat_company_ledger.balance_before",
+      headerName: "Company Fiat Before Balance",
+    },
+    {
+      field: "fiat_company_ledger.balance_after",
+      headerName: "Company Fiat After Balance",
+    },
+    {
+      field: "crypto_company_ledger.balance_before",
+      headerName: "Company Crypto Before Balance",
+    },
+    {
+      field: "crypto_company_ledger.balance_after",
+      headerName: "Company Crypto After Balance",
+    },
+    {
+      field: "transaction_request.user.id",
+      headerName: "Merchant ID",
+      link(row: any) {
+        if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
+          return `/merchants/details/${row?.transaction_request?.user?.id}`;
+        }
+      },
+      target: "_self",
+    },
+    {
+      field: "transaction_request.user.first_name",
       headerName: "Merchant First Name",
     },
     {
-      field: "owner_last_name",
+      field: "transaction_request.user.last_name",
       headerName: "Merchant Last Name",
     },
     {
-      field: "owner_email",
+      field: "transaction_request.user.email",
       headerName: "Merchant Email",
     },
     {
-      field: "owner_user_type",
+      field: "transaction_request.user.user_type",
       headerName: "Merchant Type",
+    },
+    {
+      field: "transaction_request.company.owner.id",
+      headerName: "Company Owner ID",
+      link(row: any) {
+        if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
+          return `/merchants/details/${row?.transaction_request.company.owner.id}`;
+        }
+      },
+      target: "_self",
+    },
+    {
+      field: "transaction_request.company.owner.first_name",
+      headerName: "Company Owner First Name",
+    },
+    {
+      field: "transaction_request.company.owner.last_name",
+      headerName: "Company Owner Last Name",
+    },
+    {
+      field: "transaction_request.company.owner.email",
+      headerName: "Company Owner Email",
     },
   ];
 
@@ -292,10 +360,12 @@ const FeeLedger = () => {
           initialPageSize={10}
           rowClickHandler={(row: any) =>
             hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
-            router.push(`/merchants/details/${row?.owner_id}`)
+            router.push(
+              `/merchants/details/${row?.transaction_request?.user?.id}`
+            )
           }
           pagination
-          columnClassName="max-w-[200px]"
+          columnClassName="max-w-[300px]"
           csvData={formatCsvData}
         />
       )}
@@ -311,16 +381,16 @@ const FeeLedger = () => {
             selectable={false}
             onRowClick={(row) => {
               if (
-                row?.payment &&
+                row?.transaction_request?.type == transactionTypes.Deposit &&
                 hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
               ) {
-                router.push(`payments/details/${row.payment?.id}`);
+                router.push(`payments/details/${row?.transaction_request?.id}`);
               }
               if (
-                row?.withdraw &&
+                row?.transaction_request?.type == transactionTypes.Withdraw &&
                 hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
               ) {
-                router.push(`withdrawals/details/${row.withdraw?.id}`);
+                router.push(`withdrawals/details/${row?.transaction_request?.id}`);
               }
             }}
             pagination
