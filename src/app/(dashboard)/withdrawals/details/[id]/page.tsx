@@ -273,9 +273,7 @@ const WithdrawalDetails = ({ params }) => {
         toggleHandler={() => setWithdrawalType(Withdrawal_Type.INTERNAL)}
         refreshHandler={getWithdrawalDetails}
         withdrawId={withdraw_id}
-        blockchain={
-          blockchain_units[withdrawalDetails?.blockchain?.toLowerCase()]
-        }
+        blockchain={withdrawalDetails?.contract_address?.blockchain}
       />
       <ReasonModal
         isOpen={isRejectOpen}

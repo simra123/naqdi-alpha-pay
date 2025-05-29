@@ -10,7 +10,7 @@ export const createAdminWithdrawalApi = (data: {
   standard?: string;
   token: string;
 }) => {
-  return () => api.post(`wallet/fee-withdrawal`, data);
+  return () => api.post(`admin/transaction/fee-withdraw`, data);
 };
 
 export const getAdminWithdrawalsListApi = (params: {
@@ -25,7 +25,12 @@ export const withdrawalRejectAdminApi = (data: {
   withdraw_id: number;
   reason: string;
 }) => {
-  return () => api.post(`wallet/reject-withdraw`, data);
+  return () =>
+    api.patch(
+      `admin/transaction/withdraw/${data.withdraw_id}/reject`,
+      {},
+      { params: { rejection_reason: data.reason } }
+    );
 };
 
 export const withdrawalApproveAdminApi = (data: {
@@ -38,13 +43,16 @@ export const withdrawalApproveAdminApi = (data: {
     });
 };
 
-export const externalWithdrawalApproveAdminApi = (data: {
-  withdraw_id: number;
-  transaction_hash: string;
-  sender_address: string;
-  internal_note?: string;
-}) => {
-  return () => api.post(`/wallet/external-withdraw`, data);
+export const externalWithdrawalApproveAdminApi = (
+  id: number,
+  data: {
+    hash: string;
+    sender_address: string;
+    internal_note?: string;
+  }
+) => {
+  return () =>
+    api.patch(`admin/transaction/withdraw/${id}/approve-external`, data);
 };
 
 export const getWithdrawalWalletsApi = (

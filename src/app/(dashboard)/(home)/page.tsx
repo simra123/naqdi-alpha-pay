@@ -460,7 +460,7 @@ const Home = () => {
 
           <div className="2.5xl:flex items-stretch gap-6">
             {isMerchantHasMinimumAccess && (
-              <div className="2.5xl:w-[60%] merchants">
+              <div className="2.5xl:w-[68%] merchants">
                 <CustomTableV2
                   columns={merchantsColumns}
                   rows={adminMerchantsWalletSummary?.result}
@@ -503,7 +503,7 @@ const Home = () => {
             )}
 
             {isTransactionHasMinumumAccess && (
-              <div className="hidden 2.5xl:block w-[38%] transactions">
+              <div className="hidden 2.5xl:block w-[30%] transactions">
                 <RecentTransactions />
               </div>
             )}
