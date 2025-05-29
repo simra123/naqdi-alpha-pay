@@ -2,8 +2,16 @@
 
 import api from "@/config/api";
 
-export const getDashboardMerchantsAdminApi = () => {
-  return () => api.get(`admin-dashboard/merchants-wallet-summary`);
+export const getDashboardMerchantsWalletSummaryAdminApi = (params?: {
+  limit?: number;
+  page?: number;
+  all?: boolean;
+}) => {
+  return () => api.get(`admin-dashboard/merchants-wallet-summary`, { params });
+};
+
+export const getDashboardFeeSummaryAdminApi = () => {
+  return () => api.get(`admin-dashboard/fee-summary`);
 };
 
 export const getDashboardBalancesAdminApi = (params: {
@@ -12,7 +20,8 @@ export const getDashboardBalancesAdminApi = (params: {
   userId?: number | string;
   all?: boolean;
 }) => {
-  return () => api.get(`admin-dashboard/crypto-wallet-graph`, { params });
+  return () =>
+    api.get(`admin-dashboard/crypto-wallet-graph-fiat-dashboard`, { params });
 };
 
 export const getMerchantFinancialSummaryAdminApi = (

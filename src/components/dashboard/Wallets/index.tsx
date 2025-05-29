@@ -1,7 +1,11 @@
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import PortfolioCard from "@/components/common/PortfolioCard";
-import { unitName } from "@/constants/blockchains";
+import {
+  blockchain_standards,
+  blockchain_units,
+  unitName,
+} from "@/constants/blockchains";
 import { Role } from "@/constants/roles";
 import { AccessLevelEnum, balanceType, ModulesEnum } from "@/constants/types";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -19,6 +23,19 @@ type Props = {
   onHeadingClick?: () => void;
 };
 
+type BlockchainBalance = {
+  unit: string | null;
+  standard: string | null;
+  is_token: boolean;
+  isToken: boolean;
+  blockchain: string;
+  blockchainName: string;
+  network: string;
+  historyData?: any[];
+  total_available_amount: string;
+  amount: string;
+};
+
 const Wallets = ({
   walletsArray,
   onWalletClick,
@@ -30,6 +47,9 @@ const Wallets = ({
   onWithdraw,
 }: Props) => {
   const user = useLocalStorage("user");
+  let cryptoWallets = walletsArray?.filter(
+    (asset) => asset?.type !== balanceType.fiat
+  );
 
   const isWalletHasFullAccess = hasMinAccess(
     ModulesEnum.wallet,
@@ -45,10 +65,37 @@ const Wallets = ({
     ModulesEnum.withdrawal,
     AccessLevelEnum.full
   );
+
+  const getWalletData = (asset: BlockchainBalance) => {
+    let isToken = asset?.is_token || asset?.isToken;
+    let blockchainName = asset?.blockchainName || asset?.blockchain;
+    let unit = isToken
+      ? asset.unit
+      : blockchain_units[blockchainName]?.toUpperCase();
+
+    let standard = isToken ? asset?.standard : blockchain_standards[unit];
+    let coinName = unitName[unit?.toLowerCase()];
+    let currencyHistoryData = asset?.historyData?.map(
+      (item) => item?.rate_open
+    );
+
+    let amount = asset?.total_available_amount || asset?.amount;
+
+    return {
+      isToken,
+      unit,
+      standard,
+      coinName,
+      amount,
+      currencyHistoryData,
+      blockchainName,
+    };
+  };
+
   return (
     <>
       <h3
-        className="mb-2 font-nunito text-p120 2xl:text-h4 cursor-pointer"
+        className="mb-2 font-nunito text-p120 2xl:text-h4"
         onClick={onHeadingClick}
       >
         {heading}
@@ -60,36 +107,35 @@ const Wallets = ({
         } overflow-y-auto portfolio-body`}
       >
         <LoadingApi loading={loading}>
-          {walletsArray?.length > 0 ? (
-            walletsArray?.filter((asset) => asset?.type !== balanceType.fiat)?.map((asset) => {
-              let unit = asset?.unit;
-              let tokenName = `${unit} ${
-                asset?.standard ? `(${asset?.standard})` : ""
-              }`;
-              let coinName = unitName[unit?.toLowerCase()] || "Unknown";
-              let currencyTicker = asset?.standard == "coin" ? unit : tokenName;
-              let currencyHistoryData = asset?.historyData?.map(
-                (item) => item?.rate_open
-              );
-              let depoistBlockchain = asset?.standard
-                ? unit
-                : coinName?.toLowerCase();
+          {cryptoWallets?.length > 0 ? (
+            cryptoWallets?.map((asset) => {
+              const {
+                coinName,
+                isToken,
+                standard,
+                unit,
+                amount,
+                currencyHistoryData,
+              } = getWalletData(asset);
+
               return (
                 <PortfolioCard
                   isAdmin={user?.role == Role.ADMIN}
-                  Balance={asset?.totalAmount || asset?.amount}
+                  Balance={+amount}
                   IconSrc={`/currencies/${coinName?.toLowerCase()}.png`}
                   ChartLineData={currencyHistoryData}
-                  CurrencyName={coinName}
+                  CurrencyName={coinName || unit}
                   isWalletHasFullAccess={isWalletHasFullAccess}
                   isPaymentHasFullAccess={isPaymenttHasFullAccess}
                   isWithdrawalHasFullAccess={isWithdrawalHasFullAccess}
-                  CurrencyTicker={currencyTicker}
-                  onClick={() => onWalletClick(unit?.toUpperCase())}
-                  onRecieve={() =>
-                    onReceive(depoistBlockchain, asset?.standard)
+                  CurrencyTicker={isToken ? `${unit} (${standard})` : unit}
+                  onClick={() =>
+                    onWalletClick && onWalletClick(unit?.toUpperCase())
                   }
-                  onSend={() => onWithdraw(currencyTicker)}
+                  onRecieve={() =>
+                    onReceive(unit?.toLowerCase(), asset?.standard)
+                  }
+                  onSend={() => onWithdraw(unit?.toLowerCase())}
                   onTransfer={() => {}}
                 />
               );

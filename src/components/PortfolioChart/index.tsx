@@ -12,6 +12,7 @@ import { Role } from "@/constants/roles";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { hasMinAccess } from "@/utils/cookies";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import clsx from "clsx";
 
 // Custom plugin for the vertical dashed line
 const crosshairLinePlugin = {
@@ -90,7 +91,7 @@ export const makeChartData = (data: {
 const PortfolioChart = ({
   interval,
   setInterval,
-  unit,
+
   isAdmin,
   merchantsList,
   merchant,
@@ -102,7 +103,7 @@ const PortfolioChart = ({
 }: {
   interval: string;
   setInterval: any;
-  unit: string;
+
   isAdmin?: boolean;
   merchantsList?: any[];
   merchant?: string;
@@ -120,7 +121,7 @@ const PortfolioChart = ({
   const user = useLocalStorage("user");
   useEffect(() => {
     getChartData();
-  }, [interval, unit, merchant]);
+  }, [interval, merchant]);
 
   const handleChange = (e) => {
     const { value } = e.target;
@@ -266,22 +267,16 @@ const PortfolioChart = ({
     <div className="p-6 border border-purple-10 rounded-[28px]">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <Image
-            src={
-              unitName[unit?.toLowerCase()]
-                ? `/currencies/${unitName[
-                    unit?.toLowerCase()
-                  ]?.toLowerCase()}.png`
-                : `/avatar.png`
-            }
+          {/* <Image
+            src={`/avatar.png`}
             alt="Currency"
             height={50}
             width={50}
             className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
-          />
+          /> */}
           <h3 className="font-nunito text-p120 2xl:text-h4">
             {user?.role == Role.USER
-              ? unitName[unit?.toLowerCase()] || "Portfolio"
+              ? "Portfolio"
               : merchant == "ALL"
               ? "Crypto Wallets"
               : "Merchant Wallets"}{" "}
@@ -289,7 +284,12 @@ const PortfolioChart = ({
           </h3>
         </div>
         <div className="flex justify-end gap-2">
-          <div className="2xl:hidden block">
+          <div
+            className={clsx({
+              "2xl:hidden block": !isAdmin,
+              "3.75xl:hidden": isAdmin,
+            })}
+          >
             <IconSelectBox
               options={[
                 { label: "Daily", value: "daily" },
@@ -304,12 +304,17 @@ const PortfolioChart = ({
               value={interval}
             />
           </div>
-          <div className="hidden 2xl:flex gap-2 md:gap-4">
+          <div
+            className={clsx("items-center gap-2 md:gap-4", {
+              "hidden 2xl:flex": !isAdmin,
+              "hidden 3.75xl:flex": isAdmin,
+            })}
+          >
             {["daily", "weekly", "monthly", "lifetime"].map((int) => (
               <button
                 key={int}
                 onClick={() => setInterval(int)}
-                className={`px-4 py-2 text-subtitle lg:text-base  rounded-full ${
+                className={`px-4 py-2 text-subtitle rounded-full ${
                   interval === int
                     ? "bg-purple-500 text-white"
                     : "bg-gray-200 text-gray-800"
@@ -326,16 +331,7 @@ const PortfolioChart = ({
                 wrapperClassName="!m-0"
                 inputContainerClassName="!rounded-full py-3 min-w-[100px]"
                 optionsClassName="!right-0 !w-[240px]"
-                options={[
-                  { label: "All", value: "ALL" },
-                  ...merchantsList?.map((item) => {
-                    return {
-                      // label: `${item?.first_name} ${item?.last_name}`,
-                      label: item?.username,
-                      value: item?.userId,
-                    };
-                  }),
-                ]}
+                options={[{ label: "All", value: "ALL" }, ...merchantsList]}
                 onChange={handleChangeMerchant}
                 value={merchant}
               />

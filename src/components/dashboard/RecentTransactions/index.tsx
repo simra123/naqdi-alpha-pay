@@ -11,10 +11,12 @@ import { getLatestTransactionsByAdminApi } from "@/services/admin/transaction";
 import { getRecentTransactionsApi } from "@/services/transaction";
 import { callApiHook } from "@/utils/apifuncs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const RecentTransactions = () => {
   const user = useLocalStorage("user");
+  const router = useRouter();
   const [recentTransactions, setRecentTransactions] = useState<[]>([]);
   const [
     isRecentTransactionsLoading,
@@ -32,11 +34,9 @@ const RecentTransactions = () => {
           : getLatestTransactionsByAdminApi({ page: 1, limit: 5 })
       ),
       successCallBack: (response: any) => {
-        setRecentTransactions(
-          user?.role == Role.USER
-            ? response
-            : response?.data?.recentTransactions
-        );
+        const transactions =
+          user?.role == Role.USER ? response : response?.data;
+        setRecentTransactions(transactions ? transactions.slice(0, 5) : []);
       },
     });
   };
@@ -65,23 +65,42 @@ const RecentTransactions = () => {
                   user?.role == Role.ADMIN ? (
                     <div className="2xl:max-w-[220px] overflow-hidden text-ellipsis whitespace-nowrap max-w=[180px] [direction:rtl] [text-align:left]">
                       <span className="text-button 2xl:text-p120">
-                        {transaction?.client?.first_name ||
-                          transaction?.user?.first_name}{" "}
-                        {transaction?.client?.last_name ||
-                          transaction?.user?.last_name}
+                        {transaction?.transaction_request?.user?.first_name}{" "}
+                        {transaction?.transaction_request?.user?.last_name}
                       </span>{" "}
                       <span className="font-medium text-caption text-custom-title-gray">
-                        ({unitName[transaction?.transaction_request?.unit?.toLowerCase()]})
+                        (
+                        {
+                          unitName[
+                            transaction?.transaction_request?.unit?.toLowerCase()
+                          ]
+                        }
+                        )
                       </span>
                     </div>
                   ) : (
-                    unitName[transaction?.transaction_request?.unit?.toLowerCase()]
+                    unitName[
+                      transaction?.transaction_request?.unit?.toLowerCase()
+                    ]
                   )
                 }
                 date={transaction?.created_at}
-                direction={transaction?.transaction_request?.type == transactionTypes.Deposit ? "incoming" : "outgoing"}
-                onClick={() => { }}
-                amount={parseFloat(user?.role == Role.ADMIN ? transaction?.paid_amount : transaction?.net_amount).toFixed(3)?.toString()}
+                direction={
+                  transaction?.transaction_request?.type ==
+                  transactionTypes.Deposit
+                    ? "incoming"
+                    : "outgoing"
+                }
+                onClick={() => {
+                  router.push(`/transactions/details/${transaction?.id}`);
+                }}
+                amount={parseFloat(
+                  user?.role == Role.ADMIN
+                    ? transaction?.paid_amount
+                    : transaction?.net_amount
+                )
+                  .toFixed(3)
+                  ?.toString()}
               />
             ))
           ) : !isRecentTransactionsError ? (

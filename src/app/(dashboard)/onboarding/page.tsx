@@ -18,6 +18,7 @@ const Onboarding = () => {
   const dispatch = useDispatch();
   const userState = useSelector((state: any) => state.user.data);
   const user = userState?.userDetails;
+  const company = userState?.company;
 
   const currentStep = useSelector(
     (state: any) => state.onboarding.current_step
@@ -25,8 +26,6 @@ const Onboarding = () => {
   const disabledSteps = useSelector(
     (state: any) => state.onboarding.disabled_steps
   );
-
-
 
   const handleStepChange = (stepName) => () => {
     dispatch(setStep({ current_step: stepName }));
@@ -39,11 +38,11 @@ const Onboarding = () => {
     return currentStep === stepName && <FormComponent />;
   };
 
-
+  console.log({ currentStep, disabledSteps });
 
   return (
     <>
-      <h3 className="text-h3 font-semibold text-blackGrey-100 mb-8">
+      <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3">
         Onboarding
       </h3>
       {/* Header steps */}
@@ -59,10 +58,7 @@ const Onboarding = () => {
           disabled={user}
           onClick={handleStepChange(STEPS.PROFILE)}
         >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
+          <div className="flex items-center gap-2">
             <span className="step-no">1</span>
             <span>Basic Information</span>
           </div>
@@ -75,10 +71,7 @@ const Onboarding = () => {
           disabled={disabledSteps[STEPS.PHONEVALIDATION] || user?.phone_number}
           onClick={handleStepChange(STEPS.PHONEVALIDATION)}
         >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
+          <div className="flex items-center gap-2">
             <span className="step-no">2</span>
             <span> Phone Vaidation </span>
           </div>
@@ -91,10 +84,7 @@ const Onboarding = () => {
           disabled={disabledSteps[STEPS.MFASETUP] || user?.mfa}
           onClick={handleStepChange(STEPS.MFASETUP)}
         >
-          <div
-            className="flex gap-2 
-          items-center"
-          >
+          <div className="flex items-center gap-2">
             <span className="step-no">3</span>
             <span>MFA Setup</span>
           </div>
@@ -113,10 +103,7 @@ const Onboarding = () => {
               }
               onClick={handleStepChange(STEPS.FEESETUP)}
             >
-              <div
-                className="flex gap-2 
-            items-center"
-              >
+              <div className="flex items-center gap-2">
                 <span className="step-no">4</span>
                 <span>Fee Setup</span>
               </div>
@@ -132,10 +119,7 @@ const Onboarding = () => {
               }
               onClick={handleStepChange(STEPS.IDENTITYCHECK)}
             >
-              <div
-                className="flex gap-2 
-            items-center"
-              >
+              <div className="flex items-center gap-2">
                 <span className="step-no">5</span>
                 <span>Identity Check</span>
               </div>
@@ -148,10 +132,7 @@ const Onboarding = () => {
               disabled={disabledSteps[STEPS.KYCAPPROVAL] || user?.kyc_approved}
               onClick={handleStepChange(STEPS.KYCAPPROVAL)}
             >
-              <div
-                className="flex gap-2 
-            items-center"
-              >
+              <div className="flex items-center gap-2">
                 <span className="step-no">6</span>
                 <span>KYC Approval</span>
               </div>
@@ -161,13 +142,10 @@ const Onboarding = () => {
                 "px-4 py-3 header_step_btn  flex-1" +
                 returnActiveStep(STEPS.FEESCHEDULE)
               }
-              disabled={disabledSteps[STEPS.FEESCHEDULE] || user?.fees}
+              disabled={disabledSteps[STEPS.FEESCHEDULE] || company?.fee}
               onClick={handleStepChange(STEPS.FEESCHEDULE)}
             >
-              <div
-                className="flex gap-2 
-            items-center"
-              >
+              <div className="flex items-center gap-2">
                 <span className="step-no">7</span>
                 <span>Fee Schedule</span>
               </div>

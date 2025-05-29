@@ -18,7 +18,7 @@ const isNonFunctionalRoute = (pathname: string) =>
 const isWithOutFeeRoute = (pathname: string) =>
   wihtoutFeeUserRoutes.some((route) => pathname.startsWith(route));
 
-const hasFee = (user) => user?.userDetails && user?.userDetails?.fees;
+const hasFee = (user) => user?.company && user?.company?.fee;
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

@@ -23,14 +23,12 @@ export const getProfitPercentageApi = () => {
 
 export const getPortfolioActivityChartApi = ({
   duration,
-  unit,
 }: {
   duration: string;
-  unit: string;
 }) => {
   return () =>
     api.get(`merchant-dashboard/portfolio-activity`, {
-      params: { duration, unit },
+      params: { duration },
     });
 };
 

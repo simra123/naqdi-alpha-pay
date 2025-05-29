@@ -176,7 +176,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     if (
       user?.role == Role.ADMIN ||
       (user?.parentUser && user?.userDetails?.mfa) ||
-      (!user?.parentUser && user?.userDetails && user?.userDetails?.fees)
+      (!user?.parentUser && user?.company && user?.company?.fee)
     ) {
       return nav_items;
     } else {
