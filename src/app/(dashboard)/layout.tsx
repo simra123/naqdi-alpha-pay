@@ -17,6 +17,7 @@ import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
 import { Role } from "@/constants/roles";
+import { error } from "console";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
@@ -59,6 +60,8 @@ const DashboardLayout = ({ children }) => {
   if (!isAuthenticated) {
     return router.push("/login");
   }
+
+  throw {message: "Testing"};
 
   return (
     <>
