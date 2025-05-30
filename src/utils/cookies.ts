@@ -1,6 +1,19 @@
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import Cookies from "js-cookie";
 
+export const getLocalStorageValue = (key: string): any => {
+  const raw = Cookies.get(key);
+
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error(`Failed to parse cookie value for key "${key}":`, err);
+    return null;
+  }
+};
+
 export const updateMfaInCookie = (newMfaValue) => {
   // Get the current userDetails cookie
   let user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;

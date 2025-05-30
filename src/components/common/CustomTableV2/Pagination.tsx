@@ -10,7 +10,7 @@ import {
   MdNavigateBefore,
   MdNavigateNext,
 } from "react-icons/md";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 
 const getPaginationPages = (
@@ -48,7 +48,7 @@ const Pagination = ({
   setCurrentPage,
   createHandler,
 }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const pages = useMemo(
     () => getPaginationPages(currentPage, totalPages),
     [currentPage, totalPages]

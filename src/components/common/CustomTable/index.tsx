@@ -18,7 +18,7 @@ import LoadingApi from "../LoadindApi";
 import Loader from "../Loader";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { TableColumns } from "@/constants/types";
 import { getNestedValue } from "./utils";
 import Link from "next/link";
@@ -560,7 +560,7 @@ const Pagination = ({
   setPageSize,
   createHandler,
 }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
 
   const pages = useMemo(
     () => getPaginationPages(currentPage, totalPages),

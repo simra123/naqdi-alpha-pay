@@ -9,7 +9,7 @@ import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { generateCSVApi } from "@/services/common";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
 import { getSubusersApi } from "@/services/auth";
 import { getSubAdminsApi } from "@/services/admin/auth";
@@ -41,7 +41,7 @@ const userSettings_table_columns: TableColumns = [
 
 const Users = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isCreateOpen, setCreateOpen] = useState(false);
 
   const [subUsersList, setSubUsersList] = useState({ limit: 0, users: [] });

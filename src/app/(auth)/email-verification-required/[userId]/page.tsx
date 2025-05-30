@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 
-const page = ({ params }) => {
+const EmailVerificatonPage = ({ params }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -92,4 +92,4 @@ const page = ({ params }) => {
   );
 };
 
-export default page;
+export default EmailVerificatonPage;

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
@@ -36,7 +36,7 @@ const unpaidStatuses = ["Pending", "Cancel", "New"];
 
 const DepositDetails = ({ params }) => {
   const paymentId = params?.id;
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
 
   const [payment, setPayment] = useState(null);

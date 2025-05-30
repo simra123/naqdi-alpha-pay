@@ -31,7 +31,7 @@ import {
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
 import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { MdInfo } from "react-icons/md";
@@ -67,7 +67,7 @@ const CreateWithdrawalModal = ({
   blockchain,
 }: Props) => {
   const dispatch = useDispatch();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [supportedCurrencies, setSupportedCurrencies] = useState<any>([]);
   const [balance, setBalance] = useState<any>({});
   const [fee, setFee] = useState<null | FeeState>(null);

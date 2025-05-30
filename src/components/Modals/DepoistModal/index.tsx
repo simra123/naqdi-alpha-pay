@@ -22,7 +22,7 @@ import IconSelectBox from "../../common/IconSelectBox";
 import LoaderButton from "../../common/LoaderButton";
 import Details from "@/components/common/Details";
 import { createPaymentDepositApi } from "@/services/payments";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import IconField from "@/components/common/IconField";
 import { roundToPrecision } from "@/utils/math";
 import Checkbox from "@/components/common/CheckBox";
@@ -64,7 +64,7 @@ const DepositModal = ({
   onSuccessCallback,
   type,
 }: DepositProps) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
     useApi();
   const [networks, setNeworks] = useState<Record<string, Network[]>>({});

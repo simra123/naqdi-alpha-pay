@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import {
   DashboardIcon,
   DoubleLeftIcon,
@@ -161,11 +161,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
-  const userCookie = useLocalStorage("user");
+  const userCookie = getLocalStorageValue("user");
+
+  const reduxUser = useSelector((state: any) => state.user.data);
+
   const user =
-    userCookie && userCookie?.role == Role.ADMIN
-      ? userCookie
-      : useSelector((state: any) => state.user.data);
+    userCookie && userCookie?.role === Role.ADMIN ? userCookie : reduxUser;
 
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);

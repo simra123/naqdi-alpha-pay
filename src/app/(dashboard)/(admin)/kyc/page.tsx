@@ -15,7 +15,7 @@ import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { getPermission } from "@/utils/cookies";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
@@ -56,7 +56,7 @@ const columns: TableColumns = [
 
 const KYCUsersPage = () => {
   const router = useRouter();
-  const currentUser = useLocalStorage("user");
+  const currentUser = getLocalStorageValue("user");
   const [usersList, setUsersList] = useState([]);
   const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({
     initailLoading: true,

@@ -6,7 +6,7 @@ import { Role } from "@/constants/roles";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { getAllPaymentsByAdminApi } from "@/services/admin/payments";
 import { getClientPaymentsListApi } from "@/services/payments";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 import momentTZ from "moment-timezone";
@@ -168,7 +168,7 @@ const paymentsList_table_columns: TableColumns = [
 
 const Deposits = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [paymentsList, setPaymentsList] = useState<ListApiResponse | any>({
     result: [],
   });

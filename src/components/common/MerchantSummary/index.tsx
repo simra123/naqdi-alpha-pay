@@ -10,7 +10,7 @@ import { callApiHook } from "@/utils/apifuncs";
 import { getMerchantFinancialSummaryAdminApi } from "@/services/admin/dashboard";
 import LoadingApi from "../LoadindApi";
 import ErrorApiText from "../ErrorApiText";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import { getMyFinancialSummaryApi } from "@/services/dashboard";
 
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function MerchantSummary({ merchantsList }: Props) {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const isAdmin = user?.role == Role.ADMIN;
   const [selctedMerchant, setSelectedMerchant] = useState(null);
   const [financialSummary, setFinancialSummary] = useState(null);

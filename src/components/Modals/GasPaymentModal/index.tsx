@@ -14,7 +14,7 @@ import {
   addFeeStaticWalletAdminApi,
   addFeeVirtualWalletAdminApi,
 } from "@/services/admin/payments";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Fiats } from "@/constants/fiat";
 import { WalletType } from "@/constants/types";
 import useFormValidation from "@/hooks/useFormValidation";
@@ -41,7 +41,7 @@ const GasPaymentModal = ({
   walletAddress,
   blockchain,
 }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [paymentDetails, setPaymentDetails] = useState<null | any>(null);
   const [
     isGasPaymentLoading,

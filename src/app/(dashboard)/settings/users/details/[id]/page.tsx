@@ -15,14 +15,14 @@ import {
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import { hasMinAccess } from "@/utils/cookies";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [userDetails, setUserDetails] = useState<null | any>(null);

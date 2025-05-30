@@ -11,7 +11,7 @@ import { setStep } from "@/store/slices/onboarding.slice";
 import { STEPS } from "@/constants/onboarding";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import useGetUserDetaiils from "@/hooks/useGetUserDetaiils";
 
 
@@ -32,7 +32,7 @@ const initialValues = {
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
-  const user: any = useLocalStorage("user");
+  const user: any = getLocalStorageValue("user");
   const userDetails = useSelector((state: any) => state.user.data);
   const { getUserDetails } = useGetUserDetaiils();
   const [isProfileLoading, isProfileError, callProfileApi] = useApi();

@@ -15,7 +15,7 @@ import { ChangePasswordSchema } from "@/models/profilePage";
 import useFormValidation from "@/hooks/useFormValidation";
 import { ChangePassowordApi } from "@/services/auth";
 import { ChangePassowordAdminpi } from "@/services/admin/auth";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import { MdInfo, MdLock } from "react-icons/md";
 
@@ -33,7 +33,7 @@ const initialValues = {
 
 const ChangePasswordModal = ({ isOpen, toggleHandler }: Props) => {
   const dispatch = useDispatch();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [misMatchError, setMisMatchError] = useState("");
   const [
     isChangePasswordLoading,
