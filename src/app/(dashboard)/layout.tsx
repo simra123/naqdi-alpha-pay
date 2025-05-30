@@ -61,8 +61,6 @@ const DashboardLayout = ({ children }) => {
     return router.push("/login");
   }
 
-  throw {message: "Testing"};
-
   return (
     <>
       <div className="md:flex min-h-screen max-h-screen md:overflow-hidden">
