@@ -49,8 +49,7 @@ const columns: TableColumns = [
     field: "kycStatus",
     headerName: "Status",
     dataValidator(value) {
-      const status = value ? "Approved" : "Unapproved";
-      return <Chip status={status} />;
+      return <Chip status={value} />;
     },
   },
 ];
@@ -80,7 +79,7 @@ const KYCUsersPage = () => {
             email: data?.user?.email,
             phone: data?.phone_number,
             country: data?.country,
-            kycStatus: data?.kyc_approved,
+            kycStatus: data?.kyc_status,
             fees: data?.fees ? `${data?.fees} %` : "_",
             userType: data?.user?.user_type,
           };
