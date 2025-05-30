@@ -12,28 +12,25 @@ const Error = ({
 }) => {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error);
+    console.log({ error, message: "React Error Boundry" });
   }, [error]);
 
   return (
-    <div className="p-10 bg-[#FAFAFA] h-dvh">
-      <div className="bg-white shadow-sm h-full p-6 md:p-16">
+    <div className="flex justify-center items-center bg-[url('/error-bg.png')] bg-no-repeat bg-left-bottom h-dvh">
+      <div>
         <img
           src="/404.png"
           alt="404"
-          className="max-w-[90%] w-[667px] mx-auto"
+          className="mx-auto w-[580px] max-w-[90%]"
         />
-        <div className="text-center text-black-100">
-          <p className="font-medium text-h3 mt-16">
-            Oops! <span className="text-red-button"> {error.message} </span>
+        <div className="text-black-100 text-center">
+          <p className="mt-16 font-medium text-h3">
+            <span className="text-red-button"> {error.message} </span>
           </p>
-          <p className="font-medium text-p122 mt-4">
-            Remote developers with strong technical and communication skills at
-            unbeatable prices, ready to work in your timezone.
-          </p>
-          <div className="mx-auto w-[310px] mt-12">
+          <p className="mt-4 font-medium text-p122">Something went wrong</p>
+          <div className="mx-auto mt-12 w-[310px]">
             <LoaderButton
-              content={"Reset"}
+              content={"Go to Home"}
               variant="contained"
               onClick={reset}
             />
