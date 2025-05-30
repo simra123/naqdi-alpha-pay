@@ -16,21 +16,21 @@ const Error = ({
   }, [error]);
 
   return (
-    <div className="bg-[#FAFAFA] p-10 h-dvh">
-      <div className="bg-white shadow-sm p-6 md:p-16 h-full">
+    <div className="flex justify-center items-center bg-[url('/error-bg.png')] bg-no-repeat bg-left-bottom h-dvh">
+      <div>
         <img
           src="/404.png"
           alt="404"
-          className="mx-auto w-[667px] max-w-[90%]"
+          className="mx-auto w-[580px] max-w-[90%]"
         />
         <div className="text-black-100 text-center">
           <p className="mt-16 font-medium text-h3">
-            Oops! <span className="text-red-button"> {error.message} </span>
+            <span className="text-red-button"> {error.message} </span>
           </p>
           <p className="mt-4 font-medium text-p122">Something went wrong</p>
           <div className="mx-auto mt-12 w-[310px]">
             <LoaderButton
-              content={"Reset"}
+              content={"Go to Home"}
               variant="contained"
               onClick={reset}
             />
