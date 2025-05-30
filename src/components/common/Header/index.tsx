@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { capitalize } from "@/utils/dataFormatters";
 
 import IconField from "../IconField";
@@ -24,7 +24,7 @@ import { Role } from "@/constants/roles";
 import { clearApiCache } from "@/store/slices/apiCache.slice";
 
 const Header = ({ navHandler }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
   const dispatch = useDispatch();
 

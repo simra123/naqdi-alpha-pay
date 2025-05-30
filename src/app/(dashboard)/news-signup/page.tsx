@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { Role } from "@/constants/roles";
@@ -40,7 +40,7 @@ const newsletter_table_columns = [
 ];
 
 const NewsLetterSignups = () => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
 
   const [NewsLetterUsers, setNewsLetterUsers] = useState([]);
   const [isCSVLoading, isCSVError, callCSVApi] = useApi();

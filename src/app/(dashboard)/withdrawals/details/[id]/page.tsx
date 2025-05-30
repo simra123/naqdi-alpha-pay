@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
@@ -42,7 +42,7 @@ import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transac
 import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const WithdrawalDetails = ({ params }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const dispatch = useDispatch();
   const router = useRouter();
   const [currentWalletsPage, setCurrentWalletsPage] = useState(1);

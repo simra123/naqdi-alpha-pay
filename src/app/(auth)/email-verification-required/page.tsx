@@ -14,7 +14,7 @@ import IconField from "@/components/common/IconField";
 import { MdEmail } from "react-icons/md";
 
 
-const page = () => {
+const EmailVerificationPage = () => {
   const router = useRouter();
   const email = decodeURIComponent(useSearchParams().get("email") || "");
   const [isResendLoading, isResendError, callResendApi] = useApi();
@@ -135,4 +135,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default EmailVerificationPage;

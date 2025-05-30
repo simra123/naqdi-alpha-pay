@@ -10,7 +10,7 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 
 import { roundToPrecision } from "@/utils/math";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 
 import Details from "@/components/common/Details";
@@ -40,7 +40,7 @@ const TransactionDetails = ({ params }) => {
   const tranascionId = params?.id;
   const dispatch = useDispatch();
 
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [transactionDetails, setTransactionDetails] = useState<any>({});
   const [
     isTransactionDetailsLoading,

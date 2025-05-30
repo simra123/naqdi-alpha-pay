@@ -8,7 +8,7 @@ import { userDetailsApi } from "@/services/user";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useRouter } from "next/navigation";
 import LoaderButton from "@/components/common/LoaderButton";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { updatedOnboardingCookies } from "@/utils/cookies";
 
 const FeeSchedule = () => {

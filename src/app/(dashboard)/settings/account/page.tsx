@@ -7,7 +7,7 @@ import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 import ChangePasswordModal from "@/components/Modals/ChangePasswordModal";
 import Details from "@/components/common/Details";
 import LoaderButton from "@/components/common/LoaderButton";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
@@ -33,7 +33,7 @@ let initalFormValues = {
 
 const Account = () => {
   const dispatch = useDispatch();
-  const localUser = useLocalStorage("user");
+  const localUser = getLocalStorageValue("user");
   const [isMFaVerified, setIsMfaVerified] = useState(false);
   const [isFeeEditing, setIsFeeEditing] = useState(false);
   const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -44,10 +44,9 @@ const Account = () => {
   const [isGetClientFeeLoading, isGetClientFeeError, callGetClientFeeApi] =
     useApi({ initailLoading: true });
 
-  const user =
-    localUser?.role == Role.ADMIN
-      ? localUser
-      : useSelector((state: any) => state?.user?.data);
+  const reduxUser = useSelector((state: any) => state?.user?.data);
+
+  const user = localUser?.role === Role.ADMIN ? localUser : reduxUser;
 
   // Initialize useFormValidation
   const {
@@ -210,10 +209,7 @@ const Account = () => {
             <>
               <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
                 <Details label="KYC" value={user?.userDetails?.kyc_status} />
-                <Details
-                  label="Admin Fees"
-                  value={user?.company?.fee + "%"}
-                />
+                <Details label="Admin Fees" value={user?.company?.fee + "%"} />
                 <form onSubmit={(e) => handleSubmit(e, setClientFeeHandler)}>
                   <Details
                     label="Client Fees"

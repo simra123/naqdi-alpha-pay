@@ -10,7 +10,7 @@ import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { createPrivateTicketApi } from "@/services/support";
 import { useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
@@ -29,7 +29,7 @@ const Support = () => {
   const front = useRef(null);
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isTicketLoading, isTicketError, callCreateTicketApi] = useApi();
 
   const {

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 
@@ -37,7 +37,7 @@ import { standardBlockchain, unitName } from "@/constants/blockchains";
 
 const FeeLedger = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [FeeLedgerList, setFeeLedgerList] = useState<ListApiResponse | any>(
     user?.role == Role.USER ? null : []

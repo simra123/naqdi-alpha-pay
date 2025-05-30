@@ -6,7 +6,7 @@ import { unitName } from "@/constants/blockchains";
 import { Role } from "@/constants/roles";
 import { transactionTypes } from "@/constants/types";
 import { useApi } from "@/hooks/useApi";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { getLatestTransactionsByAdminApi } from "@/services/admin/transaction";
 import { getRecentTransactionsApi } from "@/services/transaction";
 import { callApiHook } from "@/utils/apifuncs";
@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 const RecentTransactions = () => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
   const [recentTransactions, setRecentTransactions] = useState<[]>([]);
   const [

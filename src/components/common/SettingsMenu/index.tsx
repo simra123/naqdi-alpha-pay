@@ -9,14 +9,14 @@ import Link from "next/link";
 import { setModal } from "@/store/slices/modal.Slice";
 
 import "./settingsmenu.scss";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 
 import Cookies from "js-cookie";
 
 const SettingsMenu = ({ isOpen, setOpen }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
 
   const openUpgrade = () => {
     setOpen(false);

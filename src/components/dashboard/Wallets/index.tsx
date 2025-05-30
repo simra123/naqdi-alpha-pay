@@ -8,7 +8,7 @@ import {
 } from "@/constants/blockchains";
 import { Role } from "@/constants/roles";
 import { AccessLevelEnum, balanceType, ModulesEnum } from "@/constants/types";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { hasMinAccess } from "@/utils/cookies";
 import React from "react";
 
@@ -46,7 +46,7 @@ const Wallets = ({
   onReceive,
   onWithdraw,
 }: Props) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   let cryptoWallets = walletsArray?.filter(
     (asset) => asset?.type !== balanceType.fiat
   );

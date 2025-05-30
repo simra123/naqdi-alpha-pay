@@ -1,11 +1,11 @@
 import React from "react";
 import { notFound, useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 
 export const withAuth = (Component: any, allowedRoles: string[]) => {
   const AuthComponent = () => {
     const router = useRouter();
-    const user: any = useLocalStorage("user");
+    const user: any = getLocalStorageValue("user");
 
     if (!user) {
       return router.replace("/login");
