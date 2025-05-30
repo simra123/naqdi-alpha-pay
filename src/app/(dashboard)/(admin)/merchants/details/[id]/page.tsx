@@ -173,14 +173,14 @@ const MerchantDetails = ({ params }) => {
       headerName: "Transaction Type",
       sortable: true,
       dataValidator(value, row: any) {
-        return row?.payment ? "Payment" : "Withdrawal";
+        return row?.payment ? "Deposit" : "Withdrawal";
       },
       link(row: any) {
         if (
           row?.payment &&
           hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
         ) {
-          return `/payments/details/${row?.payment?.id}`;
+          return `/deposits/details/${row?.payment?.id}`;
         }
         if (
           row?.withdrawal &&
@@ -305,9 +305,8 @@ const MerchantDetails = ({ params }) => {
             }
             pagination={viewMode == ViewMode.TRANSACTIONS}
             initialPageSize={5}
-            rowClickHandler={(row: { id: string; payment: { id: string } }) => {
-              let type = row?.payment?.id ? "Payment" : "Withdrawal";
-              router.push(`/transactions/details/${row?.id}?type=${type}`);
+            rowClickHandler={(row: { id: string }) => {
+              router.push(`/transactions/details/${row?.id}`);
             }}
             tableWrapperClassName="!min-h-[auto]"
             rows={

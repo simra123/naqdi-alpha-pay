@@ -166,7 +166,7 @@ const paymentsList_table_columns: TableColumns = [
   },
 ];
 
-const Payments = () => {
+const Deposits = () => {
   const router = useRouter();
   const user = useLocalStorage("user");
   const [paymentsList, setPaymentsList] = useState<ListApiResponse | any>({
@@ -337,7 +337,7 @@ const Payments = () => {
       />
       <div className="flex justify-between items-center">
         <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
-          Payments
+          Deposits
         </h3>
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
           {PermissionAccess(
@@ -345,7 +345,7 @@ const Payments = () => {
             ModulesEnum.payment,
             AccessLevelEnum.full
           )({
-            content: "New Payment",
+            content: "New Deposit",
             className: "px-16",
             variant: "contained",
             onClick: toggelPaymentModal,
@@ -360,20 +360,12 @@ const Payments = () => {
             columns={paymentsList_table_columns}
             rows={paymentsList?.result}
             csv={true}
-            tableName="Payments"
+            tableName="deposits"
             initialPageSize={10}
             rowClickHandler={(row: any) =>
-              router.push(`payments/details/${row?.id}`)
+              router.push(`/deposits/details/${row?.id}`)
             }
             pagination
-            // onPageChange={(page, pageSize) =>
-            //   getPayments({ pageValue: page, limitValue: pageSize })
-            // }
-            // onPageSizeChange={(pageSize) =>
-            //   getPayments({ pageValue: 1, limitValue: pageSize })
-            // }
-            // serverSidePagination
-            // totalItems={paymentsList?.total}
             columnClassName="max-w-[250px]"
             loading={isPaymentLoading}
             csvData={formatCsvData}
@@ -390,7 +382,7 @@ const Payments = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             onRowClick={(row) => {
-              router.push(`payments/details/${row?.id}`);
+              router.push(`/deposits/details/${row?.id}`);
             }}
             selectable={false}
             pagination
@@ -398,7 +390,7 @@ const Payments = () => {
             loading={isPaymentLoading}
             totalItems={paymentsList?.total}
             fetchData={getPayments}
-            tableName="payments"
+            tableName="deposits"
           />
         </div>
       </RenderRoleBased>
@@ -408,7 +400,7 @@ const Payments = () => {
 };
 
 export default PermissionAccess(
-  Payments,
+  Deposits,
   ModulesEnum.payment,
   AccessLevelEnum.read
 );

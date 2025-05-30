@@ -34,13 +34,6 @@ const UserDetails = ({ params }) => {
       initailLoading: true,
     }
   );
-  // const [permissions, setPermissions] = useState({
-  //   integrations: "none",
-  //   payments: "none",
-  //   payouts: "none",
-  //   users: "none",
-  //   withdrawals: "none",
-  // });
 
   const fetchUserDetails = async () => {
     await callApiHook({
@@ -111,7 +104,7 @@ const UserDetails = ({ params }) => {
   };
 
   return (
-    <div className="flex flex-col bg-white shadow-sm sm:p-10 px-4 rounded-medium">
+    <div className="flex flex-col bg-white shadow-sm rounded-medium">
       <DeleteModal
         handleConfirm={deleteSubUser}
         isOpen={isDeleteOpen}
@@ -160,7 +153,9 @@ const UserDetails = ({ params }) => {
                   key={item?.id}
                 >
                   <div className="md:col-span-1 lg:col-span-2 min-w-20 text-[14px] text-black-100 md:text-button capitalize">
-                    {item?.permission?.module}
+                    {item?.permission?.module == "payment"
+                      ? "deposit"
+                      : item?.permission?.module}
                   </div>
                   <div className="md:col-span-1 text-center">
                     {renderRadioButton(

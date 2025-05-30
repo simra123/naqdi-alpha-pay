@@ -82,9 +82,9 @@ const nav_items: NavItem[] = [
   //   roles: [Role.ADMIN],
   // },
   {
-    name: "Payments",
+    name: "Deposits",
     icon: PaymentsIcon,
-    path: "/payments",
+    path: "/deposits",
     roles: [Role.ADMIN, Role.USER],
     module: ModulesEnum.payment,
   },

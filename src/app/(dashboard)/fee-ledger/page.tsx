@@ -136,7 +136,7 @@ const FeeLedger = () => {
           row?.transaction_request?.type == transactionTypes.Deposit &&
           hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
         ) {
-          return `/payments/details/${row?.transaction_request?.id}`;
+          return `/deposits/details/${row?.transaction_request?.id}`;
         }
         if (
           row?.transaction_request?.type == transactionTypes.Withdraw &&
@@ -384,13 +384,13 @@ const FeeLedger = () => {
                 row?.transaction_request?.type == transactionTypes.Deposit &&
                 hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
               ) {
-                router.push(`payments/details/${row?.transaction_request?.id}`);
+                router.push(`/deposits/details/${row?.transaction_request?.id}`);
               }
               if (
                 row?.transaction_request?.type == transactionTypes.Withdraw &&
                 hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
               ) {
-                router.push(`withdrawals/details/${row?.transaction_request?.id}`);
+                router.push(`/withdrawals/details/${row?.transaction_request?.id}`);
               }
             }}
             pagination

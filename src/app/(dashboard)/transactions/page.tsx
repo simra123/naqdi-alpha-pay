@@ -347,7 +347,7 @@ const Transactions = () => {
             loading={isTransactionsLoading}
             totalItems={transactonsList?.total}
             fetchData={getTransactions}
-            tableName="payments"
+            tableName="transactions"
           />
         </div>
       </RenderRoleBased>

@@ -200,9 +200,7 @@ const DepositModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="mb-6 font-bold text-xl">
-        {type == "payment" ? "Add Payment" : "Deposit Address"}
-      </h2>
+      <h2 className="mb-6 font-bold text-xl">Add Deposit</h2>
       {!depositAddress && (
         <form onSubmit={(event) => handleSubmit(event, createDepoistAddress)}>
           <IconSelectBox
@@ -305,9 +303,7 @@ const DepositModal = ({
                 type="submit"
                 loading={isDepoistLoading}
                 className="mt-6"
-                content={
-                  type == "payment" ? "Create" : `Create Deposit Address`
-                }
+                content={"Create"}
                 variant="contained"
               />
             </div>
@@ -330,7 +326,9 @@ const DepositModal = ({
               <p className="font-bold text-caption text-custom-title-gray">
                 Requested Amount ({depositAddress?.fiat_currency})
               </p>
-              <p className="font-medium text-black-100">{depositAddress?.fiat_initial_amount}</p>
+              <p className="font-medium text-black-100">
+                {depositAddress?.fiat_initial_amount}
+              </p>
             </div>
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
@@ -351,7 +349,7 @@ const DepositModal = ({
 
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Payment Amount ({depositAddress?.unit})
+                Deposit Amount ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
                 {roundToPrecision(+depositAddress?.initial_amount, 10)}
