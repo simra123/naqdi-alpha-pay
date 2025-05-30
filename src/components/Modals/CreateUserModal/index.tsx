@@ -444,7 +444,7 @@ const CreateUserModal = ({
 
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
-                <span className="font-medium text-base">Payments</span>
+                <span className="font-medium text-base">Deposits</span>
                 <SwitchButton
                   handleToggle={togglePermission(
                     ModulesEnum?.payment,
