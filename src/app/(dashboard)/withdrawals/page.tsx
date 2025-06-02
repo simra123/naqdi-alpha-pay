@@ -314,48 +314,50 @@ const Withdrawals = () => {
   };
 
   const formatCsvData = useMemo(() => {
-    const columnOrderUser: ColumnConfig<any>[] = [
+    const columnOrder: ColumnConfig<any>[] = [
       { key: "id" },
-      { key: "withdrawal_uuid" },
-      { key: "requested_amount" },
-      { key: "alphaspay_fee" },
-      { key: "total_requested_amount" },
+      { key: "type" },
+      { key: "status" },
+      { key: "notes" },
+      { key: "rejection_reason" },
+      { key: "initial_amount" },
+      { key: "paid_amount" },
+      { key: "net_amount" },
+      { key: "net_client_amount" },
+      { key: "initial_fee" },
+      { key: "paid_fee" },
+      { key: "initial_client_fee" },
+      { key: "paid_client_fee" },
+      { key: "initial_exchange_rate" },
+      { key: "paid_exchange_rate" },
+      { key: "client_fee_value" },
+      { key: "fee_value" },
       { key: "unit" },
       { key: "standard" },
+      { key: "fee_type" },
+      { key: "client_fee_type" },
+      { key: "fiat_initial_amount" },
+      { key: "fiat_paid_amount" },
+      { key: "fiat_net_amount" },
+      { key: "fiat_net_client_amount" },
+      { key: "fiat_initial_client_fee" },
+      { key: "fiat_paid_client_fee" },
+      { key: "fiat_initial_fee" },
+      { key: "fiat_paid_fee" },
       { key: "recipient_address" },
-      { key: "transaction_type" },
-      { key: "notes" },
-      { key: "reason" },
-      { key: "status" },
-      { key: "user_id" },
+      { key: "fiat_currency" },
       { key: "created_at" },
       { key: "updated_at" },
+      { key: "wallet" },
+      { key: "transactions" },
+      { key: "contract_address" },
     ];
 
-    const columnOrderAdmin: ColumnConfig<any>[] = [
-      { key: "id" },
-      { key: "withdrawal_uuid" },
-      { key: "requested_amount" },
-      { key: "alphaspay_fee" },
-      { key: "total_requested_amount" },
-      { key: "unit" },
-      { key: "standard" },
-      { key: "recipient_address" },
-      { key: "transaction_type" },
-      { key: "notes" },
-      { key: "reason" },
-      { key: "status" },
-      { key: "user_id" },
-      { key: "withdrawalTransactions" },
-      { key: "created_at" },
-      { key: "updated_at" },
-      { key: "user" },
-    ];
+    if (user?.role == Role.ADMIN) {
+      columnOrder.push({ key: "company" }, { key: "user" });
+    }
 
-    return formatCSVDataByColumnOrder(
-      withdrawalsList?.result,
-      user?.role == Role.ADMIN ? columnOrderAdmin : columnOrderUser
-    );
+    return formatCSVDataByColumnOrder(withdrawalsList?.result, columnOrder);
   }, [withdrawalsList]);
 
   useEffect(() => {
