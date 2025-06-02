@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { getUserWithdrawalsListApi } from "@/services/withdrawal";
@@ -185,7 +185,7 @@ const withdrawalsList_table_columns: TableColumns = [
 
 const Withdrawals = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [
     isWithdrawalsListLoading,

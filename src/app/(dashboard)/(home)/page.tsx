@@ -25,7 +25,7 @@ import RecentTransactions from "@/components/dashboard/RecentTransactions";
 
 // Hooks
 import { useApi } from "@/hooks/useApi";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 
 // Services
 import {
@@ -81,7 +81,7 @@ enum ButtonNames {
 type HoverButtonType = ButtonNames;
 
 const Home = () => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const dispatch = useDispatch();
   const router = useRouter();
 

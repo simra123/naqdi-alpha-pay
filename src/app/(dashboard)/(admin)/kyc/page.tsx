@@ -15,7 +15,7 @@ import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { getPermission } from "@/utils/cookies";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
@@ -49,15 +49,14 @@ const columns: TableColumns = [
     field: "kycStatus",
     headerName: "Status",
     dataValidator(value) {
-      const status = value ? "Approved" : "Unapproved";
-      return <Chip status={status} />;
+      return <Chip status={value} />;
     },
   },
 ];
 
 const KYCUsersPage = () => {
   const router = useRouter();
-  const currentUser = useLocalStorage("user");
+  const currentUser = getLocalStorageValue("user");
   const [usersList, setUsersList] = useState([]);
   const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({
     initailLoading: true,
@@ -80,7 +79,7 @@ const KYCUsersPage = () => {
             email: data?.user?.email,
             phone: data?.phone_number,
             country: data?.country,
-            kycStatus: data?.kyc_approved,
+            kycStatus: data?.kyc_status,
             fees: data?.fees ? `${data?.fees} %` : "_",
             userType: data?.user?.user_type,
           };

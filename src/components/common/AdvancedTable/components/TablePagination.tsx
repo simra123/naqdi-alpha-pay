@@ -1,4 +1,4 @@
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import React, { useMemo } from "react";
 import { getPaginationPages } from "../utils";
 import IconButton from "../../IconButton";
@@ -25,7 +25,7 @@ const TablePagination = ({
   onLimitChange,
   createHandler,
 }: Props) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
 
   const pages = useMemo(
     () => getPaginationPages(currentPage, totalPages),

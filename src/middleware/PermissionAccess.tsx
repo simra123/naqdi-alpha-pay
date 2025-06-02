@@ -7,7 +7,7 @@ import {
   ModulesEnum,
   Permissions,
 } from "@/constants/types";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import LoadingScreen from "@/components/common/LoadingScreen";
 
 type WithPermissionProps = {};
@@ -44,8 +44,7 @@ const PermissionAccess = (
     // Get permissions from cookies and parse them
 
 
-    let router = useRouter();
-    const user = useLocalStorage("user");
+    const user = getLocalStorageValue("user");
 
     if (user && user?.permissions) {
       let permissions: Permissions = user?.permissions;

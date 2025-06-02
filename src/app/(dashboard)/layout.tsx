@@ -7,7 +7,7 @@ import Sidebar from "@/components/common/Sidebar";
 
 import Cookies from "js-cookie";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import Header from "@/components/common/Header";
 import { useApi } from "@/hooks/useApi";
@@ -20,7 +20,7 @@ import { Role } from "@/constants/roles";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 

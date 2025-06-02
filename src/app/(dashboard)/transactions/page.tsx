@@ -8,7 +8,7 @@ import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import { generateCSVApi } from "@/services/common";
@@ -29,7 +29,7 @@ import CustomTableV2 from "@/components/common/CustomTableV2";
 const Transactions = () => {
   const router = useRouter();
 
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [transactonsList, setTransactionsList] = useState<
     ListApiResponse | any
   >({ result: [] });
@@ -347,7 +347,7 @@ const Transactions = () => {
             loading={isTransactionsLoading}
             totalItems={transactonsList?.total}
             fetchData={getTransactions}
-            tableName="payments"
+            tableName="transactions"
           />
         </div>
       </RenderRoleBased>

@@ -17,12 +17,12 @@ import {
 import OTPInput from "react-otp-input";
 
 import { updateMfaInCookie } from "@/utils/cookies";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { QRCodeCanvas } from "qrcode.react";
 import { MdInfo } from "react-icons/md";
 
 const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isQRCodeLoading, isQRCodeError, callQRCodeApi] = useApi();
   const [isVerificationLoading, isVerificationError, callVerificationApi] =
     useApi({ notify: true });

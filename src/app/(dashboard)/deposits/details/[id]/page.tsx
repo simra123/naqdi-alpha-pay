@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
@@ -34,9 +34,9 @@ import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const unpaidStatuses = ["Pending", "Cancel", "New"];
 
-const PaymentDetails = ({ params }) => {
+const DepositDetails = ({ params }) => {
   const paymentId = params?.id;
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
 
   const [payment, setPayment] = useState(null);
@@ -191,7 +191,7 @@ const PaymentDetails = ({ params }) => {
       <LoadingApi loading={isPaymentLoading}>
         <div className="flex flex-col bg-white rounded-medium">
           <h3 className="font-semibold text-blackGrey-100 text-h3.5">
-            Payment Details
+            Deposit Details
           </h3>
 
           <ErrorApiText error={isPaymentError}>
@@ -267,18 +267,16 @@ const PaymentDetails = ({ params }) => {
 
             <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
               <PaymentIcon active={false} />
-              <h5 className="font-semibold text-h5 text-purple-500">
-                Payments
-              </h5>
+              <h5 className="font-semibold text-h5 text-purple-500">Amount</h5>
             </div>
 
             <div className="res-2-grid py-6">
               <Details
-                label="Fiat Payment Amount"
+                label="Fiat Deposit Amount"
                 value={`${payment?.fiat_initial_amount} ${payment?.fiat_currency}`}
               />
               <Details
-                label="Crypto Payment Amount "
+                label="Crypto Deposit Amount "
                 value={`${payment?.initial_amount} ${payment?.unit}`}
               />
               <Details
@@ -325,7 +323,7 @@ const PaymentDetails = ({ params }) => {
                     : "Paid"
                 }
               />
-              <Details label="Payment Status" value={payment?.status} />
+              <Details label="Deposit Status" value={payment?.status} />
             </div>
 
             {orderInfo && (
@@ -365,7 +363,7 @@ const PaymentDetails = ({ params }) => {
             }
             rowClickHandler={(row: any) =>
               hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
-              router.push(`/transactions/details/${row?.id}?type=Payment`)
+              router.push(`/transactions/details/${row?.id}`)
             }
             columnClassName="max-w-[250px]"
           />
@@ -381,4 +379,4 @@ const PaymentDetails = ({ params }) => {
   );
 };
 
-export default PaymentDetails;
+export default DepositDetails;

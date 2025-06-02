@@ -9,7 +9,7 @@ import { unitName } from "@/constants/blockchains";
 import Image from "next/image";
 import IconSelectBox from "../common/IconSelectBox";
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { hasMinAccess } from "@/utils/cookies";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import clsx from "clsx";
@@ -118,7 +118,7 @@ const PortfolioChart = ({
     labels?: any[];
   };
 }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   useEffect(() => {
     getChartData();
   }, [interval, merchant]);

@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 
@@ -37,7 +37,7 @@ import { standardBlockchain, unitName } from "@/constants/blockchains";
 
 const FeeLedger = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [FeeLedgerList, setFeeLedgerList] = useState<ListApiResponse | any>(
     user?.role == Role.USER ? null : []
@@ -136,7 +136,7 @@ const FeeLedger = () => {
           row?.transaction_request?.type == transactionTypes.Deposit &&
           hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
         ) {
-          return `/payments/details/${row?.transaction_request?.id}`;
+          return `/deposits/details/${row?.transaction_request?.id}`;
         }
         if (
           row?.transaction_request?.type == transactionTypes.Withdraw &&
@@ -384,13 +384,13 @@ const FeeLedger = () => {
                 row?.transaction_request?.type == transactionTypes.Deposit &&
                 hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
               ) {
-                router.push(`payments/details/${row?.transaction_request?.id}`);
+                router.push(`/deposits/details/${row?.transaction_request?.id}`);
               }
               if (
                 row?.transaction_request?.type == transactionTypes.Withdraw &&
                 hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
               ) {
-                router.push(`withdrawals/details/${row?.transaction_request?.id}`);
+                router.push(`/withdrawals/details/${row?.transaction_request?.id}`);
               }
             }}
             pagination

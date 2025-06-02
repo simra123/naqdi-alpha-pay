@@ -18,7 +18,7 @@ import { createSubuserApi, updateSubuserApi } from "@/services/auth";
 import { createSubAdminApi, updateSubAdminApi } from "@/services/admin/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 
@@ -74,7 +74,7 @@ const CreateUserModal = ({
 }: Props) => {
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   let permissions =
     user?.role == Role.ADMIN ? subAdminPermissions : subUserPermissions;
 
@@ -444,7 +444,7 @@ const CreateUserModal = ({
 
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
-                <span className="font-medium text-base">Payments</span>
+                <span className="font-medium text-base">Deposits</span>
                 <SwitchButton
                   handleToggle={togglePermission(
                     ModulesEnum?.payment,

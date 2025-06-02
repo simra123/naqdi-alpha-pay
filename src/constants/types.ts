@@ -38,7 +38,7 @@ export const ModuleRoutes = {
   [ModulesEnum.wallet]: "/",
   [ModulesEnum.merchant]: "/merchants",
   [ModulesEnum.kyc]: "/kyc",
-  [ModulesEnum.payment]: "/payments",
+  [ModulesEnum.payment]: "/deposits",
   [ModulesEnum.transaction]: "/transactions",
   [ModulesEnum.withdrawal]: "/withdrawals",
   [ModulesEnum.feeLedger]: "/fee-ledger",
