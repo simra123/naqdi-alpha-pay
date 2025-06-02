@@ -4,15 +4,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { getAllTransactionsApi } from "@/services/transaction";
-import { callApiHook, downloadCSV } from "@/utils/apifuncs";
+import { callApiHook } from "@/utils/apifuncs";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
 import { Role } from "@/constants/roles";
 import { getLocalStorageValue } from "@/utils/cookies";
 
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
-import { generateCSVApi } from "@/services/common";
-import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
@@ -277,32 +275,38 @@ const Transactions = () => {
   const formatCsvData = useMemo(() => {
     const columnOrder: ColumnConfig<any>[] = [
       { key: "id" },
-      { key: "payment_transaction_uuid" },
-      { key: "withdraw_transaction_uuid" },
-      { key: "transaction_type" },
-      { key: "transaction_hash" },
+      { key: "paid_amount" },
+      { key: "net_amount" },
+      { key: "net_client_amount" },
+      { key: "hash" },
       { key: "sender_address" },
-      // { key: "transaction_amount" },
-      { key: "amount" },
-      { key: "unit" },
-      { key: "total_amount_received" },
-      { key: "alphaspay_fees" },
-      { key: "client_fee" },
+      { key: "receiver_address" },
       { key: "status" },
-      { key: "createdAt" },
-      { key: "updatedAt" },
-      { key: "client" },
-      { key: "payment" },
-      { key: "withdrawal" },
-      {
-        key: "wallet",
-        format(value, row) {
-          return row?.wallet || row?.clientWallet
-            ? JSON.stringify(row?.wallet || row?.clientWallet)
-            : "-";
-        },
-      },
+      { key: "exchange_rate" },
+      { key: "fee" },
+      { key: "client_fee" },
+      { key: "fiat_paid_amount" },
+      { key: "fiat_net_amount" },
+      { key: "fiat_net_client_amount" },
+      { key: "fiat_fee" },
+      { key: "fiat_client_fee" },
+      { key: "created_at" },
+      { key: "updated_at" },
+      { key: "transaction_request" },
     ];
+
+    if (user?.role == Role.ADMIN) {
+      columnOrder.push(
+        {
+          key: "transaction_request.company",
+          label: "company",
+        },
+        {
+          key: "transaction_request.user",
+          label: "user",
+        }
+      );
+    }
 
     return formatCSVDataByColumnOrder(transactonsList?.result, columnOrder);
   }, [transactonsList]);

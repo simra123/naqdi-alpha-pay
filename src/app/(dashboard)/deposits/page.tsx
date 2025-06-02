@@ -292,34 +292,49 @@ const Deposits = () => {
   const formatCsvData = useMemo(() => {
     const columnOrder: ColumnConfig<any>[] = [
       { key: "id" },
-      { key: "payment_uuid" },
-      { key: "client_id" },
-      { key: "wallet_id" },
-      { key: "payment_type" },
-      { key: "requested_currency" },
-      { key: "requested_amount" },
-      { key: "payment_currency" },
-      { key: "total_amount" },
-      {
-        key: "alphaspay_fees",
-        format(_, row) {
-          return row?.paymentTransaction?.reduce((sum, transaction) => {
-            return +sum + (+transaction.alphaspay_fees || 0);
-          }, 0);
-        },
-      },
-      { key: "payment_currency_amount" },
-      { key: "passthrough" },
-      { key: "notes" },
+      { key: "type" },
       { key: "status" },
-      { key: "wallet" },
-      { key: "paymentTransaction" },
+      { key: "notes" },
+      { key: "rejection_reason" },
+      { key: "initial_amount" },
+      { key: "paid_amount" },
+      { key: "net_amount" },
+      { key: "net_client_amount" },
+      { key: "initial_fee" },
+      { key: "paid_fee" },
+      { key: "initial_client_fee" },
+      { key: "paid_client_fee" },
+      { key: "initial_exchange_rate" },
+      { key: "paid_exchange_rate" },
+      { key: "client_fee_value" },
+      { key: "fee_value" },
+      { key: "unit" },
+      { key: "standard" },
+      { key: "fee_type" },
+      { key: "client_fee_type" },
+      { key: "fiat_initial_amount" },
+      { key: "fiat_paid_amount" },
+      { key: "fiat_net_amount" },
+      { key: "fiat_net_client_amount" },
+      { key: "fiat_initial_client_fee" },
+      { key: "fiat_paid_client_fee" },
+      { key: "fiat_initial_fee" },
+      { key: "fiat_paid_fee" },
+      { key: "customer_ref" },
+      { key: "recipient_address" },
+      { key: "customer_id" },
+      { key: "customer_name" },
+      { key: "customer_email" },
+      { key: "customer_phone_number" },
+      { key: "fiat_currency" },
       { key: "created_at" },
       { key: "updated_at" },
+      { key: "transactions" },
+      { key: "wallet" },
+      { key: "contract_address" },
     ];
-
     if (user?.role == Role.ADMIN) {
-      columnOrder.push({ key: "client" });
+      columnOrder.push({ key: "company" },{ key: "user" });
     }
 
     return formatCSVDataByColumnOrder(paymentsList?.result, columnOrder);

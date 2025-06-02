@@ -276,53 +276,52 @@ const FeeLedger = () => {
   const formatCsvData = useMemo(() => {
     const columnOrderUser: ColumnConfig<any>[] = [
       { key: "id" },
-      { key: "type" },
-      { key: "unit" },
-      { key: "received_amount" },
-      { key: "paid_amount" },
-      { key: "fee_amount" },
-      { key: "fee" },
-      { key: "fee_type" },
-      { key: "transaction_type" },
-      { key: "standard" },
-      { key: "createdAt" },
-      { key: "updatedAt" },
-      { key: "merchant" },
-      { key: "payment" },
-      { key: "withdraw" },
-    ];
-
-    const columnOrderAdmin: ColumnConfig<any>[] = [
-      { key: "id" },
       { key: "created_at" },
       { key: "updated_at" },
-      { key: "fee" },
-      { key: "fee_amount" },
-      { key: "fee_type" },
-      { key: "paid_amount" },
-      { key: "received_amount" },
-      { key: "standard" },
-      { key: "type" },
-      { key: "unit" },
-      { key: "transaction_type" },
-      { key: "merchant_id" },
-      { key: "owner_id" },
-      { key: "owner_first_name" },
-      { key: "owner_last_name" },
-      { key: "owner_email" },
-      { key: "owner_user_type" },
-      { key: "payment_id" },
-      { key: "withdraw_id" },
+      {
+        key: "Type",
+        format(value, row) {
+          return row?.transaction_request?.type;
+        },
+      },
+      {
+        key: "Fee Amount",
+        format(value, row) {
+          return row?.transaction_request?.fiat_paid_fee;
+        },
+      },
+      {
+        key: "Amount",
+        format(value, row) {
+          return row?.transaction_request?.fiat_paid_amount;
+        },
+      },
+      {
+        key: "Fee Comission",
+        format(value, row) {
+          return row?.transaction_request?.fee_value;
+        },
+      },
+      { key: "crypto_company_ledger" },
+      { key: "fiat_company_ledger" },
+      { key: "crypto_wallet_info" },
+      { key: "fiat_wallet_info" },
+      { key: "transaction_request" },
+      { key: "transaction" },
     ];
 
     const isAdmin = user?.role == Role.ADMIN;
 
+    if (isAdmin) {
+      columnOrderUser.push(
+        { key: "transaction_request.company", label: "company" },
+        { key: "transaction_request.user", label: "user" }
+      );
+    }
+
     const rows = isAdmin ? FeeLedgerList : FeeLedgerList?.result;
 
-    return formatCSVDataByColumnOrder(
-      rows,
-      isAdmin ? columnOrderAdmin : columnOrderUser
-    );
+    return formatCSVDataByColumnOrder(rows, columnOrderUser);
   }, [FeeLedgerList]);
 
   const toggleCreateModal = () => {
@@ -384,13 +383,17 @@ const FeeLedger = () => {
                 row?.transaction_request?.type == transactionTypes.Deposit &&
                 hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
               ) {
-                router.push(`/deposits/details/${row?.transaction_request?.id}`);
+                router.push(
+                  `/deposits/details/${row?.transaction_request?.id}`
+                );
               }
               if (
                 row?.transaction_request?.type == transactionTypes.Withdraw &&
                 hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
               ) {
-                router.push(`/withdrawals/details/${row?.transaction_request?.id}`);
+                router.push(
+                  `/withdrawals/details/${row?.transaction_request?.id}`
+                );
               }
             }}
             pagination
