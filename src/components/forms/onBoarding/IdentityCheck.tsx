@@ -80,27 +80,48 @@ const IdentityCheck = () => {
   }, [user]);
 
   const onSubmit = async () => {
-    await callApiHook({
-      apiCall: callSubmitKYCApi(
-        SubmitKYCApi({
-          file_type: values?.documentFormat,
-          front_image: values.document?.front,
-          back_image: values.document?.back,
-          country: values.country,
-        })
-      ),
-      successCallBack: () => {
-        dispatch(
-          setStep({
-            previous_step: STEPS.IDENTITYCHECK,
-            current_step: STEPS.KYCAPPROVAL,
-            next_step: STEPS?.FEESCHEDULE,
+    const frontImage = values.document?.front;
+    const backImage = values.document?.back;
+
+    const isFileOrNotURL = (file: any) => {
+      if (typeof file === "string") {
+        return !file.startsWith("http");
+      }
+      return file instanceof File;
+    };
+
+    if (isFileOrNotURL(frontImage) && isFileOrNotURL(backImage)) {
+      await callApiHook({
+        apiCall: callSubmitKYCApi(
+          SubmitKYCApi({
+            file_type: values?.documentFormat,
+            front_image: frontImage,
+            back_image: backImage,
+            country: values.country,
           })
-        );
-        getUserDetails();
-      },
-    });
+        ),
+        successCallBack: () => {
+          dispatch(
+            setStep({
+              previous_step: STEPS.IDENTITYCHECK,
+              current_step: STEPS.KYCAPPROVAL,
+              next_step: STEPS?.FEESCHEDULE,
+            })
+          );
+          getUserDetails();
+        },
+      });
+    } else {
+      dispatch(
+        setStep({
+          previous_step: STEPS.IDENTITYCHECK,
+          current_step: STEPS.KYCAPPROVAL,
+          next_step: STEPS?.FEESCHEDULE,
+        })
+      );
+    }
   };
+
   const onSubmitError = () => {
     window.scrollTo(0, 500);
   };
@@ -116,7 +137,11 @@ const IdentityCheck = () => {
   };
 
   const handleFormatChange = (format) => () => {
-    setValues((pre) => ({ ...pre, documentFormat: format }));
+    setValues((pre) => ({
+      ...pre,
+      documentFormat: format,
+      document: { front: null, back: null },
+    }));
   };
 
   return (
