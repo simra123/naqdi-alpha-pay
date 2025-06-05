@@ -32,7 +32,7 @@ import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 
 enum TransactionType {
   Deposit = "Deposit",
-  Withdrawal = "Withdrawal",
+  Withdrawal = "Withdraw",
   Payment = "Payment",
 }
 
@@ -104,7 +104,10 @@ const TransactionDetails = ({ params }) => {
           <Details label="ID" value={transactionDetails?.id} />
           <Details
             label="Blockchain"
-            value={transactionDetails?.transaction_request?.contract_address?.blockchain_name}
+            value={
+              transactionDetails?.transaction_request?.contract_address
+                ?.blockchain_name
+            }
           />
           <Details
             label="Transaction Type"
@@ -116,7 +119,8 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.transaction_request?.contract_address?.blockchain_name,
+                transactionDetails?.transaction_request?.contract_address
+                  ?.blockchain_name,
               type: "hash",
               hash: transactionDetails?.hash,
             })}
@@ -204,7 +208,8 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.transaction_request?.contract_address?.blockchain_name,
+                transactionDetails?.transaction_request?.contract_address
+                  ?.blockchain_name,
               type: "address",
               address: transactionDetails?.receiver_address,
             })}
@@ -216,7 +221,8 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.transaction_request?.contract_address?.blockchain_name,
+                transactionDetails?.transaction_request?.contract_address
+                  ?.blockchain_name,
               type: "address",
               address: transactionDetails?.sender_address,
             })}
@@ -258,20 +264,27 @@ const TransactionDetails = ({ params }) => {
               transactionDetails?.transaction_request?.unit
             }`}
           />
-          <Details
-            label="Fiat Client Fee"
-            value={` ${roundToPrecision(
-              transactionDetails?.fiat_client_fee,
-              10
-            )} ${transactionDetails?.transaction_request?.fiat_currency}`}
-          />
 
-          <Details
-            label="Crypto Client Fee"
-            value={` ${roundToPrecision(transactionDetails?.client_fee, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
-          />
+          {transactionDetails?.transaction_request?.type !=
+            TransactionType.Withdrawal && (
+            <>
+              <Details
+                label="Fiat Client Fee"
+                value={` ${roundToPrecision(
+                  transactionDetails?.fiat_client_fee,
+                  10
+                )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+              />
+
+              <Details
+                label="Crypto Client Fee"
+                value={` ${roundToPrecision(
+                  transactionDetails?.client_fee,
+                  10
+                )} ${transactionDetails?.transaction_request?.unit}`}
+              />
+            </>
+          )}
 
           <Details
             label="Fiat Net Amount"
