@@ -104,7 +104,7 @@ const TransactionDetails = ({ params }) => {
           <Details label="ID" value={transactionDetails?.id} />
           <Details
             label="Blockchain"
-            value={transactionDetails?.transaction_request?.wallet?.blockchain}
+            value={transactionDetails?.transaction_request?.contract_address?.blockchain_name}
           />
           <Details
             label="Transaction Type"
@@ -116,7 +116,7 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.transaction_request?.wallet?.blockchain,
+                transactionDetails?.transaction_request?.contract_address?.blockchain_name,
               type: "hash",
               hash: transactionDetails?.hash,
             })}
@@ -204,7 +204,7 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.transaction_request?.wallet?.blockchain,
+                transactionDetails?.transaction_request?.contract_address?.blockchain_name,
               type: "address",
               address: transactionDetails?.receiver_address,
             })}
@@ -216,7 +216,7 @@ const TransactionDetails = ({ params }) => {
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
               blockchain:
-                transactionDetails?.transaction_request?.wallet?.blockchain,
+                transactionDetails?.transaction_request?.contract_address?.blockchain_name,
               type: "address",
               address: transactionDetails?.sender_address,
             })}
