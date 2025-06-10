@@ -32,7 +32,7 @@ import { getTransactionRequestDetailsByUserApi } from "@/services/transaction";
 import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transaction";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 
-const unpaidStatuses = ["Pending", "Cancel", "New"];
+const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
 const DepositDetails = ({ params }) => {
   const paymentId = params?.id;
@@ -299,6 +299,36 @@ const DepositDetails = ({ params }) => {
                 label="Crypto Amount Recieved"
                 value={`${payment?.paid_amount || 0} ${payment?.unit}`}
               />
+
+              <Details
+                label="Fiat Initial Client Fee"
+                value={` ${roundToPrecision(
+                  payment?.fiat_initial_client_fee || 0,
+                  10
+                )} ${payment?.fiat_currency}`}
+              />
+
+              <Details
+                label="Fiat Paid Client Fee"
+                value={` ${roundToPrecision(payment?.fiat_paid_client_fee || 0, 10)} ${
+                  payment?.fiat_currency
+                }`}
+              />
+
+              <Details
+                label="Crypto Initial Client Fee"
+                value={` ${roundToPrecision(payment?.initial_client_fee || 0, 10)} ${
+                  payment?.unit
+                }`}
+              />
+
+              <Details
+                label="Crypto Paid Client Fee"
+                value={` ${roundToPrecision(payment?.paid_client_fee || 0, 10)} ${
+                  payment?.unit
+                }`}
+              />
+
               <Details
                 label="Crypto Alphaspay Fee"
                 value={`${payment?.initial_fee} ${payment?.unit}`}

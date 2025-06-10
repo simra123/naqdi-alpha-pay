@@ -27,7 +27,7 @@ import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import CustomTableV2 from "@/components/common/CustomTableV2";
 
-const unpaidStatuses = ["Pending", "Cancel", "New"];
+const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
 interface PaymentAPi {
   pageValue?: number;
