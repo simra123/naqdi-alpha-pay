@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { capitalize, mergeWebhookResponses } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, RequestVia, TableColumns } from "@/constants/types";
 import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { MdOutlineInfo } from "react-icons/md";
@@ -34,10 +34,6 @@ import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
-enum RequestVia {
-  API = "API",
-  ClientPanel = "Client Panel",
-}
 
 const DepositDetails = ({ params }) => {
   const paymentId = params?.id;

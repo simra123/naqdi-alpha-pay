@@ -20,6 +20,11 @@ export enum WalletType {
   Virtual = "Virtual",
 }
 
+export enum RequestVia {
+  API = "API",
+  ClientPanel = "Client Panel",
+}
+
 export enum ModulesEnum {
   wallet = "wallet",
   merchant = "merchant",
@@ -81,9 +86,9 @@ export const supportOptions = [
 export const transactionTypes = {
   Deposit: "Deposit",
   Withdraw: "Withdraw",
-}
+};
 
 export const balanceType = {
   fiat: "Fiat",
   crypto: "Crypto",
-}
+};
