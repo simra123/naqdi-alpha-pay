@@ -34,6 +34,11 @@ import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
+enum RequestVia {
+  API = "API",
+  ClientPanel = "Client Panel",
+}
+
 const DepositDetails = ({ params }) => {
   const paymentId = params?.id;
   const user = getLocalStorageValue("user");
@@ -300,34 +305,41 @@ const DepositDetails = ({ params }) => {
                 value={`${payment?.paid_amount || 0} ${payment?.unit}`}
               />
 
-              <Details
-                label="Fiat Initial Client Fee"
-                value={` ${roundToPrecision(
-                  payment?.fiat_initial_client_fee || 0,
-                  10
-                )} ${payment?.fiat_currency}`}
-              />
+              {payment?.request_via == RequestVia.API && (
+                <>
+                  <Details
+                    label="Fiat Initial Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.fiat_initial_client_fee || 0,
+                      10
+                    )} ${payment?.fiat_currency}`}
+                  />
 
-              <Details
-                label="Fiat Paid Client Fee"
-                value={` ${roundToPrecision(payment?.fiat_paid_client_fee || 0, 10)} ${
-                  payment?.fiat_currency
-                }`}
-              />
+                  <Details
+                    label="Fiat Paid Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.fiat_paid_client_fee || 0,
+                      10
+                    )} ${payment?.fiat_currency}`}
+                  />
 
-              <Details
-                label="Crypto Initial Client Fee"
-                value={` ${roundToPrecision(payment?.initial_client_fee || 0, 10)} ${
-                  payment?.unit
-                }`}
-              />
+                  <Details
+                    label="Crypto Initial Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.initial_client_fee || 0,
+                      10
+                    )} ${payment?.unit}`}
+                  />
 
-              <Details
-                label="Crypto Paid Client Fee"
-                value={` ${roundToPrecision(payment?.paid_client_fee || 0, 10)} ${
-                  payment?.unit
-                }`}
-              />
+                  <Details
+                    label="Crypto Paid Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.paid_client_fee || 0,
+                      10
+                    )} ${payment?.unit}`}
+                  />
+                </>
+              )}
 
               <Details
                 label="Crypto Alphaspay Fee"
