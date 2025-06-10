@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { capitalize, mergeWebhookResponses } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, RequestVia, TableColumns } from "@/constants/types";
 import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import { MdOutlineInfo } from "react-icons/md";
@@ -33,6 +33,7 @@ import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transac
 import { formatDateToUserTimeZone } from "@/utils/dates";
 
 const unpaidStatuses = ["Pending", "Cancelled", "New"];
+
 
 const DepositDetails = ({ params }) => {
   const paymentId = params?.id;
@@ -300,34 +301,41 @@ const DepositDetails = ({ params }) => {
                 value={`${payment?.paid_amount || 0} ${payment?.unit}`}
               />
 
-              <Details
-                label="Fiat Initial Client Fee"
-                value={` ${roundToPrecision(
-                  payment?.fiat_initial_client_fee || 0,
-                  10
-                )} ${payment?.fiat_currency}`}
-              />
+              {payment?.request_via == RequestVia.API && (
+                <>
+                  <Details
+                    label="Fiat Initial Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.fiat_initial_client_fee || 0,
+                      10
+                    )} ${payment?.fiat_currency}`}
+                  />
 
-              <Details
-                label="Fiat Paid Client Fee"
-                value={` ${roundToPrecision(payment?.fiat_paid_client_fee || 0, 10)} ${
-                  payment?.fiat_currency
-                }`}
-              />
+                  <Details
+                    label="Fiat Paid Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.fiat_paid_client_fee || 0,
+                      10
+                    )} ${payment?.fiat_currency}`}
+                  />
 
-              <Details
-                label="Crypto Initial Client Fee"
-                value={` ${roundToPrecision(payment?.initial_client_fee || 0, 10)} ${
-                  payment?.unit
-                }`}
-              />
+                  <Details
+                    label="Crypto Initial Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.initial_client_fee || 0,
+                      10
+                    )} ${payment?.unit}`}
+                  />
 
-              <Details
-                label="Crypto Paid Client Fee"
-                value={` ${roundToPrecision(payment?.paid_client_fee || 0, 10)} ${
-                  payment?.unit
-                }`}
-              />
+                  <Details
+                    label="Crypto Paid Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.paid_client_fee || 0,
+                      10
+                    )} ${payment?.unit}`}
+                  />
+                </>
+              )}
 
               <Details
                 label="Crypto Alphaspay Fee"

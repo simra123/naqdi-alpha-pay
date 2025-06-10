@@ -28,7 +28,7 @@ import { resendWebhookAPI } from "@/services/admin/Integration";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { hasMinAccess } from "@/utils/cookies";
-import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, RequestVia } from "@/constants/types";
 
 enum TransactionType {
   Deposit = "Deposit",
@@ -266,25 +266,27 @@ const TransactionDetails = ({ params }) => {
           />
 
           {transactionDetails?.transaction_request?.type !=
-            TransactionType.Withdrawal && (
-            <>
-              <Details
-                label="Fiat Client Fee"
-                value={` ${roundToPrecision(
-                  transactionDetails?.fiat_client_fee,
-                  10
-                )} ${transactionDetails?.transaction_request?.fiat_currency}`}
-              />
+            TransactionType.Withdrawal &&
+            transactionDetails?.transaction_request?.request_via ==
+              RequestVia.API && (
+              <>
+                <Details
+                  label="Fiat Client Fee"
+                  value={` ${roundToPrecision(
+                    transactionDetails?.fiat_client_fee,
+                    10
+                  )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+                />
 
-              <Details
-                label="Crypto Client Fee"
-                value={` ${roundToPrecision(
-                  transactionDetails?.client_fee,
-                  10
-                )} ${transactionDetails?.transaction_request?.unit}`}
-              />
-            </>
-          )}
+                <Details
+                  label="Crypto Client Fee"
+                  value={` ${roundToPrecision(
+                    transactionDetails?.client_fee,
+                    10
+                  )} ${transactionDetails?.transaction_request?.unit}`}
+                />
+              </>
+            )}
 
           <Details
             label="Fiat Net Amount"
