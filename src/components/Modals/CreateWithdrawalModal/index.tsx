@@ -45,6 +45,7 @@ interface Props {
   toggleHandler: () => void;
   refreshHandler: () => void;
   blockchain?: string;
+  standard?: string;
 }
 
 interface FeeState {
@@ -65,6 +66,7 @@ const CreateWithdrawalModal = ({
   toggleHandler,
   refreshHandler,
   blockchain,
+  standard,
 }: Props) => {
   const dispatch = useDispatch();
   const user = getLocalStorageValue("user");
@@ -99,21 +101,25 @@ const CreateWithdrawalModal = ({
 
   useEffect(() => {
     if (currentStep == 1) {
+      const currentCurrency = getSelectedCurrency(
+        values?.blockchain
+      )?.blockchain;
+
       setCurrentSchema(
         getWithdrawalSchema(
           parseFloat(balance?.total_amount) -
             parseFloat(balance.on_hold_amount),
-          getSelectedCurrency(values?.blockchain)?.blockchain
+          currentCurrency
         )
       );
     }
     if (currentStep == 2) {
       setCurrentSchema(otpSchema);
     }
-  }, [values?.blockchain, currentStep]);
+  }, [values?.blockchain, currentStep, blockchain]);
 
-  const getSelectedCurrency = (id: number) => {
-    return supportedCurrencies?.find((item) => item?.id == id);
+  const getSelectedCurrency = (label: string) => {
+    return supportedCurrencies?.find((item) => item?.label == label);
   };
 
   const getSupportedCurrencies = async () => {
@@ -132,9 +138,21 @@ const CreateWithdrawalModal = ({
               item?.is_token && item?.standard
                 ? `${item?.unit} (${item?.standard})`
                 : capitalize(item?.blockchain_name),
-            value: item?.id,
+            value:
+              item?.is_token && item?.standard
+                ? `${item?.unit} (${item?.standard})`
+                : capitalize(item?.blockchain_name),
           }))
         );
+
+        const currencyName = standard
+          ? blockchain?.toUpperCase()
+          : unitName[blockchain];
+
+        setValues({
+          ...initalFormValues,
+          blockchain: standard ? `${currencyName} (${standard})` : currencyName,
+        }); // Reset form values
       },
     });
   };
@@ -161,8 +179,6 @@ const CreateWithdrawalModal = ({
 
   const handleWithdrawal = async () => {
     const currency = getSelectedCurrency(values?.blockchain);
-
-    console.log({ currency });
 
     const withdraw_request_payload = {
       ...values,
@@ -204,13 +220,20 @@ const CreateWithdrawalModal = ({
 
   useEffect(() => {
     if (isOpen) {
+      const currencyName = standard
+        ? blockchain?.toUpperCase()
+        : unitName[blockchain];
       setErrors({});
       setBalanceError(null);
       setWithdrawalError(null);
       getBalance();
       setCurrentStep(1);
       getSupportedCurrencies();
-      setValues(initalFormValues); // Reset form values
+      if (!blockchain) {
+        setValues({
+          ...initalFormValues,
+        }); // Reset form values
+      }
     }
   }, [isOpen]);
 

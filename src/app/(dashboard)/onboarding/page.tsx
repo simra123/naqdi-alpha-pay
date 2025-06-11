@@ -38,7 +38,6 @@ const Onboarding = () => {
     return currentStep === stepName && <FormComponent />;
   };
 
-  console.log({ currentStep, disabledSteps });
 
   return (
     <>

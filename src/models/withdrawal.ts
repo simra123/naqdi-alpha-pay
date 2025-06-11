@@ -27,7 +27,6 @@ export const getWithdrawalSchema = (maxSourceAmount: number, blockchain) => {
     recipient_address: Yup.string()
       .required("Wallet address is required")
       .test("is-valid-crypto-address", function (value) {
-        console.log(blockchain);
         if (blockchain) {
           const isValid = validateCryptoAddress(value, blockchain);
 
