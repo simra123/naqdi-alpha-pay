@@ -130,9 +130,12 @@ const DepositModal = ({
 
   useEffect(() => {
     if (isOpen && blockchain) {
+      const currencyName = standard
+        ? blockchain?.toUpperCase()
+        : unitName[blockchain];
       setValues((pre) => ({
         ...pre,
-        blockchain: blockchain,
+        blockchain: currencyName,
       }));
       if (standard) {
         setFilteredNets(networks[blockchain?.toLowerCase()]);

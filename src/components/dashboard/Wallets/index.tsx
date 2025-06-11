@@ -19,7 +19,7 @@ type Props = {
   loading?: boolean;
   onWalletClick?: (currencyTicker: string) => void;
   onReceive?: (blockchain: string, standard: string) => void;
-  onWithdraw?: (currencyTicker: string) => void;
+  onWithdraw?: (currencyTicker: string, standard: string) => void;
   onHeadingClick?: () => void;
 };
 
@@ -135,7 +135,9 @@ const Wallets = ({
                   onRecieve={() =>
                     onReceive(unit?.toLowerCase(), asset?.standard)
                   }
-                  onSend={() => onWithdraw(unit?.toLowerCase())}
+                  onSend={() =>
+                    onWithdraw(unit?.toLowerCase(), asset?.standard)
+                  }
                   onTransfer={() => {}}
                 />
               );

@@ -42,10 +42,7 @@ export const onBoardingSlice = createSlice({
       const details = action?.payload?.userDetails;
       const company = action?.payload?.company;
 
-      console.log(action.payload);
-
       if (details) {
-        console.log("Details are founed");
         const stepsState = [
           {
             name: STEPS.PROFILE,
