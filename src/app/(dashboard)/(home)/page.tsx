@@ -70,6 +70,7 @@ interface DepositState {
 
 interface WithdrawState {
   blockchain?: null | string;
+  standard?: null | string;
 }
 
 enum ButtonNames {
@@ -199,10 +200,14 @@ const Home = () => {
     setWithdrawData({ blockchain: null });
   };
 
-  const openWithdrawalModalAndSetBlockchain = (blockchain: string) => {
+  const openWithdrawalModalAndSetBlockchain = (
+    blockchain: string,
+    standard?: string
+  ) => {
     setOpenWithdrawal(true);
     setWithdrawData({
       blockchain,
+      standard,
     });
   };
 
@@ -345,6 +350,7 @@ const Home = () => {
           isOpen={openWithdraw}
           refreshHandler={() => {}}
           blockchain={withdrawData?.blockchain}
+          standard={withdrawData?.standard}
           toggleHandler={toggleWithdrawalModal}
         />
       </RenderRoleBased>

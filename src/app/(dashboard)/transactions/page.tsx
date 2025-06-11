@@ -46,7 +46,6 @@ const Transactions = () => {
           )
         ),
         successCallBack: (response: any) => {
-          console.log({ response });
           if (user?.role == Role.USER) {
             const modifiedColumns = response?.listConfig.views[0].columns.map(
               (column) => {

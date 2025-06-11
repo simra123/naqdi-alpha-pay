@@ -203,7 +203,6 @@ const Deposits = () => {
     await callApiHook({
       apiCall: callPaymentApi(paymentCall()),
       successCallBack: (response: any) => {
-        console.log({ response });
         if (user?.role == Role.USER) {
           const modifiedColumns = response?.listConfig.views[0].columns.map(
             (column) => {
@@ -340,7 +339,6 @@ const Deposits = () => {
     return formatCSVDataByColumnOrder(paymentsList?.result, columnOrder);
   }, [paymentsList]);
 
-  console.log({ paymentsList });
 
   return (
     <>
