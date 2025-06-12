@@ -7,6 +7,7 @@ import React from "react";
 import { BorderedIconButton } from "../IconButton";
 import SimpleLineChart from "@/components/SimpleLineChart";
 import Image from "next/image";
+import MiniLineChart from "@/components/dashboard/MiniLineChart";
 
 type PortfolioProps = {
   IconSrc: string;
@@ -61,9 +62,9 @@ const PortfolioCard = ({
           </div>
         </div>
         {!isAdmin && (
-          <div className="hidden xxs:block chart-data">
-            <SimpleLineChart
-              dataPoints={ChartLineData}
+          <div className="hidden xs:block chart-data">
+            <MiniLineChart
+              data={ChartLineData}
               className="w-[60px] xs:w-[80px] 2.5xl:w-[120px] 3.75xl:w-[150px]"
             />
           </div>
