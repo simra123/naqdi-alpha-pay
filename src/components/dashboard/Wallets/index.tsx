@@ -75,9 +75,7 @@ const Wallets = ({
 
     let standard = isToken ? asset?.standard : blockchain_standards[unit];
     let coinName = unitName[unit?.toLowerCase()];
-    let currencyHistoryData = asset?.historyData?.map(
-      (item) => item?.rate_open
-    );
+    let currencyHistoryData = asset?.historyData;
 
     let amount = asset?.total_available_amount || asset?.amount;
 
