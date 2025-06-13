@@ -275,12 +275,7 @@ const PortfolioChart = ({
             className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
           /> */}
           <h3 className="font-nunito text-p120 2xl:text-h4">
-            {user?.role == Role.USER
-              ? "Portfolio"
-              : merchant == "ALL"
-              ? "Crypto Wallets"
-              : "Merchant Wallets"}{" "}
-            History
+            Fiat Wallets History
           </h3>
         </div>
         <div className="flex justify-end gap-2">
