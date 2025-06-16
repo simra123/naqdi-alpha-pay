@@ -154,7 +154,7 @@ const paymentsList_table_columns: TableColumns = [
   },
   {
     field: "cid",
-    headerName: "Customer Id",
+    headerName: "Client Id",
   },
   {
     field: "paid",
