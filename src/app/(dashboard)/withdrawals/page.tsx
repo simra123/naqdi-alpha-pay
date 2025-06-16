@@ -323,25 +323,17 @@ const Withdrawals = () => {
       { key: "initial_amount" },
       { key: "paid_amount" },
       { key: "net_amount" },
-      { key: "net_client_amount" },
       { key: "initial_fee" },
       { key: "paid_fee" },
-      { key: "initial_client_fee" },
-      { key: "paid_client_fee" },
       { key: "initial_exchange_rate" },
       { key: "paid_exchange_rate" },
-      { key: "client_fee_value" },
       { key: "fee_value" },
       { key: "unit" },
       { key: "standard" },
       { key: "fee_type" },
-      { key: "client_fee_type" },
       { key: "fiat_initial_amount" },
       { key: "fiat_paid_amount" },
       { key: "fiat_net_amount" },
-      { key: "fiat_net_client_amount" },
-      { key: "fiat_initial_client_fee" },
-      { key: "fiat_paid_client_fee" },
       { key: "fiat_initial_fee" },
       { key: "fiat_paid_fee" },
       { key: "recipient_address" },
@@ -349,7 +341,21 @@ const Withdrawals = () => {
       { key: "created_at" },
       { key: "updated_at" },
       { key: "wallet" },
-      { key: "transactions" },
+      {
+        key: "transactions",
+        format(value, row) {
+          const data = value?.map((item) => {
+            const result = {};
+            for (const key in item) {
+              if (!key.includes("client")) {
+                result[key] = item[key];
+              }
+            }
+            return result;
+          });
+          return data && data?.length > 0 ? JSON.stringify(data, null, 2) : "-";
+        },
+      },
       { key: "contract_address" },
     ];
 
