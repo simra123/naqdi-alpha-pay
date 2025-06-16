@@ -15,6 +15,10 @@ const Error = ({
     console.log({ error, message: "React Error Boundry" });
   }, [error]);
 
+  const handleReload = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="flex justify-center items-center bg-[url('/error-bg.png')] bg-no-repeat bg-left-bottom h-dvh">
       <div>
@@ -32,7 +36,7 @@ const Error = ({
             <LoaderButton
               content={"Go to Home"}
               variant="contained"
-              onClick={reset}
+              onClick={handleReload}
             />
           </div>
         </div>
