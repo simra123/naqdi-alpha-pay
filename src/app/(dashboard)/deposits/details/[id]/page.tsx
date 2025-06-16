@@ -202,6 +202,8 @@ const DepositDetails = ({ params }) => {
             </div>
             <div className="res-2-grid py-6">
               <Details label="ID" value={payment?.id} />
+              <Details label="Request Via" value={payment?.request_via} />
+              <Details label="Customer ID" value={payment?.cid || '_'} />
               <Details label="Blockchain" value={payment?.wallet?.blockchain} />
               <Details
                 label="Wallet Address"

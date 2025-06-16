@@ -145,8 +145,16 @@ const paymentsList_table_columns: TableColumns = [
     field: "paid_amount",
     headerName: "Amount Paid",
     dataValidator(value: any, row: any) {
-      return roundToPrecision(value, 10) + row?.payment_currency;
+      return `${roundToPrecision(value || 0, 10)}  ${row?.unit}`;
     },
+  },
+  {
+    field: "request_via",
+    headerName: "Request Via",
+  },
+  {
+    field: "cid",
+    headerName: "Customer Id",
   },
   {
     field: "paid",
@@ -333,12 +341,11 @@ const Deposits = () => {
       { key: "contract_address" },
     ];
     if (user?.role == Role.ADMIN) {
-      columnOrder.push({ key: "company" },{ key: "user" });
+      columnOrder.push({ key: "company" }, { key: "user" });
     }
 
     return formatCSVDataByColumnOrder(paymentsList?.result, columnOrder);
   }, [paymentsList]);
-
 
   return (
     <>
