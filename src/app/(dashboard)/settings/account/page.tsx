@@ -2,19 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-import {
-  ContactMailOutlined,
-  ErrorOutlineOutlined,
-  LocationOnOutlined,
-  WarningOutlined,
-  WarningRounded,
-} from "@mui/icons-material";
 import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 
 import ChangePasswordModal from "@/components/Modals/ChangePasswordModal";
 import Details from "@/components/common/Details";
 import LoaderButton from "@/components/common/LoaderButton";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import GenerateQRCodeModal from "@/components/Modals/GenerateQRCodeModal";
@@ -28,6 +21,11 @@ import { getClientFeeApi, setClientFeeApi } from "@/services/user";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import LoadingApi from "@/components/common/LoadindApi";
+import {
+  MdOutlineContactMail,
+  MdOutlineErrorOutline,
+  MdOutlineLocationOn,
+} from "react-icons/md";
 
 let initalFormValues = {
   clientFee: 0,
@@ -35,7 +33,7 @@ let initalFormValues = {
 
 const Account = () => {
   const dispatch = useDispatch();
-  const localUser = useLocalStorage("user");
+  const localUser = getLocalStorageValue("user");
   const [isMFaVerified, setIsMfaVerified] = useState(false);
   const [isFeeEditing, setIsFeeEditing] = useState(false);
   const [isChangePasswordOpen, setChangePasswordOpen] = useState(false);
@@ -46,10 +44,9 @@ const Account = () => {
   const [isGetClientFeeLoading, isGetClientFeeError, callGetClientFeeApi] =
     useApi({ initailLoading: true });
 
-  const user =
-    localUser?.role == Role.ADMIN
-      ? localUser
-      : useSelector((state: any) => state?.user?.data);
+  const reduxUser = useSelector((state: any) => state?.user?.data);
+
+  const user = localUser?.role === Role.ADMIN ? localUser : reduxUser;
 
   // Initialize useFormValidation
   const {
@@ -75,7 +72,6 @@ const Account = () => {
     await callApiHook({
       apiCall: callClientFeeApi(setClientFeeApi({ amount: values?.clientFee })),
       successCallBack: (response) => {
-
         SetFeeValues(values?.clientFee);
         dispatch(
           setNotification({
@@ -91,7 +87,6 @@ const Account = () => {
     await callApiHook({
       apiCall: callGetClientFeeApi(getClientFeeApi()),
       successCallBack: (response) => {
-
         SetFeeValues(response?.fee);
       },
     });
@@ -153,7 +148,7 @@ const Account = () => {
         </div>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-          <ContactMailOutlined className="text-purple-500" />
+          <MdOutlineContactMail className="text-purple-500" />
           <h5 className="font-semibold text-h5 text-purple-500">Contacts</h5>
         </div>
         <div className="res-2-grid py-6">
@@ -165,7 +160,7 @@ const Account = () => {
 
         <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
           <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-            <LocationOnOutlined className="text-purple-500" />
+            <MdOutlineLocationOn className="text-purple-500" />
             <h5 className="font-semibold text-h5 text-purple-500">
               Addressess
             </h5>
@@ -201,7 +196,7 @@ const Account = () => {
                   content={
                     <div className="flex items-center gap-2 font-semibold text-[14px]">
                       <span>Setup MFA</span>
-                      <ErrorOutlineOutlined className="text-[18px] text-purple-100" />
+                      <MdOutlineErrorOutline className="text-[18px] text-purple-100" />
                     </div>
                   }
                   variant="text"
@@ -214,17 +209,8 @@ const Account = () => {
             <>
               <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
                 <Details label="KYC" value={user?.userDetails?.kyc_status} />
-                <Details
-                  label="Admin Fees"
-                  value={user?.userDetails?.fees + "%"}
-                />
-                <form
-                  onSubmit={(e) =>
-                    handleSubmit(e, setClientFeeHandler, () =>
-                      console.log("Something went wrong")
-                    )
-                  }
-                >
+                <Details label="Admin Fees" value={user?.company?.fee + "%"} />
+                <form onSubmit={(e) => handleSubmit(e, setClientFeeHandler)}>
                   <Details
                     label="Client Fees"
                     className={!isClientFeeLoading && "items-baseline"}

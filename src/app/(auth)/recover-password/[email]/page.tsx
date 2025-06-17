@@ -8,8 +8,9 @@ import ErrorApiText from "@/components/common/ErrorApiText";
 import { recoverSchema } from "@/models/recoverPassword";
 import IconField from "@/components/common/IconField";
 import LoaderButton from "@/components/common/LoaderButton";
-import { Lock } from "@mui/icons-material";
+
 import { useState } from "react";
+import { MdLock } from "react-icons/md";
 
 const UpdatePassword = ({ params }) => {
   const router = useRouter();
@@ -79,7 +80,7 @@ const UpdatePassword = ({ params }) => {
           onChange={handleChange}
           value={values.password}
           error={errors.password}
-          icon={Lock}
+          icon={MdLock}
           label="Password"
           placeholder="Enter Your Password"
         />
@@ -90,7 +91,7 @@ const UpdatePassword = ({ params }) => {
           onChange={handleChange}
           value={values.confirmPassword}
           error={confirmPassError}
-          icon={Lock}
+          icon={MdLock}
           label="Confirm Password"
           placeholder="Enter Your Password"
         />

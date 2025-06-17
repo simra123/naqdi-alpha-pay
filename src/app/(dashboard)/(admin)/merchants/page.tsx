@@ -63,13 +63,13 @@ const usersList_table_columns: TableColumns = [
   },
 ];
 
-const Users = () => {
+const Merchants = () => {
   const router = useRouter();
   const [users, setUsers] = useState([]);
   const [isUsersLoading, isUsersError, callUsersApi] = useApi({
     initailLoading: true,
   });
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
+
 
   const getAllUsersAdmin = async () => {
     await callApiHook({
@@ -135,7 +135,7 @@ const Users = () => {
 };
 
 export default PermissionAccess(
-  Users,
+  Merchants,
   ModulesEnum.merchant,
   AccessLevelEnum.read
 );

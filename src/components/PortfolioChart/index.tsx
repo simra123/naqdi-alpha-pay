@@ -1,17 +1,18 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Chart as ChartJS, registerables } from "chart.js";
+import React, { useEffect } from "react";
+import { Chart as ChartJS, ChartOptions, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import moment from "moment";
-import { callApiHook } from "@/utils/apifuncs";
-import { getPortfolioActivityChartApi } from "@/services/wallet";
-import { useApi } from "@/hooks/useApi";
 import ErrorApiText from "../common/ErrorApiText";
 import LoadingApi from "../common/LoadindApi";
 import { unitName } from "@/constants/blockchains";
 import Image from "next/image";
 import IconSelectBox from "../common/IconSelectBox";
+import { Role } from "@/constants/roles";
+import { getLocalStorageValue } from "@/utils/cookies";
+import { hasMinAccess } from "@/utils/cookies";
+import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
+import clsx from "clsx";
 
 // Custom plugin for the vertical dashed line
 const crosshairLinePlugin = {
@@ -37,11 +38,11 @@ const crosshairLinePlugin = {
 
 ChartJS.register(...registerables, crosshairLinePlugin);
 
-const makeChartData = (data: {
-  sent: [];
-  received: [];
-  balances: [];
-  labels: [];
+export const makeChartData = (data: {
+  sent: any[];
+  received: any[];
+  balances: any[];
+  labels: any[];
 }) => {
   let greenColor = "#CFECE1";
   let redColor = "#F7CAD8";
@@ -90,46 +91,54 @@ const makeChartData = (data: {
 const PortfolioChart = ({
   interval,
   setInterval,
-  unit,
+
+  isAdmin,
+  merchantsList,
+  merchant,
+  setMerchant,
+  getChartData,
+  chartData,
+  loading,
+  error,
 }: {
   interval: string;
   setInterval: any;
-  unit: string;
+
+  isAdmin?: boolean;
+  merchantsList?: any[];
+  merchant?: string;
+  setMerchant?: any;
+  getChartData: () => void;
+  loading?: boolean;
+  error?: boolean | string;
+  chartData: {
+    sent?: any[];
+    received?: any[];
+    balances?: any[];
+    labels?: any[];
+  };
 }) => {
-  // State for selected interval
-
-  const [chartData, setChartData] = useState<{}>({});
-  const [
-    isPortfolioActivityLoading,
-    isPortfolioActivityError,
-    callPortfolioActivityApi,
-  ] = useApi({
-    initailLoading: true,
-  });
-
+  const user = getLocalStorageValue("user");
   useEffect(() => {
     getChartData();
-  }, [interval, unit]);
-
-  const getChartData = useCallback(async () => {
-    await callApiHook({
-      apiCall: callPortfolioActivityApi(
-        getPortfolioActivityChartApi({ duration: interval, unit })
-      ),
-      successCallBack: (response: any) => {
-        setChartData(makeChartData(response));
-      },
-    });
-  }, [unit, interval]);
+  }, [interval, merchant]);
 
   const handleChange = (e) => {
     const { value } = e.target;
     setInterval(value);
   };
 
+  const handleChangeMerchant = (e) => {
+    const { value } = e.target;
+    setMerchant(value);
+  };
+
   const options = {
     responsive: true,
     plugins: {
+      datalabels: {
+        display: false, // Turn off for this chart
+      },
       legend: {
         display: true,
         position: "bottom" as const,
@@ -255,58 +264,94 @@ const PortfolioChart = ({
   };
 
   return (
-    <div className="p-6 rounded-[28px] border border-purple-10">
+    <div className="p-6 border border-purple-10 rounded-[28px]">
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
-          <Image
-            src={
-              unitName[unit?.toLowerCase()]
-                ? `/currencies/${unitName[
-                    unit?.toLowerCase()
-                  ]?.toLowerCase()}.png`
-                : `/avatar.png`
-            }
+          {/* <Image
+            src={`/avatar.png`}
             alt="Currency"
             height={50}
             width={50}
-            className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] rounded-full"
-          />
-          <h2 className="text-button 2xl:text-p120 3xl:text-p122 3.75xl:text-h4 font-semibold leading-4">
-            {unitName[unit?.toLowerCase()] || "Portfolio"} History
-          </h2>
+            className="rounded-full w-[35px] md:w-[40px] h-[35px] md:h-[40px]"
+          /> */}
+          <h3 className="font-nunito text-p120 2xl:text-h4">
+            Fiat Wallets History
+          </h3>
         </div>
-        <div className="hidden gap-2 md:gap-4 lg:flex ">
-          {["daily", "weekly", "monthly", "lifetime"].map((int) => (
-            <button
-              key={int}
-              onClick={() => setInterval(int)}
-              className={`px-4 py-2 text-subtitle lg:text-base  rounded-full ${
-                interval === int
-                  ? "bg-purple-500 text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
-            >
-              {int.charAt(0).toUpperCase() + int.slice(1)}
-            </button>
-          ))}
-        </div>
-        <div className="block lg:hidden w-32">
-          <IconSelectBox
-            options={[
-              { label: "Daily", value: "daily" },
-              { label: "Weekly", value: "weekly" },
-              { label: "Monthly", value: "monthly" },
-              { label: "Lifetime", value: "lifetime" },
-            ]}
-            onChange={handleChange}
-            value={interval}
-          />
+        <div className="flex justify-end gap-2">
+          <div
+            className={clsx({
+              "2xl:hidden block": !isAdmin,
+              "3.75xl:hidden": isAdmin,
+            })}
+          >
+            <IconSelectBox
+              options={[
+                { label: "Daily", value: "daily" },
+                { label: "Weekly", value: "weekly" },
+                { label: "Monthly", value: "monthly" },
+                { label: "Lifetime", value: "lifetime" },
+              ]}
+              onChange={handleChange}
+              wrapperClassName="!m-0"
+              inputContainerClassName="!rounded-full py-3"
+              optionsClassName="!right-0 w-[240px]"
+              value={interval}
+            />
+          </div>
+          <div
+            className={clsx("items-center gap-2 md:gap-4", {
+              "hidden 2xl:flex": !isAdmin,
+              "hidden 3.75xl:flex": isAdmin,
+            })}
+          >
+            {["daily", "weekly", "monthly", "lifetime"].map((int) => (
+              <button
+                key={int}
+                onClick={() => setInterval(int)}
+                className={`px-4 py-2 text-subtitle rounded-full ${
+                  interval === int
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {int.charAt(0).toUpperCase() + int.slice(1)}
+              </button>
+            ))}
+          </div>
+          {hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+            isAdmin && (
+              <IconSelectBox
+                searchable
+                wrapperClassName="!m-0"
+                inputContainerClassName="!rounded-full py-3 min-w-[100px]"
+                optionsClassName="!right-0 !w-[240px]"
+                options={[{ label: "All", value: "ALL" }, ...merchantsList]}
+                onChange={handleChangeMerchant}
+                value={merchant}
+              />
+            )}
         </div>
       </div>
-      <LoadingApi loading={isPortfolioActivityLoading}>
-        <Chart data={chartData as any} type="line" options={options} />
+      <LoadingApi loading={loading}>
+        {chartData?.labels &&
+          (user?.role == Role.USER ? (
+            <Chart
+              data={chartData as any}
+              type="line"
+              options={options}
+              className="max-h-[300px] 2xl:max-h-[514px]"
+            />
+          ) : (
+            <Chart
+              data={chartData as any}
+              type="line"
+              options={options}
+              className="max-h-[300px] 2.5xl:max-h-[370px]"
+            />
+          ))}
       </LoadingApi>
-      <ErrorApiText error={isPortfolioActivityError} />
+      <ErrorApiText error={error} />
     </div>
   );
 };

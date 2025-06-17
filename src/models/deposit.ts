@@ -20,6 +20,5 @@ export const DepoistSchema = Yup.object().shape({
       message: "Email format is not valid",
     }),
   client_phone_number: Yup.string().notRequired(),
-  email_notification: Yup.boolean().required(),
-  
+  send_email: Yup.boolean().required(),
 });

@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import FilterDropdown from "./FilterDropdown";
+
 import {
-  ArrowUpward,
-  ArrowDownward,
-  Search,
-  Tune,
-  NavigateNext,
-  LastPage,
-  NavigateBefore,
-  FirstPage,
-  Add,
-} from "@mui/icons-material"; // Import MUI icons
-import { MdCopyAll } from "react-icons/md";
+  MdAdd,
+  MdArrowDownward,
+  MdArrowUpward,
+  MdCopyAll,
+  MdFirstPage,
+  MdLastPage,
+  MdNavigateBefore,
+  MdNavigateNext,
+  MdSearch,
+} from "react-icons/md";
 import LoaderButton from "../LoaderButton";
 import IconField from "../IconField";
 import IconButton from "../IconButton";
@@ -19,12 +18,14 @@ import LoadingApi from "../LoadindApi";
 import Loader from "../Loader";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { TableColumns } from "@/constants/types";
 import { getNestedValue } from "./utils";
 import Link from "next/link";
 import { useCSVDownloader } from "@/hooks/useCSVDownloader";
 import ErrorApiText from "../ErrorApiText";
+
+const noCapitalizeFields = ["email", "id"];
 
 interface TableProps {
   columns: TableColumns;
@@ -46,6 +47,10 @@ interface TableProps {
   selectedRows?: any[] | null;
   setSelectedRows?: any;
   createHandler?: any;
+  tableClassName?: string;
+  tableWrapperClassName?: string;
+  expandRowIDKey?: string;
+  ExpandComponent?: any;
 }
 
 const CustomTable = ({
@@ -67,9 +72,13 @@ const CustomTable = ({
   selectedRows,
   setSelectedRows,
   createHandler,
+  tableClassName,
+  tableWrapperClassName,
+  ExpandComponent,
+  expandRowIDKey,
 }: TableProps) => {
+  const [expandedRows, setExpandedRows] = useState({});
   const { csvLoading, csvError, generateAndDownloadCSV } = useCSVDownloader();
-  const [filtersOpen, setFiltersOpen] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentRows, setCurrentRows] = useState(rows);
@@ -78,7 +87,9 @@ const CustomTable = ({
   const [columnWidths, setColumnWidths]: any = useState();
   const [selectAll, setSelectAll] = useState(false); // Track select all checkbox state
   const tableRef = useRef(null);
-  const totalPages = Math.ceil(rows?.length / pageSize);
+  const [totalPages, setTotalPages] = useState(
+    Math.ceil(rows?.length / pageSize)
+  );
   const scrollContainerRef = useRef(null); // Add this for the scrollable div
   const [isHovered, setIsHovered] = useState(false); // Track mouse hover
 
@@ -90,6 +101,13 @@ const CustomTable = ({
       );
     }
   }, [currentRows, selectedRows, selectable]);
+
+  const toggleExpand = (rowId) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [rowId]: !prev[rowId],
+    }));
+  };
 
   const handleRowSelection = (row: any) => {
     if (selectable) {
@@ -133,8 +151,12 @@ const CustomTable = ({
         )
       : rows;
 
+    if (searchQuery) {
+      setCurrentPage(1);
+    }
+
     const sortedRows = sortConfig
-      ? filteredRows.sort((a, b) => {
+      ? filteredRows?.sort((a, b) => {
           if (sortConfig.direction === "ascending") {
             if (a[sortConfig.key] < b[sortConfig.key]) return -1;
             if (a[sortConfig.key] > b[sortConfig.key]) return 1;
@@ -147,8 +169,9 @@ const CustomTable = ({
       : filteredRows;
 
     setCurrentRows(
-      sortedRows.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+      sortedRows?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
     );
+    setTotalPages(Math.ceil(filteredRows?.length / pageSize));
   }, [searchQuery, rows, sortConfig, currentPage, pageSize]);
 
   const handleSort = (column) => {
@@ -207,7 +230,7 @@ const CustomTable = ({
           pagination
             ? "min-h-[calc(100vh-120px)] sm:min-h-[calc(100vh-240px)]"
             : "pb-8 sm:pb-0"
-        } `
+        } ${tableWrapperClassName}`
       }
       ref={tableRef}
     >
@@ -235,29 +258,31 @@ const CustomTable = ({
                   />
                 )}
               </div>
+
               <div className="right-actions flex items-center gap-3">
                 <IconField
                   onChange={(event) => setSearchQuery(event.target.value)}
                   value={searchQuery}
-                  icon={Search}
+                  icon={MdSearch}
                   wrapperClassName="!mb-0 !w-[250px] max-w-full lg:block hidden"
                   inputClassName="py-3"
                 />
                 <button className="lg:hidden block bg-transparent hover:bg-white bg-none hover:shadow-md p-3 border-0 rounded-full outline-0 w-12 h-12 transition-all">
-                  <Search />
+                  <MdSearch />
                 </button>
               </div>
             </div>
+
             <ErrorApiText error={csvError} />
           </>
         ) : (
           actions
         )}
         <div
-          ref={scrollContainerRef}
           className={`overflow-x-auto ${
             pagination && "min-h-[calc(100vh-350px)]"
-          } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none`}
+          } sm:min-h-max bg-white p-3 sm:p-0 rounded-medium sm:rounded-none shadow-sm sm:shadow-none ${tableClassName}`}
+          ref={scrollContainerRef}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -277,7 +302,7 @@ const CustomTable = ({
                     </label>
                   </th>
                 )}
-                {columns.map((column, index) => (
+                {columns?.map((column, index) => (
                   <th
                     key={column.field + index}
                     style={{ width: equalColumns ? columnWidths : "auto" }}
@@ -292,69 +317,111 @@ const CustomTable = ({
                       {sortConfig?.key === column.field && (
                         <span className="ml-2">
                           {sortConfig.direction === "ascending" ? (
-                            <ArrowUpward />
+                            <MdArrowUpward />
                           ) : (
-                            <ArrowDownward />
+                            <MdArrowDownward />
                           )}
                         </span>
                       )}
                     </div>
                   </th>
                 ))}
+                {ExpandComponent && (
+                  <th
+                    style={{ width: equalColumns ? columnWidths : "auto" }}
+                    className={`py-3 px-6 cursor-pointer text-left ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                  >
+                    Expand
+                  </th>
+                )}
               </tr>
             </thead>
 
             {/* Rows Mapped Below */}
 
-            <tbody className="capitalize">
-              {currentRows.map((row, index) => (
-                <tr
-                  key={index}
-                  onClick={() => rowClickHandler && rowClickHandler(row)}
-                  className="bg-white hover:bg-gray-50 border-b cursor-pointer"
-                >
-                  {selectable && (
-                    <td className="px-6 py-4">
-                      <label className="custom-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(row)}
-                          onChange={() => handleRowSelection(row)}
-                        />
-                        <span className="block !static checkmark"></span>
-                      </label>
-                    </td>
-                  )}
-                  {columns.map((column, index) => {
-                    const value = getNestedValue(row, column.field);
-                    return (
-                      <td
-                        key={column.field + index}
-                        className={`${
-                          column.dataValidator ? "py-4" : "py-6"
-                        } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
-                      >
-                        {column.dataValidator ? (
-                          <CopyButtonColumn
-                            value={column.dataValidator(value, row)}
-                            copyable={column.copyable}
-                            link={column?.link ? column?.link(row) : null}
-                            target={column?.target}
+            <tbody>
+              {currentRows?.map((row, index) => (
+                <>
+                  <tr
+                    key={index}
+                    onClick={() => rowClickHandler && rowClickHandler(row)}
+                    className="bg-white hover:bg-gray-50 border-b cursor-pointer"
+                  >
+                    {selectable && (
+                      <td className="px-6 py-4">
+                        <label className="custom-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(row)}
+                            onChange={() => handleRowSelection(row)}
                           />
-                        ) : value ? (
-                          <CopyButtonColumn
-                            value={value}
-                            copyable={column.copyable}
-                            link={column?.link ? column?.link(row) : null}
-                            target={column?.target}
-                          />
-                        ) : (
-                          "_"
-                        )}
+                          <span className="block !static checkmark"></span>
+                        </label>
                       </td>
-                    );
-                  })}
-                </tr>
+                    )}
+                    {columns?.map((column, index) => {
+                      const value = getNestedValue(row, column.field);
+                      const computedValue = column.dataValidator
+                        ? column.dataValidator(value, row)
+                        : value;
+                      const shouldCapitalize = !noCapitalizeFields.some(
+                        (item) => column.field.includes(item)
+                      );
+                      const link = column.link?.(row) || null;
+
+                      return (
+                        <td
+                          key={column.field + index}
+                          className={`${
+                            column.dataValidator ? "py-4" : "py-6"
+                          } px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                        >
+                          {computedValue ? (
+                            <CopyButtonColumn
+                              value={computedValue}
+                              copyable={column.copyable}
+                              link={link}
+                              target={column.target}
+                              className={shouldCapitalize ? "capitalize" : ""}
+                            />
+                          ) : (
+                            "_"
+                          )}
+                        </td>
+                      );
+                    })}
+                    {ExpandComponent && (
+                      <td
+                        className={`py-6 px-6 font-semibold ${columnClassName} text-nowrap overflow-hidden text-ellipsis`}
+                      >
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleExpand(row[expandRowIDKey || "id"]);
+                          }}
+                          className={`px-4 py-1 rounded-md hover:bg-purple-gradient hover:text-white transition-all ${
+                            expandedRows[row[expandRowIDKey || "id"]]
+                              ? "text-white bg-purple-gradient"
+                              : "text-purple-500 border-purple border"
+                          }`}
+                        >
+                          {expandedRows[row[expandRowIDKey || "id"]]
+                            ? "Unexpand"
+                            : "Expand"}
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+
+                  {expandedRows[row[expandRowIDKey || "id"]] &&
+                    ExpandComponent && (
+                      <tr className="border-b">
+                        <td colSpan={columns.length + 1} className="p-4">
+                          <ExpandComponent row={row} />
+                        </td>
+                      </tr>
+                    )}
+                </>
               ))}
             </tbody>
           </table>
@@ -387,11 +454,13 @@ const CopyButtonColumn = ({
   copyable,
   link,
   target,
+  className,
 }: {
   value: string;
   copyable: boolean;
   link: string;
   target: string;
+  className?: string;
 }) => {
   const [isCopied, setIsCopied] = useState(false);
 
@@ -403,13 +472,11 @@ const CopyButtonColumn = ({
 
       // Reset the copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+    } catch (err) {}
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-2 ${className}`}>
       {link ? (
         <Link
           onClick={(event) => event.stopPropagation()}
@@ -493,7 +560,7 @@ const Pagination = ({
   setPageSize,
   createHandler,
 }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
 
   const pages = useMemo(
     () => getPaginationPages(currentPage, totalPages),
@@ -501,14 +568,8 @@ const Pagination = ({
   );
 
   return (
-    <div className="relative flex justify-center sm:justify-between items-center mt-4">
-      {/* Pages Indicator */}
-      <span className="hidden sm:block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
-        (currentPage - 1) * pageSize + 1
-      } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
-
-      {/* Pages Navigation */}
-      <div className="relative w-full">
+    <div className="overflow-auto">
+      <div className="md:hidden block relative mx-auto mt-5 w-full">
         <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
           <IconButton
             className={
@@ -519,7 +580,7 @@ const Pagination = ({
             onClick={() => onChangePage(1)}
             disabled={currentPage === 1}
           >
-            <FirstPage />
+            <MdFirstPage />
           </IconButton>
           <IconButton
             className={
@@ -530,9 +591,9 @@ const Pagination = ({
             onClick={() => onChangePage(currentPage - 1)}
             disabled={currentPage === 1}
           >
-            <NavigateBefore />
+            <MdNavigateBefore />
           </IconButton>
-          {pages.map((item, index) =>
+          {pages?.map((item, index) =>
             item == "..." ? (
               <span key={index}>...</span>
             ) : (
@@ -557,7 +618,7 @@ const Pagination = ({
             onClick={() => onChangePage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
-            <NavigateNext />
+            <MdNavigateNext />
           </IconButton>
           <IconButton
             className={
@@ -566,15 +627,15 @@ const Pagination = ({
                 : "hover:bg-blue-500 hover:text-white"
             }
             onClick={() => onChangePage(totalPages)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || totalPages == 0}
           >
-            <LastPage />
+            <MdLastPage />
           </IconButton>
         </div>
         {createHandler && (
           <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
             <LoaderButton
-              content={<Add className="!text-h2" />}
+              content={<MdAdd className="!text-h2" />}
               className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
               variant="contained"
               onClick={createHandler}
@@ -583,38 +644,121 @@ const Pagination = ({
         )}
       </div>
 
-      {/* Page Change Dropdown below */}
+      <div className="relative flex justify-between items-center mt-4">
+        {/* Pages Indicator */}
+        <span className="block min-w-20 font-medium text-blackGrey-50 text-sm">{`${
+          (currentPage - 1) * pageSize + 1
+        } - ${currentPage * pageSize} of ${totalPages * pageSize}`}</span>
 
-      <div className="hidden sm:block">
-        <label htmlFor="page-size" className="mr-2 text-blackGrey-50 text-sm">
-          Page Size
-        </label>
-        <select
-          id="page-size"
-          value={pageSize}
-          onChange={(e) => {
-            setPageSize(parseInt(e.target.value));
-            onChangePage(1);
-          }}
-          className="p-1 border-b outline-none cursor-pointer"
-        >
-          {[5, 10, 20, 30, 50].map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+        {/* Pages Navigation */}
+        <div className="hidden md:block relative w-full hideen">
+          <div className="flex space-x-2 bg-white mx-auto p-2 sm:p-0 rounded-sm w-fit">
+            <IconButton
+              className={
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(1)}
+              disabled={currentPage === 1}
+            >
+              <MdFirstPage />
+            </IconButton>
+            <IconButton
+              className={
+                currentPage === 1
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <MdNavigateBefore />
+            </IconButton>
+            {pages.map((item, index) =>
+              item == "..." ? (
+                <span key={index}>...</span>
+              ) : (
+                <IconButton
+                  key={index}
+                  className={
+                    currentPage === item &&
+                    "text-black-100 font-bold bg-light-gray"
+                  }
+                  onClick={() => onChangePage(item)}
+                >
+                  {item}
+                </IconButton>
+              )
+            )}
+            <IconButton
+              className={
+                currentPage === totalPages || totalPages == 0
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(currentPage + 1)}
+              disabled={currentPage === totalPages || totalPages == 0}
+            >
+              <MdNavigateNext />
+            </IconButton>
+            <IconButton
+              className={
+                currentPage === totalPages || totalPages == 0
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "hover:bg-blue-500 hover:text-white"
+              }
+              onClick={() => onChangePage(totalPages)}
+              disabled={currentPage === totalPages || totalPages == 0}
+            >
+              <MdLastPage />
+            </IconButton>
+          </div>
+          {createHandler && (
+            <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+              <LoaderButton
+                content={<MdAdd className="!text-h2" />}
+                className="sm:hidden -top-8 right-4 absolute !p-1 !rounded-full !w-fit"
+                variant="contained"
+                onClick={createHandler}
+              />
+            </RenderRoleBased>
+          )}
+        </div>
+
+        {/* Page Change Dropdown below */}
+
+        <div className="block">
+          <label htmlFor="page-size" className="mr-2 text-blackGrey-50 text-sm">
+            Page Size
+          </label>
+          <select
+            id="page-size"
+            value={pageSize}
+            onChange={(e) => {
+              setPageSize(parseInt(e.target.value));
+              onChangePage(1);
+            }}
+            className="p-1 border-b outline-none cursor-pointer"
+          >
+            {[5, 10, 20, 30, 50].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
+            ))}
+          </select>
+        </div>
+        {createHandler && (
+          <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+            <LoaderButton
+              content={<MdAdd className="!text-h2" />}
+              className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
+              variant="contained"
+              onClick={createHandler}
+            />
+          </RenderRoleBased>
+        )}
       </div>
-      {createHandler && (
-        <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
-          <LoaderButton
-            content={<Add className="!text-h2" />}
-            className="hidden md:hidden sm:block -top-10 right-2 absolute !p-1 !rounded-full !w-fit"
-            variant="contained"
-            onClick={createHandler}
-          />
-        </RenderRoleBased>
-      )}
     </div>
   );
 };

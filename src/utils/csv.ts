@@ -1,7 +1,11 @@
 export type ColumnConfig<T> = {
-  key: Extract<keyof T, string>; // only string keys allowed
+  key: string; // allow nested keys like "user.name"
   label?: string;
   format?: (value: any, row: T) => string;
+};
+
+const getNestedValue = (obj: any, path: string): any => {
+  return path.split(".").reduce((acc, part) => acc?.[part], obj);
 };
 
 export const formatCSVDataByColumnOrder = <T>(
@@ -12,14 +16,11 @@ export const formatCSVDataByColumnOrder = <T>(
     const formattedRow: Record<string, any> = {};
 
     columns.forEach(({ key, label, format }) => {
-      let value = (row as any)[key];
-
+      let value = getNestedValue(row, key);
 
       if (format) {
-        // ✅ Custom formatting with full row access
         value = format(value, row);
       } else if (typeof value === "object" && value !== null) {
-        // Check for empty object or empty array
         const isEmptyObject =
           !Array.isArray(value) && Object.keys(value).length === 0;
         const isEmptyArray = Array.isArray(value) && value.length === 0;
@@ -27,10 +28,9 @@ export const formatCSVDataByColumnOrder = <T>(
         if (isEmptyObject || isEmptyArray) {
           value = "-";
         } else {
-          // Stringify deeply if not empty
           value = JSON.stringify(value, null, 2);
         }
-      } else if (!value) {
+      } else if (value == null || value === "") {
         value = "-";
       }
 

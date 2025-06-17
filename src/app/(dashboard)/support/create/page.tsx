@@ -4,59 +4,55 @@ import React, { useRef, useState } from "react";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
-import { Add, Mail } from "@mui/icons-material";
-import { MdClose } from "react-icons/md";
+import { MdAdd, MdClose, MdEmail } from "react-icons/md";
 import { getUrlOrObjectUrl } from "@/utils/getImageSrcType";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import { createPrivateTicketApi } from "@/services/support";
 import { useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
+import useFormValidation from "@/hooks/useFormValidation";
+import { supportOptions } from "@/constants/types";
+import supportSchema from "@/models/support";
 
-import { Role } from "@/constants/roles";
-
-const supportOptions = [
-  { label: "Incident", value: "Incident" },
-  { label: "Question", value: "Question" },
-  { label: "Problem", value: "Problem" },
-  { label: "Refund", value: "Refund" },
-  { label: "Transaction Issue", value: "Transaction Issue" },
-  { label: "Loan", value: "Loan" },
-];
+const initialValues = {
+  subject: "",
+  concern: "",
+  message: "",
+  attachments: null,
+};
 
 const Support = () => {
   const front = useRef(null);
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isTicketLoading, isTicketError, callCreateTicketApi] = useApi();
-  const [supportData, setSupportData] = useState({
-    subject: "",
-    concern: "",
-    message: "",
-    attachments: null,
-  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setSupportData((pre) => ({ ...pre, [name]: value }));
-  };
+  const {
+    errors,
+    handleChange,
+    handleSubmit,
+    validateField,
+    values,
+    setValues,
+  } = useFormValidation(initialValues, supportSchema);
 
   const handlefileChange = (e) => {
     const { name, files } = e.target;
-    if (supportData?.attachments) {
-      let filesMerged = [...supportData?.attachments, ...files];
-      setSupportData((pre) => ({ ...pre, [name]: Array.from(filesMerged) }));
+    if (values?.attachments) {
+      let filesMerged = [...values?.attachments, ...files];
+      setValues((pre) => ({ ...pre, [name]: Array.from(filesMerged) }));
     } else {
-      setSupportData((pre) => ({ ...pre, [name]: Array.from(files) }));
+      setValues((pre) => ({ ...pre, [name]: Array.from(files) }));
     }
   };
 
   const handleRemoveFile = (index) => {
-    setSupportData((pre) => {
+    setValues((pre) => {
       const updatedAttachments = pre.attachments.filter((_, i) => i !== index);
       return {
         ...pre,
@@ -70,11 +66,11 @@ const Support = () => {
 
     formdata.append("email", user?.email);
     formdata.append("name", `${user?.first_name} ${user?.last_name}`);
-    formdata.append("message", supportData?.message);
-    formdata.append("subject", supportData?.subject);
-    formdata.append("type", supportData?.concern);
+    formdata.append("message", values?.message);
+    formdata.append("subject", values?.subject);
+    formdata.append("type", values?.concern);
 
-    supportData?.attachments?.forEach((file: File) =>
+    values?.attachments?.forEach((file: File) =>
       formdata.append("files", file)
     );
 
@@ -94,156 +90,171 @@ const Support = () => {
 
   return (
     <>
-      <div className="rounded-medium flex flex-col">
-        <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-12">
-          Need Help
-        </h3>
+      <form onSubmit={(event) => handleSubmit(event, createTicketHandler)}>
+        <div className="flex flex-col rounded-medium">
+          <h3 className="mb-12 font-semibold text-blackGrey-100 text-h3.5">
+            Need Help
+          </h3>
 
-        <div className="grid grid-cols-2 gap-x-10 flex-wrap mb-2">
+          <div className="flex-wrap gap-x-10 grid grid-cols-2 mb-2">
+            <IconField
+              value={`${user?.first_name} ${user?.last_name}`}
+              label="Name"
+              disabled
+              icon={MdEmail}
+              onChange={handleChange}
+              name="name"
+            />
+            <IconField
+              value={user?.email}
+              icon={MdEmail}
+              label="Email"
+              disabled
+              onChange={handleChange}
+              name="email"
+            />
+          </div>
+
           <IconField
-            value={`${user?.first_name} ${user?.last_name}`}
-            label="Name"
-            disabled
-            icon={Mail}
             onChange={handleChange}
-            name="name"
+            label="Subject"
+            name="subject"
+            error={errors?.subject}
+            onBlur={validateField}
+            placeholder="Enter your Subject"
+            inputContainerClassName="!bg-blackGrey-filled-input mb-2"
+            value={values.subject}
           />
-          <IconField
-            value={user?.email}
-            icon={Mail}
-            label="Email"
-            disabled
+
+          <IconSelectBox
+            options={supportOptions}
             onChange={handleChange}
-            name="email"
+            label="Type"
+            error={errors?.concern}
+            name="concern"
+            placeholder="Select your Concern"
+            inputContainerClassName="!bg-blackGrey-filled-input mb-2"
+            value={values.concern}
           />
-        </div>
 
-        <IconField
-          onChange={handleChange}
-          label="Subject"
-          name="subject"
-          placeholder="Enter your Subject"
-          inputContainerClassName="!bg-blackGrey-filled-input mb-2"
-          value={supportData.subject}
-        />
+          <div className="flex flex-col gap-2 mb-8">
+            <label className="block mb-1 font-medium">Message</label>
 
-        <IconSelectBox
-          options={supportOptions}
-          onChange={handleChange}
-          label="Concern"
-          name="concern"
-          placeholder="Select your Concern"
-          inputContainerClassName="!bg-blackGrey-filled-input mb-2"
-          value={supportData.concern}
-        />
+            <textarea
+              value={values?.message}
+              onBlur={validateField}
+              placeholder="Your Message Here"
+              onChange={handleChange}
+              name="message"
+              className={`border border-light-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 rounded-medium bg-light-gray outline-none`}
+            />
 
-        <div className="flex flex-col gap-2 mb-8">
-          <label className="block mb-1 font-medium">Message</label>
+            {errors.message && (
+              <p className="mt-[4px] ml-4 text-red-error-dark text-subtitle">
+                {errors.message}
+              </p>
+            )}
+          </div>
 
-          <textarea
-            value={supportData?.message}
-            placeholder="Your Message Here"
-            onChange={handleChange}
-            name="message"
-            className={`border border-light-gray p-4 resize-none text-gray-400 font-medium w-full min-h-36 rounded-medium bg-light-gray outline-none`}
-          />
-        </div>
-
-        {/* <div className="flex gap-4 items-center mt-20 flex-wrap mb-8">
-        <div className="max-w-full w-[310px]">
+          {/* <div className="flex flex-wrap items-center gap-4 mt-20 mb-8">
+        <div className="w-[310px] max-w-full">
         <LoaderButton content="Contact Support" variant="contained" />
         </div>
         </div> */}
-      </div>
+        </div>
 
-      <div className="rounded-medium flex flex-col mt-10">
-        <h3 className="text-h3.5 font-semibold text-blackGrey-100 mb-12">
-          Upload Attachments
-        </h3>
+        <div className="flex flex-col mt-10 rounded-medium">
+          <h3 className="mb-12 font-semibold text-blackGrey-100 text-h3.5">
+            Upload Attachments
+          </h3>
 
-        <div className="flex flex-col gap-2">
-          <input
-            type="file"
-            multiple
-            name="attachments"
-            onChange={handlefileChange}
-            ref={front}
-            hidden
-            accept="image/*"
-          />
-          <p className="my-2 font-semibold text-input text-black-100">Images</p>
-          {!supportData?.attachments   ? (
-            <div className="flex flex-col gap-3 items-start justify-center mb-2">
-              <button
-                type="button"
-                className="border w-[470px] max-w-full justify-center border-light-gray border-dashed bg-blackGrey-filled-input p-3 px-8 rounded-full flex items-center gap-2"
-                onClick={() => front?.current?.click()}
-              >
-                <Add className="text-purple-500" />
-                <span className="text-blackGrey-placeholder text-input">
-                  Drop Files Here Or Click To Upload
-                </span>
-              </button>
-            </div>
-          ) : (
-            <div className="flex gap-6 flex-wrap">
-              {/* {supportData?.attachments?.map((item) => (
-                <div className="text-center flex flex-col gap-2 w-[320px]">
-                  <img
-                    src={getUrlOrObjectUrl(item)}
-                    alt="front side"
-                    className="max-w-full object-contain"
-                  />
-                  <span className="text-caption text-custom-title-gray font-medium">
-                    {item?.name}
-                  </span>
-                </div>
-              ))} */}
-              {supportData?.attachments?.map((item, index) => (
-                <div
-                  key={index}
-                  className="relative text-center flex flex-col gap-2 w-[320px]"
+          <div className="flex flex-col gap-2">
+            <input
+              type="file"
+              multiple
+              name="attachments"
+              onChange={handlefileChange}
+              ref={front}
+              hidden
+              accept="image/*"
+            />
+            <p className="my-2 font-semibold text-black-100 text-input">
+              Images
+            </p>
+            {!values?.attachments ? (
+              <div className="flex flex-col justify-center items-start gap-3 mb-2">
+                <button
+                  type="button"
+                  className="flex justify-center items-center gap-2 bg-blackGrey-filled-input p-3 px-8 border border-light-gray border-dashed rounded-full w-[470px] max-w-full"
+                  onClick={() => front?.current?.click()}
                 >
-                  <img
-                    src={getUrlOrObjectUrl(item)}
-                    alt="attachment"
-                    className="max-w-full object-contain"
-                  />
-                  <span className="text-caption font-medium">{item.name}</span>
-                  <button
-                    className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                    onClick={() => handleRemoveFile(index)}
-                  >
-                    <MdClose />
-                  </button>
+                  <MdAdd className="text-purple-500" />
+                  <span className="text-blackGrey-placeholder text-input">
+                    Drop Files Here Or Click To Upload
+                  </span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-6">
+                {/* {supportData?.attachments?.map((item) => (
+                <div className="flex flex-col gap-2 w-[320px] text-center">
+                <img
+                src={getUrlOrObjectUrl(item)}
+                alt="front side"
+                className="max-w-full object-contain"
+                />
+                <span className="font-medium text-caption text-custom-title-gray">
+                {item?.name}
+                </span>
                 </div>
-              ))}
+                ))} */}
+                {values?.attachments?.map((item, index) => (
+                  <div
+                    key={index}
+                    className="relative flex flex-col gap-2 w-[320px] text-center"
+                  >
+                    <img
+                      src={getUrlOrObjectUrl(item)}
+                      alt="attachment"
+                      className="max-w-full object-contain"
+                    />
+                    <span className="font-medium text-caption">
+                      {item.name}
+                    </span>
+                    <button
+                      className="top-0 right-0 absolute bg-red-500 p-1 rounded-full text-white"
+                      onClick={() => handleRemoveFile(index)}
+                    >
+                      <MdClose />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {values?.attachments && (
+            <div className="mt-12 max-w-[220px]">
+              <LoaderButton
+                content={"Upload Image"}
+                variant={"outlined"}
+                onClick={() => front?.current?.click()}
+              />
             </div>
           )}
         </div>
 
-        {supportData?.attachments && (
-          <div className="mt-12 max-w-[220px]">
-            <LoaderButton
-              content={"Upload Image"}
-              variant={"outlined"}
-              onClick={() => front?.current?.click()}
-            />
-          </div>
-        )}
-      </div>
+        <ErrorApiText error={isTicketError} />
 
-      <ErrorApiText error={isTicketError} />
-
-      <div className="mt-16 max-w-[360px] pb-8">
-        <LoaderButton
-          loading={isTicketLoading}
-          content={"Submit"}
-          onClick={createTicketHandler}
-          type="submit"
-          variant={"contained"}
-        />
-      </div>
+        <div className="mt-16 pb-8 max-w-[360px]">
+          <LoaderButton
+            loading={isTicketLoading}
+            content={"Submit"}
+            type="submit"
+            variant={"contained"}
+          />
+        </div>
+      </form>
     </>
   );
 };

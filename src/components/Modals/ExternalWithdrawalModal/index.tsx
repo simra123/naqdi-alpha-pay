@@ -13,8 +13,8 @@ import ErrorApiText from "../../common/ErrorApiText";
 
 import useFormValidation from "@/hooks/useFormValidation";
 
-import { ExternalWithdrawal } from "@/models/ExternalWithdrawal";
-import { externalWithdrawalApproveAdminApi } from "@/services/withdrawal";
+import { ExternalWithdrawal } from "@/models/externalWithdrawal";
+import { externalWithdrawalApproveAdminApi } from "@/services/admin/withdrawal";
 import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 
@@ -23,7 +23,7 @@ interface Props {
   toggleHandler: () => void;
   refreshHandler: () => void;
   withdrawId: any;
-  blockchain:string
+  blockchain: string;
 }
 
 const initalFormValues = {
@@ -37,7 +37,7 @@ const ExternalWithdrawalModal = ({
   toggleHandler,
   withdrawId,
   refreshHandler,
-  blockchain
+  blockchain,
 }: Props) => {
   const dispatch = useDispatch();
   const [
@@ -61,10 +61,9 @@ const ExternalWithdrawalModal = ({
   const handleExternalWithdrawal = async () => {
     await callApiHook({
       apiCall: callWithdrawalApi(
-        externalWithdrawalApproveAdminApi({
-          withdraw_id: withdrawId,
+        externalWithdrawalApproveAdminApi(withdrawId, {
           sender_address: values?.senderAddress,
-          transaction_hash: values?.transactionHash,
+          hash: values?.transactionHash,
           internal_note: values?.internalNote,
         })
       ),
@@ -76,7 +75,7 @@ const ExternalWithdrawalModal = ({
             status: "success",
           })
         );
-        toggleHandler()
+        toggleHandler();
       },
     });
   };
@@ -87,11 +86,7 @@ const ExternalWithdrawalModal = ({
 
       <form
         className="flex flex-col gap-2 mt-8"
-        onSubmit={(e) =>
-          handleSubmit(e, handleExternalWithdrawal, () =>
-            console.log("Something went wrong")
-          )
-        }
+        onSubmit={(e) => handleSubmit(e, handleExternalWithdrawal)}
       >
         <IconField
           value={values.transactionHash}
@@ -125,7 +120,12 @@ const ExternalWithdrawalModal = ({
         </div>
 
         <div className="flex flex-col justify-end mt-4">
-          <LoaderButton type="submit" content="Approve" variant="contained" loading={isWithdrawalLoading}/>
+          <LoaderButton
+            type="submit"
+            content="Approve"
+            variant="contained"
+            loading={isWithdrawalLoading}
+          />
         </div>
       </form>
 

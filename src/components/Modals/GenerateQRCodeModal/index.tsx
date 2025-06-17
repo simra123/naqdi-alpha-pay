@@ -10,15 +10,19 @@ import ErrorApiText from "../../common/ErrorApiText";
 
 import LoaderButton from "../../common/LoaderButton";
 import Details from "@/components/common/Details";
-import { generateMFAForAdminApi, verifyMFAForAdminApi } from "@/services/auth";
+import {
+  generateMFAForAdminApi,
+  verifyMFAForAdminApi,
+} from "@/services/admin/auth";
 import OTPInput from "react-otp-input";
-import { Info } from "@mui/icons-material";
+
 import { updateMfaInCookie } from "@/utils/cookies";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { QRCodeCanvas } from "qrcode.react";
+import { MdInfo } from "react-icons/md";
 
 const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isQRCodeLoading, isQRCodeError, callQRCodeApi] = useApi();
   const [isVerificationLoading, isVerificationError, callVerificationApi] =
     useApi({ notify: true });
@@ -31,7 +35,6 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
     await callApiHook({
       apiCall: callQRCodeApi(generateMFAForAdminApi()),
       successCallBack: (response: any) => {
-
         setQRCode(response);
       },
     });
@@ -45,7 +48,6 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
     await callApiHook({
       apiCall: callVerificationApi(verifyMFAForAdminApi({ token: otp })),
       successCallBack: (response: any) => {
-
         setIsMfaVerified(true);
         updateMfaInCookie(true);
         setIsOpen(false);
@@ -59,13 +61,13 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="text-xl font-bold mb-6">Secure You Account</h2>
+      <h2 className="mb-6 font-bold text-xl">Secure You Account</h2>
 
       {step == 1 ? (
         qrcode && (
           <>
             <div className="flex flex-col items-center overflow-hidden">
-              <div className="qr_code mt-6 flex justify-center">
+              <div className="flex justify-center mt-6 qr_code">
                 {qrcode && qrcode.secret && (
                   <QRCodeCanvas
                     value={`otpauth://totp/Alphapay?secret=${encodeURIComponent(
@@ -80,7 +82,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
 
               <Details copyable value={qrcode?.secret} />
 
-              <p className="text-black-100 font-semibold mt-4">
+              <p className="mt-4 font-semibold text-black-100">
                 Please scan the code into your autheticator app or manually
                 enter the secret. Then press next to verify.
               </p>
@@ -90,18 +92,18 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
       ) : (
         <>
           <div className="mt-2">
-            <div className="flex gap-2 items-center">
+            <div className="flex items-center gap-2">
               <label className="block mb-2 font-medium">Enter Code</label>
 
-              <div className="relative flex items-center group">
-                <Info className="text-blue-info mb-1 text-[18px]" />
+              <div className="group relative flex items-center">
+                <MdInfo className="mb-1 text-[18px] text-blue-info" />
 
-                <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
+                <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
                   <div className="relative p-2">
                     <p className="w-full text-center">
                       Use your Google Autheticator code here
                     </p>
-                    <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+                    <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
                   </div>
                 </div>
               </div>
@@ -117,7 +119,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
               renderInput={(props) => (
                 <input
                   {...props}
-                  className="!w-14 p-2 py-4 max-w-full md:p-4 rounded-large outline-none border border-light-gray bg-blackGrey-filled-input"
+                  className="bg-blackGrey-filled-input p-2 md:p-4 py-4 border border-light-gray rounded-large outline-none !w-14 max-w-full"
                 />
               )}
               onChange={(value) => setOtp(value)}
@@ -152,7 +154,7 @@ const GenerateQRCodeModal = ({ isOpen, setIsOpen, setIsMfaVerified }) => {
         {step == 2 && (
           <button
             type="button"
-            className="text-black-100 px-4 py-2 mt-2"
+            className="mt-2 px-4 py-2 text-black-100"
             onClick={handleStepChange(1)}
           >
             Back
