@@ -1,4 +1,4 @@
-import {isAddress} from "web3-validator";
+import { isAddress } from "web3-validator";
 import { validate } from "bitcoin-address-validation";
 import { TronWeb } from "tronweb";
 
@@ -15,7 +15,6 @@ export const isValidBitcoinAddress = (address) => {
 };
 
 export const validateCryptoAddress = (address, blockchain) => {
-
   switch (blockchain.toLowerCase()) {
     case "eth":
       return isValidEthereumAddress(address);

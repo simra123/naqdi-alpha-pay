@@ -10,19 +10,15 @@ import ErrorApiText from "../../common/ErrorApiText";
 
 import useFormValidation from "@/hooks/useFormValidation";
 
-import { UserSchema } from "@/models/Register";
+import { UserSchema } from "@/models/register";
 import SwitchButton from "@/components/common/SwitchButton";
 import IconSelectBox from "@/components/common/IconSelectBox";
 import { callApiHook } from "@/utils/apifuncs";
-import {
-  createSubAdminApi,
-  createSubuserApi,
-  updateSubAdminApi,
-  updateSubuserApi,
-} from "@/services/auth";
+import { createSubuserApi, updateSubuserApi } from "@/services/auth";
+import { createSubAdminApi, updateSubAdminApi } from "@/services/admin/auth";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 
@@ -40,7 +36,6 @@ const initialValues = {
   lastName: "",
   username: "",
   email: "",
-  password: "",
 };
 
 const permissionOptions = [
@@ -79,7 +74,7 @@ const CreateUserModal = ({
 }: Props) => {
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   let permissions =
     user?.role == Role.ADMIN ? subAdminPermissions : subUserPermissions;
 
@@ -189,34 +184,6 @@ const CreateUserModal = ({
   };
 
   const updateSubUser = async () => {
-    // const updatedPermissions = Object.entries(selectedPermissions).map(
-    //   ([module, access_level]) => {
-    //     const existingPerm = userPermissions?.find(
-    //       (perm) => perm?.permission?.module === module
-    //     );
-
-    //     if (existingPerm) {
-    //       return {
-    //         ...existingPerm,
-    //         permission: {
-    //           ...existingPerm.permission,
-    //           access_level: access_level || "none",
-    //         },
-    //       };
-    //     }
-
-    //     // If it's a new permission not in userPermissions, add a fresh one
-    //     return {
-    //       permission: {
-    //         module,
-    //         access_level: access_level || "none",
-    //       },
-    //     };
-    //   }
-    // );
-
-    // console.log({ updatedPermissions });
-
     let tempIdCounter = -1; // Start with negative IDs for new permissions
 
     const updatedPermissions = Object.entries(selectedPermissions).map(
@@ -246,8 +213,6 @@ const CreateUserModal = ({
         };
       }
     );
-
-    console.log({ updatedPermissions });
 
     await callApiHook({
       apiCall: callCreateUserApi(
@@ -301,7 +266,7 @@ const CreateUserModal = ({
         <form
           className="flex flex-col gap-2 mt-8"
           onSubmit={(e) =>
-            handleSubmit(e, onSubmit, () => console.log("Something went wrong"))
+            handleSubmit(e, onSubmit)
           }
         >
           <IconField
@@ -342,17 +307,6 @@ const CreateUserModal = ({
             onBlur={validateField}
             name="email"
             placeholder="Enter Email"
-          />
-
-          <IconField
-            label="Password"
-            error={errors.password}
-            value={values.password}
-            onChange={handleChange}
-            onBlur={validateField}
-            name="password"
-            type="password"
-            placeholder="Enter Password"
           />
 
           <div className="flex flex-col justify-end mt-4">
@@ -490,7 +444,7 @@ const CreateUserModal = ({
 
             <div className="flex flex-col gap-2">
               <div className="flex justify-between items-center">
-                <span className="font-medium text-base">Payments</span>
+                <span className="font-medium text-base">Deposits</span>
                 <SwitchButton
                   handleToggle={togglePermission(
                     ModulesEnum?.payment,

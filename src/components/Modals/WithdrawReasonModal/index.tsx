@@ -9,7 +9,7 @@ import { setNotification } from "@/store/slices/modal.Slice";
 import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import ErrorApiText from "../../common/ErrorApiText";
-import { withdrawalRejectAdminApi } from "@/services/withdrawal";
+import { withdrawalRejectAdminApi } from "@/services/admin/withdrawal";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -56,9 +56,9 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
-      <h2 className="text-h3.5 font-semibold mb-4">Reason For Rejection</h2>
+      <h2 className="mb-4 font-semibold text-h3.5">Reason For Rejection</h2>
 
-      <form className="mt-8 flex flex-col gap-2">
+      <form className="flex flex-col gap-2 mt-8">
         <IconField
           value={data.reason}
           name="reason"
@@ -77,7 +77,7 @@ const ReasonModal = ({ isOpen, toggleHandler, withdrawId }: Props) => {
 
           {/* <button
               type="button"
-              className="text-black-100 px-4 py-2 mt-2"
+              className="mt-2 px-4 py-2 text-black-100"
               onClick={toggleHandler}
             >
               Cancel

@@ -34,9 +34,9 @@ export const clamp = (value: number, max: number, min: number = 0): string => {
 };
 
 export const parseQueueDelay = (): number => {
-  const match = process.env.NEXT_PUBLIC_API_QUEUE_DELAY?.match(/^(\d+)(s|m|h)$/);
+  const match =
+    process.env.NEXT_PUBLIC_API_QUEUE_DELAY?.match(/^(\d+)(s|m|h)$/);
   if (!match) {
-    console.warn("Invalid QUEUE_DELAY format, defaulting to 2 minutes");
     return 1 * 60 * 1000;
   }
 

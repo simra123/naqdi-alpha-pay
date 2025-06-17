@@ -66,3 +66,13 @@
 .react-datepicker__day--outside-month {
   color: #ccc !important; /* Lighter gray for days outside the current month */
 }
+
+.react-datepicker__input-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.react-datepicker__view-calendar-icon input {
+  padding: 7px 0;
+}

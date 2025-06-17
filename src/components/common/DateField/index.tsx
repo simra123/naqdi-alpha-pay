@@ -31,7 +31,7 @@ export default function DateField({
   if (!isMounted) return null;
 
   return (
-    <div className="relative">
+    <div className="bg-white">
       <DatePicker
         value={value}
         name={name}
@@ -43,16 +43,15 @@ export default function DateField({
         timeIntervals={10} // You can change this to 5, 10, 30, etc.
         timeCaption="Time"
         dateFormat="MM/dd/yyyy hh:mm aa" // Ensure AM/PM is included
-        className={`w-full text-[14px] py-[10px] px-4 focus:outline-none ${className}`}
+        className={`w-full text-[14px] py-[10px] focus:outline-none ${className}`}
         calendarClassName="custom-calendar z-10000"
         popperClassName="!z-[10000]"
+        icon={<CalenderGrayIcon />}
+        showIcon
         popperContainer={(props) =>
           ReactDOM.createPortal(<div {...props} />, document.body)
         }
       />
-      <div className="top-2.5 right-3 absolute pointer-events-none">
-        <CalenderGrayIcon />
-      </div>
     </div>
   );
 }

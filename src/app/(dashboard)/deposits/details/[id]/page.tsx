@@ -2,19 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook } from "@/utils/apifuncs";
-import {
-  getPaymentDetailsApi,
-  getPaymentDetailsByAdminApi,
-} from "@/services/payments";
 import moment from "moment";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import Details from "@/components/common/Details";
-import { InfoOutlined, Mail } from "@mui/icons-material";
 import {
   CalenderIcon,
   FolderIcon,
@@ -27,163 +22,161 @@ import Chip from "@/components/common/Chip";
 import { useRouter } from "next/navigation";
 import { capitalize, mergeWebhookResponses } from "@/utils/dataFormatters";
 import { roundToPrecision } from "@/utils/math";
-import { nileExplorerBaseURL } from "@/constants/block-explorers";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import { AccessLevelEnum, ModulesEnum, RequestVia, TableColumns } from "@/constants/types";
 import WebhookResponseTabs from "@/components/ui/WebhookResponseTabs";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { MdOutlineInfo } from "react-icons/md";
 import { getPermission, hasMinAccess } from "@/utils/cookies";
+import { getTransactionRequestDetailsByUserApi } from "@/services/transaction";
+import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transaction";
+import { formatDateToUserTimeZone } from "@/utils/dates";
 
-const unpaidStatuses = ["Pending", "Cancel", "New"];
+const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
-const PaymentDetails = ({ params }) => {
+
+const DepositDetails = ({ params }) => {
   const paymentId = params?.id;
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
 
   const [payment, setPayment] = useState(null);
   const [webhooks, setWebhooks] = useState([]);
-  const [transaction, setTransacion] = useState([]);
   const [orderInfo, setOrderInfo] = useState<{}>(null);
-  const [receivedAmount, setRecievedAmount] = useState({
-    totalAmount: "0",
-    netAmount: "0",
-    fees: "0",
-  });
+
   const [isPaymentLoading, isPaymentError, callPaymentApi] = useApi({
     initailLoading: true,
   });
-  const isMerchantHasReadAccess =
-    getPermission(ModulesEnum.merchant)?.access_level == AccessLevelEnum.read;
+  const isMerchantHasReadAccess = hasMinAccess(
+    ModulesEnum.merchant,
+    AccessLevelEnum.read
+  );
 
   const getPayment = async () => {
-    // if (user?.role == Role.USER) {
-
     let paymentDetailCall =
       user?.role == Role.USER
-        ? getPaymentDetailsApi
-        : getPaymentDetailsByAdminApi;
+        ? getTransactionRequestDetailsByUserApi
+        : getTransactionRequestDetailsByAdminApi;
 
     await callApiHook({
-      apiCall: callPaymentApi(paymentDetailCall(paymentId)),
+      apiCall: callPaymentApi(paymentDetailCall({ id: paymentId })),
       successCallBack: (response: any) => {
-        const transactionsList = response?.paymentTransaction?.map((item) => ({
-          id: item?.id,
-          payment_transaction_uuid: item?.payment_transaction_uuid,
-          dateReceived: moment(item?.created_at).format("DD-MM-YYYY : hh:mm A"),
-          senderAddress: item?.sender_address,
-          receiveAddress: response?.wallet?.address,
-          recievedAmount: `${item?.total_amount_received} ${item?.unit}`,
-          netAmount: `${item?.transaction_amount} ${item?.unit}`,
-          transactionHash: item?.transaction_hash,
-          blockchain: capitalize(response?.wallet?.blockchain),
-          status: item?.status,
-        }));
-
-        setTransacion(transactionsList);
-
-        const netAmountReceived = response?.paymentTransaction?.reduce(
-          (acc, transaction) => {
-            return acc + parseFloat(transaction.transaction_amount);
-          },
-          0
-        );
-        const totalAmountReceived = response?.paymentTransaction?.reduce(
-          (acc, transaction) => {
-            return acc + parseFloat(transaction.total_amount_received);
-          },
-          0
-        );
-        const totalFees = response?.paymentTransaction?.reduce(
-          (acc, transaction) => {
-            return acc + parseFloat(transaction.alphaspay_fees);
-          },
-          0
-        );
-
-        setRecievedAmount({
-          totalAmount:
-            roundToPrecision(totalAmountReceived, 6) +
-            " " +
-            response?.payment_currency,
-          netAmount:
-            roundToPrecision(netAmountReceived, 6) +
-            " " +
-            response?.payment_currency,
-          fees:
-            roundToPrecision(totalFees, 6) + " " + response?.payment_currency,
-        });
-
         try {
           const parsedData = JSON.parse(response.passthrough);
           setOrderInfo(parsedData);
-        } catch (error) {
-          console.error("Failed to parse JSON:", error);
-        }
+        } catch (error) {}
         setPayment(response);
 
         // Handling Webhooks Below
 
-        const webhooks = mergeWebhookResponses(response?.paymentTransaction);
+        const webhooks = mergeWebhookResponses(response?.webhook_request);
         setWebhooks(webhooks);
       },
     });
-    // }
   };
 
   const transactionsList_table_columns: TableColumns = [
-    { field: "payment_transaction_uuid", headerName: "ID", sortable: true },
-    { field: "dateReceived", headerName: "Date Received", sortable: true },
+    { field: "id", headerName: "ID" },
     {
-      field: "senderAddress",
+      field: "created_at",
+      headerName: "Date Received",
+      dataValidator: (value) => {
+        let [day, time] = formatDateToUserTimeZone(value);
+        return (
+          <div className="flex flex-col gap-1">
+            <span className="text-caption">{day}</span>
+            <span className="text-custom-title-gray text-subtitle">{time}</span>
+          </div>
+        );
+      },
+    },
+    {
+      field: "sender_address",
       headerName: "Sender Address",
-      sortable: true,
       copyable: true,
-      link(row: { blockchain: string; senderAddress: string }) {
+      link(row: any) {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.blockchain,
+          blockchain: payment?.wallet?.blockchain,
           type: "address",
-          address: row?.senderAddress,
+          address: row?.sender_address,
         });
       },
     },
     {
-      field: "receiveAddress",
+      field: "receiver_address",
       headerName: "Receive Address",
-      sortable: true,
       copyable: true,
-      link(row: { blockchain: string; receiveAddress: string }) {
+      link(row: any) {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.blockchain,
+          blockchain: payment?.wallet?.blockchain,
           type: "address",
-          address: row?.receiveAddress,
+          address: row?.receiver_address,
         });
       },
     },
     {
-      field: "transactionHash",
+      field: "hash",
       headerName: "Transaction Hash",
-      sortable: true,
       copyable: true,
-      link(row: { blockchain: string; transactionHash: string }) {
+      link(row: any) {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.blockchain,
+          blockchain: payment?.wallet?.blockchain,
           type: "hash",
-          hash: row?.transactionHash,
+          hash: row?.hash,
         });
       },
     },
-    { field: "recievedAmount", headerName: "Recieved Amount", sortable: true },
-    { field: "netAmount", headerName: "Net Amount", sortable: true },
+    {
+      field: "paid_amount",
+      headerName: "Received Amount",
+      dataValidator(value) {
+        return value ? `${value} ${payment?.unit}` : "_";
+      },
+    },
+    {
+      field: "net_amount",
+      headerName: "Net Amount",
+      dataValidator(value) {
+        return value ? `${value} ${payment?.unit}` : "_";
+      },
+    },
 
-    { field: "blockchain", headerName: "Blockchain", sortable: true },
+    {
+      field: "fee",
+      headerName: "Alphaspay Fee",
+      dataValidator(value) {
+        return value ? `${value} ${payment?.unit}` : "_";
+      },
+    },
+    {
+      field: "fiat_paid_amount",
+      headerName: "Fiat Paid",
+      dataValidator(value) {
+        return value ? `${value} ${payment?.fiat_currency}` : "_";
+      },
+    },
+    {
+      field: "fiat_net_amount",
+      headerName: "Fiat Net Amount",
+      dataValidator(value) {
+        return value ? `${value} ${payment?.fiat_currency} ` : "_";
+      },
+    },
+
+    {
+      field: "fiat_fee",
+      headerName: "Fiat Fee",
+      dataValidator(value) {
+        return value ? `${value} ${payment?.fiat_currency}` : "_";
+      },
+    },
+
     {
       field: "status",
       headerName: "Status",
-      sortable: true,
       dataValidator: (value) => {
         return <Chip status={value} />;
       },
@@ -199,7 +192,7 @@ const PaymentDetails = ({ params }) => {
       <LoadingApi loading={isPaymentLoading}>
         <div className="flex flex-col bg-white rounded-medium">
           <h3 className="font-semibold text-blackGrey-100 text-h3.5">
-            Payment Details
+            Deposit Details
           </h3>
 
           <ErrorApiText error={isPaymentError}>
@@ -208,12 +201,10 @@ const PaymentDetails = ({ params }) => {
               <h5 className="font-semibold text-h5 text-purple-500">General</h5>
             </div>
             <div className="res-2-grid py-6">
+              <Details label="ID" value={payment?.id} />
+              <Details label="Request Via" value={payment?.request_via} />
+              <Details label="Customer ID" value={payment?.cid || '_'} />
               <Details label="Blockchain" value={payment?.wallet?.blockchain} />
-              <Details
-                label="Requested Amount"
-                value={`${payment?.requested_amount} ${payment?.requested_currency}`}
-              />
-              <Details label="ID" value={payment?.payment_uuid} />
               <Details
                 label="Wallet Address"
                 value={payment?.wallet?.address}
@@ -237,33 +228,26 @@ const PaymentDetails = ({ params }) => {
               <div className="res-2-grid !grid-cols-1 lg:!grid-cols-2 py-6">
                 <Details
                   label="ID"
-                  value={payment?.client?.id}
+                  value={payment?.user?.id}
                   link={
                     isMerchantHasReadAccess &&
-                    `/merchants/details/${payment?.client?.id}`
+                    `/merchants/details/${payment?.user?.id}`
                   }
                   target="_self"
                 />
-                <Details
-                  label="First Name"
-                  value={payment?.client?.first_name}
-                />
-                <Details label="Last Name" value={payment?.client?.last_name} />
-                <Details label="Username" value={payment?.client?.username} />
-                <Details label="Email" value={payment?.client?.email} />
-                <Details label="Role" value={payment?.client?.role} />
-                <Details label="User Type" value={payment?.client?.user_type} />
+                <Details label="First Name" value={payment?.user?.first_name} />
+                <Details label="Last Name" value={payment?.user?.last_name} />
+                <Details label="Username" value={payment?.user?.username} />
+                <Details label="Email" value={payment?.user?.email} />
+                <Details label="Role" value={payment?.user?.role} />
+                <Details label="User Type" value={payment?.user?.user_type} />
                 <Details
                   label="Created Date"
-                  value={moment(payment?.client?.created_at).format(
-                    "DD-MM-YYYY"
-                  )}
+                  value={moment(payment?.created_at).format("DD-MM-YYYY")}
                 />
                 <Details
                   label="Updated Date"
-                  value={moment(payment?.client?.updated_at).format(
-                    "DD-MM-YYYY"
-                  )}
+                  value={moment(payment?.updated_at).format("DD-MM-YYYY")}
                 />
               </div>
             </RenderRoleBased>
@@ -286,29 +270,83 @@ const PaymentDetails = ({ params }) => {
 
             <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
               <PaymentIcon active={false} />
-              <h5 className="font-semibold text-h5 text-purple-500">
-                Payments
-              </h5>
+              <h5 className="font-semibold text-h5 text-purple-500">Amount</h5>
             </div>
 
             <div className="res-2-grid py-6">
               <Details
-                label="Payment Amount"
-                value={`${payment?.requested_amount} ${payment?.requested_currency}`}
+                label="Fiat Deposit Amount"
+                value={`${payment?.fiat_initial_amount} ${payment?.fiat_currency}`}
               />
               <Details
-                label="Payment Currency Amount "
-                value={`${payment?.payment_currency_amount} ${payment?.payment_currency}`}
+                label="Crypto Deposit Amount "
+                value={`${payment?.initial_amount} ${payment?.unit}`}
               />
               <Details
-                label="Total Payment Amount Recieved"
-                value={receivedAmount?.totalAmount}
+                label="Fiat Amount Recieved"
+                value={`${payment?.fiat_paid_amount || 0} ${
+                  payment?.fiat_currency
+                }`}
               />
               <Details
-                label="Net Payment Amount Recieved"
-                value={receivedAmount?.netAmount}
+                label="Fiat Alphaspay Fee"
+                value={`${payment?.fiat_initial_fee} ${payment?.fiat_currency}`}
               />
-              <Details label="Alphaspay Fee" value={receivedAmount?.fees} />
+              <Details
+                label="Fiat Net Amount Recieved"
+                value={`${payment?.fiat_net_amount || 0} ${
+                  payment?.fiat_currency
+                }`}
+              />
+              <Details
+                label="Crypto Amount Recieved"
+                value={`${payment?.paid_amount || 0} ${payment?.unit}`}
+              />
+
+              {payment?.request_via == RequestVia.API && (
+                <>
+                  <Details
+                    label="Fiat Initial Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.fiat_initial_client_fee || 0,
+                      10
+                    )} ${payment?.fiat_currency}`}
+                  />
+
+                  <Details
+                    label="Fiat Paid Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.fiat_paid_client_fee || 0,
+                      10
+                    )} ${payment?.fiat_currency}`}
+                  />
+
+                  <Details
+                    label="Crypto Initial Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.initial_client_fee || 0,
+                      10
+                    )} ${payment?.unit}`}
+                  />
+
+                  <Details
+                    label="Crypto Paid Client Fee"
+                    value={` ${roundToPrecision(
+                      payment?.paid_client_fee || 0,
+                      10
+                    )} ${payment?.unit}`}
+                  />
+                </>
+              )}
+
+              <Details
+                label="Crypto Alphaspay Fee"
+                value={`${payment?.initial_fee} ${payment?.unit}`}
+              />
+              <Details
+                label="Crypto Net Amount Recieved"
+                value={`${payment?.net_amount || 0} ${payment?.unit}`}
+              />
             </div>
 
             <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
@@ -318,20 +356,20 @@ const PaymentDetails = ({ params }) => {
 
             <div className="res-2-grid py-6">
               <Details
-                label="Paid Stauts"
+                label="Paid Status"
                 value={
                   unpaidStatuses.some((status) => status == payment?.status)
                     ? "Unpaid"
                     : "Paid"
                 }
               />
-              <Details label="Payment Status" value={payment?.status} />
+              <Details label="Deposit Status" value={payment?.status} />
             </div>
 
             {orderInfo && (
               <>
                 <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
-                  <InfoOutlined className="text-purple-500" />
+                  <MdOutlineInfo className="text-purple-500" />
                   <h5 className="font-semibold text-h5 text-purple-500">
                     Order Information
                   </h5>
@@ -357,7 +395,7 @@ const PaymentDetails = ({ params }) => {
         <div className="mt-8">
           <CustomTable
             columns={transactionsList_table_columns}
-            rows={transaction}
+            rows={payment?.transactions}
             actions={
               <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
                 Related Transactions
@@ -365,9 +403,9 @@ const PaymentDetails = ({ params }) => {
             }
             rowClickHandler={(row: any) =>
               hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
-              router.push(`/transactions/details/${row?.id}?type=Payment`)
+              router.push(`/transactions/details/${row?.id}`)
             }
-            columnClassName="max-w-[200px]"
+            columnClassName="max-w-[250px]"
           />
         </div>
 
@@ -381,4 +419,4 @@ const PaymentDetails = ({ params }) => {
   );
 };
 
-export default PaymentDetails;
+export default DepositDetails;

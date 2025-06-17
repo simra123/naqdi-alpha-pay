@@ -1,5 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { ArrowDropDown, ArrowDropUp, Info } from "@mui/icons-material";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  ChangeEvent,
+} from "react";
+import {
+  MdArrowDropDown,
+  MdArrowDropUp,
+  MdClose,
+  MdInfo,
+} from "react-icons/md";
 
 interface Props {
   label?: string | any;
@@ -12,9 +23,11 @@ interface Props {
   error?: string | boolean;
   info?: string;
   inputContainerClassName?: string;
+  optionsClassName?: string;
   options: { value: string; label: string }[] | any[];
   searchable?: boolean;
   disabled?: boolean;
+  clearable?: boolean;
 }
 
 interface OptionType {
@@ -37,11 +50,17 @@ const IconSelectBox = ({
   searchable = false, // Default to false if not provided
   inputContainerClassName,
   disabled,
+  optionsClassName,
+  clearable,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(value);
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const [selectedValue, setSelectedValue] = useState(value);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const optionsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (value && searchable) {
@@ -57,9 +76,17 @@ const IconSelectBox = ({
     }
   }, [value]);
 
-  const toggleOpen = (e) => {
+  useEffect(() => {
+    if (open && searchable && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [open, searchable]);
+
+  const toggleOpen = (e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
-    setOpen((prev) => !prev);
+    setOpen((prev) => {
+      return !prev;
+    });
   };
 
   const handleSelect = (optionValue: OptionType) => {
@@ -69,13 +96,15 @@ const IconSelectBox = ({
     setOpen(false);
   };
 
-  const filteredOptions = searchable
-    ? options?.filter(
-        (option) =>
-          option?.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          option?.value?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : options;
+  const filteredOptions = useMemo(() => {
+    return searchable
+      ? options.filter((option) =>
+          String(option?.label || "")
+            .toLowerCase()
+            .includes(String(searchQuery || "").toLowerCase())
+        )
+      : options;
+  }, [searchQuery, options, searchable]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -91,46 +120,92 @@ const IconSelectBox = ({
     };
   }, []);
 
-  const handleInputChange = (e) => {
-    searchable && setSearchQuery(e.target.value);
-    setOpen(true); // Show the dropdown when typing
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    const val = e.target.value;
+    searchable && setSearchQuery(val);
+    setHighlightedIndex(0); // reset highlight
+    setOpen(true);
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!open) return;
+
+    if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+      e.preventDefault();
+    }
+
+    if (e.key === "ArrowDown") {
+      setHighlightedIndex((prev) =>
+        prev < filteredOptions.length - 1 ? prev + 1 : 0
+      );
+    } else if (e.key === "ArrowUp") {
+      setHighlightedIndex((prev) =>
+        prev > 0 ? prev - 1 : filteredOptions.length - 1
+      );
+    } else if (e.key === "Enter") {
+      const selected = filteredOptions[highlightedIndex];
+      if (selected) {
+        handleSelect(selected);
+      }
+    }
+  };
+
+  const handleClear = (e) => {
+    e.stopPropagation();
+    setSearchQuery("");
+    setSelectedValue("");
+    onChange({ target: { value: "", name } });
+  };
+
+  useEffect(() => {
+    const container = optionsContainerRef.current;
+    if (!container) return;
+
+    const activeOption = container.children[highlightedIndex] as HTMLElement;
+    if (activeOption) {
+      activeOption.scrollIntoView({ block: "nearest" });
+    }
+  }, [highlightedIndex]);
 
   return (
     <div className={`mb-4 text-input ${wrapperClassName}`} ref={dropdownRef}>
-      <div className="flex gap-2 items-center">
-        <label className="block mb-2 font-medium">{label}</label>
-        {info && (
-          <div className="relative flex items-center group">
-            <Info className="text-blue-info mb-1 text-[18px]" />
-            <div className="absolute w-96 bg-dark-gray text-white text-sm -top-[112px] rounded-large py-2 -left-[50px] hidden group-hover:block transition-opacity duration-200">
-              <div className="relative p-2">
-                <p className="w-full text-center">{info}</p>
-                <div className="absolute polygon-clip bg-dark-gray w-[50px] h-[50px] rounded-large left-[33px] -bottom-[38px]"></div>
+      {label && (
+        <div className="flex items-center gap-2">
+          <label className="block mb-2 font-medium">{label}</label>
+          {info && (
+            <div className="group relative flex items-center">
+              <MdInfo className="mb-1 text-[18px] text-blue-info" />
+              <div className="hidden group-hover:block -top-[112px] -left-[50px] absolute bg-dark-gray py-2 rounded-large w-96 text-white text-sm transition-opacity duration-200">
+                <div className="relative p-2">
+                  <p className="w-full text-center">{info}</p>
+                  <div className="-bottom-[38px] left-[33px] absolute bg-dark-gray rounded-large w-[50px] h-[50px] polygon-clip"></div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-      <div className="relative">
+          )}
+        </div>
+      )}
+      <div className="group relative min-w-[150px]" onKeyDown={handleKeyDown}>
         {Icon && (
-          <Icon className="absolute left-4 top-0 flex !h-full items-center text-gray-400" />
+          <Icon className="top-0 left-4 absolute flex items-center !h-full text-gray-400" />
         )}
 
         {/* Conditionally show an input that allows searching if searchable is true */}
         {searchable ? (
           <input
             type="text"
+            ref={inputRef}
             value={open ? searchQuery : selectedValue}
             onClick={toggleOpen}
             disabled={disabled}
             onChange={handleInputChange}
-            className={`w-full p-4 cursor-pointer ${
+            className={`w-full min-w-0 p-4 cursor-pointer ${
               Icon ? "pl-12" : "pl-4"
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error
                 ? "border-error-dark"
-                : "border-light-gray focus:border-purple-100"
+                : "border-light-gray focus:border-purple"
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
             placeholder={placeholder}
           />
@@ -138,12 +213,12 @@ const IconSelectBox = ({
           // If not searchable, display the value as a non-editable div
           <div
             onClick={toggleOpen}
-            className={`w-full p-4 cursor-pointer capitalize ${
+            className={`w-full p-4 pr-10 cursor-pointer capitalize ${
               Icon ? "pl-12" : "pl-4"
             } border-[1.5px] bg-white ${inputContainerClassName} ${
               error
                 ? "border-error-dark"
-                : "border-light-gray focus:border-purple-100"
+                : "border-light-gray focus:border-purple"
             } rounded-large focus:outline-none placeholder:text-blackGrey-placeholder`}
           >
             {value ? (
@@ -155,32 +230,50 @@ const IconSelectBox = ({
           </div>
         )}
 
-        <div className="absolute h-full right-4 top-0 cursor-pointer flex items-center text-gray-400">
+        <div className="top-0 right-4 absolute flex items-center h-full text-gray-400 cursor-pointer">
           <div
             onClick={toggleOpen}
-            className="rounded-full h-2-w-2 p-1 hover:bg-light-gray"
+            className="hover:bg-light-gray p-1 rounded-full h-2-w-2 text-black-60 text-xl"
           >
-            {open ? <ArrowDropUp /> : <ArrowDropDown />}
+            {open ? <MdArrowDropUp /> : <MdArrowDropDown />}
           </div>
         </div>
+
+        {clearable && selectedValue && (
+          <div className="hidden top-0 right-10 absolute group-hover:flex items-center h-full text-gray-400 cursor-pointer">
+            <div
+              onClick={handleClear}
+              className="bg-light-gray-20 hover:bg-light-gray p-1 rounded-full h-2-w-2 text-black-100 text-xl"
+            >
+              <MdClose />
+            </div>
+          </div>
+        )}
         {open && (
-          <div className="absolute w-full max-h-80 overflow-auto bg-white border p-3 border-light-gray rounded-large mt-1 shadow-lg z-10">
+          <div
+            ref={optionsContainerRef}
+            className={`z-10 absolute bg-white shadow-lg mt-1 p-3 border border-light-gray rounded-large w-full max-h-80 overflow-auto ${optionsClassName}`}
+          >
             {filteredOptions.length > 0 ? (
-              filteredOptions?.map((option, index) => (
+              filteredOptions.map((option, index) => (
                 <div
                   key={option.value}
                   onClick={() => handleSelect(option)}
-                  className={`p-3 cursor-pointer  ${
+                  className={`p-3 cursor-pointer ${
                     index === 0
                       ? "rounded-t-md"
-                      : index === options?.length - 1 && "rounded-b-md"
+                      : index === options.length - 1
+                      ? "rounded-b-md"
+                      : ""
                   } ${
-                    value === option.value
+                    index === highlightedIndex && searchable
+                      ? "bg-purple-500 text-white font-semibold"
+                      : value === option.value
                       ? "bg-purple-light-purple text-purple-500 font-medium"
                       : "hover:bg-purple-light-purple hover:text-black-100"
                   }`}
                 >
-                  {option?.label || option?.value}
+                  {option.label || option.value}
                 </div>
               ))
             ) : (
@@ -190,7 +283,7 @@ const IconSelectBox = ({
         )}
       </div>
       {error && (
-        <p className="text-red-error-dark text-subtitle mt-[4px] ml-4">
+        <p className="mt-[4px] ml-4 text-red-error-dark text-subtitle">
           {error}
         </p>
       )}

@@ -11,7 +11,7 @@ import { TableColumns, WalletType } from "@/constants/types";
 
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
-import { getAllWalletsListByAdminApi } from "@/services/wallet";
+import { getAllWalletsListByAdminApi } from "@/services/admin/wallet";
 import moment from "moment";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import GasPaymentModal from "@/components/Modals/GasPaymentModal";

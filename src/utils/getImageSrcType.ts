@@ -15,7 +15,6 @@ export const urlToFile = async (url: string) => {
     const filename = url.substring(url.lastIndexOf("/") + 1);
     return new File([blob], filename);
   } catch (error) {
-    console.error("Error converting URL to file:", error);
     return null;
   }
 };

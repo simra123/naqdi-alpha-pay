@@ -1,10 +1,10 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "../Modal";
 import { callApiHook, sendPaymentInvoiceWhatsapp } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
-import { createDepoistAddressApi } from "@/services/wallet";
+
 import Image from "next/image";
 import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
@@ -22,12 +22,12 @@ import IconSelectBox from "../../common/IconSelectBox";
 import LoaderButton from "../../common/LoaderButton";
 import Details from "@/components/common/Details";
 import { createPaymentDepositApi } from "@/services/payments";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import IconField from "@/components/common/IconField";
 import { roundToPrecision } from "@/utils/math";
 import Checkbox from "@/components/common/CheckBox";
 import useFormValidation from "@/hooks/useFormValidation";
-import { DepoistSchema } from "@/models/Deposit";
+import { DepoistSchema } from "@/models/deposit";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
 
@@ -53,7 +53,7 @@ const initalFormValues = {
   client_name: "",
   client_email: "",
   client_phone_number: "",
-  email_notification: false,
+  send_email: false,
 };
 
 const DepositModal = ({
@@ -64,7 +64,7 @@ const DepositModal = ({
   onSuccessCallback,
   type,
 }: DepositProps) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isDepoistLoading, isDepositError, callDeposistApi, setDepoistError] =
     useApi();
   const [networks, setNeworks] = useState<Record<string, Network[]>>({});
@@ -86,21 +86,15 @@ const DepositModal = ({
     await callApiHook({
       apiCall: callDeposistApi(
         createPaymentDepositApi({
-          passthrough: JSON.stringify({
-            userid: user?.id,
-            username: user.username,
-            paymentType: "Self",
-          }),
-          requested_currency: "USD",
-          payment_currency:
-            blockchain_units[values?.blockchain?.toLowerCase()]?.toUpperCase(),
-          payment_currency_standard: values?.standard,
-          requested_amount: values.amount,
-          notes: "Merchant Created This Payment Deposit",
+          unit: blockchain_units[
+            values?.blockchain?.toLowerCase()
+          ]?.toUpperCase(),
+          standard: values?.standard,
+          amount: +values.amount,
           customer_email: values?.client_email,
           customer_name: values?.client_name,
           customer_phone_number: values?.client_phone_number,
-          email_notification: values?.email_notification,
+          send_email: values?.send_email,
         })
       ),
       statusCode: 201,
@@ -136,9 +130,12 @@ const DepositModal = ({
 
   useEffect(() => {
     if (isOpen && blockchain) {
+      const currencyName = standard
+        ? blockchain?.toUpperCase()
+        : unitName[blockchain];
       setValues((pre) => ({
         ...pre,
-        blockchain: blockchain,
+        blockchain: currencyName,
       }));
       if (standard) {
         setFilteredNets(networks[blockchain?.toLowerCase()]);
@@ -204,21 +201,11 @@ const DepositModal = ({
     return networks[blockchain].find((item) => item.value == network)?.standard;
   };
 
-  console.log({ values });
-
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
-      <h2 className="mb-6 font-bold text-xl">
-        {type == "payment" ? "Add Payment" : "Deposit Address"}
-      </h2>
+      <h2 className="mb-6 font-bold text-xl">Add Deposit</h2>
       {!depositAddress && (
-        <form
-          onSubmit={(event) =>
-            handleSubmit(event, createDepoistAddress, () =>
-              console.log("Invalid Form Data")
-            )
-          }
-        >
+        <form onSubmit={(event) => handleSubmit(event, createDepoistAddress)}>
           <IconSelectBox
             label="Select a Blockchain"
             options={blockchains}
@@ -280,8 +267,8 @@ const DepositModal = ({
 
           <Checkbox
             label="Send Invoice Email"
-            name="email_notification"
-            checked={values?.email_notification}
+            name="send_email"
+            checked={values?.send_email}
             onChange={handleChange}
           />
           <div className="mt-4">
@@ -319,11 +306,7 @@ const DepositModal = ({
                 type="submit"
                 loading={isDepoistLoading}
                 className="mt-6"
-                content={
-                  type == "payment"
-                    ? "Create"
-                    : `Create Deposit Address`
-                }
+                content={"Create"}
                 variant="contained"
               />
             </div>
@@ -339,52 +322,61 @@ const DepositModal = ({
                 Currency
               </p>
               <p className="font-medium text-black-100">
-                {unitName[depositAddress?.payment_currency?.toLowerCase()]}
+                {depositAddress?.unit}
               </p>
             </div>
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Requested Amount (USD)
+                Requested Amount ({depositAddress?.fiat_currency})
               </p>
               <p className="font-medium text-black-100">
-                {depositAddress?.requested_amount}
+                {depositAddress?.fiat_initial_amount}
               </p>
             </div>
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Alphaspay Fee
+                Alphaspay Fee ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.alphaspay_fees, 10)}
+                {roundToPrecision(+depositAddress?.initial_fee, 10)}
+              </p>
+            </div>
+            <div>
+              <p className="font-bold text-caption text-custom-title-gray">
+                Alphaspay Fee ({depositAddress?.fiat_currency})
+              </p>
+              <p className="font-medium text-black-100">
+                {roundToPrecision(+depositAddress?.fiat_initial_fee, 10)}
               </p>
             </div>
 
             <div>
               <p className="font-bold text-caption text-custom-title-gray">
-                Payment Amount ({depositAddress?.payment_currency})
+                Deposit Amount ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.payment_amount, 10)}
+                {roundToPrecision(+depositAddress?.initial_amount, 10)}
               </p>
             </div>
           </div>
 
           <div className="flex flex-col items-center overflow-hidden">
             <Image
-              src={depositAddress?.qrcode}
+              src={depositAddress?.wallet?.qr_code}
               height={250}
               width={250}
               alt="Depoist"
             />
 
-            <Details copyable value={depositAddress?.address} />
+            <Details copyable value={depositAddress?.wallet?.address} />
           </div>
 
           <p className="mt-6 text-button text-custom-caption-gray">
-            This Address is generated for depositing{" "}
-            {unitName[depositAddress?.payment_currency?.toLowerCase()]} on the{" "}
-            {values?.network ||
-              blockchain_standards[depositAddress?.payment_currency]}{" "}
+            This Address is generated for depositing {depositAddress?.unit} on
+            the{" "}
+            <span className="capitalize">
+              {depositAddress?.wallet?.blockchain}
+            </span>{" "}
             network.
           </p>
         </>

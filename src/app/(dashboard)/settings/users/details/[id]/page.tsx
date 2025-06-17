@@ -7,23 +7,22 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import { useApi } from "@/hooks/useApi";
 import { AccessLevelEnum, ModalType, ModulesEnum } from "@/constants/types";
 import { callApiHook } from "@/utils/apifuncs";
+import { getSubuserDetailsApi, deleteSubusersApi } from "@/services/auth";
 import {
   deleteSubAdminApi,
-  deleteSubusersApi,
   getSubAdminDetailsApi,
-  getSubuserDetailsApi,
-} from "@/services/auth";
+} from "@/services/admin/auth";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import CreateUserModal from "@/components/Modals/CreateUserModal";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import { hasMinAccess } from "@/utils/cookies";
 
 const UserDetails = ({ params }) => {
   const userID = params?.id;
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [userDetails, setUserDetails] = useState<null | any>(null);
@@ -35,13 +34,6 @@ const UserDetails = ({ params }) => {
       initailLoading: true,
     }
   );
-  // const [permissions, setPermissions] = useState({
-  //   integrations: "none",
-  //   payments: "none",
-  //   payouts: "none",
-  //   users: "none",
-  //   withdrawals: "none",
-  // });
 
   const fetchUserDetails = async () => {
     await callApiHook({
@@ -112,7 +104,7 @@ const UserDetails = ({ params }) => {
   };
 
   return (
-    <div className="flex flex-col bg-white shadow-sm sm:p-10 px-4 rounded-medium">
+    <div className="flex flex-col bg-white shadow-sm rounded-medium">
       <DeleteModal
         handleConfirm={deleteSubUser}
         isOpen={isDeleteOpen}
@@ -161,7 +153,9 @@ const UserDetails = ({ params }) => {
                   key={item?.id}
                 >
                   <div className="md:col-span-1 lg:col-span-2 min-w-20 text-[14px] text-black-100 md:text-button capitalize">
-                    {item?.permission?.module}
+                    {item?.permission?.module == "payment"
+                      ? "deposit"
+                      : item?.permission?.module}
                   </div>
                   <div className="md:col-span-1 text-center">
                     {renderRadioButton(

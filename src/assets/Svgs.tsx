@@ -98,9 +98,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint1_linear_722_183"
@@ -110,9 +110,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint2_linear_722_183"
@@ -122,9 +122,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint3_linear_722_183"
@@ -134,9 +134,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint4_linear_722_183"
@@ -146,9 +146,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint5_linear_722_183"
@@ -158,9 +158,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint6_linear_722_183"
@@ -170,9 +170,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint7_linear_722_183"
@@ -182,9 +182,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint8_linear_722_183"
@@ -194,9 +194,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint9_linear_722_183"
@@ -206,9 +206,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint10_linear_722_183"
@@ -218,9 +218,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint11_linear_722_183"
@@ -230,9 +230,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint12_linear_722_183"
@@ -242,9 +242,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint13_linear_722_183"
@@ -254,9 +254,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint14_linear_722_183"
@@ -266,9 +266,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint15_linear_722_183"
@@ -278,9 +278,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint16_linear_722_183"
@@ -290,9 +290,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint17_linear_722_183"
@@ -302,9 +302,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
       <linearGradient
         id="paint18_linear_722_183"
@@ -314,9 +314,9 @@ export const Bars = ({ className }) => (
         y2="40.9999"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF8C82" stop-opacity="0.25"></stop>
-        <stop offset="0.526042" stop-color="#FF8C82"></stop>
-        <stop offset="1" stop-color="#FF8C82" stop-opacity="0.25"></stop>
+        <stop stopColor="#FF8C82" stop-opacity="0.25"></stop>
+        <stop offset="0.526042" stopColor="#FF8C82"></stop>
+        <stop offset="1" stopColor="#FF8C82" stop-opacity="0.25"></stop>
       </linearGradient>
     </defs>
   </svg>
@@ -338,7 +338,7 @@ export const Bitcoin = () => (
       cy="75"
       r="66.5"
       stroke="currentColor"
-      stroke-width="17"
+      strokeWidth="17"
     ></circle>
     <path
       _ngcontent-lnb-c60=""
@@ -374,7 +374,7 @@ export const Dollar = () => (
       cy="75"
       r="66"
       stroke="currentColor"
-      stroke-width="18"
+      strokeWidth="18"
     ></circle>
     <path
       _ngcontent-lnb-c60=""
@@ -410,7 +410,7 @@ export const Individual = ({
       className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_11_264)">
+      <g clipPath="url(#clip0_11_264)">
         <path
           d="M13.6581 13.3555C15.4498 13.3555 17.0013 12.7129 18.2689 11.445C19.5366 10.1774 20.1792 8.62634 20.1792 6.83444C20.1792 5.04316 19.5366 3.4919 18.2687 2.22383C17.0008 0.956387 15.4496 0.313782 13.6581 0.313782C11.8662 0.313782 10.3151 0.956387 9.04749 2.22404C7.77984 3.49169 7.13702 5.04295 7.13702 6.83444C7.13702 8.62634 7.77984 10.1776 9.0477 11.4452C10.3156 12.7127 11.8668 13.3555 13.6581 13.3555Z"
           fill={active ? "white" : "black"}
@@ -450,7 +450,7 @@ export const LegalEntity = ({
       className={className}
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_5_13525)">
+      <g clipPath="url(#clip0_5_13525)">
         <path
           d="M24.8294 9.43619L17.033 4.93273C16.5849 4.70901 16.0402 4.89091 15.8165 5.33909C15.7537 5.46487 15.7209 5.60358 15.7209 5.74416V23.8837C15.7209 24.3846 16.127 24.7907 16.6279 24.7907H22.6744C24.5106 24.7893 25.9987 23.3012 26 21.4651V11.3288C26.0029 10.5262 25.5488 9.79202 24.8294 9.43619ZM21.4651 21.1628H19.0465C18.5456 21.1628 18.1396 20.7567 18.1396 20.2558C18.1396 19.7549 18.5456 19.3489 19.0465 19.3489H21.4651C21.966 19.3489 22.3721 19.7549 22.3721 20.2558C22.3721 20.7567 21.966 21.1628 21.4651 21.1628ZM21.4651 17.5349H19.0465C18.5456 17.5349 18.1396 17.1288 18.1396 16.6279C18.1396 16.127 18.5456 15.7209 19.0465 15.7209H21.4651C21.966 15.7209 22.3721 16.127 22.3721 16.6279C22.3721 17.1288 21.966 17.5349 21.4651 17.5349ZM21.4651 13.907H19.0465C18.5456 13.907 18.1396 13.5009 18.1396 13C18.1396 12.4991 18.5456 12.093 19.0465 12.093H21.4651C21.966 12.093 22.3721 12.4991 22.3721 13C22.3721 13.5009 21.966 13.907 21.4651 13.907Z"
           fill={active ? "white" : "black"}
@@ -538,9 +538,9 @@ export const MenuIcon = () => {
       <path
         d="M1 25H25M1 13.2537C10.3726 13.2537 15.6274 13.2537 25 13.2537M1 1C6.35576 1 19.6442 1 25 1"
         stroke="black"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -627,8 +627,8 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H20.7375C22.228 19 22.9733 19 23.5432 18.72C24.045 18.4735 24.454 18.0797 24.7096 17.5958C25 17.0463 25 16.3276 25 14.8903V8.71429M1 8.71429V6.14286M1 8.71429H25M1 6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286M1 6.14286H25M6.33333 13.8571H11.6667M25 8.71429V6.14286"
         stroke="url(#paint1_linear_388_256)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M1 14.886V8.71429V6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286V8.71429V14.8903C25 16.3276 25 17.0463 24.7096 17.5958C24.454 18.0797 24.045 18.4735 23.5432 18.72C22.9733 19 22.228 19 20.7375 19H5.26255C3.77199 19 3.0256 19 2.45573 18.72C1.95396 18.4735 1.54631 18.0797 1.29065 17.5958C1 17.0458 1 16.3261 1 14.886Z"
@@ -637,14 +637,14 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H20.7375C22.228 19 22.9733 19 23.5432 18.72C24.045 18.4735 24.454 18.0797 24.7096 17.5958C25 17.0463 25 16.3276 25 14.8903V8.71429M1 8.71429V6.14286M1 8.71429H25M1 6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286M1 6.14286H25M6.33333 13.8571H11.6667M25 8.71429V6.14286"
         stroke="url(#paint3_linear_388_256)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M6.33333 13.8571H11.6667M1 8.71428V6.14285H25V8.71428H1Z"
         stroke="#F5F5F5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <defs>
         <linearGradient
@@ -655,8 +655,8 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_388_256"
@@ -666,8 +666,8 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_388_256"
@@ -677,8 +677,8 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_388_256"
@@ -688,8 +688,8 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -704,8 +704,8 @@ export const PaymentIcon = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H20.7375C22.228 19 22.9733 19 23.5432 18.72C24.045 18.4735 24.454 18.0797 24.7096 17.5958C25 17.0463 25 16.3276 25 14.8903V8.71429M1 8.71429V6.14286M1 8.71429H25M1 6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286M1 6.14286H25M6.33333 13.8571H11.6667M25 8.71429V6.14286"
         stroke={"black"}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -818,8 +818,8 @@ export const DashboardIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M22.4936 14.9459H17.4666C16.8002 14.9453 16.1608 15.2089 15.6885 15.679C15.2162 16.1491 14.9496 16.7873 14.9472 17.4536V22.4806C14.9469 22.8116 15.0118 23.1394 15.1383 23.4452C15.2648 23.751 15.4504 24.0288 15.6844 24.2629C15.9184 24.4969 16.1963 24.6824 16.5021 24.8089C16.8079 24.9354 17.1357 25.0003 17.4666 25H22.4936C23.1598 24.9973 23.7976 24.7305 24.2674 24.2583C24.7373 23.786 25.0007 23.1468 25 22.4806V17.4536C25.0003 17.1244 24.9357 16.7983 24.8099 16.4941C24.6841 16.1898 24.4995 15.9134 24.2667 15.6806C24.0339 15.4478 23.7574 15.2632 23.4532 15.1373C23.1489 15.0115 22.8229 14.9469 22.4936 14.9472M8.53341 14.9459H3.50638C2.84034 14.9497 2.20286 15.2169 1.73323 15.6893C1.2636 16.1616 0.999991 16.8005 1 17.4666V22.4936C0.99966 22.8229 1.06426 23.1489 1.19009 23.4532C1.31593 23.7574 1.50053 24.0339 1.73334 24.2667C1.96615 24.4995 2.24258 24.6841 2.54683 24.8099C2.85107 24.9357 3.17714 25.0003 3.50638 25H8.53341C9.19955 25.0007 9.83879 24.7373 10.311 24.2674C10.7833 23.7976 11.05 23.1598 11.0528 22.4936V17.4666C11.0531 17.1357 10.9882 16.8079 10.8617 16.5021C10.7352 16.1963 10.5496 15.9184 10.3156 15.6844C10.0816 15.4504 9.80374 15.2648 9.49792 15.1383C9.19211 15.0118 8.86435 14.9469 8.53341 14.9472M8.53341 1H3.50638C3.17714 0.99966 2.85107 1.06426 2.54683 1.19009C2.24258 1.31593 1.96615 1.50053 1.73334 1.73334C1.50053 1.96615 1.31593 2.24258 1.19009 2.54683C1.06426 2.85107 0.99966 3.17714 1 3.50638V8.53341C0.999309 9.19955 1.26274 9.83879 1.73255 10.311C2.20237 10.7833 2.84024 11.05 3.50638 11.0528H8.53341C8.86435 11.0531 9.19211 10.9882 9.49792 10.8617C9.80374 10.7352 10.0816 10.5496 10.3156 10.3156C10.5496 10.0816 10.7352 9.80374 10.8617 9.49792C10.9882 9.19211 11.0531 8.86435 11.0528 8.53341V3.50638C11.05 2.84024 10.7833 2.20237 10.311 1.73255C9.83879 1.26274 9.19955 0.999309 8.53341 1ZM22.4936 1H17.4666C16.8005 0.999309 16.1612 1.26274 15.689 1.73255C15.2167 2.20237 14.95 2.84024 14.9472 3.50638V8.53341C14.9476 9.20147 15.2131 9.84208 15.6855 10.3145C16.1579 10.7869 16.7985 11.0524 17.4666 11.0528H22.4936C23.1598 11.05 23.7976 10.7833 24.2674 10.311C24.7373 9.83879 25.0007 9.19955 25 8.53341V3.50638C25.0003 3.17714 24.9357 2.85107 24.8099 2.54683C24.6841 2.24258 24.4995 1.96615 24.2667 1.73334C24.0339 1.50053 23.7574 1.31593 23.4532 1.19009C23.1489 1.06426 22.8229 0.99966 22.4936 1Z"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <defs>
         <linearGradient
@@ -830,8 +830,8 @@ export const DashboardIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="19.8415"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color={active ? "#3E1753" : "#fff"} />
-          <stop offset="1" stop-color={active ? "#643882" : "#fff"} />
+          <stop stopColor={active ? "#3E1753" : "#fff"} />
+          <stop offset="1" stopColor={active ? "#643882" : "#fff"} />
         </linearGradient>
         <linearGradient
           id="paint1_linear_93_1256"
@@ -841,8 +841,8 @@ export const DashboardIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="19.8415"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color={active ? "#3E1753" : "#fff"} />
-          <stop offset="1" stop-color={active ? "#643882" : "#fff"} />
+          <stop stopColor={active ? "#3E1753" : "#fff"} />
+          <stop offset="1" stopColor={active ? "#643882" : "#fff"} />
         </linearGradient>
       </defs>
     </svg>
@@ -865,8 +865,8 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H20.7375C22.228 19 22.9733 19 23.5432 18.72C24.045 18.4735 24.454 18.0797 24.7096 17.5958C25 17.0463 25 16.3276 25 14.8903V8.71429M1 8.71429V6.14286M1 8.71429H25M1 6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286M1 6.14286H25M6.33333 13.8571H11.6667M25 8.71429V6.14286"
         stroke="url(#paint1_linear_388_256)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M1 14.886V8.71429V6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286V8.71429V14.8903C25 16.3276 25 17.0463 24.7096 17.5958C24.454 18.0797 24.045 18.4735 23.5432 18.72C22.9733 19 22.228 19 20.7375 19H5.26255C3.77199 19 3.0256 19 2.45573 18.72C1.95396 18.4735 1.54631 18.0797 1.29065 17.5958C1 17.0458 1 16.3261 1 14.886Z"
@@ -875,14 +875,14 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H20.7375C22.228 19 22.9733 19 23.5432 18.72C24.045 18.4735 24.454 18.0797 24.7096 17.5958C25 17.0463 25 16.3276 25 14.8903V8.71429M1 8.71429V6.14286M1 8.71429H25M1 6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286M1 6.14286H25M6.33333 13.8571H11.6667M25 8.71429V6.14286"
         stroke="url(#paint3_linear_388_256)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M6.33333 13.8571H11.6667M1 8.71428V6.14285H25V8.71428H1Z"
         stroke="#F5F5F5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <defs>
         <linearGradient
@@ -893,8 +893,8 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_388_256"
@@ -904,8 +904,8 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_388_256"
@@ -915,8 +915,8 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_388_256"
@@ -926,8 +926,8 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -942,8 +942,8 @@ export const PaymentsIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H20.7375C22.228 19 22.9733 19 23.5432 18.72C24.045 18.4735 24.454 18.0797 24.7096 17.5958C25 17.0463 25 16.3276 25 14.8903V8.71429M1 8.71429V6.14286M1 8.71429H25M1 6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286M1 6.14286H25M6.33333 13.8571H11.6667M25 8.71429V6.14286"
         stroke={active ? "#bfb2c5" : "black"}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -965,14 +965,14 @@ export const WithdrawalIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H9.13127M1 8.71429V6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286V8.71429M1 8.71429H25M25 8.71429V14.8903C25 16.3276 25 17.0463 24.7096 17.5958C24.454 18.0797 24.045 18.4735 23.5432 18.72C22.9733 19 22.228 19 20.7375 19H16.8687"
         stroke="url(#paint1_linear_379_276)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 21L13 24M13 24L16 21M13 24L13 13"
         stroke="url(#paint2_linear_379_276)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <defs>
         <linearGradient
@@ -983,8 +983,8 @@ export const WithdrawalIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_379_276"
@@ -994,8 +994,8 @@ export const WithdrawalIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="20.9402"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_379_276"
@@ -1005,8 +1005,8 @@ export const WithdrawalIcon: React.FC = ({ active }: { active: boolean }) => {
           y2="16.8581"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -1021,14 +1021,14 @@ export const WithdrawalIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M1 8.71429V14.886C1 16.3261 1 17.0458 1.29065 17.5958C1.54631 18.0797 1.95396 18.4735 2.45573 18.72C3.0256 19 3.77199 19 5.26255 19H9.13127M1 8.71429V6.14286V5.11454C1 3.6744 1 2.9538 1.29065 2.40374C1.54631 1.91989 1.95396 1.5268 2.45573 1.28027C3.02616 1 3.77345 1 5.26693 1H20.7336C22.2271 1 22.9728 1 23.5432 1.28027C24.045 1.5268 24.454 1.91989 24.7096 2.40374C25 2.95326 25 3.67299 25 5.11031V6.14286V8.71429M1 8.71429H25M25 8.71429V14.8903C25 16.3276 25 17.0463 24.7096 17.5958C24.454 18.0797 24.045 18.4735 23.5432 18.72C22.9733 19 22.228 19 20.7375 19H16.8687"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 21L13 24M13 24L16 21M13 24L13 13"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1046,8 +1046,8 @@ export const TransactionsIcon: React.FC = ({ active }: { active: boolean }) => {
       <path
         d="M16.8578 11.4483L23.8831 13.3308M23.8831 13.3308L22.0006 20.356M23.8831 13.3308L7.42857 22.8308M7.5967 12.8363L0.571429 10.9538M0.571429 10.9538L2.45384 3.92857M0.571429 10.9538L17.0259 1.45384"
         stroke={active ? IconsActiveColor : "black"}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1150,14 +1150,14 @@ export const SettingsIcon: React.FC = ({ active }: { active?: boolean }) => {
         d="M21.0727 16.2727C20.9275 16.6018 20.8842 16.9668 20.9484 17.3206C21.0125 17.6745 21.1812 18.0011 21.4327 18.2582L21.4982 18.3236C21.701 18.5263 21.862 18.7669 21.9718 19.0318C22.0816 19.2966 22.1381 19.5805 22.1381 19.8673C22.1381 20.154 22.0816 20.4379 21.9718 20.7028C21.862 20.9676 21.701 21.2083 21.4982 21.4109C21.2956 21.6138 21.0549 21.7747 20.7901 21.8845C20.5252 21.9943 20.2413 22.0508 19.9545 22.0508C19.6678 22.0508 19.3839 21.9943 19.119 21.8845C18.8542 21.7747 18.6135 21.6138 18.4109 21.4109L18.3455 21.3455C18.0884 21.094 17.7618 20.9253 17.4079 20.8611C17.054 20.7969 16.689 20.8402 16.36 20.9855C16.0373 21.1237 15.7622 21.3534 15.5683 21.646C15.3745 21.9387 15.2705 22.2817 15.2691 22.6327V22.8182C15.2691 23.3968 15.0392 23.9518 14.6301 24.361C14.2209 24.7701 13.6659 25 13.0873 25C12.5086 25 11.9537 24.7701 11.5445 24.361C11.1353 23.9518 10.9055 23.3968 10.9055 22.8182V22.72C10.897 22.3589 10.7801 22.0087 10.57 21.7149C10.3599 21.4212 10.0663 21.1974 9.72727 21.0727C9.39824 20.9275 9.03324 20.8842 8.67936 20.9484C8.32547 21.0125 7.99892 21.1812 7.74182 21.4327L7.67636 21.4982C7.47373 21.701 7.2331 21.862 6.96823 21.9718C6.70336 22.0816 6.41945 22.1381 6.13273 22.1381C5.846 22.1381 5.56209 22.0816 5.29722 21.9718C5.03235 21.862 4.79172 21.701 4.58909 21.4982C4.38623 21.2956 4.2253 21.0549 4.11551 20.7901C4.00571 20.5252 3.94919 20.2413 3.94919 19.9545C3.94919 19.6678 4.00571 19.3839 4.11551 19.119C4.2253 18.8542 4.38623 18.6135 4.58909 18.4109L4.65455 18.3455C4.90604 18.0884 5.07475 17.7618 5.13891 17.4079C5.20308 17.054 5.15976 16.689 5.01455 16.36C4.87626 16.0373 4.64664 15.7622 4.35396 15.5683C4.06128 15.3745 3.71831 15.2705 3.36727 15.2691H3.18182C2.60316 15.2691 2.04821 15.0392 1.63904 14.6301C1.22987 14.2209 1 13.6659 1 13.0873C1 12.5086 1.22987 11.9537 1.63904 11.5445C2.04821 11.1353 2.60316 10.9055 3.18182 10.9055H3.28C3.64108 10.897 3.99128 10.7801 4.28505 10.57C4.57883 10.3599 4.8026 10.0663 4.92727 9.72727C5.07249 9.39824 5.11581 9.03324 5.05164 8.67936C4.98748 8.32547 4.81877 7.99892 4.56727 7.74182L4.50182 7.67636C4.29896 7.47373 4.13803 7.2331 4.02823 6.96823C3.91844 6.70336 3.86192 6.41945 3.86192 6.13273C3.86192 5.846 3.91844 5.56209 4.02823 5.29722C4.13803 5.03235 4.29896 4.79172 4.50182 4.58909C4.70445 4.38623 4.94508 4.2253 5.20995 4.11551C5.47482 4.00571 5.75873 3.94919 6.04545 3.94919C6.33218 3.94919 6.61609 4.00571 6.88096 4.11551C7.14583 4.2253 7.38646 4.38623 7.58909 4.58909L7.65455 4.65455C7.91165 4.90604 8.2382 5.07475 8.59208 5.13891C8.94597 5.20308 9.31096 5.15976 9.64 5.01455H9.72727C10.0499 4.87626 10.3251 4.64664 10.5189 4.35396C10.7128 4.06128 10.8168 3.71831 10.8182 3.36727V3.18182C10.8182 2.60316 11.0481 2.04821 11.4572 1.63904C11.8664 1.22987 12.4213 1 13 1C13.5787 1 14.1336 1.22987 14.5428 1.63904C14.9519 2.04821 15.1818 2.60316 15.1818 3.18182V3.28C15.1832 3.63104 15.2872 3.97401 15.4811 4.26669C15.6749 4.55937 15.9501 4.78899 16.2727 4.92727C16.6018 5.07249 16.9668 5.11581 17.3206 5.05164C17.6745 4.98748 18.0011 4.81877 18.2582 4.56727L18.3236 4.50182C18.5263 4.29896 18.7669 4.13803 19.0318 4.02823C19.2966 3.91844 19.5805 3.86192 19.8673 3.86192C20.154 3.86192 20.4379 3.91844 20.7028 4.02823C20.9676 4.13803 21.2083 4.29896 21.4109 4.50182C21.6138 4.70445 21.7747 4.94508 21.8845 5.20995C21.9943 5.47482 22.0508 5.75873 22.0508 6.04545C22.0508 6.33218 21.9943 6.61609 21.8845 6.88096C21.7747 7.14583 21.6138 7.38646 21.4109 7.58909L21.3455 7.65455C21.094 7.91165 20.9253 8.2382 20.8611 8.59208C20.7969 8.94597 20.8402 9.31096 20.9855 9.64V9.72727C21.1237 10.0499 21.3534 10.3251 21.646 10.5189C21.9387 10.7128 22.2817 10.8168 22.6327 10.8182H22.8182C23.3968 10.8182 23.9518 11.0481 24.361 11.4572C24.7701 11.8664 25 12.4213 25 13C25 13.5787 24.7701 14.1336 24.361 14.5428C23.9518 14.9519 23.3968 15.1818 22.8182 15.1818H22.72C22.369 15.1832 22.026 15.2872 21.7333 15.4811C21.4406 15.6749 21.211 15.9501 21.0727 16.2727Z"
         fill="url(#paint0_linear_388_255)"
         stroke="url(#paint1_linear_388_255)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M13 16C14.6569 16 16 14.6569 16 13C16 11.3431 14.6569 10 13 10C11.3431 10 10 11.3431 10 13C10 14.6569 11.3431 16 13 16Z"
         stroke="#F5F5F5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <defs>
         <linearGradient
@@ -1168,8 +1168,8 @@ export const SettingsIcon: React.FC = ({ active }: { active?: boolean }) => {
           y2="19.8415"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_388_255"
@@ -1179,8 +1179,8 @@ export const SettingsIcon: React.FC = ({ active }: { active?: boolean }) => {
           y2="19.8415"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -1201,8 +1201,8 @@ export const SettingsIcon: React.FC = ({ active }: { active?: boolean }) => {
       <path
         d="M21.0727 16.2727C20.9275 16.6018 20.8842 16.9668 20.9484 17.3206C21.0125 17.6745 21.1812 18.0011 21.4327 18.2582L21.4982 18.3236C21.701 18.5263 21.862 18.7669 21.9718 19.0318C22.0816 19.2966 22.1381 19.5805 22.1381 19.8673C22.1381 20.154 22.0816 20.4379 21.9718 20.7028C21.862 20.9676 21.701 21.2083 21.4982 21.4109C21.2956 21.6138 21.0549 21.7747 20.7901 21.8845C20.5252 21.9943 20.2413 22.0508 19.9545 22.0508C19.6678 22.0508 19.3839 21.9943 19.119 21.8845C18.8542 21.7747 18.6135 21.6138 18.4109 21.4109L18.3455 21.3455C18.0884 21.094 17.7618 20.9253 17.4079 20.8611C17.054 20.7969 16.689 20.8402 16.36 20.9855C16.0373 21.1237 15.7622 21.3534 15.5683 21.646C15.3745 21.9387 15.2705 22.2817 15.2691 22.6327V22.8182C15.2691 23.3968 15.0392 23.9518 14.6301 24.361C14.2209 24.7701 13.6659 25 13.0873 25C12.5086 25 11.9537 24.7701 11.5445 24.361C11.1353 23.9518 10.9055 23.3968 10.9055 22.8182V22.72C10.897 22.3589 10.7801 22.0087 10.57 21.7149C10.3599 21.4212 10.0663 21.1974 9.72727 21.0727C9.39824 20.9275 9.03324 20.8842 8.67936 20.9484C8.32547 21.0125 7.99892 21.1812 7.74182 21.4327L7.67636 21.4982C7.47373 21.701 7.2331 21.862 6.96823 21.9718C6.70336 22.0816 6.41945 22.1381 6.13273 22.1381C5.846 22.1381 5.56209 22.0816 5.29722 21.9718C5.03235 21.862 4.79172 21.701 4.58909 21.4982C4.38623 21.2956 4.2253 21.0549 4.11551 20.7901C4.00571 20.5252 3.94919 20.2413 3.94919 19.9545C3.94919 19.6678 4.00571 19.3839 4.11551 19.119C4.2253 18.8542 4.38623 18.6135 4.58909 18.4109L4.65455 18.3455C4.90604 18.0884 5.07475 17.7618 5.13891 17.4079C5.20308 17.054 5.15976 16.689 5.01455 16.36C4.87626 16.0373 4.64664 15.7622 4.35396 15.5683C4.06128 15.3745 3.71831 15.2705 3.36727 15.2691H3.18182C2.60316 15.2691 2.04821 15.0392 1.63904 14.6301C1.22987 14.2209 1 13.6659 1 13.0873C1 12.5086 1.22987 11.9537 1.63904 11.5445C2.04821 11.1353 2.60316 10.9055 3.18182 10.9055H3.28C3.64108 10.897 3.99128 10.7801 4.28505 10.57C4.57883 10.3599 4.8026 10.0663 4.92727 9.72727C5.07249 9.39824 5.11581 9.03324 5.05164 8.67936C4.98748 8.32547 4.81877 7.99892 4.56727 7.74182L4.50182 7.67636C4.29896 7.47373 4.13803 7.2331 4.02823 6.96823C3.91843 6.70336 3.86192 6.41945 3.86192 6.13273C3.86192 5.846 3.91843 5.56209 4.02823 5.29722C4.13803 5.03235 4.29896 4.79172 4.50182 4.58909C4.70445 4.38623 4.94508 4.2253 5.20995 4.11551C5.47482 4.00571 5.75873 3.94919 6.04545 3.94919C6.33218 3.94919 6.61609 4.00571 6.88096 4.11551C7.14583 4.2253 7.38646 4.38623 7.58909 4.58909L7.65455 4.65455C7.91165 4.90604 8.2382 5.07475 8.59209 5.13891C8.94597 5.20308 9.31096 5.15976 9.64 5.01455H9.72727C10.0499 4.87626 10.3251 4.64664 10.5189 4.35396C10.7128 4.06128 10.8168 3.71831 10.8182 3.36727V3.18182C10.8182 2.60316 11.0481 2.04821 11.4572 1.63904C11.8664 1.22987 12.4213 1 13 1C13.5787 1 14.1336 1.22987 14.5428 1.63904C14.9519 2.04821 15.1818 2.60316 15.1818 3.18182V3.28C15.1832 3.63104 15.2872 3.97401 15.4811 4.26669C15.6749 4.55937 15.9501 4.78899 16.2727 4.92727C16.6018 5.07249 16.9668 5.11581 17.3206 5.05164C17.6745 4.98748 18.0011 4.81877 18.2582 4.56727L18.3236 4.50182C18.5263 4.29896 18.7669 4.13803 19.0318 4.02823C19.2966 3.91843 19.5805 3.86192 19.8673 3.86192C20.154 3.86192 20.4379 3.91843 20.7028 4.02823C20.9676 4.13803 21.2083 4.29896 21.4109 4.50182C21.6138 4.70445 21.7747 4.94508 21.8845 5.20995C21.9943 5.47482 22.0508 5.75873 22.0508 6.04545C22.0508 6.33218 21.9943 6.61609 21.8845 6.88096C21.7747 7.14583 21.6138 7.38646 21.4109 7.58909L21.3455 7.65455C21.094 7.91165 20.9253 8.2382 20.8611 8.59209C20.7969 8.94597 20.8402 9.31096 20.9855 9.64V9.72727C21.1237 10.0499 21.3534 10.3251 21.646 10.5189C21.9387 10.7128 22.2817 10.8168 22.6327 10.8182H22.8182C23.3968 10.8182 23.9518 11.0481 24.361 11.4572C24.7701 11.8664 25 12.4213 25 13C25 13.5787 24.7701 14.1336 24.361 14.5428C23.9518 14.9519 23.3968 15.1818 22.8182 15.1818H22.72C22.369 15.1832 22.026 15.2872 21.7333 15.4811C21.4406 15.6749 21.211 15.9501 21.0727 16.2727V16.2727Z"
         stroke={active ? IconsActiveColor : "black"}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1328,50 +1328,50 @@ export const ThemeChangeIcon = () => {
       <path
         d="M23 21H1"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M21 17H23"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M1 17H3"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M17 17C17 15.6739 16.4732 14.4021 15.5355 13.4645C14.5979 12.5268 13.3261 12 12 12C10.6739 12 9.40215 12.5268 8.46447 13.4645C7.52678 14.4021 7 15.6739 7 17"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M18.3594 10.6397L19.7794 9.21973"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M4.2207 9.21973L5.6407 10.6397"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12 8V1"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M16 4L12 8L8 4"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1389,8 +1389,8 @@ export const SupportIcon = () => {
       <path
         d="M21.4444 9.89391C21.4444 4.98194 17.4399 1 12.5 1C7.56012 1 3.55556 4.98194 3.55556 9.89391M17.6111 13.282V15.8232C17.6111 16.4135 17.6111 16.7087 17.6602 16.9542C17.8619 17.9622 18.6544 18.7507 19.6682 18.9512C19.915 19 20.2118 19 20.8056 19C21.3993 19 21.6961 19 21.943 18.9512C22.9568 18.7507 23.7491 17.9622 23.9507 16.9542C23.9998 16.7087 24 16.4135 24 15.8232V13.282C24 12.6917 23.9998 12.3959 23.9507 12.1505C23.7491 11.1424 22.9568 10.355 21.943 10.1545C21.6961 10.1056 21.3993 10.1056 20.8056 10.1056C20.2118 10.1056 19.915 10.1056 19.6682 10.1545C18.6544 10.355 17.8619 11.1424 17.6602 12.1505C17.6111 12.3959 17.6111 12.6917 17.6111 13.282ZM7.38889 13.282V15.8232C7.38889 16.4135 7.3887 16.7087 7.3396 16.9542C7.13795 17.9622 6.34561 18.7507 5.33184 18.9512C5.08498 19 4.78822 19 4.1945 19C3.60078 19 3.30391 19 3.05705 18.9512C2.04328 18.7507 1.25075 17.9622 1.0491 16.9542C1 16.7087 1 16.4135 1 15.8232V13.282C1 12.6917 1 12.3959 1.0491 12.1505C1.25075 11.1424 2.04328 10.355 3.05705 10.1545C3.30391 10.1056 3.60077 10.1056 4.1945 10.1056C4.78823 10.1056 5.08498 10.1056 5.33184 10.1545C6.34561 10.355 7.13795 11.1424 7.3396 12.1505C7.3887 12.3959 7.38889 12.6917 7.38889 13.282Z"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1408,8 +1408,8 @@ export const NotificationIcon = () => {
       <path
         d="M11.9462 15.258V16.2531C11.9462 17.9018 10.6096 19.2384 8.96086 19.2384C7.31211 19.2384 5.97554 17.9018 5.97554 16.2531V15.258M11.9462 15.258H5.97554M11.9462 15.258H15.5191C15.8998 15.258 16.091 15.258 16.2451 15.2061C16.5396 15.1067 16.7699 14.8756 16.8692 14.5812C16.9214 14.4264 16.9214 14.2346 16.9214 13.8509C16.9214 13.683 16.9212 13.5991 16.9081 13.5191C16.8833 13.3678 16.8246 13.2244 16.7352 13.0999C16.688 13.0341 16.6279 12.9741 16.5096 12.8557L16.1219 12.4681C15.9969 12.343 15.9266 12.1734 15.9266 11.9965V8.29241C15.9266 4.44539 12.8079 1.32677 8.96086 1.32678C5.11379 1.32679 1.99511 4.44541 1.99511 8.29241V11.9966C1.99511 12.1734 1.9247 12.343 1.79963 12.4681L1.41204 12.8557C1.29332 12.9744 1.23389 13.0341 1.18658 13.0999C1.09718 13.2244 1.03796 13.3678 1.01314 13.5191C1 13.5991 1 13.683 1 13.8509C1 14.2346 1 14.4264 1.0522 14.5811C1.15151 14.8755 1.38291 15.1067 1.67733 15.2061C1.83147 15.258 2.02199 15.258 2.40266 15.258H5.97554"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1427,8 +1427,8 @@ export const LogoutDoorIcon = () => {
       <path
         d="M11 14.75L14.75 11M14.75 11L11 7.25M14.75 11H1M7.25 5.06073V5.00024C7.25 3.60011 7.25 2.89953 7.52248 2.36475C7.76217 1.89434 8.14434 1.51217 8.61475 1.27248C9.14953 1 9.85011 1 11.2502 1H17.0002C18.4004 1 19.0995 1 19.6342 1.27248C20.1046 1.51217 20.4881 1.89434 20.7278 2.36475C21 2.899 21 3.59874 21 4.99614V17.0045C21 18.4019 21 19.1006 20.7278 19.6349C20.4881 20.1053 20.1046 20.4881 19.6342 20.7278C19.1 21 18.4013 21 17.0039 21H11.2461C9.84874 21 9.149 21 8.61475 20.7278C8.14434 20.4881 7.76217 20.1049 7.52248 19.6345C7.25 19.0997 7.25 18.4001 7.25 17V16.9375"
         stroke="#8D8D8E"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1447,9 +1447,9 @@ export const SearchbarIcon = ({ className }: { className: string }) => {
       <path
         d="M17.6667 17.6667L26 26M10.7222 20.4444C5.35279 20.4444 1 16.0917 1 10.7222C1 5.35279 5.35279 1 10.7222 1C16.0917 1 20.4444 5.35279 20.4444 10.7222C20.4444 16.0917 16.0917 20.4444 10.7222 20.4444Z"
         stroke="#8D8D8E"
-        stroke-width="1.5"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1467,8 +1467,8 @@ export const DoubleLeftIcon = () => {
       <path
         d="M5 1L1 5.5L5 10M11 1L7 5.5L11 10"
         stroke="white"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1486,8 +1486,8 @@ export const DoubleRightIcon = () => {
       <path
         d="M7 1L11 5.5L7 10M1 1L5 5.5L1 10"
         stroke="white"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1506,9 +1506,9 @@ export const ReciveIcon = ({ className }: { className?: string } = {}) => {
       <path
         d="M1.13525 1.69531L21.1353 21.6953M21.1353 21.6953L21.1353 5.69531M21.1353 21.6953L5.13525 21.6953"
         stroke="black"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1527,9 +1527,9 @@ export const ReciveIconGreen = ({ className }: { className?: string }) => {
       <path
         d="M1.23706 1.9672L18.8841 19.6143M18.8841 19.6143L18.8841 5.49661M18.8841 19.6143L4.76647 19.6143"
         stroke="#36BB91"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1548,9 +1548,9 @@ export const SendIcon = ({ className }: { className?: string } = {}) => {
       <path
         d="M1.13574 21.6953L21.1357 1.69531M21.1357 1.69531L5.13574 1.69531M21.1357 1.69531L21.1357 17.6953"
         stroke="black"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1569,9 +1569,9 @@ export const SendIconRed = ({ className }: { className?: string }) => {
       <path
         d="M1.23722 19.6139L18.8843 1.9668M18.8843 1.9668L4.76663 1.9668M18.8843 1.9668L18.8843 16.0844"
         stroke="#E14072"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1590,9 +1590,9 @@ export const TransferIcon = ({ className }: { className?: string } = {}) => {
       <path
         d="M5.28596 10.2667L1.00025 5.98103M1.00025 5.98103L5.28596 1.69531M1.00025 5.98103L21.0002 5.98103M16.7145 13.1239L21.0002 17.4096M21.0002 17.4096L16.7145 21.6953M21.0002 17.4096L1.00024 17.4096"
         stroke="black"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1610,9 +1610,9 @@ export const TransferIconPurple = () => {
       <path
         d="M5.04876 9.52982L1.26725 5.74831M1.26725 5.74831L5.04876 1.9668M1.26725 5.74831L18.9143 5.74831M15.1328 12.0508L18.9143 15.8323M18.9143 15.8323L15.1328 19.6139M18.9143 15.8323L1.26725 15.8323"
         stroke="#3E1753"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1651,8 +1651,8 @@ export const FilterIcon = () => {
       <path
         d="M1 1H20L13.6667 12.3077V17.1538L8.91667 22V12.3077L1 1Z"
         stroke="black"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );
@@ -1740,19 +1740,19 @@ export const MerchantIcon = ({ active }) => {
       <path
         d="M15.9577 25V18.3333C15.9577 17.9797 15.8172 17.6406 15.5672 17.3905C15.3171 17.1405 14.978 17 14.6243 17H10.6243C10.2707 17 9.93159 17.1405 9.68154 17.3905C9.43149 17.6406 9.29102 17.9797 9.29102 18.3333V25"
         stroke="url(#paint1_linear_620_455)"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M3.29107 11.6667V19.6667C3.29107 22.1813 3.29107 23.4373 4.0724 24.2187C4.85373 25 6.10973 25 8.6244 25H16.6244C19.1391 25 20.3951 25 21.1764 24.2187C21.9577 23.4373 21.9577 22.1813 21.9577 19.6667V11.6667M2.78573 3.02C3.0284 2.04933 3.14973 1.56533 3.51107 1.28267C3.87373 1 4.37373 1 5.37373 1H19.8751C20.8751 1 21.3751 1 21.7377 1.28267C22.0977 1.56533 22.2204 2.04933 22.4631 3.02L24.0671 9.43867C24.1964 9.956 24.2617 10.2133 24.2471 10.424C24.2288 10.6897 24.1314 10.9438 23.9675 11.1536C23.8035 11.3635 23.5805 11.5194 23.3271 11.6013C23.1271 11.6667 22.8551 11.6667 22.3097 11.6667C21.5991 11.6667 21.2431 11.6667 20.9457 11.5973C20.5335 11.5013 20.15 11.3085 19.8271 11.035C19.5041 10.7614 19.2509 10.4148 19.0884 10.024C18.9697 9.74133 18.9124 9.39733 18.7991 8.71333C18.7671 8.52133 18.7511 8.42533 18.7324 8.4C18.72 8.38293 18.7038 8.36903 18.685 8.35944C18.6663 8.34986 18.6455 8.34486 18.6244 8.34486C18.6033 8.34486 18.5825 8.34986 18.5638 8.35944C18.545 8.36903 18.5288 8.38293 18.5164 8.4C18.4977 8.42533 18.4817 8.52 18.4497 8.71333L18.3417 9.36533L18.3177 9.49867C18.2038 10.0981 17.8878 10.6403 17.4224 11.0348C16.957 11.4294 16.3704 11.6524 15.7604 11.6667H15.4884C14.8549 11.6523 14.2471 11.4129 13.7741 10.9912C13.3011 10.5695 12.9937 9.99308 12.9071 9.36533L12.7991 8.712C12.7671 8.52133 12.7511 8.42533 12.7324 8.4C12.72 8.38293 12.7038 8.36903 12.685 8.35944C12.6663 8.34986 12.6455 8.34486 12.6244 8.34486C12.6033 8.34486 12.5825 8.34986 12.5638 8.35944C12.545 8.36903 12.5288 8.38293 12.5164 8.4C12.4977 8.42533 12.4817 8.52 12.4497 8.71333L12.3417 9.36533L12.3177 9.49867C12.2038 10.0981 11.8878 10.6403 11.4224 11.0348C10.957 11.4294 10.3704 11.6524 9.7604 11.6667H9.4884C8.87843 11.6524 8.29181 11.4294 7.82642 11.0348C7.36102 10.6403 7.04499 10.0981 6.93107 9.49867L6.90707 9.36533L6.79907 8.712C6.76707 8.52133 6.75107 8.42533 6.7324 8.4C6.72004 8.38293 6.7038 8.36903 6.68503 8.35944C6.66626 8.34986 6.64548 8.34486 6.6244 8.34486C6.60332 8.34486 6.58254 8.34986 6.56377 8.35944C6.54499 8.36903 6.52876 8.38293 6.5164 8.4C6.49773 8.42533 6.48173 8.52 6.44973 8.71333C6.3364 9.39867 6.27907 9.74 6.1604 10.024C5.99802 10.4147 5.74502 10.7611 5.4223 11.0347C5.09957 11.3083 4.71639 11.5011 4.3044 11.5973C4.00573 11.6667 3.65107 11.6667 2.93907 11.6667C2.39373 11.6667 2.12173 11.6667 1.92173 11.6013C1.66834 11.5194 1.4453 11.3635 1.28132 11.1536C1.11735 10.9438 1.01997 10.6897 1.00173 10.424C0.988399 10.2133 1.0524 9.956 1.18173 9.43867L2.78573 3.02Z"
         stroke="url(#paint2_linear_620_455)"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M2.78573 3.02C3.0284 2.04933 3.14973 1.56533 3.51106 1.28267C3.87373 1 4.37373 1 5.37373 1H19.8751C20.8751 1 21.3751 1 21.7377 1.28267C22.0977 1.56533 22.2204 2.04933 22.4631 3.02L24.0671 9.43867C24.1964 9.956 24.2617 10.2133 24.2471 10.424C24.2288 10.6897 24.1314 10.9438 23.9675 11.1536C23.8035 11.3635 23.5805 11.5194 23.3271 11.6013C23.1271 11.6667 22.8551 11.6667 22.3097 11.6667C21.5991 11.6667 21.2431 11.6667 20.9457 11.5973C20.5335 11.5013 20.15 11.3085 19.8271 11.035C19.5041 10.7614 19.2509 10.4148 19.0884 10.024C18.9697 9.74133 18.9124 9.39733 18.7991 8.71333C18.7671 8.52133 18.7511 8.42533 18.7324 8.4C18.72 8.38293 18.7038 8.36903 18.685 8.35944C18.6663 8.34986 18.6455 8.34486 18.6244 8.34486C18.6033 8.34486 18.5825 8.34986 18.5638 8.35944C18.545 8.36903 18.5288 8.38293 18.5164 8.4C18.4977 8.42533 18.4817 8.52 18.4497 8.71333L18.3417 9.36533L18.3177 9.49867C18.2038 10.0981 17.8878 10.6403 17.4224 11.0348C16.957 11.4294 16.3704 11.6524 15.7604 11.6667H15.4884C14.8549 11.6523 14.2471 11.4129 13.7741 10.9912C13.3011 10.5695 12.9937 9.99308 12.9071 9.36533L12.7991 8.712C12.7671 8.52133 12.7511 8.42533 12.7324 8.4C12.72 8.38293 12.7038 8.36903 12.685 8.35944C12.6663 8.34986 12.6455 8.34486 12.6244 8.34486C12.6033 8.34486 12.5825 8.34986 12.5638 8.35944C12.545 8.36903 12.5288 8.38293 12.5164 8.4C12.4977 8.42533 12.4817 8.52 12.4497 8.71333L12.3417 9.36533L12.3177 9.49867C12.2038 10.0981 11.8878 10.6403 11.4224 11.0348C10.957 11.4294 10.3704 11.6524 9.7604 11.6667H9.4884C8.87843 11.6524 8.29181 11.4294 7.82642 11.0348C7.36102 10.6403 7.04499 10.0981 6.93106 9.49867L6.90706 9.36533L6.79906 8.712C6.76706 8.52133 6.75106 8.42533 6.7324 8.4C6.72004 8.38293 6.7038 8.36903 6.68503 8.35944C6.66626 8.34986 6.64548 8.34486 6.6244 8.34486C6.60332 8.34486 6.58254 8.34986 6.56377 8.35944C6.54499 8.36903 6.52876 8.38293 6.5164 8.4C6.49773 8.42533 6.48173 8.52 6.44973 8.71333C6.3364 9.39867 6.27906 9.74 6.1604 10.024C5.99802 10.4147 5.74502 10.7611 5.4223 11.0347C5.09957 11.3083 4.71639 11.5011 4.3044 11.5973C4.00573 11.6667 3.65106 11.6667 2.93906 11.6667C2.39373 11.6667 2.12173 11.6667 1.92173 11.6013C1.66834 11.5194 1.4453 11.3635 1.28132 11.1536C1.11735 10.9438 1.01997 10.6897 1.00173 10.424C0.988399 10.2133 1.0524 9.956 1.18173 9.43867L2.78573 3.02Z"
         fill="url(#paint3_linear_620_455)"
         stroke="url(#paint4_linear_620_455)"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <defs>
         <linearGradient
@@ -1763,8 +1763,8 @@ export const MerchantIcon = ({ active }) => {
           y2="21.8979"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_620_455"
@@ -1774,8 +1774,8 @@ export const MerchantIcon = ({ active }) => {
           y2="21.8979"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_620_455"
@@ -1785,8 +1785,8 @@ export const MerchantIcon = ({ active }) => {
           y2="19.0686"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint3_linear_620_455"
@@ -1796,8 +1796,8 @@ export const MerchantIcon = ({ active }) => {
           y2="18.964"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint4_linear_620_455"
@@ -1807,8 +1807,8 @@ export const MerchantIcon = ({ active }) => {
           y2="18.964"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -1823,7 +1823,7 @@ export const MerchantIcon = ({ active }) => {
       <path
         d="M3.29107 11.6667V19.6667C3.29107 22.1813 3.29107 23.4373 4.0724 24.2187C4.85373 25 6.10973 25 8.6244 25H16.6244C19.1391 25 20.3951 25 21.1764 24.2187C21.9577 23.4373 21.9577 22.1813 21.9577 19.6667V11.6667M2.78573 3.02C3.0284 2.04933 3.14973 1.56533 3.51107 1.28267C3.87373 1 4.37373 1 5.37373 1H19.8751C20.8751 1 21.3751 1 21.7377 1.28267C22.0977 1.56533 22.2204 2.04933 22.4631 3.02L24.0671 9.43867C24.1964 9.956 24.2617 10.2133 24.2471 10.424C24.2288 10.6897 24.1314 10.9438 23.9675 11.1536C23.8035 11.3635 23.5805 11.5194 23.3271 11.6013C23.1271 11.6667 22.8551 11.6667 22.3097 11.6667C21.5991 11.6667 21.2431 11.6667 20.9457 11.5973C20.5335 11.5013 20.15 11.3085 19.8271 11.035C19.5041 10.7614 19.2509 10.4148 19.0884 10.024C18.9697 9.74133 18.9124 9.39733 18.7991 8.71333C18.7671 8.52133 18.7511 8.42533 18.7324 8.4C18.72 8.38293 18.7038 8.36903 18.685 8.35944C18.6663 8.34986 18.6455 8.34486 18.6244 8.34486C18.6033 8.34486 18.5825 8.34986 18.5638 8.35944C18.545 8.36903 18.5288 8.38293 18.5164 8.4C18.4977 8.42533 18.4817 8.52 18.4497 8.71333L18.3417 9.36533L18.3177 9.49867C18.2038 10.0981 17.8878 10.6403 17.4224 11.0348C16.957 11.4294 16.3704 11.6524 15.7604 11.6667H15.4884C14.8549 11.6523 14.2471 11.4129 13.7741 10.9912C13.3011 10.5695 12.9937 9.99308 12.9071 9.36533L12.7991 8.712C12.7671 8.52133 12.7511 8.42533 12.7324 8.4C12.72 8.38293 12.7038 8.36903 12.685 8.35944C12.6663 8.34986 12.6455 8.34486 12.6244 8.34486C12.6033 8.34486 12.5825 8.34986 12.5638 8.35944C12.545 8.36903 12.5288 8.38293 12.5164 8.4C12.4977 8.42533 12.4817 8.52 12.4497 8.71333L12.3417 9.36533L12.3177 9.49867C12.2038 10.0981 11.8878 10.6403 11.4224 11.0348C10.957 11.4294 10.3704 11.6524 9.7604 11.6667H9.4884C8.87843 11.6524 8.29181 11.4294 7.82642 11.0348C7.36102 10.6403 7.04499 10.0981 6.93107 9.49867L6.90707 9.36533L6.79907 8.712C6.76707 8.52133 6.75107 8.42533 6.7324 8.4C6.72004 8.38293 6.7038 8.36903 6.68503 8.35944C6.66626 8.34986 6.64548 8.34486 6.6244 8.34486C6.60332 8.34486 6.58254 8.34986 6.56377 8.35944C6.54499 8.36903 6.52876 8.38293 6.5164 8.4C6.49773 8.42533 6.48173 8.52 6.44973 8.71333C6.3364 9.39867 6.27907 9.74 6.1604 10.024C5.99802 10.4147 5.74502 10.7611 5.4223 11.0347C5.09957 11.3083 4.71639 11.5011 4.3044 11.5973C4.00573 11.6667 3.65107 11.6667 2.93907 11.6667C2.39373 11.6667 2.12173 11.6667 1.92173 11.6013C1.66834 11.5194 1.4453 11.3635 1.28132 11.1536C1.11735 10.9438 1.01997 10.6897 1.00173 10.424C0.988399 10.2133 1.0524 9.956 1.18173 9.43867L2.78573 3.02Z"
         stroke="url(#paint0_linear_620_457)"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <defs>
         <linearGradient
@@ -1834,8 +1834,8 @@ export const MerchantIcon = ({ active }) => {
           y2="19.0686"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#000" strokeWidth={2}/>
-          <stop offset="1" stop-color="#000" />
+          <stop stopColor="#000" strokeWidth={2}/>
+          <stop offset="1" stopColor="#000" />
         </linearGradient>
       </defs>
     </svg>
@@ -1854,7 +1854,7 @@ export const NewsIcon = ({ active }) => {
       <path
         d="M18.5 1H25C27.2091 1 29 2.79086 29 5V19.1667C29 21.3758 27.2091 23.1667 25 23.1667H18.5"
         stroke="url(#paint0_linear_621_520)"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M22.5833 12.0833C22.5833 12.3993 22.4679 12.6727 22.237 12.9036L12.3203 22.8203C12.0894 23.0512 11.816 23.1667 11.5 23.1667C11.184 23.1667 10.9106 23.0512 10.6797 22.8203C10.4488 22.5894 10.3333 22.316 10.3333 22V16.75H2.16667C1.85069 16.75 1.57726 16.6345 1.34635 16.4036C1.11545 16.1727 1 15.8993 1 15.5833V8.58333C1 8.26736 1.11545 7.99392 1.34635 7.76302C1.57726 7.53212 1.85069 7.41667 2.16667 7.41667H10.3333V2.16667C10.3333 1.85069 10.4488 1.57726 10.6797 1.34635C10.9106 1.11545 11.184 1 11.5 1C11.816 1 12.0894 1.11545 12.3203 1.34635L22.237 11.263C22.4679 11.4939 22.5833 11.7674 22.5833 12.0833Z"
@@ -1870,8 +1870,8 @@ export const NewsIcon = ({ active }) => {
           y2="6.85918"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_621_520"
@@ -1881,8 +1881,8 @@ export const NewsIcon = ({ active }) => {
           y2="17.8021"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint2_linear_621_520"
@@ -1892,8 +1892,8 @@ export const NewsIcon = ({ active }) => {
           y2="17.8021"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -1908,7 +1908,7 @@ export const NewsIcon = ({ active }) => {
       <path
         d="M18.5 1H25C27.2091 1 29 2.79086 29 5V19.1667C29 21.3758 27.2091 23.1667 25 23.1667H18.5"
         stroke="black"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M22.5833 12.0833C22.5833 12.3993 22.4679 12.6727 22.237 12.9036L12.3203 22.8203C12.0894 23.0512 11.816 23.1667 11.5 23.1667C11.184 23.1667 10.9106 23.0512 10.6797 22.8203C10.4488 22.5894 10.3333 22.316 10.3333 22V16.75H2.16667C1.85069 16.75 1.57726 16.6345 1.34635 16.4036C1.11545 16.1727 1 15.8993 1 15.5833V8.58333C1 8.26736 1.11545 7.99392 1.34635 7.76302C1.57726 7.53212 1.85069 7.41667 2.16667 7.41667H10.3333V2.16667C10.3333 1.85069 10.4488 1.57726 10.6797 1.34635C10.9106 1.11545 11.184 1 11.5 1C11.816 1 12.0894 1.11545 12.3203 1.34635L22.237 11.263C22.4679 11.4939 22.5833 11.7674 22.5833 12.0833Z"
@@ -1941,8 +1941,8 @@ export const KYCIcon = ({ active }) => {
           y2="26.587"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
         <linearGradient
           id="paint1_linear_621_506"
@@ -1952,8 +1952,8 @@ export const KYCIcon = ({ active }) => {
           y2="26.587"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stop-color="#3E1753" />
-          <stop offset="1" stop-color="#643882" />
+          <stop stopColor="#3E1753" />
+          <stop offset="1" stopColor="#643882" />
         </linearGradient>
       </defs>
     </svg>
@@ -1982,63 +1982,63 @@ export const FeeLedgerIcon = ({ active }) => {
       viewBox="0 0 60 60"
       fill="none"
     >
-      <g clip-path="url(#clip0_2177_1635)">
+      <g clipPath="url(#clip0_2177_1635)">
         <path
           d="M52.5 37.5H46.25C45.255 37.5 44.3025 37.895 43.5975 38.5975C42.895 39.3 42.5 40.255 42.5 41.25C42.5 42.245 42.895 43.1975 43.5975 43.9025C44.3 44.605 45.255 45 46.25 45H48.75C49.745 45 50.6975 45.395 51.4025 46.0975C52.105 46.8 52.5 47.755 52.5 48.75C52.5 49.745 52.105 50.6975 51.4025 51.4025C50.7 52.105 49.745 52.5 48.75 52.5H42.5"
           stroke={active ? IconsActiveColor : "#000"}
-          stroke-linecap="round"
+          strokeLinecap="round"
           strokeWidth={2}
-          stroke-linejoin="round"
+          strokeLinejoin="round"
         />
         <path
           d="M47.5 52.5V55M47.5 35V37.5"
           // stroke={active ? IconsActiveColor : "#000"}
           strokeWidth={2}
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M32.5 52.5H15C13.675 52.5 12.4025 51.9725 11.465 51.035C10.5275 50.0975 10 48.825 10 47.5V22.5C10 21.175 10.5275 19.9025 11.465 18.965C12.4025 18.0275 13.675 17.5 15 17.5H20M50 25.3V22.5C50 21.175 49.4725 19.9025 48.535 18.965C47.5975 18.0275 46.325 17.5 45 17.5H40"
           stroke={active ? IconsActiveColor : "#000"}
           strokeWidth={2}
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M40 25V10C40 8.675 39.4725 7.4025 38.535 6.465C37.5975 5.5275 36.325 5 35 5H25C23.675 5 22.4025 5.5275 21.465 6.465C20.5275 7.4025 20 8.675 20 10V25M40 25H20M40 25H42.5M20 25H17.5"
           stroke={active ? IconsActiveColor : "#000"}
-          stroke-linecap="round"
+          strokeLinecap="round"
           strokeWidth={2}
           fill={active ? IconsActiveColor : "none"}
-          stroke-linejoin="round"
+          strokeLinejoin="round"
         />
         <path
           d="M20 35V35.0244"
           stroke={active ? IconsActiveColor : "#000"}
-          stroke-linecap="round"
+          strokeLinecap="round"
           strokeWidth={2}
-          stroke-linejoin="round"
+          strokeLinejoin="round"
         />
         <path
           d="M20 42.5V42.5244"
           stroke={active ? IconsActiveColor : "#000"}
           strokeWidth={2}
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M30 34.9751V34.9995"
           stroke={active ? IconsActiveColor : "#000"}
-          stroke-linecap="round"
+          strokeLinecap="round"
           strokeWidth={2}
-          stroke-linejoin="round"
+          strokeLinejoin="round"
         />
         <path
           d="M30 42.5V42.5244"
           stroke={active ? IconsActiveColor : "#000"}
           strokeWidth={2}
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </g>
       <defs>
@@ -2062,14 +2062,14 @@ export const RefreshIcon = () => {
       <path
         d="M12.7169 10.5554C12.3146 13.2282 10.0085 15.2776 7.22352 15.2776C4.15519 15.2776 1.66797 12.7904 1.66797 9.72206C1.66797 6.65373 4.15519 4.1665 7.22352 4.1665C9.5013 4.1665 11.4596 5.53761 12.3169 7.49984"
         stroke={IconsActiveColor}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M10 7.49995H12.4444C12.4882 7.49995 12.5316 7.49132 12.572 7.47457C12.6124 7.45782 12.6492 7.43327 12.6801 7.40231C12.7111 7.37136 12.7357 7.33462 12.7524 7.29417C12.7692 7.25373 12.7778 7.21039 12.7778 7.16661V4.72217"
         stroke={IconsActiveColor}
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

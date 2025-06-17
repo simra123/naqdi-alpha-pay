@@ -5,18 +5,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
-import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAdminWithdrawalsListApi,
-  getUserWithdrawalsListApi,
-} from "@/services/withdrawal";
+import { callApiHook } from "@/utils/apifuncs";
+import { getUserWithdrawalsListApi } from "@/services/withdrawal";
+import { getAdminWithdrawalsListApi } from "@/services/admin/withdrawal";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import ErrorApiText from "@/components/common/ErrorApiText";
-import LoadingApi from "@/components/common/LoadindApi";
 import LoaderButton from "@/components/common/LoaderButton";
-import { generateCSVApi } from "@/services/common";
 import CustomTable from "@/components/common/CustomTable";
 import Chip from "@/components/common/Chip";
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
@@ -33,13 +29,14 @@ import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { hasMinAccess } from "@/utils/cookies";
+import CustomTableV2 from "@/components/common/CustomTableV2";
 
 const withdrawalsList_table_columns: TableColumns = [
-  { field: "withdrawal_uuid", headerName: "ID", sortable: true },
+  { field: "id", headerName: "ID" },
   {
     field: "created_at",
     headerName: "Created At",
-    sortable: true,
+
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -53,7 +50,7 @@ const withdrawalsList_table_columns: TableColumns = [
   {
     field: "updated_at",
     headerName: "Updated At",
-    sortable: true,
+
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -96,43 +93,82 @@ const withdrawalsList_table_columns: TableColumns = [
     headerName: "Merchant Type",
   },
   {
-    field: "total_requested_amount",
-    headerName: "Total Requested Amount",
-    sortable: true,
-  },
-  { field: "requested_amount", headerName: "Requested Amount", sortable: true },
-  { field: "alphaspay_fee", headerName: "Fee", sortable: true },
-  { field: "transaction_type", headerName: "Currency Type", sortable: true },
-  { field: "unit", headerName: "Currency", sortable: true },
-  {
-    field: "standard",
-    headerName: "Blockchain",
-    sortable: true,
+    field: "fiat_initial_amount",
+    headerName: "Fiat Requested Amount",
     dataValidator(value, row: any) {
-      return standardBlockchain[value || blockchain_standards[row?.unit]];
+      return `${value} ${row.fiat_currency}`;
     },
+  },
+  {
+    field: "fiat_initial_fee",
+    headerName: "Fiat Fee Amount",
+    dataValidator(value, row: any) {
+      return `${value} ${row.fiat_currency}`;
+    },
+  },
+  {
+    field: "fiat_paid_amount",
+    headerName: "Fiat Paid Amount",
+    dataValidator(value, row: any) {
+      return value ? `${value} ${row.fiat_currency}` : `_`;
+    },
+  },
+  {
+    field: "fiat_net_amount",
+    headerName: "Fiat Net Amount",
+    dataValidator(value, row: any) {
+      return value ? `${value} ${row.fiat_currency}` : `_`;
+    },
+  },
+
+  {
+    field: "initial_amount",
+    headerName: "Requested Amount",
+    dataValidator(value, row: any) {
+      return value ? `${value} ${row?.unit}` : `_`;
+    },
+  },
+  {
+    field: "initial_fee",
+    headerName: "Fee Amount",
+    dataValidator(value, row: any) {
+      return value ? `${value} ${row?.unit}` : `_`;
+    },
+  },
+  {
+    field: "paid_amount",
+    headerName: "Paid Amount",
+    dataValidator(value, row: any) {
+      return value ? `${value} ${row?.unit}` : `_`;
+    },
+  },
+  {
+    field: "net_amount",
+    headerName: "Net Amount",
+    dataValidator(value, row: any) {
+      return value ? `${value} ${row?.unit}` : `_`;
+    },
+  },
+  {
+    field: "contract_address.is_token",
+    headerName: "Currency Type",
+    dataValidator(value, row) {
+      return value ? "Token" : "Coin";
+    },
+  },
+  { field: "contract_address.unit", headerName: "Currency" },
+  {
+    field: "contract_address.blockchain_name",
+    headerName: "Blockchain",
   },
   {
     field: "recipient_address",
     headerName: "Recipient Address",
-    sortable: true,
-    link(row: {
-      standard: string | null;
-      recipient_address: string;
-      unit: string;
-    }) {
-      let blockchain: string | null;
 
-      if (row?.standard) {
-        blockchain = standardBlockchain[row?.standard];
-      } else {
-        let standard = blockchain_standards[row?.unit];
-        blockchain = standardBlockchain[standard];
-      }
-
+    link(row: any) {
       return showExplorerDetailsByChain({
         env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: blockchain,
+        blockchain: row?.contract_address?.blockchain_name,
         type: "address",
         address: row?.recipient_address,
       });
@@ -149,7 +185,7 @@ const withdrawalsList_table_columns: TableColumns = [
 
 const Withdrawals = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [
     isWithdrawalsListLoading,
@@ -158,7 +194,7 @@ const Withdrawals = () => {
   ] = useApi({ initailLoading: true });
 
   const [withdrawalsList, setWithdrawalsList] = useState<ListApiResponse | any>(
-    user?.role == Role.USER ? null : []
+    { result: [] }
   );
   const [columns, setColumns] = useState([]);
   const [listConfig, setListConfig] = useState(null);
@@ -182,7 +218,11 @@ const Withdrawals = () => {
             { sort, filters },
             { limit: limitValue, page: pageValue }
           )
-        : getAdminWithdrawalsListApi();
+        : getAdminWithdrawalsListApi({
+            limit: limitValue,
+            page: pageValue,
+            all: true,
+          });
     };
 
     await callApiHook({
@@ -274,53 +314,56 @@ const Withdrawals = () => {
   };
 
   const formatCsvData = useMemo(() => {
-    const columnOrderUser: ColumnConfig<any>[] = [
+    const columnOrder: ColumnConfig<any>[] = [
       { key: "id" },
-      { key: "withdrawal_uuid" },
-      { key: "requested_amount" },
       { key: "type" },
-      { key: "alphaspay_fee" },
-      { key: "total_requested_amount" },
+      { key: "status" },
+      { key: "notes" },
+      { key: "rejection_reason" },
+      { key: "initial_amount" },
+      { key: "paid_amount" },
+      { key: "net_amount" },
+      { key: "initial_fee" },
+      { key: "paid_fee" },
+      { key: "initial_exchange_rate" },
+      { key: "paid_exchange_rate" },
+      { key: "fee_value" },
       { key: "unit" },
       { key: "standard" },
+      { key: "fee_type" },
+      { key: "fiat_initial_amount" },
+      { key: "fiat_paid_amount" },
+      { key: "fiat_net_amount" },
+      { key: "fiat_initial_fee" },
+      { key: "fiat_paid_fee" },
       { key: "recipient_address" },
-      { key: "transaction_type" },
-      { key: "notes" },
-      { key: "reason" },
-      { key: "status" },
-      { key: "user_id" },
+      { key: "fiat_currency" },
       { key: "created_at" },
       { key: "updated_at" },
+      { key: "wallet" },
+      {
+        key: "transactions",
+        format(value, row) {
+          const data = value?.map((item) => {
+            const result = {};
+            for (const key in item) {
+              if (!key.includes("client")) {
+                result[key] = item[key];
+              }
+            }
+            return result;
+          });
+          return data && data?.length > 0 ? JSON.stringify(data, null, 2) : "-";
+        },
+      },
+      { key: "contract_address" },
     ];
 
-    const columnOrderAdmin: ColumnConfig<any>[] = [
-      { key: "id" },
-      { key: "withdrawal_uuid" },
-      { key: "requested_amount" },
-      { key: "type" },
-      { key: "alphaspay_fee" },
-      { key: "total_requested_amount" },
-      { key: "unit" },
-      { key: "standard" },
-      { key: "recipient_address" },
-      { key: "transaction_type" },
-      { key: "notes" },
-      { key: "reason" },
-      { key: "status" },
-      { key: "user_id" },
-      { key: "withdrawalTransactions" },
-      { key: "created_at" },
-      { key: "updated_at" },
-      { key: "user" },
-    ];
+    if (user?.role == Role.ADMIN) {
+      columnOrder.push({ key: "company" }, { key: "user" });
+    }
 
-    const rows =
-      user?.role == Role.ADMIN ? withdrawalsList : withdrawalsList?.result;
-
-    return formatCSVDataByColumnOrder(
-      rows,
-      user?.role == Role.ADMIN ? columnOrderAdmin : columnOrderUser
-    );
+    return formatCSVDataByColumnOrder(withdrawalsList?.result, columnOrder);
   }, [withdrawalsList]);
 
   useEffect(() => {
@@ -366,12 +409,12 @@ const Withdrawals = () => {
       </div>
 
       {user?.role == Role.ADMIN && (
-        <CustomTable
+        <CustomTableV2
           loading={isWithdrawalsListLoading}
           columns={withdrawalsList_table_columns}
           // Filters={Filters}
           createHandler={toggleCreateModal}
-          rows={withdrawalsList}
+          rows={withdrawalsList?.result}
           csv={true}
           tableName="withdrawals"
           initialPageSize={10}
@@ -379,7 +422,7 @@ const Withdrawals = () => {
             router.push(`/withdrawals/details/${row?.id}`)
           }
           pagination
-          columnClassName="max-w-[200px]"
+          columnClassName="max-w-[250px]"
           csvData={formatCsvData}
         />
       )}

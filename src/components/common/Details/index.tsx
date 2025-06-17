@@ -1,8 +1,8 @@
 "use client";
 
-import { ContentCopy } from "@mui/icons-material";
 import Link from "next/link";
 import React, { useState } from "react";
+import { MdContentCopy } from "react-icons/md";
 
 type Props = {
   value: any;
@@ -30,9 +30,7 @@ const Details = ({
 
       // Reset the copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+    } catch (err) {}
   };
 
   return (
@@ -59,9 +57,9 @@ const Details = ({
         <button
           type="button"
           onClick={copyToClipboard(value)}
-          className="bg-transparent hover:bg-purple-10 active:bg-purple-20 p-1 border-0 rounded-full outline-0 w-8 h-8 aspect-square text-[14px] transition-all"
+          className="flex justify-center items-center bg-transparent hover:bg-purple-10 active:bg-purple-20 p-1 border-0 rounded-full outline-0 w-8 h-8 aspect-square text-[14px] transition-all"
         >
-          <ContentCopy className="text-[12px]" />
+          <MdContentCopy className="text-[12px]" />
         </button>
       )}
     </div>

@@ -20,14 +20,6 @@ export const FeeSetupApi = (data: {
   return () => api.post(`auth/set-fees`, data);
 };
 
-export const AdminFeeSetupApi = (data: {
-  merchant_fees: boolean;
-  client_fees: boolean;
-  userId: number;
-}) => {
-  return () => api.post(`auth/admin/set-fees`, data);
-};
-
 export const SubmitKYCApi = (data) => {
   return () => api.post(`auth/submit-kyc`, data, formHeader);
 };

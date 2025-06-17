@@ -15,10 +15,6 @@ export const verifyApi = (data: { userId: number }) => {
   return () => api.post(`auth/verify`, data);
 };
 
-export const generateMFAForAdminApi = () => {
-  return () => api.get(`auth/admin/generate-secret-key`);
-};
-
 export const verifyMFAForUserApi = (
   data: { token: string },
   accessToken?: string
@@ -30,19 +26,6 @@ export const verifyMFAForUserApi = (
       });
   }
   return () => api.post(`auth/verify-otp`, data);
-};
-
-export const verifyMFAForAdminApi = (
-  data: { token: string },
-  accessToken?: string
-) => {
-  if (accessToken) {
-    return () =>
-      api.post(`auth/admin/verify-otp`, data, {
-        headers: { Authorization: `bearer ${accessToken}` },
-      });
-  }
-  return () => api.post(`auth/admin/verify-otp`, data);
 };
 
 export const recoverPasswordApi = (data) => {
@@ -62,17 +45,15 @@ export const ChangePassowordApi = (data: {
   return () => api.post(`auth/change-password`, data);
 };
 
-export const ChangePassowordAdminpi = (data: {
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-  token: number;
-}) => {
-  return () => api.post(`auth/admin/change-password`, data);
-};
-
 export const updatePasswordApi = (data) => {
   return () => api.post(`auth/reset-password`, data);
+};
+
+export const setupPasswordApi = (data: {
+  newPassword: string;
+  token: string;
+}) => {
+  return () => api.post(`auth/set-password`, data);
 };
 
 export const createSubuserApi = (data: {
@@ -117,43 +98,3 @@ export const deleteSubusersApi = (data: {
 export const getSubuserDetailsApi = (data: { id: number }) => {
   return () => api.get(`auth/detail-sub-users/${data.id}`);
 };
-
-export const createSubAdminApi = (data: {
-  username: string;
-  first_name: string;
-  email: string;
-  last_name: string;
-  password: string;
-  permissions: {
-    module: ModulesEnum;
-    access_level: AccessLevelEnum;
-  }[];
-}) => {
-  return () => api.post(`auth/create/admin-sub-users`, data);
-};
-export const getSubAdminsApi = () => {
-  return () => api.get(`auth/admin/sub-admin`);
-};
-
-export const getSubAdminDetailsApi = (data: { id: number }) => {
-  return () => api.get(`auth/admin/detail-sub-admin/${data.id}`);
-};
-export const updateSubAdminApi = (data: {
-  user_id: number | string;
-  user_permission: {
-    id: number;
-    permissions: {
-      id: number;
-      module: ModulesEnum;
-      access_level: AccessLevelEnum;
-    };
-    }[];
-  }) => {
-    return () => api.post(`auth/admin/update-permission`, data);
-  };
-  export const deleteSubAdminApi = (data: {
-    username: string;
-    child_id: number;
-  }) => {
-    return () => api.post(`auth/admin/delete/sub-user`, data);
-  };

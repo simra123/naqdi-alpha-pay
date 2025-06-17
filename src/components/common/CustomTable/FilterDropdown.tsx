@@ -1,9 +1,9 @@
 // components/FilterDropdown.js
 
 import React, { useState } from "react";
-import { KeyboardArrowRight } from "@mui/icons-material";
 
 import "./style.scss";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 const FilterDropdown = ({ column, rows, setCurrentRows, columnsList }) => {
   const [filters, setFilters] = useState([]);
@@ -23,7 +23,7 @@ const FilterDropdown = ({ column, rows, setCurrentRows, columnsList }) => {
 
   return (
     // <div
-    //   className="absolute top-full mt-2 -left-8 bg-white border rounded shadow-lg z-10 p-2"
+    //   className="top-full -left-8 z-10 absolute bg-white shadow-lg mt-2 p-2 border rounded"
     //   onClick={(e) => e.stopPropagation()}
     // >
 
@@ -61,12 +61,12 @@ const FilterDropdown = ({ column, rows, setCurrentRows, columnsList }) => {
                   />
                   <span className="checkmark"></span>
                 </label>
-                <span className="capitalize font-normal text-p16">
+                <span className="font-normal text-p16 capitalize">
                   {" "}
                   {col?.headerName}{" "}
                 </span>
               </div>
-              <KeyboardArrowRight />
+              <MdKeyboardArrowRight />
             </div>
           )
       )}

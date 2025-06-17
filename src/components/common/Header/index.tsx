@@ -1,14 +1,9 @@
 "use client";
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { capitalize } from "@/utils/dataFormatters";
-import {
-  KeyboardArrowDown,
-  Menu,
-  Notifications,
-  Search,
-} from "@mui/icons-material";
+
 import IconField from "../IconField";
 import {
   LogoutDoorIcon,
@@ -26,9 +21,10 @@ import { useDispatch } from "react-redux";
 import Link from "next/link";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
+import { clearApiCache } from "@/store/slices/apiCache.slice";
 
 const Header = ({ navHandler }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -58,6 +54,7 @@ const Header = ({ navHandler }) => {
     Cookies.remove("token");
     Cookies.remove("user");
     router.replace("/login");
+    dispatch(clearApiCache());
     dispatch(resetSteps({}));
     dispatch(setUser(null));
   };
@@ -81,7 +78,7 @@ const Header = ({ navHandler }) => {
           {/* <div className="icon">
             <Notifications />
           </div> */}
-          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full cursor-pointer avatar">
+          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full avatar">
             <div>
               <img
                 src="/avatar.png"
@@ -119,10 +116,10 @@ const Header = ({ navHandler }) => {
               </BorderedIconButton>
             </Link>
           </RenderRoleBased>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <ThemeChangeIcon />
           </BorderedIconButton>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <NotificationIcon />
           </BorderedIconButton>
           <BorderedIconButton onClick={logoutHandler}>

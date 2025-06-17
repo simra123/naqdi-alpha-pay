@@ -318,7 +318,7 @@ const AdvancedTable = ({
       {!loading && pagination && (
         <TablePagination
           currentPage={page}
-          totalPages={Math.ceil(totalItems / limit)}
+          totalPages={Math.ceil((totalItems || 0) / limit)}
           onChangePage={onPageChange}
           limit={limit}
           onLimitChange={onLimitChange}

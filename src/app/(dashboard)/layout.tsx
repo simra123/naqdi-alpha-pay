@@ -7,7 +7,7 @@ import Sidebar from "@/components/common/Sidebar";
 
 import Cookies from "js-cookie";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import Header from "@/components/common/Header";
 import { useApi } from "@/hooks/useApi";
@@ -17,11 +17,10 @@ import { setUser } from "@/store/slices/userSlice";
 import { validateSteps } from "@/store/slices/onboarding.slice";
 import { useDispatch } from "react-redux";
 import { Role } from "@/constants/roles";
-import { debounce, updatedOnboardingCookies } from "@/utils/cookies";
 
 const DashboardLayout = ({ children }) => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -63,15 +62,20 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <div className="md:flex min-h-screen">
+      <div className="md:flex min-h-screen max-h-screen md:overflow-hidden">
         <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
-        <div className="children h-[inherit] w-full md:px-0 flex-1 overflow-hidden">
-          <div>
-            <Header navHandler={toggleSidebar} />
-          </div>
-          <div className="md:max-h-[calc(100vh-95px)] md:overflow-y-auto p-2 xxs:p-6 md:p-8">
-            {children}
+        <div className="flex flex-1 md:px-0 w-full h-[inherit] overflow-hidden children">
+          <div className="flex flex-col flex-1 max-w-full h-screen">
+            {/* Sticky header on all devices */}
+            <div className="border-b md:border-b-0 shrink-0">
+              <Header navHandler={toggleSidebar} />
+            </div>
+
+            {/* Scrollable content area */}
+            <div className="flex-1 p-2 xxs:p-6 md:p-8 overflow-y-auto">
+              {children}
+            </div>
           </div>
         </div>
       </div>
