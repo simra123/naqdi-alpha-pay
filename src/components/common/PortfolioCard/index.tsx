@@ -71,7 +71,7 @@ const PortfolioCard = ({
         )}
 
         <div className="flex flex-col w-[100px] md:w-[130px] text-end balance">
-          <span className="text-subtitle">Total Balance</span>
+          <span className="text-subtitle">Deposit</span>
           <span className="overflow-hidden font-semibold md:text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 text-base text-ellipsis">
             {Balance}
           </span>
@@ -97,7 +97,7 @@ const PortfolioCard = ({
               <ReciveIconGreen />
             </BorderedIconButton>
           </div>
-          <div className="hidden 3xl:block">
+          {/* <div className="hidden 3xl:block">
             <BorderedIconButton
               tooltipId="send-card-button"
               disabled={!isWithdrawalHasFullAccess}
@@ -124,7 +124,7 @@ const PortfolioCard = ({
             >
               <TransferIconPurple />
             </BorderedIconButton>
-          </div>
+          </div> */}
         </div>
       )}
     </div>
