@@ -12,7 +12,7 @@ type Props = {
   direction: "incoming" | "outgoing";
   date: string;
   currencyName: string | React.ReactElement;
-  amount: string;
+  amount: any;
 };
 
 const TransactionCard = ({
@@ -29,9 +29,8 @@ const TransactionCard = ({
     >
       <div className="flex items-center gap-2">
         <div
-          className={`w-[35px] h-[35px] md:w-[50px] md:h-[50px] xl:w-[63px] xl:h-[63px] bg-opacity-20 flex items-center justify-center rounded-full ${
-            direction == "incoming" ? "bg-green-300" : "bg-red-300"
-          }`}
+          className={`w-[35px] h-[35px] md:w-[50px] md:h-[50px] xl:w-[63px] xl:h-[63px] bg-opacity-20 flex items-center justify-center rounded-full ${direction == "incoming" ? "bg-green-300" : "bg-red-300"
+            }`}
         >
           {direction == "incoming" ? (
             <ReciveIconGreen className="w-[14px] xl:w-[20px] h-[15px] xl:h-[21px]" />

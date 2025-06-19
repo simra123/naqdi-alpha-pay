@@ -31,6 +31,7 @@ import { getPermission, hasMinAccess } from "@/utils/cookies";
 import { getTransactionRequestDetailsByUserApi } from "@/services/transaction";
 import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transaction";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
@@ -64,7 +65,7 @@ const DepositDetails = ({ params }) => {
         try {
           const parsedData = JSON.parse(response.passthrough);
           setOrderInfo(parsedData);
-        } catch (error) {}
+        } catch (error) { }
         setPayment(response);
 
         // Handling Webhooks Below
@@ -276,7 +277,7 @@ const DepositDetails = ({ params }) => {
             <div className="res-2-grid py-6">
               <Details
                 label="Fiat Deposit Amount"
-                value={`${payment?.fiat_initial_amount} ${payment?.fiat_currency}`}
+                value={<AmountFormat type="fiat" amount={payment?.fiat_initial_amount} currency={payment?.fiat_currency} />}
               />
               <Details
                 label="Crypto Deposit Amount "
@@ -284,19 +285,17 @@ const DepositDetails = ({ params }) => {
               />
               <Details
                 label="Fiat Amount Recieved"
-                value={`${payment?.fiat_paid_amount || 0} ${
-                  payment?.fiat_currency
-                }`}
+
+                value={<AmountFormat type="fiat" amount={payment?.fiat_paid_amount || 0} currency={payment?.fiat_currency} />}
               />
               <Details
                 label="Fiat Alphaspay Fee"
-                value={`${payment?.fiat_initial_fee} ${payment?.fiat_currency}`}
+                value={<AmountFormat type="fiat" amount={payment?.fiat_initial_fee || 0} currency={payment?.fiat_currency} />}
               />
               <Details
                 label="Fiat Net Amount Recieved"
-                value={`${payment?.fiat_net_amount || 0} ${
-                  payment?.fiat_currency
-                }`}
+
+                value={<AmountFormat type="fiat" amount={payment?.fiat_net_amount || 0} currency={payment?.fiat_currency} />}
               />
               <Details
                 label="Crypto Amount Recieved"
@@ -307,18 +306,13 @@ const DepositDetails = ({ params }) => {
                 <>
                   <Details
                     label="Fiat Initial Client Fee"
-                    value={` ${roundToPrecision(
-                      payment?.fiat_initial_client_fee || 0,
-                      10
-                    )} ${payment?.fiat_currency}`}
+
+                    value={<AmountFormat type="fiat" amount={payment?.fiat_initial_client_fee || 0} currency={payment?.fiat_currency} />}
                   />
 
                   <Details
                     label="Fiat Paid Client Fee"
-                    value={` ${roundToPrecision(
-                      payment?.fiat_paid_client_fee || 0,
-                      10
-                    )} ${payment?.fiat_currency}`}
+                    value={<AmountFormat type="fiat" amount={payment?.fiat_paid_client_fee || 0} currency={payment?.fiat_currency} />}
                   />
 
                   <Details
