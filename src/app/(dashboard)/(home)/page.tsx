@@ -53,14 +53,33 @@ import "./dashboard.scss";
 import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
 import { getAllUsersByAdminApi } from "@/services/admin/users";
 import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const merchantsColumns: TableColumns = [
   { field: "wallet.company.owner.first_name", headerName: "First Name" },
   { field: "wallet.company.owner.last_name", headerName: "Last Name" },
   { field: "wallet.company.owner.user_type", headerName: "User Type" },
-  { field: "total_amount", headerName: "Current Balance" },
-  { field: "total_deposit", headerName: "Deposit" },
-  { field: "total_withdraw", headerName: "Withdrawal" },
+  {
+    field: "total_amount",
+    headerName: "Current Balance",
+    dataValidator(value, row) {
+      return <AmountFormat amount={value} type="fiat" />;
+    },
+  },
+  {
+    field: "total_deposit",
+    headerName: "Deposit",
+    dataValidator(value, row) {
+      return <AmountFormat amount={value} type="fiat" />;
+    },
+  },
+  {
+    field: "total_withdraw",
+    headerName: "Withdrawal",
+    dataValidator(value, row) {
+      return <AmountFormat amount={value} type="fiat" />;
+    },
+  },
 ];
 
 interface DepositState {

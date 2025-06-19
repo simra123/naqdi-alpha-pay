@@ -52,6 +52,7 @@
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
     "tronweb": "^6.0.1",
+    "uuid": "^11.1.0",
     "valtio": "^1.13.2",
     "web3": "^4.16.0",
     "web3-validator": "^2.0.6",
