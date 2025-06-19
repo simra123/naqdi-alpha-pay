@@ -62,6 +62,6 @@ jobs:
       - name: Deployment
         run: |
           cd /home/ubuntu/eks/alpha-portal-qa
+          kubectl delete -f deployment.yaml
           kubectl apply -f deployment.yaml
-          echo "deployed"
           sleep 20

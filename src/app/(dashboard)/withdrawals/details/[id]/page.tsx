@@ -398,25 +398,47 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Fiat Withdrawal Amount"
-             value={<AmountFormat type="fiat" amount={withdrawalDetails.fiat_initial_amount} currency={withdrawalDetails.fiat_currency} />}
-             />
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_initial_amount}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
           <Details
             label="Crypto Withdrawal Amount "
             value={`${withdrawalDetails.initial_amount} ${withdrawalDetails.unit}`}
-            />
+          />
           <Details
             label="Fiat Amount Recieved"
-            value={<AmountFormat type="fiat" amount={withdrawalDetails.fiat_paid_amount || 0} currency={withdrawalDetails.fiat_currency} />}
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_paid_amount || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
           <Details
             label="Fiat Alphaspay Fee"
-            value={`${withdrawalDetails.fiat_initial_fee} ${withdrawalDetails.fiat_currency}`}
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_initial_fee || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
           <Details
             label="Fiat Net Amount Recieved"
-            value={`${withdrawalDetails.fiat_net_amount || 0} ${
-              withdrawalDetails.fiat_currency
-            }`}
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_net_amount || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
           <Details
             label="Crypto Amount Recieved"

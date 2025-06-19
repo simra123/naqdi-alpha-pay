@@ -26,6 +26,7 @@ import DepositModal from "@/components/Modals/DepoistModal";
 import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
@@ -122,9 +123,15 @@ const paymentsList_table_columns: TableColumns = [
   },
   {
     field: "fiat_initial_amount",
-    headerName: "Requested Payment Amount",
+    headerName: "Requested Fiat Payment Amount",
     dataValidator(value, row: any) {
-      return `${value} ${row?.fiat_currency}`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
@@ -135,6 +142,19 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
+    field: "fiat_initial_fee",
+    headerName: "Fiat Alphaspay Fee",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
+    },
+  },
+  {
     field: "initial_amount",
     headerName: "Amount to Pay",
     dataValidator(value: any, row: any) {
@@ -142,10 +162,36 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
+    field: "fiat_initial_amount",
+    headerName: "Fiat Amount to Pay",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
+    },
+  },
+  {
     field: "paid_amount",
     headerName: "Amount Paid",
     dataValidator(value: any, row: any) {
       return `${roundToPrecision(value || 0, 10)}  ${row?.unit}`;
+    },
+  },
+  {
+    field: "fiat_paid_amount",
+    headerName: "Fiat Amount Paid",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
@@ -262,6 +308,15 @@ const Deposits = () => {
                 return {
                   ...column,
                   dataValidator: (value: string) => <Chip status={value} />,
+                };
+              }
+
+              if (column.listColumnsMeta.name === "fiat_initial_amount") {
+                return {
+                  ...column,
+                  dataValidator: (value: string) => (
+                    <AmountFormat amount={value} type="fiat" />
+                  ),
                 };
               }
 

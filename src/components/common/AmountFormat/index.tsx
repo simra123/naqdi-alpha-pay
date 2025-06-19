@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import { FC } from 'react';
-import { Tooltip } from 'react-tooltip';
-import 'react-tooltip/dist/react-tooltip.css';
-import clsx from 'clsx';
+import { FC } from "react";
+import { Tooltip } from "react-tooltip";
+import "react-tooltip/dist/react-tooltip.css";
+import clsx from "clsx";
+import { v4 as uid } from "uuid";
 
-type AmountType = 'fiat' | 'crypto';
+type AmountType = "fiat" | "crypto";
 
 interface AmountFormatProps {
   amount: number | string;
@@ -25,17 +26,27 @@ const MAX_DECIMALS = {
 };
 
 const trimTrailingZeros = (value: string) => {
-  if (!value.includes('.')) return value;
-  return value.replace(/(\.\d*?[1-9])0+$/g, '$1').replace(/\.0+$/, '');
+  if (!value.includes(".")) return value;
+  return value.replace(/(\.\d*?[1-9])0+$/g, "$1").replace(/\.0+$/, "");
 };
 
-const AmountFormat: FC<AmountFormatProps> = ({ amount, type, className, currency }) => {
-  const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+const AmountFormat: FC<AmountFormatProps> = ({
+  amount,
+  type,
+  className,
+  currency,
+}) => {
+  const num = amount
+    ? typeof amount === "string"
+      ? parseFloat(amount)
+      : amount
+    : 0;
+  console.log(num, typeof num);
   const min = MIN_DISPLAY[type];
   const decimals = MAX_DECIMALS[type];
 
   const needsTooltip = num < min && num !== 0;
-  const tooltipId = `tooltip-${type}-${amount}`;
+  const tooltipId = `tooltip-${uid()}`;
 
   let display: string;
 
@@ -50,10 +61,12 @@ const AmountFormat: FC<AmountFormatProps> = ({ amount, type, className, currency
     <>
       <span
         className={clsx(className)}
-        {...(needsTooltip ? {
-          'data-tooltip-id': tooltipId,
-          'data-tooltip-content': num.toString(),
-        } : {})}
+        {...(needsTooltip
+          ? {
+              "data-tooltip-id": tooltipId,
+              "data-tooltip-content": num?.toString(),
+            }
+          : {})}
       >
         {display} {currency}
       </span>
