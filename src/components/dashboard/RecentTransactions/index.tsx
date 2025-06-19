@@ -13,6 +13,7 @@ import { callApiHook } from "@/utils/apifuncs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const RecentTransactions = () => {
   const user = getLocalStorageValue("user");
@@ -72,7 +73,7 @@ const RecentTransactions = () => {
                         (
                         {
                           unitName[
-                            transaction?.transaction_request?.unit?.toLowerCase()
+                          transaction?.transaction_request?.unit?.toLowerCase()
                           ]
                         }
                         )
@@ -80,27 +81,23 @@ const RecentTransactions = () => {
                     </div>
                   ) : (
                     unitName[
-                      transaction?.transaction_request?.unit?.toLowerCase()
+                    transaction?.transaction_request?.unit?.toLowerCase()
                     ]
                   )
                 }
                 date={transaction?.created_at}
                 direction={
                   transaction?.transaction_request?.type ==
-                  transactionTypes.Deposit
+                    transactionTypes.Deposit
                     ? "incoming"
                     : "outgoing"
                 }
                 onClick={() => {
                   router.push(`/transactions/details/${transaction?.id}`);
                 }}
-                amount={parseFloat(
-                  user?.role == Role.ADMIN
-                    ? transaction?.paid_amount
-                    : transaction?.net_amount
-                )
-                  .toFixed(3)
-                  ?.toString()}
+                amount={<AmountFormat amount={user?.role == Role.ADMIN
+                  ? transaction?.paid_amount
+                  : transaction?.net_amount} type="crypto" className="max-w-24 overflow-hidden font-semibold md:text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 text-base text-end text-ellipsisF" />}
               />
             ))
           ) : !isRecentTransactionsError ? (

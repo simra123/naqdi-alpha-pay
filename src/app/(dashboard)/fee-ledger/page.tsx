@@ -34,6 +34,7 @@ import { hasMinAccess } from "@/utils/cookies";
 
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import { standardBlockchain, unitName } from "@/constants/blockchains";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const FeeLedger = () => {
   const router = useRouter();
@@ -75,7 +76,7 @@ const FeeLedger = () => {
         if (user.role == Role.USER) {
           const modifiedColumns = response?.listConfig.views[0].columns.map(
             (column) => {
-              if (["createdAt"].includes(column.listColumnsMeta.name)) {
+              if (["created_at"].includes(column.listColumnsMeta.name)) {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
@@ -97,12 +98,30 @@ const FeeLedger = () => {
                   },
                 };
               }
-              if (["fee"].includes(column.listColumnsMeta.name)) {
+              if (
+                ["transaction_request.fee_value"].includes(
+                  column.listColumnsMeta.name
+                )
+              ) {
                 return {
                   ...column,
                   dataValidator: (value: string) => {
                     return `${value} %`;
                   },
+                };
+              }
+
+              if (
+                [
+                  "transaction_request.fiat_paid_amount",
+                  "transaction_request.fiat_paid_fee",
+                ].includes(column.listColumnsMeta.name)
+              ) {
+                return {
+                  ...column,
+                  dataValidator: (value: string) => (
+                    <AmountFormat amount={value} type="fiat" />
+                  ),
                 };
               }
 
@@ -192,9 +211,45 @@ const FeeLedger = () => {
     { field: "transaction.paid_amount", headerName: "Crypto Paid Amount" },
     { field: "transaction.net_amount", headerName: "Crypto Net Amount" },
     { field: "transaction.fee", headerName: "Crypto Fee Amount" },
-    { field: "transaction.fiat_paid_amount", headerName: "Fiat Paid Amount" },
-    { field: "transaction.fiat_net_amount", headerName: "Fiat Net Amount" },
-    { field: "transaction.fiat_fee", headerName: "Fiat Fee Amount" },
+    {
+      field: "transaction.fiat_paid_amount",
+      headerName: "Fiat Paid Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fiat_net_amount",
+      headerName: "Fiat Net Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fiat_fee",
+      headerName: "Fiat Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
     {
       field: "transaction_request.fee_value",
       headerName: "Fee (%)",
@@ -206,10 +261,28 @@ const FeeLedger = () => {
     {
       field: "fiat_company_ledger.balance_before",
       headerName: "Company Fiat Before Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
     },
     {
       field: "fiat_company_ledger.balance_after",
       headerName: "Company Fiat After Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
     },
     {
       field: "crypto_company_ledger.balance_before",

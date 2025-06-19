@@ -30,6 +30,7 @@ import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { hasMinAccess } from "@/utils/cookies";
 import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "id", headerName: "ID" },
@@ -96,28 +97,52 @@ const withdrawalsList_table_columns: TableColumns = [
     field: "fiat_initial_amount",
     headerName: "Fiat Requested Amount",
     dataValidator(value, row: any) {
-      return `${value} ${row.fiat_currency}`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "fiat_initial_fee",
     headerName: "Fiat Fee Amount",
     dataValidator(value, row: any) {
-      return `${value} ${row.fiat_currency}`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "fiat_paid_amount",
     headerName: "Fiat Paid Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row.fiat_currency}` : `_`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "fiat_net_amount",
     headerName: "Fiat Net Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row.fiat_currency}` : `_`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
 
@@ -283,6 +308,15 @@ const Withdrawals = () => {
                       </div>
                     );
                   },
+                };
+              }
+
+              if (column.listColumnsMeta.name === "fiat_initial_amount") {
+                return {
+                  ...column,
+                  dataValidator: (value: string) => (
+                    <AmountFormat amount={value} type="fiat" />
+                  ),
                 };
               }
 

@@ -23,6 +23,7 @@ import momentTZ from "moment-timezone";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
 import AdvancedTable from "@/components/common/AdvancedTable";
 import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const Transactions = () => {
   const router = useRouter();
@@ -97,6 +98,19 @@ const Transactions = () => {
                   return {
                     ...column,
                     dataValidator: (value: string) => <Chip status={value} />,
+                  };
+                }
+
+                if (
+                  ["fiat_net_amount", "fiat_fee"].includes(
+                    column.listColumnsMeta.name
+                  )
+                ) {
+                  return {
+                    ...column,
+                    dataValidator: (value: string) => (
+                      <AmountFormat amount={value} type="fiat" />
+                    ),
                   };
                 }
 
@@ -204,9 +218,48 @@ const Transactions = () => {
         return transactionExplorerLink;
       },
     },
-    { field: "paid_amount", headerName: "Received Amount", sortable: true },
-    { field: "fee", headerName: "Fee Amount", sortable: true },
-    { field: "net_amount", headerName: "Received Net Amount ", sortable: true },
+    { field: "paid_amount", headerName: "Received Amount" },
+    {
+      field: "fiat_paid_amount",
+      headerName: "Fiat Received Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    { field: "fee", headerName: "Fee Amount" },
+    {
+      field: "fiat_fee",
+      headerName: "Fiat Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    { field: "net_amount", headerName: "Received Net Amount " },
+    {
+      field: "fiat_net_amount",
+      headerName: "Received Fiat Net Amount ",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
 
     {
       field: "sender_address",

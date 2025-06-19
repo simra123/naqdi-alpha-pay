@@ -29,6 +29,7 @@ import { useDispatch } from "react-redux";
 import { setNotification } from "@/store/slices/modal.Slice";
 import { hasMinAccess } from "@/utils/cookies";
 import { AccessLevelEnum, ModulesEnum, RequestVia } from "@/constants/types";
+import AmountFormat from "@/components/common/AmountFormat";
 
 enum TransactionType {
   Deposit = "Deposit",
@@ -239,43 +240,33 @@ const TransactionDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Total Fiat Amount Received"
-            value={` ${roundToPrecision(
-              transactionDetails?.fiat_paid_amount,
-              10
-            )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+            value={<AmountFormat type="fiat" amount={transactionDetails?.fiat_paid_amount || 0} currency={transactionDetails?.transaction_request?.fiat_currency} />}
           />
           <Details
             label="Total Crypto Amount Received"
-            value={` ${roundToPrecision(transactionDetails?.paid_amount, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
+            value={` ${roundToPrecision(transactionDetails?.paid_amount, 10)} ${transactionDetails?.transaction_request?.unit
+              }`}
           />
 
           <Details
             label="Fiat Alphaspay Fee"
-            value={` ${roundToPrecision(transactionDetails?.fiat_fee, 10)} ${
-              transactionDetails?.transaction_request?.fiat_currency
-            }`}
+            value={<AmountFormat type="fiat" amount={transactionDetails?.fiat_fee || 0} currency={transactionDetails?.transaction_request?.fiat_currency} />}
           />
 
           <Details
             label="Crypto Alphaspay Fee"
-            value={` ${roundToPrecision(transactionDetails?.fee, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
+            value={` ${roundToPrecision(transactionDetails?.fee, 10)} ${transactionDetails?.transaction_request?.unit
+              }`}
           />
 
           {transactionDetails?.transaction_request?.type !=
             TransactionType.Withdrawal &&
             transactionDetails?.transaction_request?.request_via ==
-              RequestVia.API && (
+            RequestVia.API && (
               <>
                 <Details
                   label="Fiat Client Fee"
-                  value={` ${roundToPrecision(
-                    transactionDetails?.fiat_client_fee,
-                    10
-                  )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+                  value={<AmountFormat type="fiat" amount={transactionDetails?.fiat_client_fee || 0} currency={transactionDetails?.transaction_request?.fiat_currency} />}
                 />
 
                 <Details
@@ -290,16 +281,12 @@ const TransactionDetails = ({ params }) => {
 
           <Details
             label="Fiat Net Amount"
-            value={`${roundToPrecision(
-              +transactionDetails?.fiat_net_amount,
-              10
-            )} ${transactionDetails?.transaction_request?.fiat_currency}`}
+            value={<AmountFormat type="fiat" amount={transactionDetails?.fiat_net_amount || 0} currency={transactionDetails?.transaction_request?.fiat_currency} />}
           />
           <Details
             label="Crypto Net Amount"
-            value={`${roundToPrecision(+transactionDetails?.net_amount, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
+            value={`${roundToPrecision(+transactionDetails?.net_amount, 10)} ${transactionDetails?.transaction_request?.unit
+              }`}
           />
         </div>
 
