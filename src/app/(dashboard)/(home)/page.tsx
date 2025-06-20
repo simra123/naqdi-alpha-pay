@@ -568,10 +568,10 @@ const Home = () => {
 
               <div className="flex justify-around py-[36px] border-[#654178] border-y">
                 <div>
-                  <h4 className="font-nunito text-button text-white text-center">
+                  <h4 className="font-nunito text-caption text-white xs:text-button text-center">
                     Total Deposit
                   </h4>
-                  <h3 className="overflow-hidden font-nunito font-semibold text-[35px] text-white text-center text-ellipsis leading-[40px]">
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[25px] text-white xs:text-[35px] text-center text-ellipsis leading-[40px]">
                     $
                     <CountUp
                       end={balance.totalDeposit}
@@ -582,10 +582,10 @@ const Home = () => {
                   </h3>
                 </div>
                 <div>
-                  <h4 className="font-nunito text-button text-white text-center">
+                  <h4 className="font-nunito text-caption text-white xs:text-button text-center">
                     Total Withdrawal
                   </h4>
-                  <h3 className="overflow-hidden font-nunito font-semibold text-[35px] text-white text-center text-ellipsis leading-[40px]">
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[25px] text-white xs:text-[35px] text-center text-ellipsis leading-[40px]">
                     $
                     <CountUp
                       end={balance.totalWithdrawal}
