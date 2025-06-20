@@ -41,7 +41,7 @@ const AmountFormat: FC<AmountFormatProps> = ({
       ? parseFloat(amount)
       : amount
     : 0;
-  console.log(num, typeof num);
+
   const min = MIN_DISPLAY[type];
   const decimals = MAX_DECIMALS[type];
 

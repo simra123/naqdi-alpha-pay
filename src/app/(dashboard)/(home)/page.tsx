@@ -125,7 +125,11 @@ const Home = () => {
   const [adminBalances, setAdminBalances] = useState<any>({});
   const [adminMerchantsWalletSummary, setAdminMerchantsWalletSummary] =
     useState({ result: [], total: 0 });
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState<{
+    totalUSD: number;
+    totalWithdrawal: number;
+    totalDeposit: number;
+  }>({ totalDeposit: 0, totalUSD: 0, totalWithdrawal: 0 });
   const [portfolioData, setPortfolioData] = useState([]);
 
   const [interval, setInterval] = useState("monthly");
@@ -146,7 +150,7 @@ const Home = () => {
   });
 
   const [hoveredButton, setHoveredButton] = useState<HoverButtonType>(
-    ButtonNames.transfer
+    ButtonNames.send
   ); // Default to "transfer"
   const [openDeposit, setOpenDeposit] = useState(null);
   const [openWithdraw, setOpenWithdrawal] = useState(null);
@@ -238,7 +242,7 @@ const Home = () => {
           cacheKey: "user-total-balance",
         }),
         successCallBack: (response: any) => {
-          setBalance(response?.totalUSD);
+          setBalance(response);
         },
       });
     }
@@ -347,13 +351,13 @@ const Home = () => {
       tooltip:
         "You don't have sufficient permissions to initiate a Withdrawal.",
     },
-    {
-      name: ButtonNames.transfer,
-      icon: <TransferIcon className="w-4 2.5xl:w-[23px]" />,
-      label: "Transfer",
-      disabled: !isWalletHasFullAccess,
-      tooltip: "You don't have sufficient permissions to initiate a Transfer.",
-    },
+    // {
+    //   name: ButtonNames.transfer,
+    //   icon: <TransferIcon className="w-4 2.5xl:w-[23px]" />,
+    //   label: "Transfer",
+    //   disabled: !isWalletHasFullAccess,
+    //   tooltip: "You don't have sufficient permissions to initiate a Transfer.",
+    // },
   ];
 
   return (
@@ -544,16 +548,16 @@ const Home = () => {
               : "dashboard-layout-without-transactions"
           }
         >
-          <div className="px-4 py-[35px] 2.5xl:py-[60px] min-h-[310px] 2.5xl:min-h-[470px] wallets 2.5xlpx-8">
+          <div className="px-4 2.5xl:px-8 py-[35px] 2.5xl:py-[40px] min-h-[310px] 2.5xl:min-h-[470px] wallets">
             <div className="flex flex-col justify-between gap-8 h-full">
               <div>
-                <h4 className="font-nunito font-bold text-h4 text-white text-center">
-                  Crypto Wallets
+                <h4 className="font-nunito font-semibold text-button text-white text-center">
+                  Fiat Wallet
                 </h4>
-                <h3 className="overflow-hidden font-nunito font-semibold text-[60px] text-white 2.5xl:text-[92px] text-center text-ellipsis leading-[110px]">
+                <h3 className="overflow-hidden font-nunito font-semibold text-[40px] text-white 2.5xl:text-[55px] text-center text-ellipsis leading-[60px]">
                   $
                   <CountUp
-                    end={balance}
+                    end={balance.totalUSD}
                     separator=","
                     decimal="."
                     decimals={2}
@@ -561,8 +565,40 @@ const Home = () => {
                 </h3>
                 <ErrorApiText error={isTotalPortfolioError} />
               </div>
+
+              <div className="flex justify-around py-[36px] border-[#654178] border-y">
+                <div>
+                  <h4 className="font-nunito text-caption text-white xs:text-button text-center">
+                    Total Deposit
+                  </h4>
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[25px] text-white xs:text-[35px] text-center text-ellipsis leading-[40px]">
+                    $
+                    <CountUp
+                      end={balance.totalDeposit}
+                      separator=","
+                      decimal="."
+                      decimals={2}
+                    />
+                  </h3>
+                </div>
+                <div>
+                  <h4 className="font-nunito text-caption text-white xs:text-button text-center">
+                    Total Withdrawal
+                  </h4>
+                  <h3 className="overflow-hidden font-nunito font-semibold text-[25px] text-white xs:text-[35px] text-center text-ellipsis leading-[40px]">
+                    $
+                    <CountUp
+                      end={balance.totalWithdrawal}
+                      separator=","
+                      decimal="."
+                      decimals={2}
+                    />
+                  </h3>
+                </div>
+              </div>
+
               <div
-                className="flex justify-center 2.5xl:justify-between gap-4 2.5xl:gap-0 xl:px-8"
+                className="flex justify-center gap-4 xl:px-8"
                 onClick={(e) => e.stopPropagation()}
               >
                 {actionButtons.map((button) => (
