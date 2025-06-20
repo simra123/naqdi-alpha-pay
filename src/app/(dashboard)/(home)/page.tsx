@@ -125,7 +125,11 @@ const Home = () => {
   const [adminBalances, setAdminBalances] = useState<any>({});
   const [adminMerchantsWalletSummary, setAdminMerchantsWalletSummary] =
     useState({ result: [], total: 0 });
-  const [balance, setBalance] = useState(0);
+  const [balance, setBalance] = useState<{
+    totalUSD: number;
+    totalWithdrawal: number;
+    totalDeposit: number;
+  }>({ totalDeposit: 0, totalUSD: 0, totalWithdrawal: 0 });
   const [portfolioData, setPortfolioData] = useState([]);
 
   const [interval, setInterval] = useState("monthly");
@@ -238,7 +242,7 @@ const Home = () => {
           cacheKey: "user-total-balance",
         }),
         successCallBack: (response: any) => {
-          setBalance(response?.totalUSD);
+          setBalance(response);
         },
       });
     }
@@ -553,7 +557,7 @@ const Home = () => {
                 <h3 className="overflow-hidden font-nunito font-semibold text-[40px] text-white 2.5xl:text-[55px] text-center text-ellipsis leading-[60px]">
                   $
                   <CountUp
-                    end={balance}
+                    end={balance.totalUSD}
                     separator=","
                     decimal="."
                     decimals={2}
@@ -570,7 +574,7 @@ const Home = () => {
                   <h3 className="overflow-hidden font-nunito font-semibold text-[35px] text-white text-center text-ellipsis leading-[40px]">
                     $
                     <CountUp
-                      end={balance}
+                      end={balance.totalDeposit}
                       separator=","
                       decimal="."
                       decimals={2}
@@ -584,7 +588,7 @@ const Home = () => {
                   <h3 className="overflow-hidden font-nunito font-semibold text-[35px] text-white text-center text-ellipsis leading-[40px]">
                     $
                     <CountUp
-                      end={balance}
+                      end={balance.totalWithdrawal}
                       separator=","
                       decimal="."
                       decimals={2}
