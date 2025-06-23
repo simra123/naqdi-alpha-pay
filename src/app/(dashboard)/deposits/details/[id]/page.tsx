@@ -138,14 +138,18 @@ const DepositDetails = ({ params }) => {
       field: "paid_amount",
       headerName: "Received Amount",
       dataValidator(value) {
-        return value ? `${value} ${payment?.unit}` : "_";
+        return (
+          <AmountFormat type="crypto" amount={value} currency={payment?.unit} />
+        );
       },
     },
     {
       field: "net_amount",
       headerName: "Net Amount",
       dataValidator(value) {
-        return value ? `${value} ${payment?.unit}` : "_";
+        return (
+          <AmountFormat type="crypto" amount={value} currency={payment?.unit} />
+        );
       },
     },
 
@@ -153,21 +157,27 @@ const DepositDetails = ({ params }) => {
       field: "fee",
       headerName: "Alphaspay Fee",
       dataValidator(value) {
-        return value ? `${value} ${payment?.unit}` : "_";
+        return (
+          <AmountFormat type="crypto" amount={value} currency={payment?.unit} />
+        );
       },
     },
     {
       field: "fiat_paid_amount",
       headerName: "Fiat Paid",
       dataValidator(value) {
-        return value ? `${value} ${payment?.fiat_currency}` : "_";
+        return (
+          <AmountFormat type="fiat" amount={value} currency={payment?.unit} />
+        );
       },
     },
     {
       field: "fiat_net_amount",
       headerName: "Fiat Net Amount",
       dataValidator(value) {
-        return value ? `${value} ${payment?.fiat_currency} ` : "_";
+        return (
+          <AmountFormat type="fiat" amount={value} currency={payment?.unit} />
+        );
       },
     },
 
@@ -175,7 +185,9 @@ const DepositDetails = ({ params }) => {
       field: "fiat_fee",
       headerName: "Fiat Fee",
       dataValidator(value) {
-        return value ? `${value} ${payment?.fiat_currency}` : "_";
+        return (
+          <AmountFormat type="fiat" amount={value} currency={payment?.unit} />
+        );
       },
     },
 
@@ -291,7 +303,13 @@ const DepositDetails = ({ params }) => {
               />
               <Details
                 label="Crypto Deposit Amount "
-                value={`${payment?.initial_amount} ${payment?.unit}`}
+                value={
+                  <AmountFormat
+                    type="crypto"
+                    amount={payment?.initial_amount}
+                    currency={payment?.unit}
+                  />
+                }
               />
               <Details
                 label="Fiat Amount Recieved"
@@ -305,7 +323,13 @@ const DepositDetails = ({ params }) => {
               />
               <Details
                 label="Crypto Initial Fee"
-                value={`${payment?.initial_fee} ${payment?.unit}`}
+                value={
+                  <AmountFormat
+                    type="crypto"
+                    amount={payment?.initial_fee}
+                    currency={payment?.unit}
+                  />
+                }
               />
               <Details
                 label="Fiat Initial Fee"
@@ -319,7 +343,13 @@ const DepositDetails = ({ params }) => {
               />
               <Details
                 label="Crypto Paid Fee"
-                value={`${payment?.paid_fee} ${payment?.unit}`}
+                value={
+                  <AmountFormat
+                    type="crypto"
+                    amount={payment?.paid_fee}
+                    currency={payment?.unit}
+                  />
+                }
               />
               <Details
                 label="Fiat Paid Fee"
@@ -333,7 +363,13 @@ const DepositDetails = ({ params }) => {
               />
               <Details
                 label="Crypto Amount Recieved"
-                value={`${payment?.paid_amount || 0} ${payment?.unit}`}
+                value={
+                  <AmountFormat
+                    type="crypto"
+                    amount={payment?.paid_amount}
+                    currency={payment?.unit}
+                  />
+                }
               />
 
               {payment?.request_via == RequestVia.API && (
@@ -351,10 +387,13 @@ const DepositDetails = ({ params }) => {
 
                   <Details
                     label="Crypto Initial Client Fee"
-                    value={` ${roundToPrecision(
-                      payment?.initial_client_fee || 0,
-                      10
-                    )} ${payment?.unit}`}
+                    value={
+                      <AmountFormat
+                        type="crypto"
+                        amount={payment?.initial_client_fee}
+                        currency={payment?.unit}
+                      />
+                    }
                   />
 
                   <Details
@@ -369,10 +408,13 @@ const DepositDetails = ({ params }) => {
                   />
                   <Details
                     label="Crypto Paid Client Fee"
-                    value={` ${roundToPrecision(
-                      payment?.paid_client_fee || 0,
-                      10
-                    )} ${payment?.unit}`}
+                    value={
+                      <AmountFormat
+                        type="crypto"
+                        amount={payment?.paid_client_fee}
+                        currency={payment?.unit}
+                      />
+                    }
                   />
                 </>
               )}
@@ -389,7 +431,13 @@ const DepositDetails = ({ params }) => {
               />
               <Details
                 label="Crypto Net Amount Recieved"
-                value={`${payment?.net_amount || 0} ${payment?.unit}`}
+                value={
+                  <AmountFormat
+                    type="crypto"
+                    amount={payment?.net_amount}
+                    currency={payment?.unit}
+                  />
+                }
               />
             </div>
 
