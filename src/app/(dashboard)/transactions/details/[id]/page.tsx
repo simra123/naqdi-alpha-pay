@@ -252,9 +252,13 @@ const TransactionDetails = ({ params }) => {
           />
           <Details
             label="Total Crypto Amount Received"
-            value={` ${roundToPrecision(transactionDetails?.paid_amount, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={transactionDetails?.paid_amount || 0}
+                currency={transactionDetails?.transaction_request?.unit}
+              />
+            }
           />
 
           <Details
@@ -272,9 +276,13 @@ const TransactionDetails = ({ params }) => {
 
           <Details
             label="Crypto Initial Fee"
-            value={` ${roundToPrecision(transactionDetails?.fee, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={transactionDetails?.fee || 0}
+                currency={transactionDetails?.transaction_request?.unit}
+              />
+            }
           />
           <Details
             label="Fiat Paid Fee"
@@ -294,11 +302,9 @@ const TransactionDetails = ({ params }) => {
             label="Crypto Paid Fee"
             value={
               <AmountFormat
-                type="fiat"
-                amount={transactionDetails?.transaction_request?.paid_fee || 0}
-                currency={
-                  transactionDetails?.transaction_request?.unit
-                }
+                type="crypto"
+                amount={transactionDetails?.paid_fee || 0}
+                currency={transactionDetails?.transaction_request?.unit}
               />
             }
           />
@@ -323,10 +329,13 @@ const TransactionDetails = ({ params }) => {
 
                 <Details
                   label="Crypto Client Fee"
-                  value={` ${roundToPrecision(
-                    transactionDetails?.client_fee,
-                    10
-                  )} ${transactionDetails?.transaction_request?.unit}`}
+                  value={
+                    <AmountFormat
+                      type="crypto"
+                      amount={transactionDetails?.client_fee || 0}
+                      currency={transactionDetails?.transaction_request?.unit}
+                    />
+                  }
                 />
               </>
             )}
@@ -345,9 +354,13 @@ const TransactionDetails = ({ params }) => {
           />
           <Details
             label="Crypto Net Amount"
-            value={`${roundToPrecision(+transactionDetails?.net_amount, 10)} ${
-              transactionDetails?.transaction_request?.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={transactionDetails?.net_amount || 0}
+                currency={transactionDetails?.transaction_request?.unit}
+              />
+            }
           />
         </div>
 

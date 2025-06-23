@@ -35,6 +35,7 @@ import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import { standardBlockchain, unitName } from "@/constants/blockchains";
 import AmountFormat from "@/components/common/AmountFormat";
+import { applyColumnEnhancements } from "@/components/common/AdvancedTable/components/fitlers/ColumnEnhancer";
 
 const FeeLedger = () => {
   const router = useRouter();
@@ -74,59 +75,8 @@ const FeeLedger = () => {
       apiCall: callFeeLedgerListApi(feeLeadgerCall()),
       successCallBack: (response: any) => {
         if (user.role == Role.USER) {
-          const modifiedColumns = response?.listConfig.views[0].columns.map(
-            (column) => {
-              if (["created_at"].includes(column.listColumnsMeta.name)) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    const currentTimeZone = momentTZ.tz.guess();
-
-                    let date: string | string[] = momentTZ(value)
-                      .tz(currentTimeZone)
-                      .format("DD-MM-YYYY.hh:mm A");
-
-                    let [day, time] = date.split(".");
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-caption">{day}</span>
-                        <span className="text-custom-title-gray text-subtitle">
-                          {time}
-                        </span>
-                      </div>
-                    );
-                  },
-                };
-              }
-              if (
-                ["transaction_request.fee_value"].includes(
-                  column.listColumnsMeta.name
-                )
-              ) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    return `${value} %`;
-                  },
-                };
-              }
-
-              if (
-                [
-                  "transaction_request.fiat_paid_amount",
-                  "transaction_request.fiat_paid_fee",
-                ].includes(column.listColumnsMeta.name)
-              ) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => (
-                    <AmountFormat amount={value} type="fiat" />
-                  ),
-                };
-              }
-
-              return column;
-            }
+          const modifiedColumns = applyColumnEnhancements(
+            response?.listConfig.views[0].columns
           );
 
           response.listConfig.views[0].columns = modifiedColumns;
@@ -208,9 +158,45 @@ const FeeLedger = () => {
       },
     },
 
-    { field: "transaction.paid_amount", headerName: "Crypto Paid Amount" },
-    { field: "transaction.net_amount", headerName: "Crypto Net Amount" },
-    { field: "transaction.fee", headerName: "Crypto Fee Amount" },
+    {
+      field: "transaction.paid_amount",
+      headerName: "Crypto Paid Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.net_amount",
+      headerName: "Crypto Net Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fee",
+      headerName: "Crypto Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
     {
       field: "transaction.fiat_paid_amount",
       headerName: "Fiat Paid Amount",
@@ -287,10 +273,28 @@ const FeeLedger = () => {
     {
       field: "crypto_company_ledger.balance_before",
       headerName: "Company Crypto Before Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
     },
     {
       field: "crypto_company_ledger.balance_after",
       headerName: "Company Crypto After Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
     },
     {
       field: "transaction_request.user.id",
