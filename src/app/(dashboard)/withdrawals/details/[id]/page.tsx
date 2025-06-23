@@ -217,14 +217,26 @@ const WithdrawalDetails = ({ params }) => {
       field: "paid_amount",
       headerName: "Received Amount",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.unit}` : "_";
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
     {
       field: "net_amount",
       headerName: "Net Amount",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.unit}` : "_";
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
 
@@ -232,21 +244,39 @@ const WithdrawalDetails = ({ params }) => {
       field: "fee",
       headerName: "Alphaspay Fee",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.unit}` : "_";
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
     {
       field: "fiat_paid_amount",
       headerName: "Fiat Paid",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.fiat_currency}` : "_";
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
     {
       field: "fiat_net_amount",
       headerName: "Fiat Net Amount",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.fiat_currency} ` : "_";
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
 
@@ -254,7 +284,13 @@ const WithdrawalDetails = ({ params }) => {
       field: "fiat_fee",
       headerName: "Fiat Fee",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.fiat_currency}` : "_";
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
 
@@ -408,7 +444,13 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Crypto Withdrawal Amount "
-            value={`${withdrawalDetails.initial_amount} ${withdrawalDetails.unit}`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.initial_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
             label="Fiat Amount Recieved"
@@ -422,9 +464,13 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Crypto Amount Recieved"
-            value={`${withdrawalDetails.paid_amount || 0} ${
-              withdrawalDetails.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.paid_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
             label="Fiat Initial Fee"
@@ -438,7 +484,13 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Crypto Initial Fee"
-            value={`${withdrawalDetails.initial_fee} ${withdrawalDetails.unit}`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.initial_fee}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
             label="Fiat Paid Fee"
@@ -452,7 +504,13 @@ const WithdrawalDetails = ({ params }) => {
           />
           <Details
             label="Crypto Paid Fee"
-            value={`${withdrawalDetails.paid_fee} ${withdrawalDetails.unit}`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.paid_fee}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
             label="Fiat Net Amount Recieved"
@@ -467,9 +525,13 @@ const WithdrawalDetails = ({ params }) => {
 
           <Details
             label="Crypto Net Amount Recieved"
-            value={`${withdrawalDetails.net_amount || 0} ${
-              withdrawalDetails.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.net_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
         </div>
 

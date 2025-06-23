@@ -54,3 +54,17 @@ export const parseQueueDelay = (): number => {
       return 2 * 60 * 1000; // Default: 2 minutes
   }
 };
+
+export function trimAndLimitDecimals(decimal: string, maxDecimals = 8): string {
+  if (!decimal.includes(".")) return decimal;
+
+  const [intPart, decPart] = decimal.split(".");
+
+  // Remove trailing zeroes from decimal part
+  const trimmedDec = decPart.replace(/0+$/, "");
+
+  // Limit to maxDecimals (but do not round)
+  const limitedDec = trimmedDec.slice(0, maxDecimals);
+
+  return limitedDec.length > 0 ? `${intPart}.${limitedDec}` : intPart;
+}

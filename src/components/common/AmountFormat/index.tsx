@@ -17,12 +17,12 @@ interface AmountFormatProps {
 
 const MIN_DISPLAY = {
   fiat: 0.001,
-  crypto: 0.000001,
+  crypto: 0.00000001,
 };
 
 const MAX_DECIMALS = {
   fiat: 3,
-  crypto: 6,
+  crypto: 8,
 };
 
 const trimTrailingZeros = (value: string) => {
@@ -64,7 +64,7 @@ const AmountFormat: FC<AmountFormatProps> = ({
         {...(needsTooltip
           ? {
               "data-tooltip-id": tooltipId,
-              "data-tooltip-content": num?.toString(),
+              "data-tooltip-content": trimTrailingZeros(num.toFixed(20)),
             }
           : {})}
       >
