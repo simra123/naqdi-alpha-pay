@@ -303,7 +303,7 @@ const TransactionDetails = ({ params }) => {
             value={
               <AmountFormat
                 type="crypto"
-                amount={transactionDetails?.paid_fee || 0}
+                amount={transactionDetails?.transaction_request?.paid_fee || 0}
                 currency={transactionDetails?.transaction_request?.unit}
               />
             }
