@@ -30,6 +30,8 @@ import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { hasMinAccess } from "@/utils/cookies";
 import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
+import { applyColumnEnhancements } from "@/components/common/AdvancedTable/components/fitlers/ColumnEnhancer";
 
 const withdrawalsList_table_columns: TableColumns = [
   { field: "id", headerName: "ID" },
@@ -96,28 +98,52 @@ const withdrawalsList_table_columns: TableColumns = [
     field: "fiat_initial_amount",
     headerName: "Fiat Requested Amount",
     dataValidator(value, row: any) {
-      return `${value} ${row.fiat_currency}`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "fiat_initial_fee",
     headerName: "Fiat Fee Amount",
     dataValidator(value, row: any) {
-      return `${value} ${row.fiat_currency}`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "fiat_paid_amount",
     headerName: "Fiat Paid Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row.fiat_currency}` : `_`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "fiat_net_amount",
     headerName: "Fiat Net Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row.fiat_currency}` : `_`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
 
@@ -125,28 +151,28 @@ const withdrawalsList_table_columns: TableColumns = [
     field: "initial_amount",
     headerName: "Requested Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row?.unit}` : `_`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
     },
   },
   {
     field: "initial_fee",
     headerName: "Fee Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row?.unit}` : `_`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
     },
   },
   {
     field: "paid_amount",
     headerName: "Paid Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row?.unit}` : `_`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
     },
   },
   {
     field: "net_amount",
     headerName: "Net Amount",
     dataValidator(value, row: any) {
-      return value ? `${value} ${row?.unit}` : `_`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
     },
   },
   {
@@ -229,72 +255,8 @@ const Withdrawals = () => {
       apiCall: callWithdrawalsListApi(withdrawalCall()),
       successCallBack: (response: any) => {
         if (user.role == Role.USER) {
-          const modifiedColumns = response?.listConfig.views[0].columns.map(
-            (column) => {
-              if (column.listColumnsMeta.name === "recipient_address") {
-                return {
-                  ...column,
-                  copyable: true,
-                  link(row: {
-                    standard: string | null;
-                    recipient_address: string;
-                    unit: string;
-                  }) {
-                    let blockchain: string | null;
-
-                    if (row?.standard) {
-                      blockchain = standardBlockchain[row?.standard];
-                    } else {
-                      let standard = blockchain_standards[row?.unit];
-                      blockchain = standardBlockchain[standard];
-                    }
-
-                    return showExplorerDetailsByChain({
-                      env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                      blockchain: blockchain,
-                      type: "address",
-                      address: row?.recipient_address,
-                    });
-                  },
-                };
-              }
-
-              if (
-                ["created_at", "updated_at"].includes(
-                  column.listColumnsMeta.name
-                )
-              ) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    const currentTimeZone = momentTZ.tz.guess();
-
-                    let date: string | string[] = momentTZ(value)
-                      .tz(currentTimeZone)
-                      .format("DD-MM-YYYY.hh:mm A");
-
-                    let [day, time] = date.split(".");
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-caption">{day}</span>
-                        <span className="text-custom-title-gray text-subtitle">
-                          {time}
-                        </span>
-                      </div>
-                    );
-                  },
-                };
-              }
-
-              if (column.listColumnsMeta.name === "status") {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => <Chip status={value} />,
-                };
-              }
-
-              return column;
-            }
+          const modifiedColumns = applyColumnEnhancements(
+            response?.listConfig.views[0].columns
           );
 
           response.listConfig.views[0].columns = modifiedColumns;

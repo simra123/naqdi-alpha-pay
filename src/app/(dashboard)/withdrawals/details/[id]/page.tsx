@@ -40,6 +40,7 @@ import { blockchain_units } from "@/constants/blockchains";
 import { getTransactionRequestDetailsByUserApi } from "@/services/transaction";
 import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transaction";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const WithdrawalDetails = ({ params }) => {
   const user = getLocalStorageValue("user");
@@ -216,14 +217,26 @@ const WithdrawalDetails = ({ params }) => {
       field: "paid_amount",
       headerName: "Received Amount",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.unit}` : "_";
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
     {
       field: "net_amount",
       headerName: "Net Amount",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.unit}` : "_";
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
 
@@ -231,21 +244,39 @@ const WithdrawalDetails = ({ params }) => {
       field: "fee",
       headerName: "Alphaspay Fee",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.unit}` : "_";
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
     {
       field: "fiat_paid_amount",
       headerName: "Fiat Paid",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.fiat_currency}` : "_";
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
     {
       field: "fiat_net_amount",
       headerName: "Fiat Net Amount",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.fiat_currency} ` : "_";
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
 
@@ -253,7 +284,13 @@ const WithdrawalDetails = ({ params }) => {
       field: "fiat_fee",
       headerName: "Fiat Fee",
       dataValidator(value) {
-        return value ? `${value} ${withdrawalDetails?.fiat_currency}` : "_";
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
       },
     },
 
@@ -397,43 +434,104 @@ const WithdrawalDetails = ({ params }) => {
         <div className="res-2-grid py-6">
           <Details
             label="Fiat Withdrawal Amount"
-            value={`${withdrawalDetails.fiat_initial_amount} ${withdrawalDetails.fiat_currency}`}
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_initial_amount}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
           <Details
             label="Crypto Withdrawal Amount "
-            value={`${withdrawalDetails.initial_amount} ${withdrawalDetails.unit}`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.initial_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
             label="Fiat Amount Recieved"
-            value={`${withdrawalDetails.fiat_paid_amount || 0} ${
-              withdrawalDetails.fiat_currency
-            }`}
-          />
-          <Details
-            label="Fiat Alphaspay Fee"
-            value={`${withdrawalDetails.fiat_initial_fee} ${withdrawalDetails.fiat_currency}`}
-          />
-          <Details
-            label="Fiat Net Amount Recieved"
-            value={`${withdrawalDetails.fiat_net_amount || 0} ${
-              withdrawalDetails.fiat_currency
-            }`}
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_paid_amount || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
           <Details
             label="Crypto Amount Recieved"
-            value={`${withdrawalDetails.paid_amount || 0} ${
-              withdrawalDetails.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.paid_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
-            label="Crypto Alphaspay Fee"
-            value={`${withdrawalDetails.initial_fee} ${withdrawalDetails.unit}`}
+            label="Fiat Initial Fee"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_initial_fee || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
+          <Details
+            label="Crypto Initial Fee"
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.initial_fee}
+                currency={withdrawalDetails?.unit}
+              />
+            }
+          />
+          <Details
+            label="Fiat Paid Fee"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_paid_fee || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
+          <Details
+            label="Crypto Paid Fee"
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.paid_fee}
+                currency={withdrawalDetails?.unit}
+              />
+            }
+          />
+          <Details
+            label="Fiat Net Amount Recieved"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_net_amount || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
+
           <Details
             label="Crypto Net Amount Recieved"
-            value={`${withdrawalDetails.net_amount || 0} ${
-              withdrawalDetails.unit
-            }`}
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.net_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
         </div>
 

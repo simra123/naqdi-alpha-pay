@@ -13,6 +13,7 @@ import ErrorApiText from "../ErrorApiText";
 import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import { getMyFinancialSummaryApi } from "@/services/dashboard";
+import AmountFormat from "../AmountFormat";
 
 const columns = [
   { label: "Today’s", key: "today" },
@@ -133,13 +134,10 @@ export default function MerchantSummary({ merchantsList }: Props) {
                   key={cIdx}
                   className="py-[15px] border rounded-xl overflow-hidden font-semibold text-[#1F243B] text-[15px] text-center text-ellipsis whitespace-nowrap"
                 >
-                  {financialSummary?.[col.key]?.[row.key]?.toLocaleString(
-                    undefined,
-                    {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    }
-                  ) ?? "-"}
+                  <AmountFormat
+                    amount={financialSummary?.[col.key]?.[row.key]}
+                    type="fiat"
+                  />
                 </div>
               ))}
             </div>

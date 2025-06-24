@@ -26,6 +26,8 @@ import DepositModal from "@/components/Modals/DepoistModal";
 import { hasMinAccess } from "@/utils/cookies";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
+import { applyColumnEnhancements } from "@/components/common/AdvancedTable/components/fitlers/ColumnEnhancer";
 
 const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
@@ -122,30 +124,75 @@ const paymentsList_table_columns: TableColumns = [
   },
   {
     field: "fiat_initial_amount",
-    headerName: "Requested Payment Amount",
+    headerName: "Requested Fiat Payment Amount",
     dataValidator(value, row: any) {
-      return `${value} ${row?.fiat_currency}`;
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "initial_fee",
     headerName: "Alphaspay Fee",
     dataValidator(value: any, row: any) {
-      return `${roundToPrecision(value, 6)} ${row?.unit}`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
+    },
+  },
+  {
+    field: "fiat_initial_fee",
+    headerName: "Fiat Alphaspay Fee",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "initial_amount",
     headerName: "Amount to Pay",
     dataValidator(value: any, row: any) {
-      return `${roundToPrecision(value, 6)} ${row?.unit}`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
+    },
+  },
+  {
+    field: "fiat_initial_amount",
+    headerName: "Fiat Amount to Pay",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
     field: "paid_amount",
     headerName: "Amount Paid",
     dataValidator(value: any, row: any) {
-      return `${roundToPrecision(value || 0, 10)}  ${row?.unit}`;
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
+    },
+  },
+  {
+    field: "fiat_paid_amount",
+    headerName: "Fiat Amount Paid",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
     },
   },
   {
@@ -212,61 +259,8 @@ const Deposits = () => {
       apiCall: callPaymentApi(paymentCall()),
       successCallBack: (response: any) => {
         if (user?.role == Role.USER) {
-          const modifiedColumns = response?.listConfig.views[0].columns.map(
-            (column) => {
-              if (column.listColumnsMeta.name === "wallet.address") {
-                return {
-                  ...column,
-                  copyable: true,
-                  link: (row: {
-                    wallet: { blockchain: string; address: string };
-                  }) => {
-                    return showExplorerDetailsByChain({
-                      env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                      blockchain: row?.wallet?.blockchain,
-                      type: "address",
-                      address: row?.wallet.address,
-                    });
-                  },
-                };
-              }
-
-              if (
-                ["created_at", "updated_at"].includes(
-                  column.listColumnsMeta.name
-                )
-              ) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    const currentTimeZone = momentTZ.tz.guess();
-
-                    let date: string | string[] = momentTZ(value)
-                      .tz(currentTimeZone)
-                      .format("DD-MM-YYYY.hh:mm A");
-
-                    let [day, time] = date.split(".");
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-caption">{day}</span>
-                        <span className="text-custom-title-gray text-subtitle">
-                          {time}
-                        </span>
-                      </div>
-                    );
-                  },
-                };
-              }
-
-              if (column.listColumnsMeta.name === "status") {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => <Chip status={value} />,
-                };
-              }
-
-              return column;
-            }
+          const modifiedColumns = applyColumnEnhancements(
+            response?.listConfig.views[0].columns
           );
 
           response.listConfig.views[0].columns = modifiedColumns;
