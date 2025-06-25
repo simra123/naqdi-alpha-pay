@@ -167,7 +167,7 @@ const DepositDetails = ({ params }) => {
       headerName: "Fiat Paid",
       dataValidator(value) {
         return (
-          <AmountFormat type="fiat" amount={value} currency={payment?.unit} />
+          <AmountFormat type="fiat" amount={value} currency={payment?.fiat_currency} />
         );
       },
     },
@@ -176,7 +176,7 @@ const DepositDetails = ({ params }) => {
       headerName: "Fiat Net Amount",
       dataValidator(value) {
         return (
-          <AmountFormat type="fiat" amount={value} currency={payment?.unit} />
+          <AmountFormat type="fiat" amount={value} currency={payment?.fiat_currency} />
         );
       },
     },
@@ -186,7 +186,7 @@ const DepositDetails = ({ params }) => {
       headerName: "Fiat Fee",
       dataValidator(value) {
         return (
-          <AmountFormat type="fiat" amount={value} currency={payment?.unit} />
+          <AmountFormat type="fiat" amount={value} currency={payment?.fiat_currency} />
         );
       },
     },
