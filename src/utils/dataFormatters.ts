@@ -1,10 +1,13 @@
 import moment from "moment";
 import { roundToPrecision } from "./math";
 import {
+  blockchain_standards,
+  blockchain_units,
   standardBlockchain,
   tickerByStandard,
   unitName,
 } from "@/constants/blockchains";
+import { BlockchainBalance } from "@/constants/types";
 
 export const capitalize = (value) => {
   if (typeof value == "number") {
@@ -232,4 +235,28 @@ export const filterWebhooks = (data: {
 export const getWebhookPayloadById = (webhooks, id) => {
   const webhook = webhooks.find((w) => w.id === id);
   return webhook ? webhook : null;
+};
+
+export const getWalletData = (asset: BlockchainBalance) => {
+  let isToken = asset?.is_token || asset?.isToken;
+  let blockchainName = asset?.blockchainName || asset?.blockchain;
+  let unit = isToken
+    ? asset.unit
+    : blockchain_units[blockchainName]?.toUpperCase();
+
+  let standard = isToken ? asset?.standard : blockchain_standards[unit];
+  let coinName = unitName[unit?.toLowerCase()];
+  let currencyHistoryData = asset?.historyData;
+
+  let amount = asset?.total_available_amount || asset?.amount;
+
+  return {
+    isToken,
+    unit,
+    standard,
+    coinName,
+    amount,
+    currencyHistoryData,
+    blockchainName,
+  };
 };

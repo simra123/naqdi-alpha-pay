@@ -10,6 +10,7 @@ import { Role } from "@/constants/roles";
 import { AccessLevelEnum, balanceType, ModulesEnum } from "@/constants/types";
 import { getLocalStorageValue } from "@/utils/cookies";
 import { hasMinAccess } from "@/utils/cookies";
+import { getWalletData } from "@/utils/dataFormatters";
 import React from "react";
 
 type Props = {
@@ -21,19 +22,6 @@ type Props = {
   onReceive?: (blockchain: string, standard: string) => void;
   onWithdraw?: (currencyTicker: string, standard: string) => void;
   onHeadingClick?: () => void;
-};
-
-type BlockchainBalance = {
-  unit: string | null;
-  standard: string | null;
-  is_token: boolean;
-  isToken: boolean;
-  blockchain: string;
-  blockchainName: string;
-  network: string;
-  historyData?: any[];
-  total_available_amount: string;
-  amount: string;
 };
 
 const Wallets = ({
@@ -65,30 +53,6 @@ const Wallets = ({
     ModulesEnum.withdrawal,
     AccessLevelEnum.full
   );
-
-  const getWalletData = (asset: BlockchainBalance) => {
-    let isToken = asset?.is_token || asset?.isToken;
-    let blockchainName = asset?.blockchainName || asset?.blockchain;
-    let unit = isToken
-      ? asset.unit
-      : blockchain_units[blockchainName]?.toUpperCase();
-
-    let standard = isToken ? asset?.standard : blockchain_standards[unit];
-    let coinName = unitName[unit?.toLowerCase()];
-    let currencyHistoryData = asset?.historyData;
-
-    let amount = asset?.total_available_amount || asset?.amount;
-
-    return {
-      isToken,
-      unit,
-      standard,
-      coinName,
-      amount,
-      currencyHistoryData,
-      blockchainName,
-    };
-  };
 
   return (
     <>

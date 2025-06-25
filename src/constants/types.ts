@@ -92,3 +92,16 @@ export const balanceType = {
   fiat: "Fiat",
   crypto: "Crypto",
 };
+
+export interface BlockchainBalance {
+  unit: string | null;
+  standard: string | null;
+  is_token: boolean;
+  isToken: boolean;
+  blockchain: string;
+  blockchainName: string;
+  network: string;
+  historyData?: any[];
+  total_available_amount: string;
+  amount: string;
+}

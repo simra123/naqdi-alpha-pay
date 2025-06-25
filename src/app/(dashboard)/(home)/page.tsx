@@ -54,6 +54,7 @@ import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
 import { getAllUsersByAdminApi } from "@/services/admin/users";
 import CustomTableV2 from "@/components/common/CustomTableV2";
 import AmountFormat from "@/components/common/AmountFormat";
+import Balances from "@/components/common/Balance";
 
 const merchantsColumns: TableColumns = [
   { field: "wallet.company.owner.first_name", headerName: "First Name" },
@@ -400,10 +401,15 @@ const Home = () => {
                     <ErrorApiText error={isTotalPortfolioError} />
                   </div>
 
-                  <Wallets
+                  {/* <Wallets
                     walletsArray={adminBalances?.userBalances}
                     error={isAdminBalancesError}
                     heading="Crypto Wallets"
+                    loading={isAdminBalancesLoading}
+                  /> */}
+                  <Balances
+                    balances={adminBalances?.userBalances}
+                    error={isAdminBalancesError}
                     loading={isAdminBalancesLoading}
                   />
                 </div>
