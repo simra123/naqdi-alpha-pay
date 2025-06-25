@@ -261,7 +261,7 @@ const WithdrawalDetails = ({ params }) => {
           <AmountFormat
             type="fiat"
             amount={value}
-            currency={withdrawalDetails?.unit}
+            currency={withdrawalDetails?.fiat_currency}
           />
         );
       },
@@ -274,7 +274,7 @@ const WithdrawalDetails = ({ params }) => {
           <AmountFormat
             type="fiat"
             amount={value}
-            currency={withdrawalDetails?.unit}
+            currency={withdrawalDetails?.fiat_currency}
           />
         );
       },
@@ -288,7 +288,7 @@ const WithdrawalDetails = ({ params }) => {
           <AmountFormat
             type="fiat"
             amount={value}
-            currency={withdrawalDetails?.unit}
+            currency={withdrawalDetails?.fiat_currency}
           />
         );
       },
