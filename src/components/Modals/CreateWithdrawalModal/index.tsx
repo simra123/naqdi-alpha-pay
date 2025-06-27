@@ -39,6 +39,8 @@ import {
   getMerchantFiatBalanceApi,
   getMerchantSupportedCryptoApi,
 } from "@/services/wallet";
+import AmountFormat from "@/components/common/AmountFormat";
+import { formatAmount } from "@/components/common/AmountFormat/utils";
 
 interface Props {
   isOpen: boolean;
@@ -107,8 +109,12 @@ const CreateWithdrawalModal = ({
 
       setCurrentSchema(
         getWithdrawalSchema(
-          parseFloat(balance?.total_amount) -
-            parseFloat(balance.on_hold_amount),
+          +formatAmount({
+            amount:
+              parseFloat(balance?.total_amount) -
+              parseFloat(balance?.on_hold_amount),
+            type: "fiat",
+          })?.fixedRaw,
           currentCurrency
         )
       );
@@ -265,9 +271,14 @@ const CreateWithdrawalModal = ({
                 <>
                   <div className="mb-1">
                     <p className="font-medium text-black-100">
-                      {parseFloat(balance?.total_amount) -
-                        parseFloat(balance.on_hold_amount)}{" "}
-                      {balance?.currency}
+                      <AmountFormat
+                        amount={
+                          parseFloat(balance?.total_amount) -
+                          parseFloat(balance.on_hold_amount)
+                        }
+                        type="fiat"
+                        currency={balance.currency}
+                      />
                     </p>
                     <p className="font-semibold text-[13px] text-custom-title-gray">
                       {user?.role == Role.USER
@@ -277,7 +288,11 @@ const CreateWithdrawalModal = ({
                   </div>
                   <div className="mb-1">
                     <p className="font-medium text-black-100">
-                      {balance.on_hold_amount} {balance?.currency}
+                      <AmountFormat
+                        amount={parseFloat(balance.on_hold_amount)}
+                        type="fiat"
+                        currency={balance.currency}
+                      />
                     </p>
                     <p className="font-semibold text-[13px] text-custom-title-gray">
                       On Hold Amount

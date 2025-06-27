@@ -440,7 +440,7 @@ const Home = () => {
                       end={adminBalances?.fiatAmount?.totalFiat}
                       separator=","
                       decimal="."
-                      decimals={2}
+                      decimals={3}
                     />
                   </h3>
                   <ErrorApiText error={isTotalPortfolioError} />
@@ -560,7 +560,7 @@ const Home = () => {
                     end={balance.totalUSD}
                     separator=","
                     decimal="."
-                    decimals={2}
+                    decimals={3}
                   />
                 </h3>
                 <ErrorApiText error={isTotalPortfolioError} />
@@ -577,7 +577,7 @@ const Home = () => {
                       end={balance.totalDeposit}
                       separator=","
                       decimal="."
-                      decimals={2}
+                      decimals={3}
                     />
                   </h3>
                 </div>
@@ -591,7 +591,7 @@ const Home = () => {
                       end={balance.totalWithdrawal}
                       separator=","
                       decimal="."
-                      decimals={2}
+                      decimals={3}
                     />
                   </h3>
                 </div>
