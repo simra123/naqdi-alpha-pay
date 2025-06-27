@@ -2,8 +2,11 @@
 
 import api from "@/config/api";
 
-export const getAllUsersByAdminApi = () => {
-  return () => api.get(`auth/get-all-users`);
+export const getAllUsersByAdminApi = (params: {
+  page: number;
+  limit: number;
+}) => {
+  return () => api.get(`auth/get-all-users`, { params });
 };
 export const getKYCUsersListApi = (data: { status?: string }) => {
   return () => api.get(`auth/userDetails/list`, { params: { status } });
