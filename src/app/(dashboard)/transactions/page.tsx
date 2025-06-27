@@ -12,7 +12,12 @@ import { getLocalStorageValue } from "@/utils/cookies";
 
 import { getAllTransactionsByAdminApi } from "@/services/admin/transaction";
 import Chip from "@/components/common/Chip";
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import {
+  AccessLevelEnum,
+  ModulesEnum,
+  TableColumns,
+  TransactionType,
+} from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
@@ -256,16 +261,16 @@ const Transactions = () => {
       headerName: "Transaction Type",
       link(row: any) {
         if (
-          row?.transaction_request.type == "Depoist" &&
-          hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
+          row?.transaction_request?.type == TransactionType.Deposit &&
+          hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
         ) {
-          return `payments/details/${row?.id}`;
+          return `/deposits/details/${row?.transaction_request?.id}`;
         }
         if (
-          row?.transaction_request.type == "Withdraw" &&
+          row?.transaction_request?.type == TransactionType.Withdraw &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
         ) {
-          return `withdrawals/details/${row?.id}`;
+          return `/withdrawals/details/${row?.transaction_request?.id}`;
         }
       },
       target: "_self",

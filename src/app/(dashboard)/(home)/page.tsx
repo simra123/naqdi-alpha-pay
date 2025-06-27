@@ -493,7 +493,6 @@ const Home = () => {
                 <CustomTableV2
                   columns={merchantsColumns}
                   rows={adminMerchantsWalletSummary?.result}
-                  initialPageSize={merchantPageSize}
                   rowClickHandler={(row: any) => {
                     router.push(
                       `/merchants/details/${row?.wallet?.company?.owner?.id}`
@@ -507,13 +506,14 @@ const Home = () => {
                       <Link
                         className="font-semibold text-caption text-purple-500 underline"
                         href={"/merchants"}
-                      >
+                        >
                         View All
                       </Link>
                     </div>
                   }
                   tableWrapperClassName="!min-h-[auto] border h-full  !px-5 py-[30px] !rounded-[28px]"
                   pagination
+                  initialPageSize={merchantPageSize}
                   serverSidePagination
                   totalItems={adminMerchantsWalletSummary?.total}
                   onPageChange={(page) => {

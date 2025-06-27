@@ -16,7 +16,12 @@ import { FolderIcon, StatusIcon } from "@/assets/Svgs";
 import Details from "@/components/common/Details";
 import { MdOutlineContactMail, MdOutlineLocationOn } from "react-icons/md";
 import CustomTable from "@/components/common/CustomTable";
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import {
+  AccessLevelEnum,
+  ModulesEnum,
+  TableColumns,
+  TransactionType,
+} from "@/constants/types";
 import { unitName } from "@/constants/blockchains";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { getMerchantTransactionByIdApi } from "@/services/admin/transaction";
@@ -63,6 +68,8 @@ const MerchantDetails = ({ params }) => {
   const [userDetails, setUserDetails]: any = useState({});
   const [merchantTransactions, setmerchantTransactions]: any = useState([]);
   const [viewMode, setViewMode] = useState<ViewMode>(ViewMode.BALANCES);
+  const [pageSize, setPageSize] = useState<number>(5);
+  const [page, setPage] = useState<number>(1);
 
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
     { initailLoading: true }
@@ -83,13 +90,19 @@ const MerchantDetails = ({ params }) => {
   };
   const toggleViewMode = (mode: ViewMode) => setViewMode(mode);
 
-  const getMerchantTransactions = async () => {
+  const getMerchantTransactions = async ({
+    limit,
+    page,
+  }: {
+    limit: number;
+    page: number;
+  }) => {
     await callApiHook({
       apiCall: callMerchantTransactionsApi(
         getAllMerchantTransactionsAndBalanceByAdminApi({
           companyId: userDetails?.user?.company?.id,
-          limit: 5,
-          page: 1,
+          limit,
+          page,
         })
       ),
       successCallBack: (response) => {
@@ -104,7 +117,7 @@ const MerchantDetails = ({ params }) => {
 
   useEffect(() => {
     if (userDetails?.user?.company?.id) {
-      getMerchantTransactions();
+      getMerchantTransactions({ limit: pageSize, page });
     }
   }, [viewMode, userDetails]);
 
@@ -144,7 +157,8 @@ const MerchantDetails = ({ params }) => {
       link: (row: any) => {
         const transactionExplorerLink = showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.transaction_request.contract_address.blockchain_name,
+          blockchain:
+            row?.transaction_request?.contract_address?.blockchain_name,
           type: "hash",
           hash: row?.hash,
         });
@@ -225,7 +239,8 @@ const MerchantDetails = ({ params }) => {
       link: (row: any) => {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.transaction_request.contract_address.blockchain_name,
+          blockchain:
+            row?.transaction_request?.contract_address?.blockchain_name,
           type: "address",
           address: row?.sender_address,
         });
@@ -236,16 +251,17 @@ const MerchantDetails = ({ params }) => {
       headerName: "Receiver Address",
       copyable: true,
       dataValidator(value, row: any) {
-        return value || row?.transaction_request.recipient_address;
+        return value || row?.transaction_request?.recipient_address;
       },
       link: (row: any) => {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.transaction_request.contract_address.blockchain_name,
+          blockchain:
+            row?.transaction_request?.contract_address?.blockchain_name,
           type: "address",
           address:
-            row?.transaction_request.recipient_address ||
-            row?.transaction_request.wallet?.address,
+            row?.transaction_request?.recipient_address ||
+            row?.transaction_request?.wallet?.address,
         });
       },
     },
@@ -254,16 +270,16 @@ const MerchantDetails = ({ params }) => {
       headerName: "Transaction Type",
       link(row: any) {
         if (
-          row?.transaction_request.type == "Depoist" &&
-          hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
+          row?.transaction_request?.type == TransactionType.Deposit &&
+          hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
         ) {
-          return `payments/details/${row?.id}`;
+          return `/deposits/details/${row?.transaction_request?.id}`;
         }
         if (
-          row?.transaction_request.type == "Withdraw" &&
+          row?.transaction_request?.type == TransactionType.Withdraw &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
         ) {
-          return `withdrawals/details/${row?.id}`;
+          return `/withdrawals/details/${row?.transaction_request?.id}`;
         }
       },
       target: "_self",
@@ -385,17 +401,26 @@ const MerchantDetails = ({ params }) => {
             rows={
               viewMode == ViewMode.BALANCES
                 ? [{ id: 1, ...merchantTransactions?.wallet }]
-                : merchantTransactions?.transactions?.result || []
+                : merchantTransactions?.transacitons?.result || []
             }
-            totalItems={merchantTransactions?.transactions?.total}
-            serverSidePagination
             tableName="transactions"
-            initialPageSize={5}
             rowClickHandler={(row: any) => {
               router.push(`/transactions/details/${row?.id}`);
             }}
-            pagination={viewMode == ViewMode.TRANSACTIONS}
+            totalItems={merchantTransactions?.transacitons?.total}
             columnClassName="max-w-[250px]"
+            serverSidePagination
+            pagination={viewMode == ViewMode.TRANSACTIONS}
+            initialPageSize={pageSize}
+            onPageChange={(page) => {
+              setPage(page);
+              getMerchantTransactions({ limit: pageSize, page });
+            }}
+            onPageSizeChange={(pageSize) => {
+              setPageSize(pageSize);
+              setPage(1);
+              getMerchantTransactions({ limit: pageSize, page: 1 });
+            }}
           />
         </div>
         <ErrorApiText error={isMerchantTransactionsError} />
