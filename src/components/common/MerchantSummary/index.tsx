@@ -46,7 +46,7 @@ export default function MerchantSummary({ merchantsList }: Props) {
     const baseRows = [
       { label: "Deposit", key: "deposits" },
       { label: "Withdrawal", key: "withdrawals" },
-      { label: "Outstanding Balance", key: "outstandingBalance" },
+      { label: "Balance", key: "outstandingBalance" },
     ];
 
     if (!isAdmin) {

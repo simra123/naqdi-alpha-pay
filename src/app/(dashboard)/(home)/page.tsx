@@ -386,7 +386,7 @@ const Home = () => {
                 <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
                   <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
                     <h4 className="font-nunito font-bold text-h4 text-white text-center">
-                      Fiat Wallet
+                      Wallet
                     </h4>
                     <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
                       $
@@ -552,7 +552,7 @@ const Home = () => {
             <div className="flex flex-col justify-between gap-8 h-full">
               <div>
                 <h4 className="font-nunito font-semibold text-button text-white text-center">
-                  Fiat Wallet
+                  Wallet
                 </h4>
                 <h3 className="overflow-hidden font-nunito font-semibold text-[40px] text-white 2.5xl:text-[55px] text-center text-ellipsis leading-[60px]">
                   $
