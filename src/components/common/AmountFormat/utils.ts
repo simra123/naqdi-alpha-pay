@@ -80,6 +80,6 @@ export const formatAmount = ({
     main,
     extra,
     needsTooltip,
-    fixedRaw: Number(raw)?.toFixed(decimals)?.toString(),
+    fixedRaw: trimTrailingZeros(Number(raw)?.toFixed(decimals)?.toString()),
   };
 };
