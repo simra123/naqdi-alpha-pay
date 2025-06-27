@@ -10,7 +10,6 @@ export const getKYCUsersListApi = (data: { status?: string }) => {
 };
 
 export const getUserDetailsApi = (data: { userId: number }) => {
-
   return () => api.post(`auth/getUserByAdmin`, data);
 };
 
@@ -20,4 +19,13 @@ export const updateUserFeeApi = (data) => {
 
 export const updateKYCStatusApi = (data) => {
   return () => api.post(`auth/admin/kyc`, data);
+};
+
+export const getAllMerchantTransactionsAndBalanceByAdminApi = (params: {
+  companyId: number;
+  limit: number;
+  page: number;
+  all?: boolean;
+}) => {
+  return () => api.get(`/admin-merchant/balance-transactions`, { params });
 };

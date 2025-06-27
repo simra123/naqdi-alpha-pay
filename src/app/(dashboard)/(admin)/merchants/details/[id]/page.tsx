@@ -3,7 +3,10 @@ import React, { useEffect, useState } from "react";
 
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
-import { getUserDetailsApi } from "@/services/admin/users";
+import {
+  getAllMerchantTransactionsAndBalanceByAdminApi,
+  getUserDetailsApi,
+} from "@/services/admin/users";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
@@ -22,19 +25,31 @@ import { showExplorerDetailsByChain } from "@/utils/block-explorers";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import Chip from "@/components/common/Chip";
 import { useRouter } from "next/navigation";
+import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const BalanceColumns: TableColumns = [
-  { field: "id", headerName: "ID" },
   {
-    field: "unit",
-    headerName: "Currency",
-    dataValidator(value, row: { standard: string | null }) {
-      return row?.standard
-        ? `${value} (${row?.standard})`
-        : `${unitName[value.toLocaleLowerCase()]}`;
+    field: "totalUSD",
+    headerName: "Current Balance",
+    dataValidator(value, row) {
+      return <AmountFormat amount={value} type="fiat" />;
     },
   },
-  { field: "amount", headerName: "Balance" },
+  {
+    field: "totalDeposit",
+    headerName: "Total Deposit",
+    dataValidator(value, row) {
+      return <AmountFormat amount={value} type="fiat" />;
+    },
+  },
+  {
+    field: "totalWithdrawal",
+    headerName: "Total Withdrawal",
+    dataValidator(value, row) {
+      return <AmountFormat amount={value} type="fiat" />;
+    },
+  },
 ];
 
 enum ViewMode {
@@ -71,10 +86,14 @@ const MerchantDetails = ({ params }) => {
   const getMerchantTransactions = async () => {
     await callApiHook({
       apiCall: callMerchantTransactionsApi(
-        getMerchantTransactionByIdApi({ merchant_id: userId })
+        getAllMerchantTransactionsAndBalanceByAdminApi({
+          companyId: userDetails?.user?.company?.id,
+          limit: 5,
+          page: 1,
+        })
       ),
       successCallBack: (response) => {
-        setmerchantTransactions(response?.data);
+        setmerchantTransactions(response);
       },
     });
   };
@@ -84,22 +103,19 @@ const MerchantDetails = ({ params }) => {
   }, []);
 
   useEffect(() => {
-    viewMode == ViewMode.TRANSACTIONS && getMerchantTransactions();
-  }, [viewMode]);
+    if (userDetails?.user?.company?.id) {
+      getMerchantTransactions();
+    }
+  }, [viewMode, userDetails]);
 
   const transactionsList_Admin_table_columns: TableColumns = [
     {
-      field: "uuid",
+      field: "id",
       headerName: "ID",
-      sortable: true,
-      dataValidator(value, row: any) {
-        return row?.withdraw_transaction_uuid || row?.payment_transaction_uuid;
-      },
     },
     {
-      field: "createdAt",
+      field: "created_at",
       headerName: "Date Received",
-      sortable: true,
       dataValidator: (value) => {
         let [day, time] = formatDateToUserTimeZone(value);
         return (
@@ -110,83 +126,144 @@ const MerchantDetails = ({ params }) => {
         );
       },
     },
-    { field: "transaction_type", headerName: "Currency Type", sortable: true },
-    { field: "unit", headerName: "Currency", sortable: true },
     {
-      field: "blockchain",
-      headerName: "Blockchain",
-      sortable: true,
-      dataValidator(value, row: any) {
-        return row?.clientWallet?.blockchain || row?.wallet?.blockchain;
+      field: "transaction_request.contract_address.is_token",
+      headerName: "Currency Type",
+      dataValidator(value, row) {
+        return value ? "Token" : "Coin";
       },
     },
+    { field: "transaction_request.unit", headerName: "Currency" },
     {
-      field: "transaction_hash",
+      field: "transaction_request.contract_address.blockchain_name",
+      headerName: "Blockchain",
+    },
+    {
+      field: "hash",
       headerName: "Transaction Hash",
-      sortable: true,
       link: (row: any) => {
         const transactionExplorerLink = showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.wallet?.blockchain || row?.clientWallet?.blockchain,
+          blockchain: row?.transaction_request.contract_address.blockchain_name,
           type: "hash",
-          hash: row?.transaction_hash,
+          hash: row?.hash,
         });
         return transactionExplorerLink;
       },
     },
-    { field: "amount", headerName: "Amount", sortable: true },
-    { field: "alphaspay_fees", headerName: "Fee", sortable: true },
+    {
+      field: "paid_amount",
+      headerName: "Received Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat type="crypto" amount={value} currency={row?.unit} />
+        );
+      },
+    },
+    {
+      field: "fiat_paid_amount",
+      headerName: "Fiat Received Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "fee",
+      headerName: "Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat type="crypto" amount={value} currency={row?.unit} />
+        );
+      },
+    },
+    {
+      field: "fiat_fee",
+      headerName: "Fiat Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "net_amount",
+      headerName: "Received Net Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat type="crypto" amount={value} currency={row?.unit} />
+        );
+      },
+    },
+    {
+      field: "fiat_net_amount",
+      headerName: "Received Fiat Net Amount ",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
 
     {
       field: "sender_address",
       headerName: "Sender Address",
-      sortable: true,
       copyable: true,
       link: (row: any) => {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
+          blockchain: row?.transaction_request.contract_address.blockchain_name,
           type: "address",
           address: row?.sender_address,
         });
       },
     },
     {
-      field: "receiveAddress",
+      field: "transaction_request.wallet.address",
       headerName: "Receiver Address",
-      sortable: true,
       copyable: true,
       dataValidator(value, row: any) {
-        return row?.withdrawal?.recipient_address || row?.wallet?.address;
+        return value || row?.transaction_request.recipient_address;
       },
       link: (row: any) => {
         return showExplorerDetailsByChain({
           env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-          blockchain: row?.clientWallet?.blockchain || row?.wallet?.blockchain,
+          blockchain: row?.transaction_request.contract_address.blockchain_name,
           type: "address",
-          address: row?.withdrawal?.recipient_address || row?.wallet?.address,
+          address:
+            row?.transaction_request.recipient_address ||
+            row?.transaction_request.wallet?.address,
         });
       },
     },
     {
-      field: "type",
+      field: "transaction_request.type",
       headerName: "Transaction Type",
-      sortable: true,
-      dataValidator(value, row: any) {
-        return row?.payment ? "Deposit" : "Withdrawal";
-      },
       link(row: any) {
         if (
-          row?.payment &&
+          row?.transaction_request.type == "Depoist" &&
           hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read)
         ) {
-          return `/deposits/details/${row?.payment?.id}`;
+          return `payments/details/${row?.id}`;
         }
         if (
-          row?.withdrawal &&
+          row?.transaction_request.type == "Withdraw" &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
         ) {
-          return `/withdrawals/details/${row?.withdrawal?.id}`;
+          return `withdrawals/details/${row?.id}`;
         }
       },
       target: "_self",
@@ -194,7 +271,6 @@ const MerchantDetails = ({ params }) => {
     {
       field: "status",
       headerName: "Status",
-      sortable: true,
       dataValidator: (value) => {
         return <Chip status={value} />;
       },
@@ -297,26 +373,29 @@ const MerchantDetails = ({ params }) => {
             )}
           </div>
 
-          <CustomTable
+          <CustomTableV2
+            loading={isMerchantTransactionsLoading}
+            actions={<></>}
+            tableWrapperClassName="!min-h-[auto]"
             columns={
               viewMode == ViewMode.BALANCES
                 ? BalanceColumns
                 : transactionsList_Admin_table_columns
             }
-            pagination={viewMode == ViewMode.TRANSACTIONS}
-            initialPageSize={5}
-            rowClickHandler={(row: { id: string }) => {
-              router.push(`/transactions/details/${row?.id}`);
-            }}
-            tableWrapperClassName="!min-h-[auto]"
             rows={
               viewMode == ViewMode.BALANCES
-                ? userDetails?.user?.balances || []
-                : merchantTransactions
+                ? [{ id: 1, ...merchantTransactions?.wallet }]
+                : merchantTransactions?.transactions?.result || []
             }
-            actions={<></>}
-            loading={isMerchantTransactionsLoading}
-            columnClassName="max-w-[200px]"
+            totalItems={merchantTransactions?.transactions?.total}
+            serverSidePagination
+            tableName="transactions"
+            initialPageSize={5}
+            rowClickHandler={(row: any) => {
+              router.push(`/transactions/details/${row?.id}`);
+            }}
+            pagination={viewMode == ViewMode.TRANSACTIONS}
+            columnClassName="max-w-[250px]"
           />
         </div>
         <ErrorApiText error={isMerchantTransactionsError} />
