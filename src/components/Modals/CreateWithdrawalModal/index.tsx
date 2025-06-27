@@ -251,7 +251,7 @@ const CreateWithdrawalModal = ({
           >
             <IconSelectBox
               wrapperClassName="!mb-2"
-              label="Source Currency"
+              label="Withdraw Currency"
               options={supportedCurrencies}
               name="blockchain"
               value={values.blockchain}
