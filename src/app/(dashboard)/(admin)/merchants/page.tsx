@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { getAllUsersByAdminApi } from "@/services/admin/users";
+import { getAllMerchantsByAdminApi, getAllUsersByAdminApi } from "@/services/admin/users";
 
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -110,7 +110,7 @@ const Merchants = () => {
   }) => {
     await callApiHook({
       apiCall: callUsersApi(
-        getAllUsersByAdminApi({
+        getAllMerchantsByAdminApi({
           limit,
           page,
         })
