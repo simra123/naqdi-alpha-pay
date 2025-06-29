@@ -20,3 +20,11 @@ export const getTransactionRequestDetailsByUserApi = (data: { id: number }) => {
 export const getRecentTransactionsApi = () => {
   return () => api.get(`merchant-dashboard/recent-transactions`);
 };
+
+export const getExxhangeRateUSDToCryptoApi = (params: {
+  unit: string;
+  blockchain: string;
+  amount: number;
+}) => {
+  return () => api.get(`transaction/withdrawal/exchange-rate`, { params });
+};

@@ -32,3 +32,12 @@ export const getMerchantTransactionByIdApi = (data: {
 }) => {
   return () => api.get(`/admin-merchant/${data.merchant_id}/transactions`);
 };
+
+
+export const getAdminExchangeRateUSDToCryptoApi = (params: {
+  unit: string;
+  blockchain: string;
+  amount: number;
+}) => {
+  return () => api.get(`admin/transaction/withdrawal/exchange-rate`, { params });
+};
