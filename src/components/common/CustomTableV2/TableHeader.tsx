@@ -57,7 +57,7 @@ const TableHeader = ({
             </label>
           </th>
         )}
-        {columns.map((column, index) => (
+        {columns?.map((column, index) => (
           <th
             key={column.field + index}
             style={{ width: "auto" }}

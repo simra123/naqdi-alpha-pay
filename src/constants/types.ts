@@ -20,6 +20,11 @@ export enum WalletType {
   Virtual = "Virtual",
 }
 
+export enum TransactionType {
+  Deposit = "Deposit",
+  Withdraw = "Withdraw",
+}
+
 export enum RequestVia {
   API = "API",
   ClientPanel = "Client Panel",

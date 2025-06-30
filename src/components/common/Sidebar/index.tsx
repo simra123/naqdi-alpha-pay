@@ -106,7 +106,7 @@ const nav_items: NavItem[] = [
     name: "Fee Ledger",
     icon: FeeLedgerIcon,
     path: "/fee-ledger",
-    roles: [Role.ADMIN, Role.USER],
+    roles: [Role.ADMIN],
     module: ModulesEnum.feeLedger,
   },
   {

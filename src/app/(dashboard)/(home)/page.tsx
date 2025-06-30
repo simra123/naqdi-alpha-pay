@@ -54,6 +54,9 @@ import FeeSummaryGraph from "@/components/dashboard/FeeSummaryGraph";
 import { getAllUsersByAdminApi } from "@/services/admin/users";
 import CustomTableV2 from "@/components/common/CustomTableV2";
 import AmountFormat from "@/components/common/AmountFormat";
+import { formatAmount } from "@/components/common/AmountFormat/utils";
+import AdminWallet from "@/components/dashboard/AdminWallet";
+import MerchantWallet from "@/components/dashboard/MerchantWallet";
 
 const merchantsColumns: TableColumns = [
   { field: "wallet.company.owner.first_name", headerName: "First Name" },
@@ -384,21 +387,10 @@ const Home = () => {
             <div className="hidden 2.5xl:flex gap-6">
               <div className="w-[504px] wallets">
                 <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
-                  <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
-                    <h4 className="font-nunito font-bold text-h4 text-white text-center">
-                      Fiat Wallet
-                    </h4>
-                    <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
-                      $
-                      <CountUp
-                        end={adminBalances?.fiatAmount?.totalFiat}
-                        separator=","
-                        decimal="."
-                        decimals={2}
-                      />
-                    </h3>
-                    <ErrorApiText error={isTotalPortfolioError} />
-                  </div>
+                  <AdminWallet
+                    adminBalances={adminBalances}
+                    error={isAdminBalancesError}
+                  />
 
                   <Wallets
                     walletsArray={adminBalances?.userBalances}
@@ -430,21 +422,10 @@ const Home = () => {
           <div className="2.5xl:hidden flex flex-wrap gap-6">
             <div className="flex-1 wallets">
               <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
-                <div className="flex flex-col justify-center items-center bg-purple-gradient mb-4 pt-6 pb-5 rounded-[20px] max-h-[141px]">
-                  <h4 className="font-nunito font-bold text-h4 text-white text-center">
-                    Fiat Wallet
-                  </h4>
-                  <h3 className="overflow-hidden font-nunito font-semibold text-[24px] text-white 2.5xl:text-[40px] text-center text-ellipsis">
-                    $
-                    <CountUp
-                      end={adminBalances?.fiatAmount?.totalFiat}
-                      separator=","
-                      decimal="."
-                      decimals={2}
-                    />
-                  </h3>
-                  <ErrorApiText error={isTotalPortfolioError} />
-                </div>
+                <AdminWallet
+                  adminBalances={adminBalances}
+                  error={isAdminBalancesError}
+                />
 
                 <Wallets
                   walletsArray={adminBalances?.userBalances}
@@ -493,7 +474,6 @@ const Home = () => {
                 <CustomTableV2
                   columns={merchantsColumns}
                   rows={adminMerchantsWalletSummary?.result}
-                  initialPageSize={merchantPageSize}
                   rowClickHandler={(row: any) => {
                     router.push(
                       `/merchants/details/${row?.wallet?.company?.owner?.id}`
@@ -514,6 +494,7 @@ const Home = () => {
                   }
                   tableWrapperClassName="!min-h-[auto] border h-full  !px-5 py-[30px] !rounded-[28px]"
                   pagination
+                  initialPageSize={merchantPageSize}
                   serverSidePagination
                   totalItems={adminMerchantsWalletSummary?.total}
                   onPageChange={(page) => {
@@ -550,52 +531,7 @@ const Home = () => {
         >
           <div className="px-4 2.5xl:px-8 py-[35px] 2.5xl:py-[40px] min-h-[310px] 2.5xl:min-h-[470px] wallets">
             <div className="flex flex-col justify-between gap-8 h-full">
-              <div>
-                <h4 className="font-nunito font-semibold text-button text-white text-center">
-                  Fiat Wallet
-                </h4>
-                <h3 className="overflow-hidden font-nunito font-semibold text-[40px] text-white 2.5xl:text-[55px] text-center text-ellipsis leading-[60px]">
-                  $
-                  <CountUp
-                    end={balance.totalUSD}
-                    separator=","
-                    decimal="."
-                    decimals={2}
-                  />
-                </h3>
-                <ErrorApiText error={isTotalPortfolioError} />
-              </div>
-
-              <div className="flex justify-around py-[36px] border-[#654178] border-y">
-                <div>
-                  <h4 className="font-nunito text-caption text-white xs:text-button text-center">
-                    Total Deposit
-                  </h4>
-                  <h3 className="overflow-hidden font-nunito font-semibold text-[25px] text-white xs:text-[35px] text-center text-ellipsis leading-[40px]">
-                    $
-                    <CountUp
-                      end={balance.totalDeposit}
-                      separator=","
-                      decimal="."
-                      decimals={2}
-                    />
-                  </h3>
-                </div>
-                <div>
-                  <h4 className="font-nunito text-caption text-white xs:text-button text-center">
-                    Total Withdrawal
-                  </h4>
-                  <h3 className="overflow-hidden font-nunito font-semibold text-[25px] text-white xs:text-[35px] text-center text-ellipsis leading-[40px]">
-                    $
-                    <CountUp
-                      end={balance.totalWithdrawal}
-                      separator=","
-                      decimal="."
-                      decimals={2}
-                    />
-                  </h3>
-                </div>
-              </div>
+              <MerchantWallet balance={balance} error={isTotalPortfolioError} />
 
               <div
                 className="flex justify-center gap-4 xl:px-8"
