@@ -26,7 +26,7 @@ const columns: TableColumns = [
     headerName: "ID",
   },
   {
-    field: "createdAt",
+    field: "user.created_at",
     headerName: "Created At",
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
@@ -38,15 +38,21 @@ const columns: TableColumns = [
       );
     },
   },
-  { field: "firstName", headerName: "First name" },
-  { field: "lastName", headerName: "Last name" },
-  { field: "email", headerName: "Email" },
-  { field: "phone", headerName: "Phone" },
+  { field: "user.first_name", headerName: "First name" },
+  { field: "user.last_name", headerName: "Last name" },
+  { field: "user.email", headerName: "Email" },
+  { field: "phone_number", headerName: "Phone" },
   { field: "country", headerName: "Country" },
-  { field: "userType", headerName: "User Type" },
-  { field: "fees", headerName: "Fee" },
+  { field: "user.user_type", headerName: "User Type" },
   {
-    field: "kycStatus",
+    field: "user.company.fee",
+    headerName: "Fee",
+    dataValidator(value, row) {
+      return value ? `${value} %` : "_";
+    },
+  },
+  {
+    field: "kyc_status",
     headerName: "Status",
     dataValidator(value) {
       return <Chip status={value} />;
@@ -67,24 +73,7 @@ const KYCUsersPage = () => {
     await callApiHook({
       apiCall: callUsersListApi(getKYCUsersListApi({ status: "" })),
       successCallBack: (response) => {
-        const filteredData = response?.map((data) => {
-          return {
-            ...data,
-            id: data?.id,
-            user_details_uuid: data?.user_details_uuid,
-            createdAt: data?.user?.created_at,
-            userId: data?.user?.id,
-            firstName: data?.user?.first_name,
-            lastName: data?.user?.last_name,
-            email: data?.user?.email,
-            phone: data?.phone_number,
-            country: data?.country,
-            kycStatus: data?.kyc_status,
-            fees: data?.fees ? `${data?.fees} %` : "_",
-            userType: data?.user?.user_type,
-          };
-        });
-        setUsersList(filteredData);
+        setUsersList(response);
       },
     });
   };
@@ -140,7 +129,7 @@ const KYCUsersPage = () => {
               getPermission(ModulesEnum.kyc)?.access_level ==
               AccessLevelEnum?.full
             ) {
-              router.push(`/kyc/${row?.userId}`);
+              router.push(`/kyc/${row?.user?.id}`);
             }
           }}
           pagination

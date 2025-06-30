@@ -3,7 +3,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { getAllUsersByAdminApi } from "@/services/admin/users";
+import {
+  getAllMerchantsByAdminApi,
+  getAllUsersByAdminApi,
+} from "@/services/admin/users";
 
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -19,14 +22,16 @@ import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const usersList_table_columns: TableColumns = [
-  { field: "user_uuid", headerName: "ID" },
+  { field: "id", headerName: "ID" },
   {
     field: "created_at",
     headerName: "Created",
     dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
+      const [day, time] = formatDateToUserTimeZone(value);
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
@@ -39,7 +44,7 @@ const usersList_table_columns: TableColumns = [
     field: "updated_at",
     headerName: "Updated",
     dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
+      const [day, time] = formatDateToUserTimeZone(value);
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
@@ -48,34 +53,93 @@ const usersList_table_columns: TableColumns = [
       );
     },
   },
-  { field: "first_name", headerName: "First Name" },
-  { field: "last_name", headerName: "Last Name" },
-  { field: "username", headerName: "Username" },
-  { field: "email", headerName: "Email" },
-  { field: "user_type", headerName: "User Type" },
   {
-    field: "verified",
-    headerName: "Verified",
-    dataValidator(value) {
-      const status = value ? "Verified" : "Unverified";
-      return <Chip status={status} />;
+    field: "first_name",
+    headerName: "First Name",
+  },
+  {
+    field: "last_name",
+    headerName: "Last Name",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+  },
+  {
+    field: "company.wallet_info.total_amount",
+    headerName: "Current Balance",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "company.wallet_info.total_deposit",
+    headerName: "Deposit",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "company.wallet_info.total_withdraw",
+    headerName: "Withdrawal",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "user_type",
+    headerName: "User Type",
+  },
+  {
+    field: "company_id",
+    headerName: "Company Id",
+  },
+  {
+    field: "company.ownername",
+    headerName: "Owner Name",
+  },
+  {
+    field: "company.type",
+    headerName: "Type",
+  },
+  {
+    field: "company.client_fee",
+    headerName: "Client Fee",
+    dataValidator: (value) => {
+      return value ? `${value} %` : "_";
+    },
+  },
+  {
+    field: "company.fee",
+    headerName: "Alphaspay Fee",
+    dataValidator: (value) => {
+      return value ? `${value} %` : "_";
     },
   },
 ];
 
 const Merchants = () => {
   const router = useRouter();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<{ result: []; total: number }>({
+    result: [],
+    total: 0,
+  });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isUsersLoading, isUsersError, callUsersApi] = useApi({
     initailLoading: true,
   });
 
-
-  const getAllUsersAdmin = async () => {
+  const getAllUsersAdmin = async ({
+    limit,
+    page,
+  }: {
+    limit: number;
+    page: number;
+  }) => {
     await callApiHook({
-      apiCall: callUsersApi(getAllUsersByAdminApi()),
+      apiCall: callUsersApi(
+        getAllMerchantsByAdminApi({
+          limit,
+          page,
+        })
+      ),
       successCallBack: (response) => {
-        setUsers(formatUsers(response));
+        setUsers(response);
       },
     });
   };
@@ -97,11 +161,11 @@ const Merchants = () => {
       { key: "updated_at" },
     ];
 
-    return formatCSVDataByColumnOrder(users, columnOrder);
+    return formatCSVDataByColumnOrder(users?.result, columnOrder);
   }, [users]);
 
   useEffect(() => {
-    getAllUsersAdmin();
+    getAllUsersAdmin({ limit, page });
   }, []);
 
   return (
@@ -113,19 +177,30 @@ const Merchants = () => {
       {/* Table Actions Below */}
 
       <div>
-        <CustomTable
+        <CustomTableV2
           loading={isUsersLoading}
           columns={usersList_table_columns}
-          rows={users}
+          rows={users?.result}
+          totalItems={users?.total}
           csv={true}
           tableName="Merchants"
-          initialPageSize={10}
+          initialPageSize={limit}
           rowClickHandler={(row: any) =>
             router.push(`/merchants/details/${row?.id}`)
           }
-          pagination
           columnClassName="max-w-[250px]"
           csvData={formatCsvData}
+          pagination
+          serverSidePagination
+          onPageChange={(page) => {
+            setPage(page);
+            getAllUsersAdmin({ limit, page });
+          }}
+          onPageSizeChange={(pageSize) => {
+            setLimit(pageSize);
+            setPage(1);
+            getAllUsersAdmin({ limit: pageSize, page: 1 });
+          }}
         />
 
         <ErrorApiText error={isUsersError} />
