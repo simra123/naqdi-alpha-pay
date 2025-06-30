@@ -3,7 +3,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { getAllMerchantsByAdminApi, getAllUsersByAdminApi } from "@/services/admin/users";
+import {
+  getAllMerchantsByAdminApi,
+  getAllUsersByAdminApi,
+} from "@/services/admin/users";
 
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
@@ -28,7 +31,7 @@ const usersList_table_columns: TableColumns = [
     field: "created_at",
     headerName: "Created",
     dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
+      const [day, time] = formatDateToUserTimeZone(value);
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
@@ -41,7 +44,7 @@ const usersList_table_columns: TableColumns = [
     field: "updated_at",
     headerName: "Updated",
     dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
+      const [day, time] = formatDateToUserTimeZone(value);
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
@@ -50,41 +53,61 @@ const usersList_table_columns: TableColumns = [
       );
     },
   },
-  { field: "ownername", headerName: "Owner Name" },
-  { field: "type", headerName: "type" },
   {
-    field: "client_fee",
-    headerName: "Client Fee",
-    dataValidator(value, row) {
-      return value ? `${value} %` : "_";
-    },
+    field: "first_name",
+    headerName: "First Name",
   },
   {
-    field: "fee",
-    headerName: "Alphaspay Fee",
-    dataValidator(value, row) {
-      return value ? `${value} %` : "_";
-    },
+    field: "last_name",
+    headerName: "Last Name",
   },
   {
-    field: "wallet_info.total_amount",
+    field: "email",
+    headerName: "Email",
+  },
+  {
+    field: "company.wallet_info.total_amount",
     headerName: "Current Balance",
-    dataValidator(value, row) {
-      return <AmountFormat amount={value} type="fiat" />;
-    },
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
   },
   {
-    field: "wallet_info.total_deposit",
+    field: "company.wallet_info.total_deposit",
     headerName: "Deposit",
-    dataValidator(value, row) {
-      return <AmountFormat amount={value} type="fiat" />;
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "company.wallet_info.total_withdraw",
+    headerName: "Withdrawal",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "user_type",
+    headerName: "User Type",
+  },
+  {
+    field: "company_id",
+    headerName: "Company Id",
+  },
+  {
+    field: "company.ownername",
+    headerName: "Owner Name",
+  },
+  {
+    field: "company.type",
+    headerName: "Type",
+  },
+  {
+    field: "company.client_fee",
+    headerName: "Client Fee",
+    dataValidator: (value) => {
+      return value ? `${value} %` : "_";
     },
   },
   {
-    field: "wallet_info.total_withdraw",
-    headerName: "Withdrawal",
-    dataValidator(value, row) {
-      return <AmountFormat amount={value} type="fiat" />;
+    field: "company.fee",
+    headerName: "Alphaspay Fee",
+    dataValidator: (value) => {
+      return value ? `${value} %` : "_";
     },
   },
 ];
