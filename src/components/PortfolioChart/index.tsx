@@ -13,6 +13,7 @@ import { getLocalStorageValue } from "@/utils/cookies";
 import { hasMinAccess } from "@/utils/cookies";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import clsx from "clsx";
+import { formatAmount } from "../common/AmountFormat/utils";
 
 // Custom plugin for the vertical dashed line
 const crosshairLinePlugin = {
@@ -54,13 +55,24 @@ export const makeChartData = (data: {
     bottomLeft: 0,
     bottomRight: 0,
   };
+
+  let received = data.received?.map(
+    (value) => formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+  );
+  let balances = data.balances?.map(
+    (value) => formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+  );
+  let sent = data.sent?.map(
+    (value) => formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+  );
+
   return {
     labels: data?.labels,
     datasets: [
       {
         type: "line",
         label: "Balance",
-        data: data?.balances,
+        data: balances,
         borderColor: purpleColor,
         tension: 0.4,
         pointRadius: 5, // Size of the point
@@ -73,14 +85,14 @@ export const makeChartData = (data: {
       {
         type: "bar",
         label: "Received",
-        data: data?.received,
+        data: received,
         backgroundColor: greenColor,
         borderRadius,
       },
       {
         type: "bar",
         label: "Sent",
-        data: data?.sent,
+        data: sent,
         backgroundColor: redColor,
         borderRadius,
       },
