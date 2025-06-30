@@ -501,28 +501,32 @@ const CreateWithdrawalModal = ({
                 </p>
               </div>
 
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Fiat Fee Amount
-                </p>
-                <p className="font-medium text-black-100">
-                  <AmountFormat
-                    amount={withdrawSummary.fiatFeeAmount}
-                    type="fiat"
-                  />
-                </p>
-              </div>
-              <div>
-                <p className="font-bold text-caption text-custom-title-gray">
-                  Crypto Fee Amount
-                </p>
-                <p className="font-medium text-black-100">
-                  <AmountFormat
-                    amount={withdrawSummary.cryptoFeeAmount}
-                    type="crypto"
-                  />
-                </p>
-              </div>
+              <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+                <>
+                  <div>
+                    <p className="font-bold text-caption text-custom-title-gray">
+                      Fiat Fee Amount
+                    </p>
+                    <p className="font-medium text-black-100">
+                      <AmountFormat
+                        amount={withdrawSummary.fiatFeeAmount}
+                        type="fiat"
+                      />
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-caption text-custom-title-gray">
+                      Crypto Fee Amount
+                    </p>
+                    <p className="font-medium text-black-100">
+                      <AmountFormat
+                        amount={withdrawSummary.cryptoFeeAmount}
+                        type="crypto"
+                      />
+                    </p>
+                  </div>
+                </>
+              </RenderRoleBased>
 
               <div>
                 <p className="font-bold text-caption text-custom-title-gray">
@@ -530,7 +534,11 @@ const CreateWithdrawalModal = ({
                 </p>
                 <p className="font-medium text-black-100">
                   <AmountFormat
-                    amount={withdrawSummary.fiatNetAmount}
+                    amount={
+                      user?.role == Role.USER
+                        ? withdrawSummary.fiatNetAmount
+                        : withdrawSummary.requestedAmount
+                    }
                     type="fiat"
                   />
                 </p>
@@ -541,7 +549,11 @@ const CreateWithdrawalModal = ({
                 </p>
                 <p className="font-medium text-black-100">
                   <AmountFormat
-                    amount={withdrawSummary.cryptoNetAmount}
+                    amount={
+                      user?.role == Role.USER
+                        ? withdrawSummary.cryptoNetAmount
+                        : withdrawSummary.cryptoRequstedAmount
+                    }
                     type="crypto"
                   />
                 </p>
