@@ -103,7 +103,6 @@ const CreateWithdrawalModal = ({
     useApi({
       initailLoading: true,
     });
-  const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
     useApi();
@@ -457,7 +456,7 @@ const CreateWithdrawalModal = ({
         )}
       </LoadingApi>
       {currentStep == 2 && (
-        <LoadingApi loading={isFeeLoading}>
+        <LoadingApi loading={isUserDetailsLoading || isExchangeRateLoading}>
           <form
             className="flex flex-col gap-2 mt-8"
             onSubmit={(e) => handleSubmit(e, handleWithdrawal)}
@@ -624,7 +623,14 @@ const CreateWithdrawalModal = ({
           </form>
         </LoadingApi>
       )}
-      <ErrorApiText error={isBalanceError || isFeeError || isWithdrawalError} />
+      <ErrorApiText
+        error={
+          isBalanceError ||
+          isUserDetailsError ||
+          isExchangeRateError ||
+          isWithdrawalError
+        }
+      />
     </Modal>
   );
 };
