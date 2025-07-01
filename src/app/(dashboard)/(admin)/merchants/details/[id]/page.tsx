@@ -373,7 +373,7 @@ const MerchantDetails = ({ params }) => {
                   : "hover:bg-purple-gradient hover:text-white"
               }`}
             >
-              Balances
+              Summary
             </button>
             {hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) && (
               <button
