@@ -244,9 +244,9 @@ const CreateWithdrawalModal = ({
         successCallBack: (response) => {
           const { exchangeRate, cryptoAmount } = response;
           setWithdrawSummary({
-            cryptoFeeAmount: exchangeRate * data.feeAmount,
+            cryptoFeeAmount: data.feeAmount / exchangeRate,
             cryptoNetAmount: cryptoAmount,
-            cryptoRequstedAmount: +data.requestedAmount * exchangeRate,
+            cryptoRequstedAmount: +data.requestedAmount / exchangeRate,
             feePercentage: data.feePercentage,
             fiatFeeAmount: data.feeAmount,
             fiatNetAmount: data.netAmount,
@@ -263,9 +263,9 @@ const CreateWithdrawalModal = ({
         successCallBack: (response) => {
           const { exchangeRate, cryptoAmount } = response;
           setWithdrawSummary({
-            cryptoFeeAmount: exchangeRate * data.feeAmount,
+            cryptoFeeAmount: data.feeAmount / exchangeRate,
             cryptoNetAmount: cryptoAmount,
-            cryptoRequstedAmount: +data.requestedAmount * exchangeRate,
+            cryptoRequstedAmount: +data.requestedAmount / exchangeRate,
             feePercentage: data.feePercentage,
             fiatFeeAmount: data.feeAmount,
             fiatNetAmount: data.netAmount,
