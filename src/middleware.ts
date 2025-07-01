@@ -3,7 +3,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./constants/roles";
 
-const adminRoutes = ["/kyc", "/merchants", "/wallets", "/news-signup"];
+const adminRoutes = [
+  "/kyc",
+  "/merchants",
+  "/wallets",
+  "/news-signup",
+  "/fee-ledger",
+];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
 const nonFunctionalRoutes = ["/payouts", "/wallets"];
 
@@ -70,7 +76,7 @@ export function middleware(req: NextRequest) {
       // Checking if is not a onboarding route and dont have fee also if is a onboarding route but has fees then blocking the user
       if (!isWithOutFeeRoute(pathname) && !hasFee(user)) {
         // if (pathname == "/") {
-          return NextResponse.redirect(new URL("/onboarding", req.url));
+        return NextResponse.redirect(new URL("/onboarding", req.url));
         // }
         // return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
@@ -87,7 +93,6 @@ export function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
-
 
 export const config = {
   matcher: [

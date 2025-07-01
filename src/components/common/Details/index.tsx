@@ -35,7 +35,7 @@ const Details = ({
 
   return (
     <div
-      className={`flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis ${className}`}
+      className={`flex gap-4 items-start text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis ${className}`}
     >
       {label && (
         <span className="font-medium text-custom-caption-gray">{label}:</span>
