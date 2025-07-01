@@ -3,27 +3,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import {
-  getAllMerchantsByAdminApi,
-  getAllUsersByAdminApi,
-} from "@/services/admin/users";
+import { getAllMerchantsByAdminApi } from "@/services/admin/users";
 
-import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
-import { formatUsers } from "@/utils/dataFormatters";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-import { Role } from "@/constants/roles";
-import Chip from "@/components/common/Chip";
-import CustomTable from "@/components/common/CustomTable";
-import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
 import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 import CustomTableV2 from "@/components/common/CustomTableV2";
 import AmountFormat from "@/components/common/AmountFormat";
+import { formatAmount } from "@/components/common/AmountFormat/utils";
 
 const usersList_table_columns: TableColumns = [
   { field: "id", headerName: "ID" },
@@ -157,6 +149,46 @@ const Merchants = () => {
       { key: "username" },
       { key: "user_type" },
       { key: "verified" },
+      { key: "company_id" },
+
+      // Company fields
+      { key: "company.ownername", label: "company_ownername" },
+      { key: "company.type", label: "company_type" },
+      { key: "company.client_fee", label: "company_client_fee" },
+      { key: "company.fee", label: "company_fee" },
+
+      // Wallet info fields
+      { key: "company.wallet_info.currency", label: "wallet_currency" },
+
+      {
+        key: "company.wallet_info.total_amount",
+        label: "current_balance",
+        format(value, row) {
+          return value
+            ? formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+            : "-";
+        },
+      },
+      {
+        key: "company.wallet_info.total_deposit",
+        label: "deposit",
+        format(value, row) {
+          return value
+            ? formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+            : "-";
+        },
+      },
+      {
+        key: "company.wallet_info.total_withdraw",
+        label: "withdrawal",
+        format(value, row) {
+          return value
+            ? formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+            : "-";
+        },
+      },
+
+      // User timestamps
       { key: "created_at" },
       { key: "updated_at" },
     ];
