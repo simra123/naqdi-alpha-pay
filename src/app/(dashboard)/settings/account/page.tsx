@@ -26,6 +26,7 @@ import {
   MdOutlineErrorOutline,
   MdOutlineLocationOn,
 } from "react-icons/md";
+import { USERTYPE } from "@/constants/types";
 
 let initalFormValues = {
   clientFee: 0,
@@ -140,11 +141,25 @@ const Account = () => {
           <Details label="ID" value={user?.id} />
           <Details label="First Name" value={user?.first_name} />
           <Details label="Last Name" value={user?.last_name} />
-          <Details label="Username" value={user?.username} />
+          <Details
+            label="Username"
+            value={user?.username}
+            textClassName="!normal-case"
+          />
           <Details
             label="User Type"
             value={localUser?.role == Role.ADMIN ? "Admin" : user?.user_type}
           />
+          {user?.role != Role.ADMIN && (
+            <Details
+              label="Legal Name"
+              value={
+                user?.company?.owner?.user_type == USERTYPE.LEGALENTITY
+                  ? user?.company?.owner?.legal_name
+                  : `${user?.company?.owner?.first_name} ${user?.company?.owner?.last_name}`
+              }
+            />
+          )}
         </div>
 
         <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
@@ -152,7 +167,11 @@ const Account = () => {
           <h5 className="font-semibold text-h5 text-purple-500">Contacts</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="Email" value={user?.email} />
+          <Details
+            label="Email"
+            value={user?.email}
+            textClassName="!normal-case"
+          />
           <RenderRoleBased user={localUser} allowedRoles={[Role.USER]}>
             <Details label="Phone" value={user?.userDetails?.phone_number} />
           </RenderRoleBased>
