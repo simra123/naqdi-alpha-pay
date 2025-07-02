@@ -36,7 +36,7 @@ export const BalanceRow: React.FC<BalanceRowProps> = ({ item }) => {
           src={`/currencies/${coinName?.toLowerCase()}.png`}
         />
         <span className="font-semibold capitalize">
-          {isToken ? unit : blockchainName}
+          {isToken ? coinName : blockchainName}
         </span>
       </div>
       <div className="pr-3 overflow-hidden font-semibold text-ellipsis">
