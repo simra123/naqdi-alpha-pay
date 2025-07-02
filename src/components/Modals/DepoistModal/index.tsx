@@ -30,6 +30,7 @@ import useFormValidation from "@/hooks/useFormValidation";
 import { DepoistSchema } from "@/models/deposit";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/material.css";
+import AmountFormat from "@/components/common/AmountFormat";
 
 interface Network {
   label: string;
@@ -330,7 +331,10 @@ const DepositModal = ({
                 Requested Amount ({depositAddress?.fiat_currency})
               </p>
               <p className="font-medium text-black-100">
-                {depositAddress?.fiat_initial_amount}
+                <AmountFormat
+                  amount={depositAddress?.fiat_initial_amount}
+                  type="fiat"
+                />
               </p>
             </div>
             <div>
@@ -338,7 +342,10 @@ const DepositModal = ({
                 Alphaspay Fee ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.initial_fee, 10)}
+                <AmountFormat
+                  amount={depositAddress?.initial_fee}
+                  type="crypto"
+                />
               </p>
             </div>
             <div>
@@ -346,7 +353,10 @@ const DepositModal = ({
                 Alphaspay Fee ({depositAddress?.fiat_currency})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.fiat_initial_fee, 10)}
+                <AmountFormat
+                  amount={depositAddress?.fiat_initial_fee}
+                  type="fiat"
+                />
               </p>
             </div>
 
@@ -355,7 +365,10 @@ const DepositModal = ({
                 Deposit Amount ({depositAddress?.unit})
               </p>
               <p className="font-medium text-black-100">
-                {roundToPrecision(+depositAddress?.initial_amount, 10)}
+                <AmountFormat
+                  amount={depositAddress?.initial_amount}
+                  type="crypto"
+                />
               </p>
             </div>
           </div>
