@@ -358,7 +358,11 @@ const MerchantDetails = ({ params }) => {
             <Details label="KYC" value={userDetails?.kyc_status} />
             <Details
               label="Fees"
-              value={userDetails?.fees ? userDetails?.fees + "%" : "Unset"}
+              value={
+                userDetails?.user?.company?.fee
+                  ? userDetails?.user?.company?.fee + "%"
+                  : "Unset"
+              }
             />
           </div>
         </div>
