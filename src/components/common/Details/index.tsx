@@ -10,6 +10,7 @@ type Props = {
   copyable?: boolean;
   link?: string;
   className?: string;
+  textClassName?: string;
   target?: string;
 };
 
@@ -19,6 +20,7 @@ const Details = ({
   copyable,
   link,
   className,
+  textClassName,
   target = "_blank",
 }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -44,12 +46,14 @@ const Details = ({
         <Link
           href={link}
           target={target}
-          className="overflow-hidden font-semibold text-blue-700 hover:text-blue-600 hover:underline text-ellipsis capitalize transition-all"
+          className={`overflow-hidden font-semibold text-blue-700 hover:text-blue-600 hover:underline text-ellipsis ${textClassName} capitalize transition-all`}
         >
           {isCopied ? "Copied" : value}
         </Link>
       ) : (
-        <span className="overflow-hidden font-semibold text-black-100 text-ellipsis capitalize">
+        <span
+          className={`overflow-hidden font-semibold text-black-100  ${textClassName} text-ellipsis capitalize`}
+        >
           {isCopied ? "Copied" : value}
         </span>
       )}
