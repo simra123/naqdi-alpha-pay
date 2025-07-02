@@ -325,7 +325,12 @@ const WithdrawalDetails = ({ params }) => {
     { field: "currency", headerName: "Currency" },
     { field: "blockchain", headerName: "Blockchain" },
     {
-      field: "amount", headerName: "Available Balance", dataValidator(value, row) {
+      field: "amount", headerName: "Portal Balance", dataValidator(value, row) {
+        return <AmountFormat amount={value} type="crypto" />
+      },
+    },
+    {
+      field: "vaultodyBalanceInfo.availableAmount", headerName: "Vaultody Balance", dataValidator(value, row) {
         return <AmountFormat amount={value} type="crypto" />
       },
     },
@@ -372,8 +377,8 @@ const WithdrawalDetails = ({ params }) => {
 
           <Details
             label={`${withdrawalDetails?.unit} ${withdrawalDetails?.standard
-                ? `(${withdrawalDetails?.standard})`
-                : ""
+              ? `(${withdrawalDetails?.standard})`
+              : ""
               } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
             copyable
@@ -606,8 +611,8 @@ const WithdrawalDetails = ({ params }) => {
                 <div className="gap-2 grid grid-cols-2 bg-light-gray mt-12 mb-10 p-2 px-5 rounded-large w-full">
                   <button
                     className={`w-full  ${withdrawalType == Withdrawal_Type.INTERNAL
-                        ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
-                        : "font-medium text-custom-title-gray"
+                      ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
+                      : "font-medium text-custom-title-gray"
                       }`}
                     onClick={handleWithdrawalType(Withdrawal_Type.INTERNAL)}
                   >
@@ -616,8 +621,8 @@ const WithdrawalDetails = ({ params }) => {
                   <button
                     id="disabled-auto-withdrawal"
                     className={`w-full rounded-large  ${withdrawalType == Withdrawal_Type.External
-                        ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
-                        : "font-medium text-custom-title-gray"
+                      ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
+                      : "font-medium text-custom-title-gray"
                       }`}
                     onClick={handleWithdrawalType(Withdrawal_Type.External)}
                   >
