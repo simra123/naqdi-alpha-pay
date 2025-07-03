@@ -22,6 +22,7 @@ import Link from "next/link";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
 import { clearApiCache } from "@/store/slices/apiCache.slice";
+import { USERTYPE } from "@/constants/types";
 
 const Header = ({ navHandler }) => {
   const user = getLocalStorageValue("user");
@@ -87,11 +88,22 @@ const Header = ({ navHandler }) => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-medium text-p120 leading-5">
-                {user?.first_name} {user?.last_name}
+              <span className="flex items-center gap-1 font-medium text-p120">
+                <span>
+                  {user?.first_name} {user?.last_name}
+                </span>
+                {user?.role != Role.ADMIN && (
+                  <span className="font-medium text-caption text-custom-caption-gray">
+                    (
+                    {user?.company?.owner?.user_type == USERTYPE.LEGALENTITY
+                      ? user?.company?.owner?.legal_name
+                      : `${user?.company?.owner?.first_name} ${user?.company?.owner?.last_name}`}
+                    )
+                  </span>
+                )}
               </span>
-              <span className="font-medium text-button text-custom-caption-gray">
-                {capitalize(user?.user_type)}
+              <span className="font-medium text-custom-caption-gray text-base leading-4">
+                {capitalize(user?.role == Role.USER ? "Merchant" : user?.role)}
               </span>
             </div>
           </div>
