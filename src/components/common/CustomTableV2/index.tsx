@@ -72,6 +72,8 @@ const CustomTableV2 = ({
 }: TableProps) => {
   const isServerSide = serverSidePagination;
 
+  console.log({ rows });
+
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(initialPageSize);
@@ -86,15 +88,17 @@ const CustomTableV2 = ({
     return isServerSide
       ? Math.ceil((totalItems || 0) / pageSize)
       : Math.ceil(
-          rows.filter((row) =>
-            columns.some((column) => {
-              const value = getNestedValue(row, column.field);
-              return value
-                ?.toString()
-                ?.toLowerCase()
-                .includes(searchQuery.toLowerCase().trim());
-            })
-          ).length / pageSize
+          rows &&
+            rows?.length > 0 &&
+            rows?.filter((row) =>
+              columns.some((column) => {
+                const value = getNestedValue(row, column.field);
+                return value
+                  ?.toString()
+                  ?.toLowerCase()
+                  .includes(searchQuery.toLowerCase().trim());
+              })
+            ).length / pageSize
         );
   }, [rows, pageSize, searchQuery, totalItems, isServerSide, columns]);
 
@@ -102,10 +106,10 @@ const CustomTableV2 = ({
     if (isServerSide) {
       setCurrentRows(rows);
     } else {
-      let temp = [...rows];
+      let temp = rows && rows?.length > 0 ? [...rows] : [];
 
       if (searchQuery) {
-        temp = temp.filter((row) =>
+        temp = temp?.filter((row) =>
           columns.some((column) => {
             const value = getNestedValue(row, column.field);
             return value
@@ -114,8 +118,6 @@ const CustomTableV2 = ({
               .includes(searchQuery.toLowerCase().trim());
           })
         );
-
-
       }
 
       if (sortConfig) {

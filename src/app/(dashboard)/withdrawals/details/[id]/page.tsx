@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
 import { getLocalStorageValue } from "@/utils/cookies";
 import LoaderButton from "@/components/common/LoaderButton";
@@ -303,6 +302,37 @@ const WithdrawalDetails = ({ params }) => {
     },
   ];
 
+  const availableWallets_table_columns: TableColumns = [
+    {
+      field: "wallet_uuid",
+      headerName: "ID",
+      dataValidator(value, row: { wallet_uuid: string; id: number }) {
+        return row?.wallet_uuid || row?.id;
+      },
+    },
+
+    {
+      field: "address",
+      headerName: "Wallet Address",
+      copyable: true,
+      link(row: { address: string; blockchain: string }) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: row?.blockchain,
+          type: "address",
+          address: row?.address,
+        });
+      },
+    },
+    { field: "currency", headerName: "Currency" },
+    { field: "blockchain", headerName: "Blockchain" },
+    {
+      field: "amount", headerName: "Available Balance", dataValidator(value, row) {
+        return <AmountFormat amount={value} type="crypto" />
+      },
+    },
+  ];
+
   return (
     <LoadingApi loading={isWithdrawalDetailsLoading}>
       <ExternalWithdrawalModal
@@ -343,11 +373,10 @@ const WithdrawalDetails = ({ params }) => {
           />
 
           <Details
-            label={`${withdrawalDetails?.unit} ${
-              withdrawalDetails?.standard
+            label={`${withdrawalDetails?.unit} ${withdrawalDetails?.standard
                 ? `(${withdrawalDetails?.standard})`
                 : ""
-            } Wallet Address`}
+              } Wallet Address`}
             value={withdrawalDetails?.recipient_address}
             copyable
             link={showExplorerDetailsByChain({
@@ -578,22 +607,20 @@ const WithdrawalDetails = ({ params }) => {
 
                 <div className="gap-2 grid grid-cols-2 bg-light-gray mt-12 mb-10 p-2 px-5 rounded-large w-full">
                   <button
-                    className={`w-full  ${
-                      withdrawalType == Withdrawal_Type.INTERNAL
+                    className={`w-full  ${withdrawalType == Withdrawal_Type.INTERNAL
                         ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
                         : "font-medium text-custom-title-gray"
-                    }`}
+                      }`}
                     onClick={handleWithdrawalType(Withdrawal_Type.INTERNAL)}
                   >
                     Internal
                   </button>
                   <button
                     id="disabled-auto-withdrawal"
-                    className={`w-full rounded-large  ${
-                      withdrawalType == Withdrawal_Type.External
+                    className={`w-full rounded-large  ${withdrawalType == Withdrawal_Type.External
                         ? "bg-purple-gradient p-3 font-bold text-white rounded-large"
                         : "font-medium text-custom-title-gray"
-                    }`}
+                      }`}
                     onClick={handleWithdrawalType(Withdrawal_Type.External)}
                   >
                     External

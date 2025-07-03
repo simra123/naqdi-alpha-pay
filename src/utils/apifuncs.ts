@@ -16,7 +16,7 @@ export const callApiHook = async ({
   const response = await apiCall;
 
   if (response?.status < 400) {
-    return successCallBack(response.data);
+    return await successCallBack(response.data);
   }
 };
 

@@ -18,6 +18,7 @@ import { getDashboardFeeSummaryAdminApi } from "@/services/admin/dashboard";
 import { callApiHook } from "@/utils/apifuncs";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
+import { formatAmount } from "@/components/common/AmountFormat/utils";
 
 ChartJS.register(
   CategoryScale,
@@ -57,9 +58,18 @@ const FeeSummaryGraph = () => {
           // Index: 1 ----> Withdrawn Fee Amount
           // Index: 2 ----> Balance Fee Amount
           data: [
-            +parseFloat(adminFeeSummary.total_deposit).toFixed(2),
-            +parseFloat(adminFeeSummary.total_withdraw).toFixed(2),
-            +parseFloat(adminFeeSummary.total_amount).toFixed(2),
+            formatAmount({
+              amount: adminFeeSummary.total_deposit,
+              type: "fiat",
+            })?.fixedRaw,
+            formatAmount({
+              amount: adminFeeSummary.total_withdraw,
+              type: "fiat",
+            })?.fixedRaw,
+            formatAmount({
+              amount: adminFeeSummary.total_amount,
+              type: "fiat",
+            })?.fixedRaw,
           ],
           backgroundColor: ["#471F5E", "#623680", "#803EE5"],
           hoverBackgroundColor: ["#7735E3", "#6F29CF", "#8A45F7"],
