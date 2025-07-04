@@ -392,17 +392,17 @@ const Home = () => {
                     error={isAdminBalancesError}
                   />
 
-                  {/* <Wallets
+                   <Wallets
                     walletsArray={adminBalances?.userBalances}
                     error={isAdminBalancesError}
                     heading="Crypto Wallets"
                     loading={isAdminBalancesLoading}
-                  /> */}
-                  <Balances
+                  /> 
+                  {/* <Balances
                     balances={adminBalances?.userBalances}
                     error={isAdminBalancesError}
                     loading={isAdminBalancesLoading}
-                  />
+                  /> */}
                 </div>
               </div>
               <div className="flex-1 history">
@@ -427,10 +427,10 @@ const Home = () => {
           <div className="2.5xl:hidden flex flex-wrap gap-6">
             <div className="flex-1 wallets">
               <div className="relative flex flex-col max-h-[400px] md:max-h-[100%] 2.5xl:max-h-[470px]">
-                <AdminWallet
+                {/* <AdminWallet
                   adminBalances={adminBalances}
                   error={isAdminBalancesError}
-                />
+                /> */}
 
                 <Wallets
                   walletsArray={adminBalances?.userBalances}
