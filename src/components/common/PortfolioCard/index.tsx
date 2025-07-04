@@ -71,9 +71,9 @@ const PortfolioCard = ({
           </div>
         )}
 
-        <div className="flex flex-col w-[100px] md:w-[130px] text-end balance">
+        <div className="flex flex-col w-[100px] md:w-[170px] text-end balance">
           <span className="text-subtitle">Total Deposit</span>
-          <span className="overflow-hidden font-semibold md:text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 text-base text-ellipsis">
+          <span className="overflow-hidden font-semibold md:text-button 2xl:text-p120 3.75xl:text-h4 3xl:text-p122 text-base text-ellipsis whitespace-nowrap">
             <AmountFormat amount={Balance} type="crypto" />
           </span>
         </div>
