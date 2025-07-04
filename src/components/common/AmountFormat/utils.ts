@@ -15,6 +15,23 @@ const trimTrailingZeros = (value: string) => {
   return value.replace(/(\.\d*?[1-9])0+$/g, "$1").replace(/\.0+$/, "");
 };
 
+function truncateToFirstNonZero(raw: string, decimalPlaces: number): string {
+  {
+    const [num, float] = raw.split(".");
+
+    let fixedDecimalsWithNonZeros = float?.slice(0, decimalPlaces);
+    let firstNonZeroIndex: number;
+
+    if (+fixedDecimalsWithNonZeros == 0) {
+      let floatArray = float.split("");
+      firstNonZeroIndex = floatArray.findIndex((item) => item != "0");
+      fixedDecimalsWithNonZeros = float?.slice(0, firstNonZeroIndex + 1);
+    }
+
+    return `${num}.${fixedDecimalsWithNonZeros}`;
+  }
+}
+
 export interface FormatAmountOptions {
   amount: number | string;
   type: AmountType;
@@ -36,6 +53,7 @@ export const formatAmount = ({
   main: string;
   extra: string;
   needsTooltip: boolean;
+  precised: string;
 } => {
   const num = amount
     ? typeof amount === "string"
@@ -47,7 +65,7 @@ export const formatAmount = ({
   const decimals = MAX_DECIMALS[type];
 
   const needsTooltip = num < min && num !== 0;
-  const raw = trimTrailingZeros(num.toFixed(20));
+  const raw = trimTrailingZeros(num.toFixed(18));
 
   let display = "";
   let main = "";
@@ -74,6 +92,8 @@ export const formatAmount = ({
     display = main + (currency ? ` ${currency}` : "");
   }
 
+  let precised = truncateToFirstNonZero(raw, decimals);
+
   return {
     display,
     raw,
@@ -81,5 +101,6 @@ export const formatAmount = ({
     extra,
     needsTooltip,
     fixedRaw: trimTrailingZeros(Number(raw)?.toFixed(decimals)?.toString()),
+    precised,
   };
 };

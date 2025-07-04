@@ -17,7 +17,7 @@ const AmountFormat: FC<AmountFormatProps> = ({
   className,
   currency,
 }) => {
-  const { main, extra, raw, needsTooltip } = formatAmount({
+  const { main, extra, raw, needsTooltip,precised } = formatAmount({
     amount,
     type,
     currency,
@@ -32,7 +32,7 @@ const AmountFormat: FC<AmountFormatProps> = ({
         {...(needsTooltip
           ? {
               "data-tooltip-id": tooltipId,
-              "data-tooltip-content": raw,
+              "data-tooltip-content": precised,
             }
           : {})}
       >
