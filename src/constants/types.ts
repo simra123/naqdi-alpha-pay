@@ -97,3 +97,8 @@ export const balanceType = {
   fiat: "Fiat",
   crypto: "Crypto",
 };
+
+export enum USERTYPE {
+  INDIVIDUAL = "individual",
+  LEGALENTITY = "legalEntity",
+}

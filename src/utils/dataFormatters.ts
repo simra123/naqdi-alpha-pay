@@ -10,7 +10,9 @@ export const capitalize = (value) => {
   if (typeof value == "number") {
     return value;
   }
-  return value ? value?.charAt(0).toUpperCase() + value.slice(1) : "";
+  return value
+    ? value?.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+    : "";
 };
 
 export const removeBrackets = (value) => {
