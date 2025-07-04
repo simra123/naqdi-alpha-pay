@@ -110,3 +110,7 @@ export interface BlockchainBalance {
   total_available_amount: string;
   amount: string;
 }
+export enum USERTYPE {
+  INDIVIDUAL = "individual",
+  LEGALENTITY = "legalEntity",
+}
