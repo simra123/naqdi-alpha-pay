@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 
 import DetailsWrapper from "@/components/ui/Wrappers/DetailsWrapper";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import {
@@ -31,7 +31,7 @@ import IconField from "@/components/common/IconField";
 
 const PayoutDetails = ({ params }) => {
   const payout_id = +params?.id;
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -94,8 +94,8 @@ const PayoutDetails = ({ params }) => {
   }, []);
 
   return (
-    <div className="rounded-medium flex flex-col  bg-white p-6">
-      <h3 className="text-h3.5 font-semibold text-blackGrey-100 ">
+    <div className="flex flex-col bg-white p-6 rounded-medium">
+      <h3 className="font-semibold text-blackGrey-100 text-h3.5">
         Payout Details
       </h3>
       <ConfirmationModal
@@ -107,9 +107,9 @@ const PayoutDetails = ({ params }) => {
       />
 
       <LoadingApi loading={isPayoutDetailsLoading}>
-        <div className="flex items-center gap-2 mt-8 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
           <FolderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">General</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="res-2-grid py-6">
           <Details label="ID" value={payout?.payout_uuid} />
@@ -119,9 +119,9 @@ const PayoutDetails = ({ params }) => {
           <Details label="To Currency" value={payout?.to_currency} />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <CalenderIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Dates</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Dates</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -135,9 +135,9 @@ const PayoutDetails = ({ params }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <PaymentIcon active={false} />
-          <h5 className="text-purple-500 text-h5 font-semibold">Payouts</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Payouts</h5>
         </div>
 
         <div className="res-2-grid py-6">
@@ -155,18 +155,18 @@ const PayoutDetails = ({ params }) => {
           />
         </div>
 
-        <div className="flex items-center gap-2 mt-2 border-b border-light-gray py-4">
+        <div className="flex items-center gap-2 mt-2 py-4 border-b border-light-gray">
           <StatusIcon />
-          <h5 className="text-purple-500 text-h5 font-semibold">Status</h5>
+          <h5 className="font-semibold text-h5 text-purple-500">Status</h5>
         </div>
 
         <div className="res-2-grid py-6">
           <Details label="Payment Status" value={payout?.status} />
         </div>
 
-        <h4 className="text-button font-semibold my-5">Notes</h4>
+        <h4 className="my-5 font-semibold text-button">Notes</h4>
 
-        <div className="border border-light-gray p-4 text-gray-400 font-medium w-full min-h-36 rounded-large">
+        <div className="p-4 border border-light-gray rounded-large w-full min-h-36 font-medium text-gray-400">
           {payout?.notes}
         </div>
 
@@ -181,10 +181,10 @@ const PayoutDetails = ({ params }) => {
             </DetailsWrapper>
 
             <ErrorApiText error={isApprovePayoutError || isRejectPayoutError} />
-            <div className="flex gap-2 justify-center max-w-[75%] mb-7 mt-10 ">
+            <div className="flex justify-center gap-2 mt-10 mb-7 max-w-[75%]">
               <button
 
-                className="py-2 px-8"
+                className="px-8 py-2"
                 onClick={toggleConfirmModal}
               >
                 Approve

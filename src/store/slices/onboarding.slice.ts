@@ -30,7 +30,6 @@ export const onBoardingSlice = createSlice({
     setStep(state, action) {
       const { previous_step, current_step } = action.payload;
 
-
       if (previous_step) {
         state.disabled_steps[previous_step] = false;
       }
@@ -41,10 +40,9 @@ export const onBoardingSlice = createSlice({
     },
     validateSteps(state, action) {
       const details = action?.payload?.userDetails;
+      const company = action?.payload?.company;
 
       if (details) {
-
-
         const stepsState = [
           {
             name: STEPS.PROFILE,
@@ -72,7 +70,7 @@ export const onBoardingSlice = createSlice({
           },
           {
             name: STEPS.FEESCHEDULE,
-            condition: details?.fee,
+            condition: company?.fee,
           },
         ];
 
@@ -81,13 +79,14 @@ export const onBoardingSlice = createSlice({
           const current_step = stepsState[i];
           const next_step = stepsState[i + 1];
 
-
           if (current_step.condition) {
+            state.disabled_steps[current_step?.name] = false;
 
-            state.disabled_steps[current_step.name] = false;
-            state.disabled_steps[next_step.name] = false;
-            state.previous_step = previous_step?.name || null;
-            state.current_step = next_step?.name || null;
+            if (next_step) {
+              state.disabled_steps[next_step.name] = false;
+              state.previous_step = previous_step?.name || null;
+              state.current_step = next_step.name;
+            }
           }
         }
       }

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { Role } from "@/constants/roles";
@@ -15,8 +15,6 @@ import CustomTable from "@/components/common/CustomTable";
 import LoaderButton from "@/components/common/LoaderButton";
 import CreatePayoutModal from "@/components/Modals/CreatePayoutModal";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
-import { Add } from "@mui/icons-material";
-
 const payoutsList_table_columns = [
   { field: "uuid", headerName: "ID", sortable: true },
   { field: "created_at", headerName: "Date", sortable: true },
@@ -37,7 +35,7 @@ const payoutsList_table_columns = [
 
 const Payouts = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 

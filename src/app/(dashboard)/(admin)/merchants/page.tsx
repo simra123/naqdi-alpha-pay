@@ -1,31 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { getAllUsersByAdminApi } from "@/services/admin/users";
+import { getAllMerchantsByAdminApi } from "@/services/admin/users";
 
-import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 
-import { formatUsers } from "@/utils/dataFormatters";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 import { useApi } from "@/hooks/useApi";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
-import { Role } from "@/constants/roles";
-import Chip from "@/components/common/Chip";
-import CustomTable from "@/components/common/CustomTable";
-import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
+import { formatAmount } from "@/components/common/AmountFormat/utils";
 
 const usersList_table_columns: TableColumns = [
-  { field: "user_uuid", headerName: "ID" },
+  { field: "id", headerName: "ID" },
   {
     field: "created_at",
     headerName: "Created",
     dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
+      const [day, time] = formatDateToUserTimeZone(value);
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
@@ -38,7 +36,7 @@ const usersList_table_columns: TableColumns = [
     field: "updated_at",
     headerName: "Updated",
     dataValidator: (value) => {
-      let [day, time] = formatDateToUserTimeZone(value);
+      const [day, time] = formatDateToUserTimeZone(value);
       return (
         <div className="flex flex-col gap-1">
           <span className="text-caption">{day}</span>
@@ -47,49 +45,159 @@ const usersList_table_columns: TableColumns = [
       );
     },
   },
-  { field: "first_name", headerName: "First Name" },
-  { field: "last_name", headerName: "Last Name" },
-  { field: "username", headerName: "Username" },
-  { field: "email", headerName: "Email" },
-  { field: "user_type", headerName: "User Type" },
   {
-    field: "verified",
-    headerName: "Verified",
-    dataValidator(value) {
-      const status = value ? "Verified" : "Unverified";
-      return <Chip status={status} />;
+    field: "first_name",
+    headerName: "First Name",
+  },
+  {
+    field: "last_name",
+    headerName: "Last Name",
+  },
+  {
+    field: "email",
+    headerName: "Email",
+  },
+  {
+    field: "company.wallet_info.total_amount",
+    headerName: "Current Balance",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "company.wallet_info.total_deposit",
+    headerName: "Deposit",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "company.wallet_info.total_withdraw",
+    headerName: "Withdrawal",
+    dataValidator: (value) => <AmountFormat amount={value} type="fiat" />,
+  },
+  {
+    field: "user_type",
+    headerName: "User Type",
+  },
+  {
+    field: "company_id",
+    headerName: "Company Id",
+  },
+  {
+    field: "company.ownername",
+    headerName: "Owner Name",
+  },
+  {
+    field: "company.type",
+    headerName: "Type",
+  },
+  {
+    field: "company.client_fee",
+    headerName: "Client Fee",
+    dataValidator: (value) => {
+      return value ? `${value} %` : "_";
+    },
+  },
+  {
+    field: "company.fee",
+    headerName: "Alphaspay Fee",
+    dataValidator: (value) => {
+      return value ? `${value} %` : "_";
     },
   },
 ];
 
-const Users = () => {
+const Merchants = () => {
   const router = useRouter();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<{ result: []; total: number }>({
+    result: [],
+    total: 0,
+  });
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [isUsersLoading, isUsersError, callUsersApi] = useApi({
     initailLoading: true,
   });
-  const [isCSVLoading, isCSVError, callCSVApi] = useApi();
 
-  const getAllUsersAdmin = async () => {
+  const getAllUsersAdmin = async ({
+    limit,
+    page,
+  }: {
+    limit: number;
+    page: number;
+  }) => {
     await callApiHook({
-      apiCall: callUsersApi(getAllUsersByAdminApi()),
+      apiCall: callUsersApi(
+        getAllMerchantsByAdminApi({
+          limit,
+          page,
+        })
+      ),
       successCallBack: (response) => {
-        setUsers(formatUsers(response));
+        setUsers(response);
       },
     });
   };
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(users)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "users.csv");
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "user_uuid" },
+      { key: "first_name" },
+      { key: "middle_name" },
+      { key: "last_name" },
+      { key: "legal_name" },
+      { key: "legal_type" },
+      { key: "email" },
+      { key: "username" },
+      { key: "user_type" },
+      { key: "verified" },
+      { key: "company_id" },
+
+      // Company fields
+      { key: "company.ownername", label: "company_ownername" },
+      { key: "company.type", label: "company_type" },
+      { key: "company.client_fee", label: "company_client_fee" },
+      { key: "company.fee", label: "company_fee" },
+
+      // Wallet info fields
+      { key: "company.wallet_info.currency", label: "wallet_currency" },
+
+      {
+        key: "company.wallet_info.total_amount",
+        label: "current_balance",
+        format(value, row) {
+          return value
+            ? formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+            : "-";
+        },
       },
-    });
-  };
+      {
+        key: "company.wallet_info.total_deposit",
+        label: "deposit",
+        format(value, row) {
+          return value
+            ? formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+            : "-";
+        },
+      },
+      {
+        key: "company.wallet_info.total_withdraw",
+        label: "withdrawal",
+        format(value, row) {
+          return value
+            ? formatAmount({ amount: value, type: "fiat" })?.fixedRaw
+            : "-";
+        },
+      },
+
+      // User timestamps
+      { key: "created_at" },
+      { key: "updated_at" },
+    ];
+
+    return formatCSVDataByColumnOrder(users?.result, columnOrder);
+  }, [users]);
 
   useEffect(() => {
-    getAllUsersAdmin();
+    getAllUsersAdmin({ limit, page });
   }, []);
 
   return (
@@ -101,18 +209,30 @@ const Users = () => {
       {/* Table Actions Below */}
 
       <div>
-        <CustomTable
+        <CustomTableV2
           loading={isUsersLoading}
           columns={usersList_table_columns}
-          rows={users}
+          rows={users?.result}
+          totalItems={users?.total}
           csv={true}
           tableName="Merchants"
-          initialPageSize={10}
+          initialPageSize={limit}
           rowClickHandler={(row: any) =>
             router.push(`/merchants/details/${row?.id}`)
           }
-          pagination
           columnClassName="max-w-[250px]"
+          csvData={formatCsvData}
+          pagination
+          serverSidePagination
+          onPageChange={(page) => {
+            setPage(page);
+            getAllUsersAdmin({ limit, page });
+          }}
+          onPageSizeChange={(pageSize) => {
+            setLimit(pageSize);
+            setPage(1);
+            getAllUsersAdmin({ limit: pageSize, page: 1 });
+          }}
         />
 
         <ErrorApiText error={isUsersError} />
@@ -122,7 +242,7 @@ const Users = () => {
 };
 
 export default PermissionAccess(
-  Users,
+  Merchants,
   ModulesEnum.merchant,
   AccessLevelEnum.read
 );

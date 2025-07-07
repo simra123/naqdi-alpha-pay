@@ -8,12 +8,13 @@ import { resendEmailApi } from "@/services/auth";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import LoadingApi from "@/components/common/LoadindApi";
 import useFormValidation from "@/hooks/useFormValidation";
-import { ForgotSchema } from "@/models/Forgot";
+import { ForgotSchema } from "@/models/forgot";
 import LoaderButton from "@/components/common/LoaderButton";
 import IconField from "@/components/common/IconField";
-import { Mail } from "@mui/icons-material";
+import { MdEmail } from "react-icons/md";
 
-const page = () => {
+
+const EmailVerificationPage = () => {
   const router = useRouter();
   const email = decodeURIComponent(useSearchParams().get("email") || "");
   const [isResendLoading, isResendError, callResendApi] = useApi();
@@ -98,7 +99,7 @@ const page = () => {
               onChange={handleChange}
               value={values.email}
               error={errors.email}
-              icon={Mail}
+              icon={MdEmail}
               label="Email"
               placeholder="Enter Your Email"
             />
@@ -134,4 +135,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default EmailVerificationPage;

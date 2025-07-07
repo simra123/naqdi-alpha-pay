@@ -2,42 +2,29 @@
 
 import api from "@/config/api";
 
-export const getAllTransactionsApi = ({
-  count,
-  limit,
-}: {
-  count?: number;
-  limit?: number;
-}) => {
-  return () => api.get(`wallet/transaction`, { params: { count, limit } });
+export const getAllTransactionsApi = (
+  data?: {},
+  params?: { limit: number; page: number }
+) => {
+  return () => api.post(`transaction/transaction-list`, data, { params });
 };
 
 export const getTransactionDetailsByUserApi = (data: { id: number }) => {
-  return () => api.post(`auth/get-transaction-by-user`, data);
+  return () => api.get(`transaction/${data.id}/details`);
 };
 
-export const getPaymentTransactionDetailsByUserApi = (data: { id: number }) => {
-  return () => api.get(`v1/client/payment_transaction/${data?.id}`);
-};
-
-export const getWithdrawalTransactionDetailsByUserApi = (data: {
-  transaction_id: number;
-}) => {
-  return () => api.post(`wallet/withdrawtransaction-details`, data);
-};
-
-export const getPaymentTransactionDetailsByAdminApi = (data: {
-  id: number;
-}) => {
-  return () => api.get(`v1/admin/payment_transaction/${data?.id}`);
-};
-
-export const getWithdrawalTransactionDetailsByAdminApi = (data: {
-  transaction_id: number;
-}) => {
-  return () => api.post(`wallet/withdrawtransaction-details`, data);
+export const getTransactionRequestDetailsByUserApi = (data: { id: number }) => {
+  return () => api.get(`transaction/request-details/${data.id}`);
 };
 
 export const getRecentTransactionsApi = () => {
-  return () => api.get(`wallet/recent-transactions`);
+  return () => api.get(`merchant-dashboard/recent-transactions`);
+};
+
+export const getExxhangeRateUSDToCryptoApi = (params: {
+  unit: string;
+  blockchain: string;
+  amount: number;
+}) => {
+  return () => api.get(`transaction/withdrawal/exchange-rate`, { params });
 };

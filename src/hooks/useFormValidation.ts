@@ -72,7 +72,7 @@ const useFormValidation = (
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>,
     callback: () => void,
-    errorCallBack: () => void
+    errorCallBack?: () => void
   ) => {
     event.preventDefault();
     try {
@@ -84,8 +84,8 @@ const useFormValidation = (
       callback();
     } catch (validationErrors) {
       const formattedErrors = {};
-      // console.log(validationErrors);
-      validationErrors.inner.forEach((error) => {
+      // console.log(validationErrors)
+      validationErrors?.inner?.forEach((error) => {
         formattedErrors[error.path] = error.message;
       });
       setErrors(formattedErrors);

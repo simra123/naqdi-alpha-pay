@@ -10,19 +10,11 @@ export const createDepoistAddressApi = (data: {
 };
 
 export const getAllWalletBalancesApi = () => {
-  return () => api.get(`wallet/balance`);
-};
-
-export const getAllAdminWalletBalancesApi = () => {
-  return () => api.get(`wallet/admin/balance`);
-};
-
-export const getAllWalletsListByAdminApi = () => {
-  return () => api.get(`wallet/wallet-list`);
+  return () => api.get(`merchant-dashboard/balance`);
 };
 
 export const getTotalPortfolioValueApi = () => {
-  return () => api.get(`dashboard/total-portfolio-amount`);
+  return () => api.get(`merchant-dashboard/total-portfolio-amount`);
 };
 
 export const getProfitPercentageApi = () => {
@@ -31,11 +23,19 @@ export const getProfitPercentageApi = () => {
 
 export const getPortfolioActivityChartApi = ({
   duration,
-  unit
 }: {
   duration: string;
-  unit: string
 }) => {
   return () =>
-    api.get(`/dashboard/portfolio-activity`, { params: { duration, unit } });
+    api.get(`merchant-dashboard/portfolio-activity`, {
+      params: { duration },
+    });
+};
+
+export const getMerchantSupportedCryptoApi = () => {
+  return () => api.get(`merchant/company-wallet/supported-crypto`);
+};
+
+export const getMerchantFiatBalanceApi = () => {
+  return () => api.get(`merchant/company-wallet/balance`);
 };

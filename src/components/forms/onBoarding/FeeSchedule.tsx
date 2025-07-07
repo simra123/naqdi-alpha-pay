@@ -8,13 +8,12 @@ import { userDetailsApi } from "@/services/user";
 import LoadingApi from "@/components/common/LoadindApi";
 import { useRouter } from "next/navigation";
 import LoaderButton from "@/components/common/LoaderButton";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { updatedOnboardingCookies } from "@/utils/cookies";
 
 const FeeSchedule = () => {
   const router = useRouter();
-  const [user, setUser] = useState(null);
-  const localUser = useLocalStorage("user");
+  const [hasFee, setHasFee] = useState(null);
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
     { initailLoading: true }
   );
@@ -27,40 +26,33 @@ const FeeSchedule = () => {
     await callApiHook({
       apiCall: callUserDetailsApi(userDetailsApi()),
       successCallBack: (response: any) => {
-        setUser(response);
-
-        // if (
-        //   localUser &&
-        //   localUser.userDetails?.fees != response?.userDetails?.fees
-        // ) {
-        //   updatedOnboardingCookies(response?.userDetails);
-        // }
+        setHasFee(response?.company?.fee);
       },
     });
   };
 
   return (
-    <div className="bg-white rounded-small p-12 flex flex-col gap-5 mt-8">
-      <h4 className="text-black-100 text-h3.5 font-semibold">
+    <div className="flex flex-col gap-5 bg-white mt-8 p-8 rounded-small">
+      <h4 className="font-semibold text-black-100 text-h3.5">
         Your Fee Schdeule
       </h4>
 
-      {user?.userDetails?.fees && (
-        <p className="text-button text-black-100">
+      {hasFee && (
+        <p className="text-black-100 text-button">
           You will be paying the following fee for alphaspay.
         </p>
       )}
 
       <div>
-        <div className=" mt-10 mb-2">
-          <h4 className="text-p120 font-semibold text-black-100">Schedule</h4>
+        <div className="mt-10 mb-2">
+          <h4 className="font-semibold text-black-100 text-p120">Schedule</h4>
         </div>
 
         <div className="flex gap-3">
           <LoadingApi loading={isUserDetailsLoading}>
-            {user?.userDetails?.fees ? (
+            {hasFee ? (
               <FeeCard
-                schedule={{ id: 1, value: user?.userDetails?.fees }}
+                schedule={{ id: 1, value: hasFee }}
                 // selected={selectedSchedule}
               />
             ) : (
@@ -74,14 +66,14 @@ const FeeSchedule = () => {
         </div>
       </div>
 
-      {user?.userDetails?.fees && (
-        <p className="text-black-100  mt-5">
+      {hasFee && (
+        <p className="mt-5 text-black-100">
           Your Fee Schedule is mentioned above. For any querires you can contact
           us.
         </p>
       )}
 
-      {user?.userDetails?.fees && (
+      {hasFee && (
         <div className="mt-8 max-w-[360px]">
           <LoaderButton
             content={"Go to Dashboard"}
@@ -104,7 +96,7 @@ export const FeeCard = ({ schedule }) => {
       <div className="text-center">
         <span className="font-semibold text-h4">{schedule?.value} %</span>
 
-        <p className=" mt-[2px]">Per Transaction*</p>
+        <p className="mt-[2px]">Per Transaction*</p>
       </div>
     </div>
   );

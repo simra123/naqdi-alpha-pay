@@ -1,14 +1,9 @@
 "use client";
 import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { capitalize } from "@/utils/dataFormatters";
-import {
-  KeyboardArrowDown,
-  Menu,
-  Notifications,
-  Search,
-} from "@mui/icons-material";
+
 import IconField from "../IconField";
 import {
   LogoutDoorIcon,
@@ -26,9 +21,11 @@ import { useDispatch } from "react-redux";
 import Link from "next/link";
 import RenderRoleBased from "../RenderRoleBased";
 import { Role } from "@/constants/roles";
+import { clearApiCache } from "@/store/slices/apiCache.slice";
+import { USERTYPE } from "@/constants/types";
 
 const Header = ({ navHandler }) => {
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -58,6 +55,7 @@ const Header = ({ navHandler }) => {
     Cookies.remove("token");
     Cookies.remove("user");
     router.replace("/login");
+    dispatch(clearApiCache());
     dispatch(resetSteps({}));
     dispatch(setUser(null));
   };
@@ -81,7 +79,7 @@ const Header = ({ navHandler }) => {
           {/* <div className="icon">
             <Notifications />
           </div> */}
-          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full cursor-pointer avatar">
+          <div className="hidden md:flex items-center gap-2 p-2 pr-3 rounded-full avatar">
             <div>
               <img
                 src="/avatar.png"
@@ -90,11 +88,22 @@ const Header = ({ navHandler }) => {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-medium text-p120 leading-5">
-                {user?.first_name} {user?.last_name}
+              <span className="flex items-center gap-1 font-medium text-p120">
+                <span>
+                  {user?.first_name} {user?.last_name}
+                </span>
+                {user?.role != Role.ADMIN && (
+                  <span className="font-medium text-caption text-custom-caption-gray">
+                    (
+                    {user?.company?.owner?.user_type == USERTYPE.LEGALENTITY
+                      ? user?.company?.owner?.legal_name
+                      : `${user?.company?.owner?.first_name} ${user?.company?.owner?.last_name}`}
+                    )
+                  </span>
+                )}
               </span>
-              <span className="font-medium text-button text-custom-caption-gray">
-                {capitalize(user?.user_type)}
+              <span className="font-medium text-custom-caption-gray text-base leading-4">
+                {capitalize(user?.role == Role.USER ? "Merchant" : user?.role)}
               </span>
             </div>
           </div>
@@ -119,10 +128,10 @@ const Header = ({ navHandler }) => {
               </BorderedIconButton>
             </Link>
           </RenderRoleBased>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <ThemeChangeIcon />
           </BorderedIconButton>
-          <BorderedIconButton>
+          <BorderedIconButton disabled>
             <NotificationIcon />
           </BorderedIconButton>
           <BorderedIconButton onClick={logoutHandler}>

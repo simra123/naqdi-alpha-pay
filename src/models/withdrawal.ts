@@ -13,7 +13,7 @@ import {
 
 let contextTest;
 
-export const getWithdrawalSchema = (maxSourceAmount: number) => {
+export const getWithdrawalSchema = (maxSourceAmount: number, blockchain) => {
   return Yup.object().shape({
     blockchain: Yup.string().required("Blockchain is required"),
     amount: Yup.number()
@@ -21,33 +21,21 @@ export const getWithdrawalSchema = (maxSourceAmount: number) => {
       .min(0.0001)
       .max(
         maxSourceAmount,
-        `Source amount must be equal or less than ${maxSourceAmount}`
+        `Withdrawal amount must be equal or less than ${maxSourceAmount}`
       )
-      .required("Source amount is required"),
+      .required("Withdrawal amount is required"),
     recipient_address: Yup.string()
       .required("Wallet address is required")
       .test("is-valid-crypto-address", function (value) {
-        const parent = this.options.context?.parent || {};
+        if (blockchain) {
+          const isValid = validateCryptoAddress(value, blockchain);
 
-        const blockchain = formattedBlockchainName(parent?.blockchain);
-
-        const isValid = validateCryptoAddress(
-          value,
-          blockchain.standard
-            ? tickerByStandard[blockchain?.standard]
-            : blockchain?.ticker
-        );
-
-        if (!isValid) {
-          return this.createError({
-            message: `Invalid wallet address for the selected blockchain: ${
-              blockchain?.standardBlockchain
-                ? capitalize(blockchain?.standardBlockchain)
-                : blockchain?.name
-            }`,
-          });
+          if (!isValid) {
+            return this.createError({
+              message: `Invalid wallet address for the selected blockchain: ${blockchain}`,
+            });
+          }
         }
-
         return true;
       }),
     notes: Yup.string().notRequired(),
@@ -61,6 +49,5 @@ export const otpSchema = () => {
       .length(6, "Token must be exactly 6 characters long"),
   });
 };
-
 
 export const emptySchema = Yup.object().shape({});

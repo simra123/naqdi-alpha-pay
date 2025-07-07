@@ -1,18 +1,9 @@
 import React, { useCallback, useState } from "react";
 import Link from "next/link";
-import {
-  AccountBalance,
-  Assignment,
-  Key,
-  KeyboardArrowLeft,
-  KeyboardArrowRight,
-  PersonRounded,
-  Wallet,
-} from "@mui/icons-material";
+
 import { usePathname, useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { LuNewspaper } from "react-icons/lu";
+import { getLocalStorageValue } from "@/utils/cookies";
 import {
   DashboardIcon,
   DoubleLeftIcon,
@@ -38,11 +29,11 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { setUser } from "@/store/slices/userSlice";
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
-import { resetSteps, setStep } from "@/store/slices/onboarding.slice";
-import { STEPS } from "@/constants/onboarding";
-import { FaUsers } from "react-icons/fa";
+import { resetSteps } from "@/store/slices/onboarding.slice";
 import { BorderedIconButton } from "../IconButton";
 import RenderRoleBased from "../RenderRoleBased";
+import { MdAccountBalance, MdKey, MdPerson2 } from "react-icons/md";
+import { clearApiCache } from "@/store/slices/apiCache.slice";
 
 interface NavItem {
   name: string;
@@ -91,9 +82,9 @@ const nav_items: NavItem[] = [
   //   roles: [Role.ADMIN],
   // },
   {
-    name: "Payments",
+    name: "Deposits",
     icon: PaymentsIcon,
-    path: "/payments",
+    path: "/deposits",
     roles: [Role.ADMIN, Role.USER],
     module: ModulesEnum.payment,
   },
@@ -115,7 +106,7 @@ const nav_items: NavItem[] = [
     name: "Fee Ledger",
     icon: FeeLedgerIcon,
     path: "/fee-ledger",
-    roles: [Role.ADMIN, Role.USER],
+    roles: [Role.ADMIN],
     module: ModulesEnum.feeLedger,
   },
   {
@@ -139,20 +130,20 @@ const nav_items: NavItem[] = [
     sub_nav: [
       {
         name: "Account",
-        icon: AccountBalance,
+        icon: MdAccountBalance,
         path: "/settings/account",
         roles: [Role.ADMIN, Role.USER],
       },
       {
         name: "Users",
-        icon: PersonRounded,
+        icon: MdPerson2,
         path: "/settings/users",
         roles: [Role.USER, Role.ADMIN],
         module: ModulesEnum.user,
       },
       {
         name: "Integrations",
-        icon: Key,
+        icon: MdKey,
         path: "/settings/integrations",
         roles: [Role.USER],
         module: ModulesEnum.integration,
@@ -170,11 +161,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useDispatch();
-  const userCookie = useLocalStorage("user");
+  const userCookie = getLocalStorageValue("user");
+
+  const reduxUser = useSelector((state: any) => state.user.data);
+
   const user =
-    userCookie && userCookie?.role == Role.ADMIN
-      ? userCookie
-      : useSelector((state: any) => state.user.data);
+    userCookie && userCookie?.role === Role.ADMIN ? userCookie : reduxUser;
 
   const [openSubNav, setOpenSubNav] = useState(""); // State to manage open sub-navigation
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -185,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     if (
       user?.role == Role.ADMIN ||
       (user?.parentUser && user?.userDetails?.mfa) ||
-      (!user?.parentUser && user?.userDetails && user?.userDetails?.fees)
+      (!user?.parentUser && user?.company && user?.company?.fee)
     ) {
       return nav_items;
     } else {
@@ -230,6 +222,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     Cookies.remove("token");
     Cookies.remove("user");
     router.replace("/login");
+    dispatch(clearApiCache());
     dispatch(resetSteps({}));
     dispatch(setUser(null));
   };

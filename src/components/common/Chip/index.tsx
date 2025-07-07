@@ -13,7 +13,7 @@ const Chip = ({ status }: Props) => {
     statusColor = "text-purple-100";
     statusBg = "bg-purple-10";
   }
-  if (capStatus == "pending") {
+  if (capStatus == "pending" || capStatus == "pending approval") {
     statusColor = "text-yellow-light";
     statusBg = "bg-yellow-chip-light";
   }
@@ -21,6 +21,7 @@ const Chip = ({ status }: Props) => {
     capStatus == "cancel" ||
     capStatus == "cancelled" ||
     capStatus == "withdrawn" ||
+    capStatus == "rejected" ||
     capStatus == "reject"
   ) {
     statusColor = "text-red-chip";
@@ -31,6 +32,7 @@ const Chip = ({ status }: Props) => {
     capStatus == "verified" ||
     capStatus == "confirm" ||
     capStatus == "approved" ||
+    capStatus == "partial completed" ||
     capStatus == "accepted" ||
     capStatus == "200 ok" ||
     capStatus == "resolved"
@@ -47,6 +49,7 @@ const Chip = ({ status }: Props) => {
   if (
     capStatus == "incomplete" ||
     capStatus == "in-progress" ||
+    capStatus == "partial approved" ||
     capStatus == "unverified" ||
     capStatus == "unapproved"
   ) {
@@ -56,7 +59,7 @@ const Chip = ({ status }: Props) => {
 
   return (
     <p
-      className={`${statusColor} ${statusBg} p-2 min-w-20 max-w-24 text-center text-[14px] font-semibold px-3 rounded-medium`}
+      className={`${statusColor} ${statusBg} p-2 min-w-20 max-w-max text-center text-[14px] font-semibold px-3 rounded-medium`}
     >
       {capitalize(status)}
     </p>

@@ -64,9 +64,10 @@ export const availableWallets_table_columns: TableColumns = [
       });
     },
   },
-  { field: "currency", headerName: "Currency" },
   { field: "blockchain", headerName: "Blockchain" },
-  { field: "amount", headerName: "Available Balance" },
+  { field: "currency", headerName: "Currency" },
+  { field: "amount", headerName: "Portal Balance" },
+  { field: "amount", headerName: "Vaultody Balance" },
 ];
 
 export const webhooks_table_columns = [

@@ -3,52 +3,24 @@
 import api from "@/config/api";
 
 export const createPaymentDepositApi = (data: {
-  requested_currency: string;
-  requested_amount: string;
-  payment_currency: string;
-  payment_currency_standard: string;
-  passthrough: string;
-  notes?: string;
-  customer_email: string;
-  customer_name: string;
-  customer_phone_number?: string;
-  email_notification?: boolean;
+  unit: string;
+  standard?: string;
+  amount: number;
+  customer_email: "muhammad.u@gateso.com";
+  customer_name: "Usman";
+  send_email?: boolean;
+  customer_phone_number: string;
 }) => {
-  return () => api.post(`v1/create-manual-payment`, data);
+  return () => api.post(`transaction/deposit`, data);
 };
 
 export const getAllPaymentsApi = () => {
   return () => api.get(`v1/client/payments`);
 };
 
-export const getClientPaymentsListApi = (data?: {}, params?: { limit: number, page: number }) => {
-  return () => api.post(`v1/payment-list`, data, { params });
-};
-
-export const getAllPaymentsByAdminApi = () => {
-  return () => api.get(`v1/admin/payments-by-admin`);
-};
-
-export const getPaymentDetailsApi = (id: number) => {
-  return () => api.get(`v1/client/payments/${id}`);
-};
-
-export const getPaymentDetailsByAdminApi = (id: number) => {
-  return () => api.get(`v1/admin/payments/${id}`);
-};
-
-export const addFeeStaticWalletAdminApi = (data: {
-  wallet_address: string;
-}) => {
-  return () => api.post(`wallet/admin/add/network-fees`, data);
-};
-
-export const addFeeVirtualWalletAdminApi = (data: {
-  wallet_Address: string;
-  requested_currency: string;
-  requested_amount: string;
-  payment_currency?: string;
-  passthrough: string;
-}) => {
-  return () => api.post(`v1/admin/add/network-fees`, data);
+export const getClientPaymentsListApi = (
+  data?: {},
+  params?: { limit: number; page: number }
+) => {
+  return () => api.post(`transaction/payment-list`, data, { params });
 };

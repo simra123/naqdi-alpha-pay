@@ -1,19 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { availableWallets_table_columns } from "../../columns";
 import { Role, Withdrawal_Type } from "@/constants/roles";
-import useLocalStorage from "@/hooks/useLocalStorage";
-import { ContactMailOutlined } from "@mui/icons-material";
+import { getLocalStorageValue } from "@/utils/cookies";
 import LoaderButton from "@/components/common/LoaderButton";
 import ConfirmationModal from "@/components/Modals/ConfirmationModal";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook } from "@/utils/apifuncs";
 import {
-  getWithdrawalDetilsApi,
   getWithdrawalWalletsApi,
   withdrawalApproveAdminApi,
-  withdrawalRejectAdminApi,
-} from "@/services/withdrawal";
+} from "@/services/admin/withdrawal";
 import LoadingApi from "@/components/common/LoadindApi";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import { useDispatch } from "react-redux";
@@ -34,82 +30,22 @@ import ReasonModal from "@/components/Modals/WithdrawReasonModal";
 import Chip from "@/components/common/Chip";
 import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
 import { showExplorerDetailsByChain } from "@/utils/block-explorers";
-import { roundToPrecision } from "@/utils/math";
 import { FiRefreshCw } from "react-icons/fi";
-import { getPermission, hasMinAccess } from "@/utils/cookies";
-import { Tooltip } from "react-tooltip";
+import { hasMinAccess } from "@/utils/cookies";
 import useFirstRenderEffect from "@/hooks/useFirstRenderEffect";
 import ExternalWithdrawalModal from "@/components/Modals/ExternalWithdrawalModal";
-import { blockchain_units } from "@/constants/blockchains";
-
-const transactionsList_table_columns: TableColumns = [
-  {
-    field: "id",
-    headerName: "ID",
-    dataValidator(value, row: { withdraw_transaction_uuid: string }) {
-      return row?.withdraw_transaction_uuid;
-    },
-  },
-  {
-    field: "createdAt",
-    headerName: "Date",
-    dataValidator(value) {
-      return moment(value).format("DD-MM-YYYY : hh:mm A");
-    },
-  },
-  {
-    field: "updatedAt",
-    headerName: "Updated Date",
-    dataValidator(value) {
-      return moment(value).format("DD-MM-YYYY : hh:mm A");
-    },
-  },
-  { field: "blockchain", headerName: "Blockchain" },
-  { field: "unit", headerName: "Currency" },
-  { field: "amount", headerName: "Amount" },
-  {
-    field: "sender_address",
-    headerName: "Wallet Address",
-    copyable: true,
-    link(row: { blockchain: string; sender_address: string }) {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
-        type: "address",
-        address: row?.sender_address,
-      });
-    },
-  },
-  {
-    field: "transaction_hash",
-    headerName: "Transaction Hash",
-    copyable: true,
-    link(row: { blockchain: string; transaction_hash: string }) {
-      return showExplorerDetailsByChain({
-        env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-        blockchain: row?.blockchain,
-        type: "hash",
-        hash: row?.transaction_hash,
-      });
-    },
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    dataValidator(value) {
-      return <Chip status={value} />;
-    },
-  },
-];
+import { getTransactionRequestDetailsByUserApi } from "@/services/transaction";
+import { getTransactionRequestDetailsByAdminApi } from "@/services/admin/transaction";
+import { formatDateToUserTimeZone } from "@/utils/dates";
+import AmountFormat from "@/components/common/AmountFormat";
 
 const WithdrawalDetails = ({ params }) => {
-  let isMounted = true;
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const dispatch = useDispatch();
   const router = useRouter();
   const [currentWalletsPage, setCurrentWalletsPage] = useState(1);
   const [totalWallets, setTotalWallets] = useState(0);
-  const withdraw_id = +params?.id;
+  const withdraw_id = params?.id;
 
   const [confirmModal, setConfirmModal] = useState(false);
   const [selectedWallets, setSelectedWallets] = useState([]);
@@ -141,13 +77,11 @@ const WithdrawalDetails = ({ params }) => {
   ] = useApi();
 
   const handleApprove = async () => {
-    const addresses = selectedWallets?.map(
-      (item) => item?.wallet_address || item?.address
-    );
+    const wallets = selectedWallets?.map((item) => item?.id);
 
     const internalData = {
       withdraw_id: withdraw_id,
-      addresses,
+      wallets,
     };
 
     await callApiHook({
@@ -173,7 +107,9 @@ const WithdrawalDetails = ({ params }) => {
   const getWithdrawalDetails = async () => {
     await callApiHook({
       apiCall: callWithdrawalDetailsApi(
-        getWithdrawalDetilsApi({ withdraw_id })
+        user?.role == Role.USER
+          ? getTransactionRequestDetailsByUserApi({ id: withdraw_id })
+          : getTransactionRequestDetailsByAdminApi({ id: withdraw_id })
       ),
       successCallBack: (response: any) => {
         setwithdrawalDetails(response);
@@ -220,6 +156,188 @@ const WithdrawalDetails = ({ params }) => {
     setConfirmModal(!confirmModal);
   };
 
+  const transactionsList_table_columns: TableColumns = [
+    { field: "id", headerName: "ID" },
+    {
+      field: "created_at",
+      headerName: "Date Received",
+      dataValidator: (value) => {
+        let [day, time] = formatDateToUserTimeZone(value);
+        return (
+          <div className="flex flex-col gap-1">
+            <span className="text-caption">{day}</span>
+            <span className="text-custom-title-gray text-subtitle">{time}</span>
+          </div>
+        );
+      },
+    },
+    {
+      field: "sender_address",
+      headerName: "Sender Address",
+      copyable: true,
+      link(row: any) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: withdrawalDetails?.contract_address?.blockchain_name,
+          type: "address",
+          address: row?.sender_address,
+        });
+      },
+    },
+    {
+      field: "receiver_address",
+      headerName: "Receive Address",
+      copyable: true,
+      link(row: any) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: withdrawalDetails?.contract_address?.blockchain_name,
+          type: "address",
+          address: row?.receiver_address,
+        });
+      },
+    },
+    {
+      field: "hash",
+      headerName: "Transaction Hash",
+      copyable: true,
+      link(row: any) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: withdrawalDetails?.contract_address?.blockchain_name,
+          type: "hash",
+          hash: row?.hash,
+        });
+      },
+    },
+    {
+      field: "paid_amount",
+      headerName: "Received Amount",
+      dataValidator(value) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "net_amount",
+      headerName: "Net Amount",
+      dataValidator(value) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
+      },
+    },
+
+    {
+      field: "fee",
+      headerName: "Alphaspay Fee",
+      dataValidator(value) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={withdrawalDetails?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "fiat_paid_amount",
+      headerName: "Fiat Paid",
+      dataValidator(value) {
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "fiat_net_amount",
+      headerName: "Fiat Net Amount",
+      dataValidator(value) {
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.fiat_currency}
+          />
+        );
+      },
+    },
+
+    {
+      field: "fiat_fee",
+      headerName: "Fiat Fee",
+      dataValidator(value) {
+        return (
+          <AmountFormat
+            type="fiat"
+            amount={value}
+            currency={withdrawalDetails?.fiat_currency}
+          />
+        );
+      },
+    },
+
+    {
+      field: "status",
+      headerName: "Status",
+      dataValidator: (value) => {
+        return <Chip status={value} />;
+      },
+    },
+  ];
+
+  const availableWallets_table_columns: TableColumns = [
+    {
+      field: "wallet_uuid",
+      headerName: "ID",
+      dataValidator(value, row: { wallet_uuid: string; id: number }) {
+        return row?.wallet_uuid || row?.id;
+      },
+    },
+
+    {
+      field: "address",
+      headerName: "Wallet Address",
+      copyable: true,
+      link(row: { address: string; blockchain: string }) {
+        return showExplorerDetailsByChain({
+          env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
+          blockchain: row?.blockchain,
+          type: "address",
+          address: row?.address,
+        });
+      },
+    },
+    { field: "currency", headerName: "Currency" },
+    { field: "blockchain", headerName: "Blockchain" },
+    {
+      field: "amount",
+      headerName: "Available Balance",
+      dataValidator(value, row) {
+        return <AmountFormat amount={value} type="crypto" />;
+      },
+    },
+    // {
+    //   field: "vaultodyBalanceInfo.availableAmount", headerName: "Vaultody Balance", dataValidator(value, row) {
+    //     return <AmountFormat amount={value} type="crypto" />
+    //   },
+    // },
+  ];
+
   return (
     <LoadingApi loading={isWithdrawalDetailsLoading}>
       <ExternalWithdrawalModal
@@ -227,9 +345,7 @@ const WithdrawalDetails = ({ params }) => {
         toggleHandler={() => setWithdrawalType(Withdrawal_Type.INTERNAL)}
         refreshHandler={getWithdrawalDetails}
         withdrawId={withdraw_id}
-        blockchain={
-          blockchain_units[withdrawalDetails?.blockchain?.toLowerCase()]
-        }
+        blockchain={withdrawalDetails?.contract_address?.blockchain}
       />
       <ReasonModal
         isOpen={isRejectOpen}
@@ -255,8 +371,11 @@ const WithdrawalDetails = ({ params }) => {
           <h5 className="font-semibold text-h5 text-purple-500">General</h5>
         </div>
         <div className="res-2-grid py-6">
-          <Details label="ID" value={withdrawalDetails?.withdrawal_uuid} />
-          <Details label="Blockchain" value={withdrawalDetails?.blockchain} />
+          <Details label="ID" value={withdrawalDetails?.id} />
+          <Details
+            label="Blockchain"
+            value={withdrawalDetails?.contract_address?.blockchain_name}
+          />
 
           <Details
             label={`${withdrawalDetails?.unit} ${
@@ -268,7 +387,7 @@ const WithdrawalDetails = ({ params }) => {
             copyable
             link={showExplorerDetailsByChain({
               env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-              blockchain: withdrawalDetails?.blockchain,
+              blockchain: withdrawalDetails?.contract_address?.blockchain_name,
               type: "address",
               address: withdrawalDetails?.recipient_address,
             })}
@@ -349,22 +468,105 @@ const WithdrawalDetails = ({ params }) => {
 
         <div className="res-2-grid py-6">
           <Details
-            label="Requested Amount"
-            value={`${withdrawalDetails?.total_requested_amount} ${withdrawalDetails?.unit}`}
+            label="Fiat Withdrawal Amount"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_initial_amount}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
           />
           <Details
-            label="Fee"
-            value={`${roundToPrecision(
-              +withdrawalDetails?.alphaspay_fee,
-              10
-            )} ${withdrawalDetails?.unit}`}
+            label="Crypto Withdrawal Amount "
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.initial_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
           <Details
-            label="Net Amount"
-            value={`${roundToPrecision(
-              withdrawalDetails?.requested_amount,
-              10
-            )} ${withdrawalDetails?.unit}`}
+            label="Fiat Amount Recieved"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_paid_amount || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
+          <Details
+            label="Crypto Amount Recieved"
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.paid_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
+          />
+          <Details
+            label="Fiat Initial Fee"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_initial_fee || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
+          <Details
+            label="Crypto Initial Fee"
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.initial_fee}
+                currency={withdrawalDetails?.unit}
+              />
+            }
+          />
+          <Details
+            label="Fiat Paid Fee"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_paid_fee || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
+          <Details
+            label="Crypto Paid Fee"
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.paid_fee}
+                currency={withdrawalDetails?.unit}
+              />
+            }
+          />
+          <Details
+            label="Fiat Net Amount Recieved"
+            value={
+              <AmountFormat
+                type="fiat"
+                amount={withdrawalDetails.fiat_net_amount || 0}
+                currency={withdrawalDetails.fiat_currency}
+              />
+            }
+          />
+
+          <Details
+            label="Crypto Net Amount Recieved"
+            value={
+              <AmountFormat
+                type="crypto"
+                amount={withdrawalDetails?.net_amount}
+                currency={withdrawalDetails?.unit}
+              />
+            }
           />
         </div>
 
@@ -398,50 +600,13 @@ const WithdrawalDetails = ({ params }) => {
       </div>
 
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
-        {/* <div className="flex flex-col bg-white shadow-sm mt-8 py-10 rounded-medium">
-          <h3 className="font-semibold text-blackGrey-100 text-h3.5">
-            User Details
-          </h3>
-
-          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
-            <FolderIcon />
-            <h5 className="font-semibold text-h5 text-purple-500">General</h5>
-          </div>
-          <div className="res-2-grid py-6">
-            <Details
-              label="First Name"
-              value={withdrawalDetails?.user?.first_name}
-            />
-
-            <Details
-              label="Last Name"
-              value={withdrawalDetails?.user?.last_name}
-            />
-          </div>
-
-          <div className="flex items-center gap-2 mt-8 py-4 border-b border-light-gray">
-            <ContactMailOutlined className="text-purple-500" />
-            <h5 className="font-semibold text-h5 text-purple-500">Contact</h5>
-          </div>
-          <div className="res-2-grid py-6">
-            <Details
-              label="First Name"
-              value={withdrawalDetails?.user?.email}
-            />
-
-            <Details
-              label="Last Name"
-              value={withdrawalDetails?.user?.userDetails?.phone_number}
-            />
-          </div>
-        </div> */}
         <div className="mt-8"></div>
 
-        {withdrawalDetails?.status == "pending" &&
+        {withdrawalDetails?.status == "Pending Approval" &&
           hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.full) && (
             <>
               {/* <LoadingApi loading={isWithdrawalWalletsLoading}> */}
-              <div className="flex flex-col bg-white shadow-sm p-10 rounded-medium">
+              <div className="flex flex-col rounded-medium">
                 <h3 className="font-semibold text-blackGrey-100 text-h3.5">
                   Withdraw
                 </h3>
@@ -533,26 +698,25 @@ const WithdrawalDetails = ({ params }) => {
           )}
       </RenderRoleBased>
 
-      {withdrawalDetails?.status == "confirm" && (
-        <div className="mt-8">
-          <CustomTable
-            columns={transactionsList_table_columns}
-            rows={withdrawalDetails?.withdrawalTransactions?.map((item) => {
-              return { ...item, blockchain: withdrawalDetails?.blockchain };
-            })}
-            actions={
-              <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
-                Related Transactions
-              </h3>
-            }
-            rowClickHandler={(row: any) =>
-              hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
-              router.push(`/transactions/details/${row?.id}?type=Withdrawal`)
-            }
-            columnClassName="max-w-[200px]"
-          />
-        </div>
-      )}
+      {withdrawalDetails?.transactions &&
+        withdrawalDetails?.transactions?.length > 0 && (
+          <div className="mt-8">
+            <CustomTable
+              columns={transactionsList_table_columns}
+              rows={withdrawalDetails?.transactions}
+              actions={
+                <h3 className="mb-8 font-semibold text-blackGrey-100 text-h3.5">
+                  Related Transactions
+                </h3>
+              }
+              rowClickHandler={(row: any) =>
+                hasMinAccess(ModulesEnum.transaction, AccessLevelEnum.read) &&
+                router.push(`/transactions/details/${row?.id}`)
+              }
+              columnClassName="max-w-[250px]"
+            />
+          </div>
+        )}
     </LoadingApi>
   );
 };

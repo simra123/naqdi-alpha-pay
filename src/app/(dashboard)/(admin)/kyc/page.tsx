@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
@@ -15,9 +15,10 @@ import Chip from "@/components/common/Chip";
 import CustomTable from "@/components/common/CustomTable";
 import { generateCSVApi } from "@/services/common";
 import PermissionAccess from "@/middleware/PermissionAccess";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { getPermission } from "@/utils/cookies";
 import { formatDateToUserTimeZone } from "@/utils/dates";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
 
 const columns: TableColumns = [
   {
@@ -25,7 +26,7 @@ const columns: TableColumns = [
     headerName: "ID",
   },
   {
-    field: "createdAt",
+    field: "user.created_at",
     headerName: "Created At",
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
@@ -37,26 +38,31 @@ const columns: TableColumns = [
       );
     },
   },
-  { field: "firstName", headerName: "First name" },
-  { field: "lastName", headerName: "Last name" },
-  { field: "email", headerName: "Email" },
-  { field: "phone", headerName: "Phone" },
+  { field: "user.first_name", headerName: "First name" },
+  { field: "user.last_name", headerName: "Last name" },
+  { field: "user.email", headerName: "Email" },
+  { field: "phone_number", headerName: "Phone" },
   { field: "country", headerName: "Country" },
-  { field: "userType", headerName: "User Type" },
-  { field: "fees", headerName: "Fee" },
+  { field: "user.user_type", headerName: "User Type" },
   {
-    field: "kycStatus",
+    field: "user.company.fee",
+    headerName: "Fee",
+    dataValidator(value, row) {
+      return value ? `${value} %` : "_";
+    },
+  },
+  {
+    field: "kyc_status",
     headerName: "Status",
     dataValidator(value) {
-      const status = value ? "Approved" : "Unapproved";
-      return <Chip status={status} />;
+      return <Chip status={value} />;
     },
   },
 ];
 
 const KYCUsersPage = () => {
   const router = useRouter();
-  const currentUser = useLocalStorage("user");
+  const currentUser = getLocalStorageValue("user");
   const [usersList, setUsersList] = useState([]);
   const [isUsersListLoading, isUsersListError, callUsersListApi] = useApi({
     initailLoading: true,
@@ -67,35 +73,37 @@ const KYCUsersPage = () => {
     await callApiHook({
       apiCall: callUsersListApi(getKYCUsersListApi({ status: "" })),
       successCallBack: (response) => {
-        const filteredData = response?.map((data) => {
-          return {
-            id: data?.id,
-            user_details_uuid: data?.user_details_uuid,
-            createdAt: data?.user?.created_at,
-            userId: data?.user?.id,
-            firstName: data?.user?.first_name,
-            lastName: data?.user?.last_name,
-            email: data?.user?.email,
-            phone: data?.phone_number,
-            country: data?.country,
-            kycStatus: data?.kyc_approved,
-            fees: data?.fees ? `${data?.fees} %` : "_",
-            userType: data?.user?.user_type,
-          };
-        });
-        setUsersList(filteredData);
+        setUsersList(response);
       },
     });
   };
 
-  const ExportCSVHandler = async () => {
-    await callApiHook({
-      apiCall: callCSVApi(generateCSVApi(usersList)),
-      successCallBack: (response: any) => {
-        downloadCSV(response, "kyc-requests.csv");
-      },
-    });
-  };
+  const formatCsvData = useMemo(() => {
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "user_details_uuid" },
+      { key: "country" },
+      { key: "state" },
+      { key: "city" },
+      { key: "postal_code" },
+      { key: "phone_number" },
+      { key: "mfa" },
+      { key: "address_line_1" },
+      { key: "address_line_2" },
+      { key: "file_type" },
+      { key: "front_image" },
+      { key: "back_image" },
+      { key: "kyc_status" },
+      { key: "kyc_approved" },
+      { key: "reason" },
+      { key: "fees" },
+      { key: "merchant_fees" },
+      { key: "client_fees" },
+      { key: "user" },
+    ];
+
+    return formatCSVDataByColumnOrder(usersList, columnOrder);
+  }, [usersList]);
 
   useEffect(() => {
     getUsersList();
@@ -121,12 +129,13 @@ const KYCUsersPage = () => {
               getPermission(ModulesEnum.kyc)?.access_level ==
               AccessLevelEnum?.full
             ) {
-              router.push(`/kyc/${row?.userId}`);
+              router.push(`/kyc/${row?.user?.id}`);
             }
           }}
           pagination
           columnClassName="max-w-[250px]"
           loading={isUsersListLoading}
+          csvData={formatCsvData}
         />
 
         <ErrorApiText error={isUsersListError} />

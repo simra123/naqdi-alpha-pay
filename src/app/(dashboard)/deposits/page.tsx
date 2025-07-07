@@ -4,11 +4,9 @@ import { useRouter } from "next/navigation";
 import { useApi } from "@/hooks/useApi";
 import { Role } from "@/constants/roles";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
-import {
-  getAllPaymentsByAdminApi,
-  getClientPaymentsListApi,
-} from "@/services/payments";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getAllPaymentsByAdminApi } from "@/services/admin/payments";
+import { getClientPaymentsListApi } from "@/services/payments";
+import { getLocalStorageValue } from "@/utils/cookies";
 import ErrorApiText from "@/components/common/ErrorApiText";
 import moment from "moment";
 import momentTZ from "moment-timezone";
@@ -26,8 +24,12 @@ import { formatDateToUserTimeZone } from "@/utils/dates";
 import LoaderButton from "@/components/common/LoaderButton";
 import DepositModal from "@/components/Modals/DepoistModal";
 import { hasMinAccess } from "@/utils/cookies";
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import CustomTableV2 from "@/components/common/CustomTableV2";
+import AmountFormat from "@/components/common/AmountFormat";
+import { applyColumnEnhancements } from "@/components/common/AdvancedTable/components/fitlers/ColumnEnhancer";
 
-const unpaidStatuses = ["Pending", "Cancel", "New"];
+const unpaidStatuses = ["Pending", "Cancelled", "New"];
 
 interface PaymentAPi {
   pageValue?: number;
@@ -38,13 +40,12 @@ interface PaymentAPi {
 
 const paymentsList_table_columns: TableColumns = [
   {
-    field: "payment_uuid",
+    field: "id",
     headerName: "ID",
   },
   {
-    field: "createdAt",
+    field: "created_at",
     headerName: "Created At",
-
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -56,9 +57,8 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "updatedAt",
+    field: "updated_at",
     headerName: "Updated At",
-
     dataValidator: (value) => {
       let [day, time] = formatDateToUserTimeZone(value);
       return (
@@ -70,33 +70,33 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "client.id",
+    field: "user.id",
     headerName: "Merchant ID",
     target: "_self",
     link: (row: any) => {
       if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
-        return `/merchants/details/${row?.client?.id}`;
+        return `/merchants/details/${row?.user?.id}`;
       }
     },
   },
   {
-    field: "client.first_name",
+    field: "user.first_name",
     headerName: "Merchant First Name",
   },
   {
-    field: "client.last_name",
+    field: "user.last_name",
     headerName: "Merchant Last Name",
   },
   {
-    field: "client.email",
+    field: "user.email",
     headerName: "Merchant Email",
   },
   {
-    field: "client.username",
+    field: "user.username",
     headerName: "Merchant Username",
   },
   {
-    field: "client.user_type",
+    field: "user.user_type",
     headerName: "Merchant Type",
   },
 
@@ -105,8 +105,8 @@ const paymentsList_table_columns: TableColumns = [
     headerName: "Blockchain",
   },
   {
-    field: "payment_currency",
-    headerName: "Currency",
+    field: "unit",
+    headerName: "Unit",
   },
 
   {
@@ -123,36 +123,85 @@ const paymentsList_table_columns: TableColumns = [
     },
   },
   {
-    field: "requestedPaymentAmount",
-    headerName: "Requested Payment Amount",
-    dataValidator(value, row: any) {
-      return `${row?.requested_amount} ${row?.requested_currency}`;
-    },
-  },
-  {
-    field: "amountToPay",
-    headerName: "Amount to Pay",
-    dataValidator(value, row: any) {
-      return `${roundToPrecision(row?.payment_currency_amount, 6)} ${
-        row?.payment_currency
-      }`;
-    },
-  },
-  {
-    field: "amountPaid",
-    headerName: "Amount Paid",
+    field: "fiat_initial_amount",
+    headerName: "Requested Fiat Payment Amount",
     dataValidator(value, row: any) {
       return (
-        roundToPrecision(
-          row?.paymentTransaction?.reduce((acc, transaction) => {
-            return acc + parseFloat(transaction.transaction_amount);
-          }, 0),
-          6
-        ) +
-        " " +
-        row?.payment_currency
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
       );
     },
+  },
+  {
+    field: "initial_fee",
+    headerName: "Alphaspay Fee",
+    dataValidator(value: any, row: any) {
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
+    },
+  },
+  {
+    field: "fiat_initial_fee",
+    headerName: "Fiat Alphaspay Fee",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
+    },
+  },
+  {
+    field: "initial_amount",
+    headerName: "Amount to Pay",
+    dataValidator(value: any, row: any) {
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
+    },
+  },
+  {
+    field: "fiat_initial_amount",
+    headerName: "Fiat Amount to Pay",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
+    },
+  },
+  {
+    field: "paid_amount",
+    headerName: "Amount Paid",
+    dataValidator(value: any, row: any) {
+      return <AmountFormat type="crypto" amount={value} currency={row?.unit} />;
+    },
+  },
+  {
+    field: "fiat_paid_amount",
+    headerName: "Fiat Amount Paid",
+    dataValidator(value, row: any) {
+      return (
+        <AmountFormat
+          amount={value}
+          type="fiat"
+          currency={row?.fiat_currency}
+        />
+      );
+    },
+  },
+  {
+    field: "request_via",
+    headerName: "Request Via",
+  },
+  {
+    field: "cid",
+    headerName: "Client Id",
   },
   {
     field: "paid",
@@ -166,19 +215,18 @@ const paymentsList_table_columns: TableColumns = [
   {
     field: "status",
     headerName: "Status",
-
     dataValidator: (value) => {
       return <Chip status={value} />;
     },
   },
 ];
 
-const Payments = () => {
+const Deposits = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
-  const [paymentsList, setPaymentsList] = useState<ListApiResponse | any>(
-    user?.role == Role.USER ? null : []
-  );
+  const user = getLocalStorageValue("user");
+  const [paymentsList, setPaymentsList] = useState<ListApiResponse | any>({
+    result: [],
+  });
   const [columns, setColumns] = useState([]);
   const [listConfig, setListConfig] = useState(null);
 
@@ -200,68 +248,19 @@ const Payments = () => {
             { sort, filters },
             { limit: limitValue, page: pageValue }
           )
-        : getAllPaymentsByAdminApi();
+        : getAllPaymentsByAdminApi({
+            limit: limitValue,
+            page: pageValue,
+            all: true,
+          });
     };
 
     await callApiHook({
       apiCall: callPaymentApi(paymentCall()),
       successCallBack: (response: any) => {
         if (user?.role == Role.USER) {
-          const modifiedColumns = response?.listConfig.views[0].columns.map(
-            (column) => {
-              if (column.listColumnsMeta.name === "wallet.address") {
-                return {
-                  ...column,
-                  copyable: true,
-                  link: (row: {
-                    wallet: { blockchain: string; address: string };
-                  }) => {
-                    return showExplorerDetailsByChain({
-                      env: process?.env?.NEXT_PUBLIC_ENVIRONMENT,
-                      blockchain: row?.wallet?.blockchain,
-                      type: "address",
-                      address: row?.wallet.address,
-                    });
-                  },
-                };
-              }
-
-              if (
-                ["created_at", "updated_at"].includes(
-                  column.listColumnsMeta.name
-                )
-              ) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    const currentTimeZone = momentTZ.tz.guess();
-
-                    let date: string | string[] = momentTZ(value)
-                      .tz(currentTimeZone)
-                      .format("DD-MM-YYYY.hh:mm A");
-
-                    let [day, time] = date.split(".");
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-caption">{day}</span>
-                        <span className="text-custom-title-gray text-subtitle">
-                          {time}
-                        </span>
-                      </div>
-                    );
-                  },
-                };
-              }
-
-              if (column.listColumnsMeta.name === "status") {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => <Chip status={value} />,
-                };
-              }
-
-              return column;
-            }
+          const modifiedColumns = applyColumnEnhancements(
+            response?.listConfig.views[0].columns
           );
 
           response.listConfig.views[0].columns = modifiedColumns;
@@ -292,18 +291,54 @@ const Payments = () => {
   }, []);
 
   const formatCsvData = useMemo(() => {
-    const rows = user?.role == Role.ADMIN ? paymentsList : paymentsList?.result;
-    const formattedData = rows?.map(
-      ({ wallet, paymentTransaction, client, ...rest }) => ({
-        ...rest,
-        wallet: wallet?.address ?? "",
-        alphaspay_fees: paymentTransaction.reduce((sum, transaction) => {
-          return +sum + (+transaction.alphaspay_fees || 0);
-        }, 0),
-      })
-    );
+    const columnOrder: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "type" },
+      { key: "status" },
+      { key: "notes" },
+      { key: "rejection_reason" },
+      { key: "initial_amount" },
+      { key: "paid_amount" },
+      { key: "net_amount" },
+      { key: "net_client_amount" },
+      { key: "initial_fee" },
+      { key: "paid_fee" },
+      { key: "initial_client_fee" },
+      { key: "paid_client_fee" },
+      { key: "initial_exchange_rate" },
+      { key: "paid_exchange_rate" },
+      { key: "client_fee_value" },
+      { key: "fee_value" },
+      { key: "unit" },
+      { key: "standard" },
+      { key: "fee_type" },
+      { key: "client_fee_type" },
+      { key: "fiat_initial_amount" },
+      { key: "fiat_paid_amount" },
+      { key: "fiat_net_amount" },
+      { key: "fiat_net_client_amount" },
+      { key: "fiat_initial_client_fee" },
+      { key: "fiat_paid_client_fee" },
+      { key: "fiat_initial_fee" },
+      { key: "fiat_paid_fee" },
+      { key: "customer_ref" },
+      { key: "recipient_address" },
+      { key: "customer_id" },
+      { key: "customer_name" },
+      { key: "customer_email" },
+      { key: "customer_phone_number" },
+      { key: "fiat_currency" },
+      { key: "created_at" },
+      { key: "updated_at" },
+      { key: "transactions" },
+      { key: "wallet" },
+      { key: "contract_address" },
+    ];
+    if (user?.role == Role.ADMIN) {
+      columnOrder.push({ key: "company" }, { key: "user" });
+    }
 
-    return formattedData;
+    return formatCSVDataByColumnOrder(paymentsList?.result, columnOrder);
   }, [paymentsList]);
 
   return (
@@ -316,7 +351,7 @@ const Payments = () => {
       />
       <div className="flex justify-between items-center">
         <h3 className="hidden md:block mb-8 font-semibold text-blackGrey-100 text-h3">
-          Payments
+          Deposits
         </h3>
         <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
           {PermissionAccess(
@@ -324,7 +359,7 @@ const Payments = () => {
             ModulesEnum.payment,
             AccessLevelEnum.full
           )({
-            content: "New Payment",
+            content: "New Deposit",
             className: "px-16",
             variant: "contained",
             onClick: toggelPaymentModal,
@@ -335,14 +370,14 @@ const Payments = () => {
       {/* Table Actions Below */}
       <RenderRoleBased allowedRoles={[Role.ADMIN]} user={user}>
         <div>
-          <CustomTable
+          <CustomTableV2
             columns={paymentsList_table_columns}
-            rows={paymentsList}
+            rows={paymentsList?.result}
             csv={true}
-            tableName="Payments"
+            tableName="deposits"
             initialPageSize={10}
             rowClickHandler={(row: any) =>
-              router.push(`payments/details/${row?.id}`)
+              router.push(`/deposits/details/${row?.id}`)
             }
             pagination
             columnClassName="max-w-[250px]"
@@ -361,15 +396,15 @@ const Payments = () => {
             listConfig={listConfig}
             setListConfig={setListConfig}
             onRowClick={(row) => {
-              router.push(`payments/details/${row?.id}`);
+              router.push(`/deposits/details/${row?.id}`);
             }}
             selectable={false}
             pagination
+            csvData={formatCsvData}
             loading={isPaymentLoading}
             totalItems={paymentsList?.total}
             fetchData={getPayments}
-            csvData={formatCsvData}
-            tableName="payments"
+            tableName="deposits"
           />
         </div>
       </RenderRoleBased>
@@ -379,7 +414,7 @@ const Payments = () => {
 };
 
 export default PermissionAccess(
-  Payments,
+  Deposits,
   ModulesEnum.payment,
   AccessLevelEnum.read
 );

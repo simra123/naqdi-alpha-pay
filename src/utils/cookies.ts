@@ -1,6 +1,19 @@
 import { AccessLevelEnum, ModulesEnum } from "@/constants/types";
 import Cookies from "js-cookie";
 
+export const getLocalStorageValue = (key: string): any => {
+  const raw = Cookies.get(key);
+
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error(`Failed to parse cookie value for key "${key}":`, err);
+    return null;
+  }
+};
+
 export const updateMfaInCookie = (newMfaValue) => {
   // Get the current userDetails cookie
   let user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
@@ -38,11 +51,18 @@ export const debounce = (func: Function, delay: number) => {
 
 export const getPermission = (moduleName: ModulesEnum) => {
   const userCookie = Cookies.get("user");
-  const currentUser = JSON.parse(userCookie || "");
-  const permissionObj = currentUser?.permissions?.find(
-    (perm) => perm?.permission?.module == moduleName
-  );
-  return permissionObj?.permission;
+
+  if (!userCookie) return null;
+
+  try {
+    const currentUser = JSON.parse(userCookie);
+    const permissionObj = currentUser?.permissions?.find(
+      (perm) => perm?.permission?.module === moduleName
+    );
+    return permissionObj?.permission || null;
+  } catch (err) {
+    return null;
+  }
 };
 
 export const hasMinAccess = (
@@ -51,9 +71,6 @@ export const hasMinAccess = (
 ): boolean => {
   // I have added this line to make sure no one passess --none-- as minAccessLevel
   if (minAccess === AccessLevelEnum.none) {
-    console.warn(
-      "hasMinAccess() was called with 'none' as minimum access. This is likely unintended."
-    );
     return false;
   }
 

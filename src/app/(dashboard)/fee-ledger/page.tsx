@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { Role } from "@/constants/roles";
 
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { useApi } from "@/hooks/useApi";
 import { callApiHook, downloadCSV } from "@/utils/apifuncs";
 
@@ -16,22 +16,30 @@ import CustomTable from "@/components/common/CustomTable";
 
 import CreateWithdrawalModal from "@/components/Modals/CreateWithdrawalModal";
 
-import { AccessLevelEnum, ModulesEnum, TableColumns } from "@/constants/types";
+import {
+  AccessLevelEnum,
+  ModulesEnum,
+  TableColumns,
+  transactionTypes,
+} from "@/constants/types";
 
 import PermissionAccess from "@/middleware/PermissionAccess";
 import AdvancedTable from "@/components/common/AdvancedTable";
 import { ListApiResponse } from "@/components/common/AdvancedTable/types";
 import momentTZ from "moment-timezone";
 import { formatDateToUserTimeZone } from "@/utils/dates";
-import {
-  getAdminLedgerListApi,
-  getUserLedgerListApi,
-} from "@/services/feeLedger";
-import { getPermission, hasMinAccess } from "@/utils/cookies";
+import { getUserLedgerListApi } from "@/services/feeLedger";
+import { getAdminLedgerListApi } from "@/services/admin/feeLedger";
+import { hasMinAccess } from "@/utils/cookies";
+
+import { ColumnConfig, formatCSVDataByColumnOrder } from "@/utils/csv";
+import { standardBlockchain, unitName } from "@/constants/blockchains";
+import AmountFormat from "@/components/common/AmountFormat";
+import { applyColumnEnhancements } from "@/components/common/AdvancedTable/components/fitlers/ColumnEnhancer";
 
 const FeeLedger = () => {
   const router = useRouter();
-  const user = useLocalStorage("user");
+  const user = getLocalStorageValue("user");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [FeeLedgerList, setFeeLedgerList] = useState<ListApiResponse | any>(
     user?.role == Role.USER ? null : []
@@ -67,50 +75,11 @@ const FeeLedger = () => {
       apiCall: callFeeLedgerListApi(feeLeadgerCall()),
       successCallBack: (response: any) => {
         if (user.role == Role.USER) {
-          const modifiedColumns = response?.listConfig.views[0].columns.map(
-            (column) => {
-              if (["createdAt"].includes(column.listColumnsMeta.name)) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    const currentTimeZone = momentTZ.tz.guess();
-
-                    console.log({ currentTimeZone });
-
-                    let date: string | string[] = momentTZ(value)
-                      .tz(currentTimeZone)
-                      .format("DD-MM-YYYY.hh:mm A");
-
-                    console.log({ date });
-
-                    let [day, time] = date.split(".");
-                    return (
-                      <div className="flex flex-col gap-1">
-                        <span className="text-caption">{day}</span>
-                        <span className="text-custom-title-gray text-subtitle">
-                          {time}
-                        </span>
-                      </div>
-                    );
-                  },
-                };
-              }
-              if (["fee"].includes(column.listColumnsMeta.name)) {
-                return {
-                  ...column,
-                  dataValidator: (value: string) => {
-                    return `${value} %`;
-                  },
-                };
-              }
-
-              return column;
-            }
+          const modifiedColumns = applyColumnEnhancements(
+            response?.listConfig.views[0].columns
           );
 
           response.listConfig.views[0].columns = modifiedColumns;
-
-          console.log({ modifiedColumns });
 
           setColumns(modifiedColumns);
 
@@ -119,7 +88,7 @@ const FeeLedger = () => {
           setFeeLedgerList(response);
         }
         if (user?.role == Role.ADMIN) {
-          setFeeLedgerList(response);
+          setFeeLedgerList(response?.result);
         }
       },
     });
@@ -127,22 +96,28 @@ const FeeLedger = () => {
   };
 
   const feeLedger_table_columns: TableColumns = [
-    { field: "id", headerName: "ID", sortable: true },
+    { field: "id", headerName: "ID" },
     {
-      field: "type",
+      field: "transaction_request.type",
       headerName: "Transaction Type",
       link(row: any) {
-        if (row?.payment_id && hasMinAccess(ModulesEnum.payment,AccessLevelEnum.read)) {
-          return `/payments/details/${row?.payment_id}`;
+        if (
+          row?.transaction_request?.type == transactionTypes.Deposit &&
+          hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
+        ) {
+          return `/deposits/details/${row?.transaction_request?.id}`;
         }
-        if (row?.withdraw_id && hasMinAccess(ModulesEnum.withdrawal,AccessLevelEnum.read)) {
-          return `/withdrawals/details/${row?.withdraw_id}`;
+        if (
+          row?.transaction_request?.type == transactionTypes.Withdraw &&
+          hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
+        ) {
+          return `/withdrawals/details/${row?.transaction_request?.id}`;
         }
       },
       target: "_self",
     },
     {
-      field: "createdAt",
+      field: "created_at",
       headerName: "Created At",
       sortable: true,
       dataValidator: (value) => {
@@ -169,14 +144,100 @@ const FeeLedger = () => {
         );
       },
     },
-    { field: "transaction_type", headerName: "Currency Type", sortable: true },
-    { field: "unit", headerName: "Currency", sortable: true },
-
-    { field: "received_amount", headerName: "Received Amount", sortable: true },
-    { field: "paid_amount", headerName: "Paid Amount", sortable: true },
-    { field: "fee_amount", headerName: "Fee Amount", sortable: true },
+    { field: "transaction_request.fiat_currency", headerName: "Fiat Currency" },
+    { field: "transaction_request.unit", headerName: "Crypto Currency" },
     {
-      field: "fee",
+      field: "transaction_request.standard",
+      headerName: "Blockchain",
+      dataValidator(value, row: any) {
+        if (value) {
+          return standardBlockchain[value];
+        }
+
+        return unitName[row?.transaction_request?.unit?.toLowerCase()];
+      },
+    },
+
+    {
+      field: "transaction.paid_amount",
+      headerName: "Crypto Paid Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.net_amount",
+      headerName: "Crypto Net Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fee",
+      headerName: "Crypto Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fiat_paid_amount",
+      headerName: "Fiat Paid Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fiat_net_amount",
+      headerName: "Fiat Net Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction.fiat_fee",
+      headerName: "Fiat Fee Amount",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction_request.fee_value",
       headerName: "Fee (%)",
       sortable: true,
       dataValidator(value, row) {
@@ -184,20 +245,104 @@ const FeeLedger = () => {
       },
     },
     {
-      field: "owner_first_name",
+      field: "fiat_company_ledger.balance_before",
+      headerName: "Company Fiat Before Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "fiat_company_ledger.balance_after",
+      headerName: "Company Fiat After Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            amount={value}
+            type="fiat"
+            currency={row?.transaction_request?.fiat_currency}
+          />
+        );
+      },
+    },
+    {
+      field: "crypto_company_ledger.balance_before",
+      headerName: "Company Crypto Before Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "crypto_company_ledger.balance_after",
+      headerName: "Company Crypto After Balance",
+      dataValidator(value, row: any) {
+        return (
+          <AmountFormat
+            type="crypto"
+            amount={value}
+            currency={row?.transaction_request?.unit}
+          />
+        );
+      },
+    },
+    {
+      field: "transaction_request.user.id",
+      headerName: "Merchant ID",
+      link(row: any) {
+        if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
+          return `/merchants/details/${row?.transaction_request?.user?.id}`;
+        }
+      },
+      target: "_self",
+    },
+    {
+      field: "transaction_request.user.first_name",
       headerName: "Merchant First Name",
     },
     {
-      field: "owner_last_name",
+      field: "transaction_request.user.last_name",
       headerName: "Merchant Last Name",
     },
     {
-      field: "owner_email",
+      field: "transaction_request.user.email",
       headerName: "Merchant Email",
     },
     {
-      field: "owner_user_type",
+      field: "transaction_request.user.user_type",
       headerName: "Merchant Type",
+    },
+    {
+      field: "transaction_request.company.owner.id",
+      headerName: "Company Owner ID",
+      link(row: any) {
+        if (hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read)) {
+          return `/merchants/details/${row?.transaction_request.company.owner.id}`;
+        }
+      },
+      target: "_self",
+    },
+    {
+      field: "transaction_request.company.owner.first_name",
+      headerName: "Company Owner First Name",
+    },
+    {
+      field: "transaction_request.company.owner.last_name",
+      headerName: "Company Owner Last Name",
+    },
+    {
+      field: "transaction_request.company.owner.email",
+      headerName: "Company Owner Email",
     },
   ];
 
@@ -205,7 +350,56 @@ const FeeLedger = () => {
     getFeeLedger({ limitValue: 10, pageValue: 1, filters: [], sort: [] });
   }, []);
 
-  console.log({ colsState: columns });
+  const formatCsvData = useMemo(() => {
+    const columnOrderUser: ColumnConfig<any>[] = [
+      { key: "id" },
+      { key: "created_at" },
+      { key: "updated_at" },
+      {
+        key: "Type",
+        format(value, row) {
+          return row?.transaction_request?.type;
+        },
+      },
+      {
+        key: "Fee Amount",
+        format(value, row) {
+          return row?.transaction_request?.fiat_paid_fee;
+        },
+      },
+      {
+        key: "Amount",
+        format(value, row) {
+          return row?.transaction_request?.fiat_paid_amount;
+        },
+      },
+      {
+        key: "Fee Comission",
+        format(value, row) {
+          return row?.transaction_request?.fee_value;
+        },
+      },
+      { key: "crypto_company_ledger" },
+      { key: "fiat_company_ledger" },
+      { key: "crypto_wallet_info" },
+      { key: "fiat_wallet_info" },
+      { key: "transaction_request" },
+      { key: "transaction" },
+    ];
+
+    const isAdmin = user?.role == Role.ADMIN;
+
+    if (isAdmin) {
+      columnOrderUser.push(
+        { key: "transaction_request.company", label: "company" },
+        { key: "transaction_request.user", label: "user" }
+      );
+    }
+
+    const rows = isAdmin ? FeeLedgerList : FeeLedgerList?.result;
+
+    return formatCSVDataByColumnOrder(rows, columnOrderUser);
+  }, [FeeLedgerList]);
 
   const toggleCreateModal = () => {
     setIsCreateOpen(!isCreateOpen);
@@ -241,11 +435,14 @@ const FeeLedger = () => {
           tableName="fee-ledger"
           initialPageSize={10}
           rowClickHandler={(row: any) =>
-            hasMinAccess(ModulesEnum.merchant,AccessLevelEnum.read) &&
-            router.push(`/merchants/details/${row?.owner_id}`)
+            hasMinAccess(ModulesEnum.merchant, AccessLevelEnum.read) &&
+            router.push(
+              `/merchants/details/${row?.transaction_request?.user?.id}`
+            )
           }
           pagination
-          columnClassName="max-w-[200px]"
+          columnClassName="max-w-[300px]"
+          csvData={formatCsvData}
         />
       )}
 
@@ -259,12 +456,21 @@ const FeeLedger = () => {
             setListConfig={setListConfig}
             selectable={false}
             onRowClick={(row) => {
-              console.log({ row });
-              if (row?.payment && hasMinAccess(ModulesEnum.payment,AccessLevelEnum.read)) {
-                router.push(`payments/details/${row.payment?.id}`);
+              if (
+                row?.transaction_request?.type == transactionTypes.Deposit &&
+                hasMinAccess(ModulesEnum.payment, AccessLevelEnum.read)
+              ) {
+                router.push(
+                  `/deposits/details/${row?.transaction_request?.id}`
+                );
               }
-              if (row?.withdraw && hasMinAccess(ModulesEnum.withdrawal,AccessLevelEnum.read)) {
-                router.push(`withdrawals/details/${row.withdraw?.id}`);
+              if (
+                row?.transaction_request?.type == transactionTypes.Withdraw &&
+                hasMinAccess(ModulesEnum.withdrawal, AccessLevelEnum.read)
+              ) {
+                router.push(
+                  `/withdrawals/details/${row?.transaction_request?.id}`
+                );
               }
             }}
             pagination
@@ -272,6 +478,7 @@ const FeeLedger = () => {
             totalItems={FeeLedgerList?.total}
             fetchData={getFeeLedger}
             tableName="fee-ledger"
+            csvData={formatCsvData}
           />
         </div>
       )}

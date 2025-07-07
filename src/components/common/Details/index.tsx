@@ -1,8 +1,8 @@
 "use client";
 
-import { ContentCopy } from "@mui/icons-material";
 import Link from "next/link";
 import React, { useState } from "react";
+import { MdContentCopy } from "react-icons/md";
 
 type Props = {
   value: any;
@@ -10,6 +10,7 @@ type Props = {
   copyable?: boolean;
   link?: string;
   className?: string;
+  textClassName?: string;
   target?: string;
 };
 
@@ -19,6 +20,7 @@ const Details = ({
   copyable,
   link,
   className,
+  textClassName,
   target = "_blank",
 }: Props) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -30,14 +32,12 @@ const Details = ({
 
       // Reset the copied state after 2 seconds
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-    }
+    } catch (err) {}
   };
 
   return (
     <div
-      className={`flex gap-4 items-center text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis ${className}`}
+      className={`flex gap-4 items-start text-button whitespace-nowrap max-w-full overflow-hidden text-ellipsis ${className}`}
     >
       {label && (
         <span className="font-medium text-custom-caption-gray">{label}:</span>
@@ -46,12 +46,14 @@ const Details = ({
         <Link
           href={link}
           target={target}
-          className="overflow-hidden font-semibold text-blue-700 hover:text-blue-600 hover:underline text-ellipsis capitalize transition-all"
+          className={`overflow-hidden font-semibold text-blue-700 hover:text-blue-600 hover:underline text-ellipsis ${textClassName} capitalize transition-all`}
         >
           {isCopied ? "Copied" : value}
         </Link>
       ) : (
-        <span className="overflow-hidden font-semibold text-black-100 text-ellipsis capitalize">
+        <span
+          className={`overflow-hidden font-semibold text-black-100  ${textClassName} text-ellipsis capitalize`}
+        >
           {isCopied ? "Copied" : value}
         </span>
       )}
@@ -59,9 +61,9 @@ const Details = ({
         <button
           type="button"
           onClick={copyToClipboard(value)}
-          className="bg-transparent hover:bg-purple-10 active:bg-purple-20 p-1 border-0 rounded-full outline-0 w-8 h-8 aspect-square text-[14px] transition-all"
+          className="flex justify-center items-center bg-transparent hover:bg-purple-10 active:bg-purple-20 p-1 border-0 rounded-full outline-0 w-8 h-8 aspect-square text-[14px] transition-all"
         >
-          <ContentCopy className="text-[12px]" />
+          <MdContentCopy className="text-[12px]" />
         </button>
       )}
     </div>

@@ -3,9 +3,15 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Role } from "./constants/roles";
 
-const adminRoutes = ["/kyc", "/merchants", "/wallets", "/news-signup"];
+const adminRoutes = [
+  "/kyc",
+  "/merchants",
+  "/wallets",
+  "/news-signup",
+  "/fee-ledger",
+];
 const wihtoutFeeUserRoutes = ["/onboarding", "/support"];
-const nonFunctionalRoutes = ["/payouts","/wallets"];
+const nonFunctionalRoutes = ["/payouts", "/wallets"];
 
 const NOT_FOUND_URL = "/not-found";
 
@@ -18,7 +24,7 @@ const isNonFunctionalRoute = (pathname: string) =>
 const isWithOutFeeRoute = (pathname: string) =>
   wihtoutFeeUserRoutes.some((route) => pathname.startsWith(route));
 
-const hasFee = (user) => user?.userDetails && user?.userDetails?.fees;
+const hasFee = (user) => user?.company && user?.company?.fee;
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -29,16 +35,12 @@ export function middleware(req: NextRequest) {
 
   const userCookie = req.cookies.get("user");
 
-
-
   let user = null;
 
   if (userCookie) {
     try {
       user = JSON.parse(userCookie.value);
-    } catch (e) {
-      console.error("Invalid localUser cookie");
-    }
+    } catch (e) {}
 
     // Blocking user only routes for admin
     if (user?.role == Role.ADMIN) {
@@ -73,10 +75,10 @@ export function middleware(req: NextRequest) {
 
       // Checking if is not a onboarding route and dont have fee also if is a onboarding route but has fees then blocking the user
       if (!isWithOutFeeRoute(pathname) && !hasFee(user)) {
-        if (pathname == "/") {
-          return NextResponse.redirect(new URL("/onboarding", req.url));
-        }
-        return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
+        // if (pathname == "/") {
+        return NextResponse.redirect(new URL("/onboarding", req.url));
+        // }
+        // return NextResponse.rewrite(new URL(NOT_FOUND_URL, req.url));
       }
 
       if (
@@ -91,10 +93,6 @@ export function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
-
-// export const config = {
-//   matcher: ["/((?!.*\\.).*)"],
-// };
 
 export const config = {
   matcher: [

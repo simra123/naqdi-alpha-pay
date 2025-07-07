@@ -7,21 +7,21 @@ import { useApi } from "@/hooks/useApi";
 import { networks_available, unitName } from "@/constants/blockchains";
 import { callApiHook } from "@/utils/apifuncs";
 import {
+  getAdminFiatBalanceApi,
+  getAdminSupportedCryptoApi,
   getAllAdminWalletBalancesApi,
-  getAllWalletBalancesApi,
-} from "@/services/wallet";
+} from "@/services/admin/wallet";
 import {
-  createAdminWithdrawalApi,
   createWithdrawalApi,
   getWithdrawableCurrenciesListApi,
 } from "@/services/withdrawal";
+import { createAdminWithdrawalApi } from "@/services/admin/withdrawal";
 import { setNotification } from "@/store/slices/modal.Slice";
 import IconField from "../../common/IconField";
 import LoaderButton from "../../common/LoaderButton";
 import LoadingApi from "../../common/LoadindApi";
 import ErrorApiText from "../../common/ErrorApiText";
 import OtpInput from "react-otp-input";
-import { Info } from "@mui/icons-material";
 import useFormValidation from "@/hooks/useFormValidation";
 import {
   emptySchema,
@@ -31,21 +31,35 @@ import {
 import { getFeesApi } from "@/services/common";
 import { roundToPrecision } from "@/utils/math";
 import { capitalize, formattedBlockchainName } from "@/utils/dataFormatters";
-import { getAllWalletAssetsByAdminApi } from "@/services/admin/wallets";
-import useLocalStorage from "@/hooks/useLocalStorage";
+import { getLocalStorageValue } from "@/utils/cookies";
 import { Role } from "@/constants/roles";
 import RenderRoleBased from "@/components/common/RenderRoleBased";
+import { MdInfo } from "react-icons/md";
+import {
+  getMerchantFiatBalanceApi,
+  getMerchantSupportedCryptoApi,
+} from "@/services/wallet";
+import AmountFormat from "@/components/common/AmountFormat";
+import { formatAmount } from "@/components/common/AmountFormat/utils";
+import { userDetailsApi } from "@/services/user";
+import { getExxhangeRateUSDToCryptoApi } from "@/services/transaction";
+import { getAdminExchangeRateUSDToCryptoApi } from "@/services/admin/transaction";
 
 interface Props {
   isOpen: boolean;
   toggleHandler: () => void;
   refreshHandler: () => void;
   blockchain?: string;
+  standard?: string;
 }
-
-interface FeeState {
-  alphaspayFees: string;
-  netAmount: string;
+interface SummaryState {
+  requestedAmount: number;
+  feePercentage: number;
+  fiatFeeAmount: number;
+  fiatNetAmount: number;
+  cryptoRequstedAmount: number;
+  cryptoFeeAmount: number;
+  cryptoNetAmount: number;
 }
 
 const initalFormValues = {
@@ -61,11 +75,21 @@ const CreateWithdrawalModal = ({
   toggleHandler,
   refreshHandler,
   blockchain,
+  standard,
 }: Props) => {
   const dispatch = useDispatch();
-  const user = useLocalStorage("user");
-  const [balance, setBalance] = useState([]);
-  const [fee, setFee] = useState<null | FeeState>(null);
+  const user = getLocalStorageValue("user");
+  const [supportedCurrencies, setSupportedCurrencies] = useState<any>([]);
+  const [balance, setBalance] = useState<any>({});
+  const [withdrawSummary, setWithdrawSummary] = useState<SummaryState>({
+    cryptoFeeAmount: 0,
+    cryptoNetAmount: 0,
+    cryptoRequstedAmount: 0,
+    feePercentage: 0,
+    fiatFeeAmount: 0,
+    fiatNetAmount: 0,
+    requestedAmount: 0,
+  });
   const [currentSchema, setCurrentSchema] = useState(emptySchema);
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -79,11 +103,11 @@ const CreateWithdrawalModal = ({
     useApi({
       initailLoading: true,
     });
-  const [isFeeLoading, isFeeError, callFeeApi] = useApi();
 
-  const getCurrentAssetAmount = (value) => {
-    return balance.find((item) => item.value == value)?.amount;
-  };
+  const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] =
+    useApi();
+  const [isExchangeRateLoading, isExchangeRateError, callExchangeRateApi] =
+    useApi();
 
   // Initialize useFormValidation
   const {
@@ -98,60 +122,192 @@ const CreateWithdrawalModal = ({
 
   useEffect(() => {
     if (currentStep == 1) {
-      const maxAmount = getCurrentAssetAmount(values?.blockchain);
-      setCurrentSchema(getWithdrawalSchema(+maxAmount || 0));
+      const currentCurrency = getSelectedCurrency(
+        values?.blockchain
+      )?.blockchain;
+
+      setCurrentSchema(
+        getWithdrawalSchema(
+          +formatAmount({
+            amount:
+              parseFloat(balance?.total_amount) -
+              parseFloat(balance?.on_hold_amount),
+            type: "fiat",
+          })?.fixedRaw,
+          currentCurrency
+        )
+      );
     }
     if (currentStep == 2) {
       setCurrentSchema(otpSchema);
     }
-  }, [values?.blockchain, currentStep]);
+  }, [values?.blockchain, currentStep, blockchain]);
+
+  const getSelectedCurrency = (label: string) => {
+    return supportedCurrencies?.find((item) => item?.label == label);
+  };
+
+  const getSupportedCurrencies = async () => {
+    await callApiHook({
+      apiCall: callBalanceApi(
+        user?.role == Role.USER
+          ? getMerchantSupportedCryptoApi()
+          : getAdminSupportedCryptoApi()
+      ),
+      successCallBack: (response: any) => {
+        let data = response?.data || response;
+        setSupportedCurrencies(
+          data?.map((item) => ({
+            ...item,
+            label:
+              item?.is_token && item?.standard
+                ? `${item?.unit} (${item?.standard})`
+                : capitalize(item?.blockchain_name),
+            value:
+              item?.is_token && item?.standard
+                ? `${item?.unit} (${item?.standard})`
+                : capitalize(item?.blockchain_name),
+          }))
+        );
+
+        const currencyName = standard
+          ? blockchain?.toUpperCase()
+          : unitName[blockchain];
+
+        setValues({
+          ...initalFormValues,
+          blockchain: standard ? `${currencyName} (${standard})` : currencyName,
+        }); // Reset form values
+      },
+    });
+  };
 
   const getBalance = async () => {
     await callApiHook({
       apiCall: callBalanceApi(
         user?.role == Role.USER
-          ? getWithdrawableCurrenciesListApi()
-          : getAllAdminWalletBalancesApi()
+          ? getMerchantFiatBalanceApi()
+          : getAdminFiatBalanceApi()
       ),
       successCallBack: (response: any) => {
-        const withdraw_currency_options = response.map((item) => {
-          return {
-            label: item?.standard
-              ? `${item?.unit} (${item?.standard})`
-              : unitName[item?.unit?.toLowerCase()],
-            value: item?.standard
-              ? `${capitalize(item?.unit)} (${item?.standard})`
-              : item?.unit,
-            standard: item?.standard,
-            unit: item?.unit,
-            amount: item?.totalAmount || item?.amount,
-          };
-        });
-        setBalance(withdraw_currency_options);
-        if (blockchain) {
-          setValues((pre) => ({ ...pre, blockchain }));
-        }
+        setBalance(response?.data || response);
       },
     });
+  };
+
+  const getUserDetails = async () => {
+    if (user?.role == Role.USER) {
+      await callApiHook({
+        apiCall: callUserDetailsApi(userDetailsApi()),
+        successCallBack: async (response) => {
+          const requestedAmount = values?.amount;
+          const feePercentage = +response?.company?.fee;
+          const feeAmount = (requestedAmount / 100) * feePercentage;
+          const netAmount = requestedAmount - feeAmount;
+          await getExchangeRate(
+            {
+              amount: netAmount,
+              blockchain: getSelectedCurrency(values.blockchain)
+                ?.blockchain_name,
+              unit: getSelectedCurrency(values.blockchain)?.unit,
+            },
+            { requestedAmount, feePercentage, feeAmount, netAmount }
+          );
+        },
+      });
+    }
+  };
+
+  const getExchangeRate = async (
+    {
+      amount,
+      blockchain,
+      unit,
+    }: {
+      amount: number;
+      blockchain: string;
+      unit: string;
+    },
+    data: {
+      requestedAmount: number;
+      feePercentage: number;
+      feeAmount: number;
+      netAmount: number;
+    }
+  ) => {
+    let response;
+    if (user?.role == Role.USER) {
+      await callApiHook({
+        apiCall: callExchangeRateApi(
+          getExxhangeRateUSDToCryptoApi({ amount, blockchain, unit })
+        ),
+        successCallBack: (response) => {
+          const { exchangeRate, cryptoAmount } = response;
+          setWithdrawSummary({
+            cryptoFeeAmount: data.feeAmount / exchangeRate,
+            cryptoNetAmount: cryptoAmount,
+            cryptoRequstedAmount: +data.requestedAmount / exchangeRate,
+            feePercentage: data.feePercentage,
+            fiatFeeAmount: data.feeAmount,
+            fiatNetAmount: data.netAmount,
+            requestedAmount: data.requestedAmount,
+          });
+        },
+      });
+    }
+    if (user?.role == Role.ADMIN) {
+      await callApiHook({
+        apiCall: callExchangeRateApi(
+          getAdminExchangeRateUSDToCryptoApi({ amount, blockchain, unit })
+        ),
+        successCallBack: (response) => {
+          const { exchangeRate, cryptoAmount } = response;
+          setWithdrawSummary({
+            cryptoFeeAmount: data.feeAmount / exchangeRate,
+            cryptoNetAmount: cryptoAmount,
+            cryptoRequstedAmount: +data.requestedAmount / exchangeRate,
+            feePercentage: data.feePercentage,
+            fiatFeeAmount: data.feeAmount,
+            fiatNetAmount: data.netAmount,
+            requestedAmount: data.requestedAmount,
+          });
+        },
+      });
+    }
   };
 
   const handleStepChange = (step: number) => () => {
     setCurrentStep(step);
     if (step == 2) {
-      user?.role == Role.USER && getAlpapayFee({ amount: values?.amount });
+      if (user?.role == Role.USER) {
+        getUserDetails();
+      }
+      if (user?.role == Role.ADMIN) {
+        getExchangeRate(
+          {
+            amount: values?.amount,
+            blockchain: getSelectedCurrency(values.blockchain)?.blockchain_name,
+            unit: getSelectedCurrency(values.blockchain)?.unit,
+          },
+          {
+            requestedAmount: values?.amount,
+            feePercentage: 0,
+            feeAmount: 0,
+            netAmount: values?.amount,
+          }
+        );
+      }
     }
   };
 
-  const getcurrentAsset = () =>
-    balance.find((item) => item?.value == values?.blockchain);
-
   const handleWithdrawal = async () => {
-    const currentAsset = getcurrentAsset();
+    const currency = getSelectedCurrency(values?.blockchain);
+
     const withdraw_request_payload = {
       ...values,
-      // standard: networks_available[values.blockchain] ? values.standard : null,
-      blockchain: currentAsset?.unit,
-      standard: currentAsset?.standard || null,
+      unit: currency?.unit,
+      standard: currency?.standard,
+      amount: +values?.amount,
     };
 
     if (withdraw_request_payload.standard == null) {
@@ -176,25 +332,27 @@ const CreateWithdrawalModal = ({
       },
     });
   };
-  const getAlpapayFee = async ({ amount }) => {
-    await callApiHook({
-      apiCall: callFeeApi(getFeesApi(amount)),
-      successCallBack: (response) => {
-        setFee(response);
-      },
-    });
-  };
 
   useEffect(() => {
     if (isOpen) {
+      const currencyName = standard
+        ? blockchain?.toUpperCase()
+        : unitName[blockchain];
       setErrors({});
       setBalanceError(null);
       setWithdrawalError(null);
       getBalance();
       setCurrentStep(1);
-      setValues(initalFormValues); // Reset form values
+      getSupportedCurrencies();
+      if (!blockchain) {
+        setValues({
+          ...initalFormValues,
+        }); // Reset form values
+      }
     }
   }, [isOpen]);
+
+  console.log({ withdrawSummary });
 
   return (
     <Modal isOpen={isOpen} onClose={toggleHandler}>
@@ -206,16 +364,12 @@ const CreateWithdrawalModal = ({
         {currentStep == 1 && (
           <form
             className="flex flex-col gap-2 mt-8"
-            onSubmit={(e) =>
-              handleSubmit(e, handleStepChange(2), () =>
-                console.log("Something went wrong")
-              )
-            }
+            onSubmit={(e) => handleSubmit(e, handleStepChange(2))}
           >
             <IconSelectBox
               wrapperClassName="!mb-2"
-              label="Source Currency"
-              options={balance}
+              label="Withdraw Currency"
+              options={supportedCurrencies}
               name="blockchain"
               value={values.blockchain}
               placeholder="Select a Blockchain"
@@ -223,21 +377,41 @@ const CreateWithdrawalModal = ({
               error={errors.blockchain}
             />
 
-            {values.blockchain && (
-              <div className="mb-1">
-                <p className="font-medium text-black-100">
-                  {
-                    balance.find((item) => item.value === values.blockchain)
-                      ?.amount
-                  }
-                </p>
-                <p className="font-semibold text-[13px] text-custom-title-gray">
-                  {user?.role == Role.USER
-                    ? "Available Balance"
-                    : "Available Fee"}
-                </p>
-              </div>
-            )}
+            <div className="flex items-center gap-8">
+              {balance?.currency && (
+                <>
+                  <div className="mb-1">
+                    <p className="font-medium text-black-100">
+                      <AmountFormat
+                        amount={
+                          parseFloat(balance?.total_amount) -
+                          parseFloat(balance.on_hold_amount)
+                        }
+                        type="fiat"
+                        currency={balance.currency}
+                      />
+                    </p>
+                    <p className="font-semibold text-[13px] text-custom-title-gray">
+                      {user?.role == Role.USER
+                        ? "Available Balance"
+                        : "Available Fee"}
+                    </p>
+                  </div>
+                  <div className="mb-1">
+                    <p className="font-medium text-black-100">
+                      <AmountFormat
+                        amount={parseFloat(balance.on_hold_amount)}
+                        type="fiat"
+                        currency={balance.currency}
+                      />
+                    </p>
+                    <p className="font-semibold text-[13px] text-custom-title-gray">
+                      On Hold Amount
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
 
             <IconField
               value={values.amount}
@@ -282,28 +456,18 @@ const CreateWithdrawalModal = ({
         )}
       </LoadingApi>
       {currentStep == 2 && (
-        <LoadingApi loading={isFeeLoading}>
+        <LoadingApi loading={isUserDetailsLoading || isExchangeRateLoading}>
           <form
             className="flex flex-col gap-2 mt-8"
-            onSubmit={(e) =>
-              handleSubmit(e, handleWithdrawal, () =>
-                console.log("Something went wrong")
-              )
-            }
+            onSubmit={(e) => handleSubmit(e, handleWithdrawal)}
           >
             <div className="gap-6 grid grid-cols-1 md:grid-cols-2">
               <div>
                 <p className="font-bold text-caption text-custom-title-gray">
                   Blockchain
                 </p>
-                <p className="font-medium text-black-100">
-                  {formattedBlockchainName(values?.blockchain)
-                    ?.standardBlockchain
-                    ? capitalize(
-                        formattedBlockchainName(values?.blockchain)
-                          ?.standardBlockchain
-                      )
-                    : formattedBlockchainName(values?.blockchain)?.name}
+                <p className="font-medium text-black-100 capitalize">
+                  {getSelectedCurrency(values.blockchain)?.blockchain_name}
                 </p>
               </div>
               <div>
@@ -311,37 +475,91 @@ const CreateWithdrawalModal = ({
                   Currency
                 </p>
                 <p className="font-medium text-black-100">
-                  {formattedBlockchainName(values?.blockchain)?.ticker}
+                  {getSelectedCurrency(values.blockchain)?.unit}
                 </p>
               </div>
               <div>
                 <p className="font-bold text-caption text-custom-title-gray">
-                  Requested Amount
+                  Fiat Requested Amount
                 </p>
                 <p className="font-medium text-black-100">
-                  {roundToPrecision(+values?.amount, 10)}
+                  <AmountFormat
+                    amount={withdrawSummary.requestedAmount}
+                    type="fiat"
+                  />
                 </p>
               </div>
-              <RenderRoleBased user={user} allowedRoles={[Role.USER]}>
-                <div>
-                  <p className="font-bold text-caption text-custom-title-gray">
-                    Alphapay Fee
-                  </p>
-                  <p className="font-medium text-black-100">
-                    {roundToPrecision(+fee?.alphaspayFees, 10)}
-                  </p>
-                </div>
+              <div>
+                <p className="font-bold text-caption text-custom-title-gray">
+                  Crypto Requested Amount
+                </p>
+                <p className="font-medium text-black-100">
+                  <AmountFormat
+                    amount={withdrawSummary.cryptoRequstedAmount}
+                    type="crypto"
+                  />
+                </p>
+              </div>
 
-                <div>
-                  <p className="font-bold text-caption text-custom-title-gray">
-                    Net Amount
-                  </p>
-                  <p className="font-medium text-black-100">
-                    {roundToPrecision(+fee?.netAmount, 10)}
-                  </p>
-                </div>
+              <RenderRoleBased allowedRoles={[Role.USER]} user={user}>
+                <>
+                  <div>
+                    <p className="font-bold text-caption text-custom-title-gray">
+                      Fiat Fee Amount
+                    </p>
+                    <p className="font-medium text-black-100">
+                      <AmountFormat
+                        amount={withdrawSummary.fiatFeeAmount}
+                        type="fiat"
+                      />
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-bold text-caption text-custom-title-gray">
+                      Crypto Fee Amount
+                    </p>
+                    <p className="font-medium text-black-100">
+                      <AmountFormat
+                        amount={withdrawSummary.cryptoFeeAmount}
+                        type="crypto"
+                      />
+                    </p>
+                  </div>
+                </>
               </RenderRoleBased>
+
+              <div>
+                <p className="font-bold text-caption text-custom-title-gray">
+                  Fiat Net Amount
+                </p>
+                <p className="font-medium text-black-100">
+                  <AmountFormat
+                    amount={
+                      user?.role == Role.USER
+                        ? withdrawSummary.fiatNetAmount
+                        : withdrawSummary.requestedAmount
+                    }
+                    type="fiat"
+                  />
+                </p>
+              </div>
+              <div>
+                <p className="font-bold text-caption text-custom-title-gray">
+                  Crypto Net Amount
+                </p>
+                <p className="font-medium text-black-100">
+                  <AmountFormat
+                    amount={
+                      user?.role == Role.USER
+                        ? withdrawSummary.cryptoNetAmount
+                        : withdrawSummary.cryptoRequstedAmount
+                    }
+                    type="crypto"
+                  />
+                </p>
+              </div>
             </div>
+
             <div className="mt-3">
               <p className="font-bold text-caption text-custom-title-gray">
                 Recipient Address
@@ -363,7 +581,7 @@ const CreateWithdrawalModal = ({
               <div className="flex items-center gap-2">
                 <label className="block mb-2 font-medium">Enter Code</label>
                 <div className="group relative flex items-center">
-                  <Info className="mb-1 text-[18px] text-blue-info" />
+                  <MdInfo className="mb-1 text-[18px] text-blue-info" />
                 </div>
               </div>
               <OtpInput
@@ -417,7 +635,14 @@ const CreateWithdrawalModal = ({
           </form>
         </LoadingApi>
       )}
-      <ErrorApiText error={isBalanceError || isFeeError || isWithdrawalError} />
+      <ErrorApiText
+        error={
+          isBalanceError ||
+          isUserDetailsError ||
+          isExchangeRateError ||
+          isWithdrawalError
+        }
+      />
     </Modal>
   );
 };
