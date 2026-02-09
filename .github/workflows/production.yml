@@ -2,7 +2,7 @@ name: Deploy to production Amazon ECS
 
 on:
   push:
-    branches: ["production1"]
+    branches: ["production"]
 
 env:
   AWS_REGION: eu-west-2
