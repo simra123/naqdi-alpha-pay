@@ -7,10 +7,12 @@ EXPOSE 3000
 FROM base as builder
 WORKDIR /app
 COPY . .
+COPY .env* ./
 RUN yarn
 RUN yarn build
 
 FROM base as production
+RUN apk add --no-cache curl
 WORKDIR /app
 
 RUN addgroup -g 1001 -S nodejs
@@ -23,6 +25,7 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
+COPY --from=builder /app/.env ./.env
 
 
 CMD yarn start
