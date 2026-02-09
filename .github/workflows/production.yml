@@ -1,0 +1,79 @@
+name: Deploy to production Amazon ECS
+
+on:
+  push:
+    branches: ["production1"]
+
+env:
+  AWS_REGION: eu-west-2
+  ECR_REPOSITORY: alphapay-prod-client
+  ECS_SERVICE: alphapay-prod-client
+  ECS_CLUSTER: naqdi-prod-cluster
+  ECS_TASK_DEFINITION: alphapay-prod-client
+  AWS_DEFAULT_REGION: eu-west-2
+
+  CONTAINER_NAME: alphapay-prod-client
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: alphapay-prod-client
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          
+      - name: Create .env file
+        run: |
+          aws secretsmanager get-secret-value --secret-id Alpha-Prod-client-SM --query SecretString --region eu-west-2 --output text | jq -r '. | to_entries | .[] | "\(.key)=\(.value)"' > .env
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # Build a docker container andpush it to ECR so that it canbe deployed to ECS.
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Retrieve trask def
+        uses: pagarme/ecs-task-def-replacements@main
+        id: task
+        with:
+          region: ${{ env.AWS_REGION }}
+          cluster-name: ${{ env.ECS_CLUSTER }}
+          service-name: ${{ env.ECS_SERVICE }}
+          replacements: |
+            {
+              "containerDefinitions": [{
+                "image": "${{ steps.build-image.outputs.image }}"
+              }]
+            }
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task.outputs.taskDef }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
