@@ -70,10 +70,10 @@ const PermissionAccess = (
         // Redirect based on permission available
         let availableModule = findFirstAccessableModule(permissions);
 
-        const isPathAvailable = !!ModuleRoutes[availableModule.module];
+        const isPathAvailable = !!ModuleRoutes[availableModule?.module];
 
         if (availableModule && isPathAvailable) {
-          return redirect(ModuleRoutes[availableModule.module]);
+          return redirect(ModuleRoutes[availableModule?.module]);
         } else {
           return redirect("/settings/account");
         }

@@ -50,7 +50,7 @@ const KYCUserID = ({ params }) => {
   });
   const [error, setError] = useState(null);
   const [isUserDetailsLoading, isUserDetailsError, callUserDetailsApi] = useApi(
-    { initailLoading: true }
+    { initailLoading: true },
   );
   const [isFeeUpdateLoading, isFeeUpdateError, callFeeUpdateApi] = useApi({
     notify: true,
@@ -77,7 +77,7 @@ const KYCUserID = ({ params }) => {
   const handleSubmit = (status) => async () => {
     await callApiHook({
       apiCall: callKYCSubmitApi(
-        updateKYCStatusApi({ userId: +userId, status, ...reason })
+        updateKYCStatusApi({ userId: +userId, status, ...reason }),
       ),
       successCallBack: (response) => {
         getUserDetails();
@@ -86,16 +86,16 @@ const KYCUserID = ({ params }) => {
     });
   };
 
-  const handleFeeSubmit = async () => {
-    await callApiHook({
-      apiCall: callFeeUpdateApi(
-        updateUserFeeApi({ userId: +userId, fees: fee })
-      ),
-      successCallBack: (response) => {
-        setIsFees(true);
-      },
-    });
-  };
+  // const handleFeeSubmit = async () => {
+  //   await callApiHook({
+  //     apiCall: callFeeUpdateApi(
+  //       updateUserFeeApi({ userId: +userId, fees: fee }),
+  //     ),
+  //     successCallBack: (response) => {
+  //       setIsFees(true);
+  //     },
+  //   });
+  // };
 
   const toggleRejectHandler = () => {
     setRejectOpen(!isRejectOpen);
@@ -111,14 +111,21 @@ const KYCUserID = ({ params }) => {
     }
 
     setError(null);
-
+    await callApiHook({
+      apiCall: callFeeUpdateApi(
+        updateUserFeeApi({ userId: +userId, fees: fee }),
+      ),
+      successCallBack: (response) => {
+        setIsFees(true);
+      },
+    });
     await callApiHook({
       apiCall: callFeeSetupApi(
         adminFeeSetupApi({
           client_fees: selectedRole?.client,
           merchant_fees: selectedRole?.merchant,
           userId: +userId,
-        })
+        }),
       ),
       successCallBack: (response: any) => {
         dispatch(
@@ -127,7 +134,7 @@ const KYCUserID = ({ params }) => {
               response?.data?.client_fees ? "Client" : "Merchant"
             }`,
             status: "success",
-          })
+          }),
         );
       },
     });
@@ -175,14 +182,14 @@ const KYCUserID = ({ params }) => {
                     error={isFeeUpdateError}
                     type="number"
                   />
-                  <div className="w-[260px] max-w-full">
+                  {/* <div className="w-[260px] max-w-full">
                     <LoaderButton
                       variant="contained"
                       content={userDetails?.fees || isFees ? "Update" : "Save"}
                       loading={isFeeUpdateLoading}
                       onClick={handleFeeSubmit}
                     />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -221,7 +228,7 @@ const KYCUserID = ({ params }) => {
                 {(selectedRole?.merchant || selectedRole?.client) && (
                   <div className="mt-8 max-w-[360px]">
                     <LoaderButton
-                      loading={isFeeSetupLoading}
+                      loading={isFeeSetupLoading || isFeeUpdateLoading}
                       content={"Update"}
                       onClick={handleUserFeeSetup}
                       variant={"contained"}
@@ -303,5 +310,5 @@ const KYCUserID = ({ params }) => {
 export default PermissionAccess(
   KYCUserID,
   ModulesEnum.kyc,
-  AccessLevelEnum.full
+  AccessLevelEnum.full,
 );
